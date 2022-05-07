@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import cryptoRandomString from "crypto-random-string";
 import RepoPanel from "./RepoPanel";
 import DirectoryBtn from "./DirectoryBtn";
-import FolderList from "../SideBar/FolderList";
+import FolderList from "./FolderList";
 import NoteList from "./NoteList";
 import { useState, useCallback, useEffect, useRef } from "react";
 

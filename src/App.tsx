@@ -7,7 +7,7 @@ import { useDxnote } from "./lib/useDxnote";
 
 import initData from "./lib/init";
 
-import SideBar from "./main/SideBar";
+import SideBar from "./main/SideNav";
 
 import { MarkdownArea } from "./components/markdownArea";
 //import SocketServerBtn from "./components/socketServerBtn";
