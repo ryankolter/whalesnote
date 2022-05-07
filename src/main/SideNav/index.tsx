@@ -215,7 +215,11 @@ const SideBar: React.FC<SideBarProps> = ({
       </List>
       <RepoBar>
         <DirectoryBtnArea>
-          <DirectoryBtn data_path={data_path} setDataPath={setDataPath} />
+          <DirectoryBtn
+            data_path={data_path}
+            setDataPath={setDataPath}
+            panelWidth={folderWidth + noteWidth}
+          />
         </DirectoryBtnArea>
         <RepoNameArea
           onMouseEnter={() => {
