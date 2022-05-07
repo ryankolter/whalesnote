@@ -6,6 +6,7 @@ import EasyMDE from "easymde";
 import type { Editor, Position } from "codemirror";
 import styled from "@emotion/styled";
 import MarkdownIt from "markdown-it";
+import { editLinesTypes } from "../lib/useEditLine";
 
 export const MarkdownArea: React.FC<MarkdownAreaProps> = ({
   data_path,
@@ -14,15 +15,21 @@ export const MarkdownArea: React.FC<MarkdownAreaProps> = ({
   currentNoteKey,
   notes,
   content,
-  line,
+  editPos,
+  editLine,
   focus,
   blur,
   updateNote,
   renameNote,
-  updateLine,
+  updateEditPos,
+  updateEditLine,
 }) => {
   const [value, setValue] = useState(content);
-  const [curLine, setCurLine] = useState(0);
+  const [curEditPos, setCurEditPos] = useState<editPos>({
+    cursor_line: -1,
+    cursor_ch: -1,
+  });
+  const [curEditLine, setCurEditLine] = useState(0);
   const [showScrollPos, setShowScrollPos] = useState(false);
 
   const [simpleMdeInstance, setMdeInstance] = useState<EasyMDE | null>(null);
@@ -51,14 +58,13 @@ export const MarkdownArea: React.FC<MarkdownAreaProps> = ({
         "code" as ToolbarButton,
         "table" as ToolbarButton,
         "|" as "|",
-        "side-by-side" as ToolbarButton,
+        "switch-mode" as ToolbarButton,
+        "fullscreen" as ToolbarButton,
       ],
       tabSize: 4,
       sideBySideFullscreen: false,
       spellChecker: false,
-      shortcuts: {
-        toggleSideBySide: "Cmd-/",
-      },
+      shortcuts: {},
       scrollbarStyle: "overlay",
       maxHeight: "calc(100vh - 105px)",
       previewRender: (plainText: any) => customMarkdownParser.render(plainText),
@@ -86,11 +92,21 @@ export const MarkdownArea: React.FC<MarkdownAreaProps> = ({
     }
     codemirrorInstance?.clearHistory();
     changeShowScrollPos();
+    let full_preview_ele = codemirrorInstance?.getWrapperElement().lastChild;
+    if (full_preview_ele) {
+      (full_preview_ele as any).scrollTop = 0;
+    }
   }, [data_path, currentRepoKey, currentFolderKey, currentNoteKey]);
 
   useEffect(() => {
-    changeNoteCurLine(curLine);
-  }, [curLine]);
+    console.log(curEditPos);
+    changeNoteCurEditPos(curEditPos);
+  }, [curEditPos]);
+
+  useEffect(() => {
+    console.log(curEditLine);
+    changeNoteCurEditLine(curEditLine);
+  }, [curEditLine]);
 
   useEffect(() => {
     if (focus === "") return;
@@ -107,24 +123,41 @@ export const MarkdownArea: React.FC<MarkdownAreaProps> = ({
 
   //function used in useEffect
   const changeShowScrollPos = useCallback(() => {
-    if (line && line > 20) {
+    if (editLine && editLine > 10 && !simpleMdeInstance?.isPreviewActive()) {
       setShowScrollPos(true);
     } else {
       setShowScrollPos(false);
     }
-  }, [line]);
+  }, [editPos, simpleMdeInstance]);
 
-  const changeNoteCurLine = useCallback(
-    (curLine: number) => {
-      updateLine(currentRepoKey, currentFolderKey, currentNoteKey, curLine);
+  const changeNoteCurEditPos = useCallback(
+    (edit_pos: editPos) => {
+      updateEditPos(currentRepoKey, currentFolderKey, currentNoteKey, edit_pos);
     },
-    [currentRepoKey, currentFolderKey, currentNoteKey, updateLine]
+    [currentRepoKey, currentFolderKey, currentNoteKey]
+  );
+
+  const changeNoteCurEditLine = useCallback(
+    (edit_line: number) => {
+      updateEditLine(
+        currentRepoKey,
+        currentFolderKey,
+        currentNoteKey,
+        edit_line
+      );
+    },
+    [currentRepoKey, currentFolderKey, currentNoteKey]
   );
 
   // function given to child
   const getMdeInstanceCallback = useCallback((simpleMde: EasyMDE) => {
     setMdeInstance(simpleMde);
-    EasyMDE.toggleSideBySide(simpleMde);
+    let view_mode = window.localStorage.getItem("view_mode") || "";
+    if (view_mode === "sidebyside") {
+      EasyMDE.toggleSideBySide(simpleMde);
+    } else if (view_mode === "preview") {
+      EasyMDE.togglePreview(simpleMde);
+    }
   }, []);
 
   const getCmInstanceCallback = useCallback((editor: Editor) => {
@@ -132,6 +165,7 @@ export const MarkdownArea: React.FC<MarkdownAreaProps> = ({
     editor?.clearHistory();
     editor?.scrollTo(null, 0);
     editor?.on("scroll", handleScrollEvent);
+    editor?.on("cursorActivity", handleCursorActivity);
   }, []);
 
   const getLineAndCursorCallback = useCallback((position: Position) => {
@@ -140,9 +174,7 @@ export const MarkdownArea: React.FC<MarkdownAreaProps> = ({
 
   const onChange = useCallback(
     (new_value: string) => {
-      console.log(noteSwitchRef.current);
       if (!noteSwitchRef.current) {
-        console.log("onchange");
         updateNote(
           data_path,
           currentRepoKey,
@@ -191,37 +223,83 @@ export const MarkdownArea: React.FC<MarkdownAreaProps> = ({
     const doc = codemirrorInstance?.getDoc();
     if (doc) {
       let row_count = doc.lineCount();
-      let start_line = line < row_count && line > 0 ? line + 1 : line;
+      let start_line =
+        editLine < row_count && editLine > 0 ? editLine + 1 : editLine;
       codemirrorInstance?.scrollIntoView({
         ch: 0,
         line: start_line,
         sticky: "dxnote",
       });
-      codemirrorInstance?.focus();
-      codemirrorInstance?.setCursor({
-        ch: 0,
-        line: start_line,
-      });
+      if (codemirrorInstance) {
+        const rect = codemirrorInstance
+          .getWrapperElement()
+          .getBoundingClientRect();
+        const topVisibleLine = codemirrorInstance.lineAtHeight(
+          rect.top,
+          "window"
+        );
+        const bottomVisibleLine = codemirrorInstance.lineAtHeight(
+          rect.bottom,
+          "window"
+        );
+        if (
+          editPos.cursor_line > topVisibleLine &&
+          editPos.cursor_line < bottomVisibleLine
+        ) {
+          codemirrorInstance?.focus();
+          if (editPos.cursor_line !== -1) {
+            codemirrorInstance?.setCursor({
+              ch: editPos.cursor_ch,
+              line: editPos.cursor_line,
+            });
+          } else {
+            codemirrorInstance?.setCursor({
+              ch: 0,
+              line: start_line,
+            });
+          }
+        }
+      }
       setShowScrollPos(false);
     }
-  }, [line, codemirrorInstance]);
+  }, [editPos, editLine, codemirrorInstance]);
 
   //event handler
-  const handleScrollEvent = useCallback((editor) => {
-    if (autoScroll.current) {
-      autoScroll.current = false;
+  const handleScrollEvent = useCallback(
+    (editor) => {
+      if (autoScroll.current) {
+        autoScroll.current = false;
+        return;
+      }
+      if (scrollSaveTimerRef.current) {
+        clearTimeout(scrollSaveTimerRef.current);
+      }
+      scrollSaveTimerRef.current = setTimeout(() => {
+        const rect = editor.getWrapperElement().getBoundingClientRect();
+        const topVisibleLine = editor.lineAtHeight(rect.top, "window");
+        let line = topVisibleLine;
+
+        console.log(line);
+        if (line <= 1) {
+          return;
+        }
+        setShowScrollPos(false);
+        setCurEditLine(line);
+      }, 100);
+    },
+    [curEditPos]
+  );
+
+  const handleCursorActivity = useCallback((editor) => {
+    var pos = editor.getCursor();
+    if ((pos.line === 0 || pos.line === 1) && pos.ch === 0) {
       return;
     }
-    if (scrollSaveTimerRef.current) {
-      clearTimeout(scrollSaveTimerRef.current);
-    }
-    scrollSaveTimerRef.current = setTimeout(() => {
-      setShowScrollPos(false);
-      const rect = editor.getWrapperElement().getBoundingClientRect();
-      const topVisibleLine = editor.lineAtHeight(rect.top, "window");
-      let line = topVisibleLine;
-      setCurLine(line);
-    }, 100);
+    setShowScrollPos(false);
+    setCurEditPos({
+      cursor_line: pos.line,
+      cursor_ch: pos.ch,
+    });
   }, []);
 
   const handleKeyDown = useCallback(
@@ -231,7 +309,7 @@ export const MarkdownArea: React.FC<MarkdownAreaProps> = ({
       // console.log(e.altKey)
       // console.log(e.metaKey)
       // console.log(e.keyCode)
-      if (process.platform === "darwin") {
+      if (process.platform == "darwin") {
         //J key mean jump
         if (e.keyCode === 74 && e.metaKey) {
           showScrollPos && autoScrollToLine();
@@ -248,8 +326,14 @@ export const MarkdownArea: React.FC<MarkdownAreaProps> = ({
             }, 0);
           }
         }
+
+        if (e.keyCode === 191 && e.metaKey) {
+          if (simpleMdeInstance) {
+            EasyMDE.switchMode(simpleMdeInstance);
+          }
+        }
       }
-      if (process.platform === "win32" || process.platform === "linux") {
+      if (process.platform == "win32" || process.platform == "linux") {
         //J key
         if (e.keyCode === 74 && e.ctrlKey) {
           showScrollPos && autoScrollToLine();
@@ -266,9 +350,15 @@ export const MarkdownArea: React.FC<MarkdownAreaProps> = ({
             }, 0);
           }
         }
+
+        if (e.keyCode === 191 && e.ctrlKey) {
+          if (simpleMdeInstance) {
+            EasyMDE.switchMode(simpleMdeInstance);
+          }
+        }
       }
     },
-    [showScrollPos, autoScrollToLine, codemirrorInstance]
+    [showScrollPos, autoScrollToLine, codemirrorInstance, simpleMdeInstance]
   );
 
   useEffect(() => {
@@ -333,7 +423,8 @@ type MarkdownAreaProps = {
   currentNoteKey: string;
   notes: object;
   content: string;
-  line: number;
+  editPos: editPos;
+  editLine: number;
   focus: string;
   blur: string;
   updateNote: (
@@ -350,10 +441,21 @@ type MarkdownAreaProps = {
     note_key: string,
     new_title: string
   ) => void;
-  updateLine: (
+  updateEditPos: (
     repo_key: string,
     folder_key: string,
     note_key: string,
-    line: number
+    edit_pos: editPos
   ) => void;
+  updateEditLine: (
+    repo_key: string,
+    folder_key: string,
+    note_key: string,
+    edit_line: number
+  ) => void;
+};
+
+type editPos = {
+  cursor_line: number;
+  cursor_ch: number;
 };

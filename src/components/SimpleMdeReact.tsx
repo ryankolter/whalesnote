@@ -40,6 +40,7 @@ import type {
   LineHandle,
   Position,
 } from "codemirror";
+import { relative } from "path/posix";
 
 let _id = 0;
 
@@ -355,7 +356,7 @@ export const SimpleMdeReact = React.forwardRef<
     >
       {showScrollPos ? (
         <div className="lastScrollPos" onClick={() => autoScrollToLine()}>
-          上次读到
+          上次在
         </div>
       ) : (
         <></>

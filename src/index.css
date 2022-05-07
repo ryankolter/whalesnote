@@ -236,6 +236,10 @@ input {
   padding: 5px 10px !important;
 }
 
+.editor-toolbar.fullscreen {
+  background: #2c3033 !important;
+}
+
 .editor-toolbar i.separator {
   border-left-color: rgb(59, 64, 66) !important;
   border-right-color: rgb(48, 52, 54) !important;

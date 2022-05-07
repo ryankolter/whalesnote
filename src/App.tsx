@@ -16,7 +16,8 @@ import { MarkdownArea } from "./components/markdownArea";
 import "./resources/css/font_awesome.css";
 import "./resources/my_highlight_styles/editor/solarized-dark.min.css";
 import "./resources/my_highlight_styles/preview/solarized-dark.min.css";
-import { useLines } from "./lib/useLines";
+import { useEditPos } from "./lib/useEditPos";
+import { useEditLine } from "./lib/useEditLine";
 
 // const { ipcRenderer } = window.require('electron')
 
@@ -55,7 +56,8 @@ const App = () => {
       updateNote,
     },
   ] = useNotes();
-  const [lines, { updateLine }] = useLines();
+  const [editPos, { updateEditPos }] = useEditPos();
+  const [editLine, { updateEditLine }] = useEditLine();
 
   useMemo(() => {
     let new_data = initData(dataPath);
@@ -124,7 +126,8 @@ const App = () => {
           data_path={dataPath}
           updateNote={updateNote}
           renameNote={renameNote}
-          updateLine={updateLine}
+          updateEditPos={updateEditPos}
+          updateEditLine={updateEditLine}
           currentRepoKey={currentRepoKey}
           currentFolderKey={currentFolderKey}
           currentNoteKey={currentNoteKey}
@@ -139,14 +142,24 @@ const App = () => {
               ? notes[currentRepoKey][currentFolderKey][currentNoteKey]
               : ""
           }
-          line={
+          editPos={
             currentRepoKey &&
             currentFolderKey &&
             currentNoteKey &&
-            lines[currentRepoKey] &&
-            lines[currentRepoKey][currentFolderKey] &&
-            lines[currentRepoKey][currentFolderKey][currentNoteKey]
-              ? lines[currentRepoKey][currentFolderKey][currentNoteKey]
+            editPos[currentRepoKey] &&
+            editPos[currentRepoKey][currentFolderKey] &&
+            editPos[currentRepoKey][currentFolderKey][currentNoteKey]
+              ? editPos[currentRepoKey][currentFolderKey][currentNoteKey]
+              : { cursor_line: -1, cursor_ch: -1 }
+          }
+          editLine={
+            currentRepoKey &&
+            currentFolderKey &&
+            currentNoteKey &&
+            editLine[currentRepoKey] &&
+            editLine[currentRepoKey][currentFolderKey] &&
+            editLine[currentRepoKey][currentFolderKey][currentNoteKey]
+              ? editLine[currentRepoKey][currentFolderKey][currentNoteKey]
               : 0
           }
           focus={focus}
