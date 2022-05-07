@@ -608,7 +608,6 @@ const RepoList: React.FC<RepoListProps> = ({
                 items={repos_key}
                 strategy={verticalListSortingStrategy}
               >
-                {/* <Repos ref={outerRef}> */}
                 {repos_key
                   .filter((key) => repos_obj && repos_obj[key])
                   .map((key, index) => {
@@ -717,7 +716,6 @@ const RepoList: React.FC<RepoListProps> = ({
                     }
                     // }
                   })}
-                <RepoItemPadding></RepoItemPadding>
                 {menu && currentRepoKey && !folderMenu ? (
                   <MenuUl top={yPos} left={xPos}>
                     <MenuLi onClick={() => renameRepo()}>重命名</MenuLi>
@@ -747,6 +745,7 @@ const RepoList: React.FC<RepoListProps> = ({
           ) : (
             <></>
           )}
+          <RepoItemPadding></RepoItemPadding>
         </Repos>
       </ReposScroll>
       <AlertPopUp
@@ -804,16 +803,16 @@ const Repos = styled.div({
   display: "flex",
   flexDirection: "column",
   flexWrap: "wrap",
-  margin: " 8px 20px 8px 0",
-  height: "calc(324px + 5px)",
+  margin: "8px 0",
+  height: "calc(9 * (28px + 4px) + 5px)",
 });
 
 const RepoItem = styled.div`
   position: relative;
   display: flex;
   width: 100%;
-  height: 32px;
-  line-height: 32px;
+  height: 28px;
+  line-height: 28px;
   margin: 0 10px 4px 10px;
   color: #939395;
   cursor: pointer;
@@ -831,7 +830,7 @@ const RepoGroupSelect = styled.div({
   position: "absolute",
   top: "-7px",
   left: "-5px",
-  height: "calc(324px + 5px)",
+  height: "calc(9 * (28px + 4px) + 5px)",
   width: "calc(100% + 6px)",
   border: "2px dotted rgb(58, 64, 76)",
   borderRadius: "5px",
@@ -854,7 +853,7 @@ const RepoGroupItem = styled.div({
 });
 
 const RepoItemPadding = styled.div({
-  width: "calc(100%  * 4 + 80px)",
+  width: "calc(100% / 5 * 4)",
   height: "100%",
 });
 

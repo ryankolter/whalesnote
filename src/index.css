@@ -12,9 +12,9 @@ body {
 .repoItemSort {
   position: relative;
   display: flex;
-  width: calc((100% - 4 * 20px - 20px) / 5);
-  height: 32px;
-  line-height: 32px;
+  width: calc(20% - 20px);
+  height: 28px;
+  line-height: 28px;
   margin: 0 10px 4px 10px;
   color: #939395;
   cursor: pointer;
@@ -36,8 +36,8 @@ body {
 
 .repoNameInput {
   width: 120px;
-  height: 32px;
-  line-height: 32px;
+  height: 29px;
+  line-height: 29px;
   border: none;
   outline: none;
   flex: 1;
@@ -50,18 +50,6 @@ body {
   width: 100%;
   height: 32px;
   line-height: 32px;
-  padding: 0 16px;
-  border: none;
-  outline: none;
-  flex: 1;
-  font-size: 14px;
-  border-bottom: 1px solid #939395;
-}
-
-.noteNameInput {
-  width: 120px;
-  height: 28px;
-  line-height: 28px;
   padding: 0 16px;
   border: none;
   outline: none;

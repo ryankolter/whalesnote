@@ -67,6 +67,7 @@ export const MarkdownArea: React.FC<MarkdownAreaProps> = ({
       shortcuts: {},
       scrollbarStyle: "overlay",
       maxHeight: "calc(100vh - 105px)",
+      autoDownloadFontAwesome: false,
       previewRender: (plainText: any) => customMarkdownParser.render(plainText),
     };
   }, []);
