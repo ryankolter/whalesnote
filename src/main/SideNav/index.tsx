@@ -4,7 +4,8 @@ import RepoPanel from "./RepoPanel";
 import DirectoryBtn from "./DirectoryBtn";
 import FolderList from "./FolderList";
 import NoteList from "./NoteList";
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect, useRef, useMemo } from "react";
+const { ipcRenderer } = window.require("electron");
 
 const SideBar: React.FC<SideBarProps> = ({
   data_path,
@@ -40,6 +41,17 @@ const SideBar: React.FC<SideBarProps> = ({
     useState(true);
 
   const repoNameLeaveTimer = useRef<NodeJS.Timeout | null>(null);
+
+  useMemo(() => {
+    ipcRenderer.on("selectedFolder", (event: any, path: string) => {
+      window.localStorage.setItem("dxnote_data_path", path);
+      setDataPath(path);
+    });
+  }, [setDataPath]);
+
+  const addDataPath = () => {
+    ipcRenderer.send("open-directory-dialog");
+  };
 
   const handleKeyDown = useCallback(
     (e: any) => {
@@ -215,11 +227,15 @@ const SideBar: React.FC<SideBarProps> = ({
       </List>
       <RepoBar>
         <DirectoryBtnArea>
-          <DirectoryBtn
-            data_path={data_path}
-            setDataPath={setDataPath}
-            panelWidth={folderWidth + noteWidth}
-          />
+          {data_path ? (
+            <DirectoryBtn
+              data_path={data_path}
+              addDataPath={addDataPath}
+              panelWidth={folderWidth + noteWidth}
+            />
+          ) : (
+            <PathAddBtn onClick={addDataPath}>添加目录</PathAddBtn>
+          )}
         </DirectoryBtnArea>
         <RepoNameArea
           onMouseEnter={() => {
@@ -287,24 +303,35 @@ const RepoBar = styled.div({
   justifyContent: "space-between",
 });
 
-const DirectoryBtnArea = styled.div(
+const DirectoryBtnArea = styled.div();
+
+const PathAddBtn = styled.div(
   {
     position: "relative",
+    height: "32px",
+    lineHeight: "32px",
+    display: "flex",
+    alignItem: "center",
+    justifyContent: "center",
+    padding: "0 10px",
+    marginTop: "8px",
+    color: "#939395",
+    backgroundColor: "rgb(58, 64, 76)",
     cursor: "pointer",
   },
   `
-    &::before {
-        position: absolute;
-        top: 8px;
-        right: -32px;
-        display: block;
-        content: '';
-        border-bottom: 16px solid rgb(58, 64, 76);
-        border-top: 16px solid transparent;
-        border-left: 16px solid rgb(58, 64, 76);
-        border-right: 16px solid transparent;
-        cursor: pointer;
-    }
+  &::before {
+      position: absolute;
+      top: 0px;
+      right: -32px;
+      display: block;
+      content: '';
+      border-bottom: 16px solid rgb(58, 64, 76);
+      border-top: 16px solid transparent;
+      border-left: 16px solid rgb(58, 64, 76);
+      border-right: 16px solid transparent;
+      cursor: pointer;
+  }
 `
 );
 
