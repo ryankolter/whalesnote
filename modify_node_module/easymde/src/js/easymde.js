@@ -1346,7 +1346,7 @@ function switchMode(editor) {
     //in preview mode , change to edit mode
     console.log("in preview mode , change to edit mode");
     previewToEdit(editor);
-    window.localStorage.removeItem("view_mode");
+    window.localStorage.setItem("view_mode", "edit");
   }
 }
 

@@ -1,4 +1,4 @@
-import initGuide from "./initGuide";
+import initDefault from "./initDefault";
 const { ipcRenderer } = window.require("electron");
 
 export const initExistRepo = (data_path: string) => {
@@ -29,9 +29,6 @@ export const initExistRepo = (data_path: string) => {
         });
         if (folder_info) {
           repos[repo_key].folders_obj[folder_key] = folder_info;
-          // folder_info.notes_key.forEach((note_key : string) => {
-
-          // })
           valid_folders_key.push(folder_key);
         }
       });
@@ -107,7 +104,7 @@ export const initExistRepo = (data_path: string) => {
 };
 
 export const initEmptyRepo = (data_path: string) => {
-  let data = initGuide();
+  let data = initDefault();
   let repos = data.repos;
   let notes = data.notes;
   let dxnote = data.dxnote;

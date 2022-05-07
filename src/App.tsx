@@ -19,8 +19,6 @@ import "./resources/my_highlight_styles/preview/solarized-dark.min.css";
 import { useEditPos } from "./lib/useEditPos";
 import { useEditLine } from "./lib/useEditLine";
 
-// const { ipcRenderer } = window.require('electron')
-
 const App = () => {
   const [dataPath, setDataPath] = useState<string>(
     window.localStorage.getItem("dxnote_data_path") || ""
@@ -28,6 +26,7 @@ const App = () => {
   const [focus, setFocus] = useState("");
   const [blur, setBlur] = useState("");
   const [keySelect, setKeySelect] = useState(false);
+  const [showAddPathTips, setShowAddPathTips] = useState(false);
   const [
     dxnote,
     {
@@ -60,11 +59,19 @@ const App = () => {
   const [editLine, { updateEditLine }] = useEditLine();
 
   useMemo(() => {
+    if (!window.localStorage.getItem("view_mode")) {
+      window.localStorage.setItem("view_mode", "sidebyside");
+    }
     let new_data = initData(dataPath);
-    initDxnote(new_data.dxnote);
-    initRepo(new_data.repos);
-    initNotes(new_data.notes);
-  }, [dataPath]);
+    if (new_data) {
+      initDxnote(new_data.dxnote);
+      initRepo(new_data.repos);
+      initNotes(new_data.notes);
+    } else {
+      console.log("no data path");
+      setShowAddPathTips(true);
+    }
+  }, [dataPath, setShowAddPathTips]);
 
   const repoSwitch = (repo_key: string | undefined) => {
     repoNotesFetch(dataPath, repos, repo_key);
@@ -73,24 +80,9 @@ const App = () => {
 
   return (
     <AppContainer>
-      {/* <TopBar 
-                data_path = {dataPath}
-                repos_key = {dxnote.repos_key} 
-                repos_obj = {repos} 
-                currentRepoKey = {currentRepoKey} 
-                currentFolderKey = {currentFolderKey}
-                keySelect = {keySelect}
-                repoSwitch = {repoSwitch}
-                folderSwitch = {switchFolder}
-                noteSwitch = {switchNote} 
-                updateDxnote = {updateDxnote}
-                updateRepos = {updateRepos}
-                changeNotesAfterNew = {changeNotesAfterNew}
-                setDataPath = {setDataPath}
-                reorderFolder = {reorderFolder}
-                setFocus = {setFocus}
-                setBlur = {setBlur}
-                setKeySelect = {setKeySelect}/> */}
+      {/* <AddPathTips>
+
+      </AddPathTips> */}
       <RepoContent>
         <SideBar
           data_path={dataPath}
@@ -178,6 +170,15 @@ const AppContainer = styled.div({
   flexDirection: "column",
   overflow: "hidden",
 });
+
+// const AddPathTips = styled.div({
+//   position: "fixed",
+//   bottom: "40px",
+//   width: "100vw",
+//   height: "100vh",
+//   background: "rgba(0,0,0,0.5)",
+//   zIndex: "99999",
+// })
 
 const RepoContent = styled.div({
   display: "flex",
