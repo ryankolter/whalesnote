@@ -4,6 +4,15 @@
   "private": true,
   "main": "main.js",
   "homepage": ".",
+  "build": {
+    "asar": false,
+    "productName": "dxnote",
+    "extends": null,
+    "files": [
+      "*.js",
+      "build"
+    ]
+  },
   "dependencies": {
     "@dnd-kit/core": "^5.0.1",
     "@dnd-kit/modifiers": "^5.0.0",
