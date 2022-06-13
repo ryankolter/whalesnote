@@ -30,7 +30,7 @@ const useContextMenu = (outerRef: any) => {
       document.removeEventListener("click", handleClick);
       document.removeEventListener("contextmenu", handleContextMenu);
     };
-  }, []);
+  }, [handleClick, handleContextMenu]);
 
   return { xPos, yPos, menu };
 };

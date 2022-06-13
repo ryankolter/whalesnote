@@ -61,7 +61,7 @@ const NoteList: React.FC<NoteListProps> = ({
     }
   };
 
-  const newNote = () => {
+  const newNote = useCallback(() => {
     const note_key = cryptoRandomString({ length: 12, type: "alphanumeric" });
 
     let folder_info = ipcRenderer.sendSync("readJson", {
@@ -107,7 +107,16 @@ const NoteList: React.FC<NoteListProps> = ({
       scrollToBottom();
     }, 0);
     setKeySelect(false);
-  };
+  }, [
+    currentRepoKey,
+    currentFolderKey,
+    changeNotesAfterNew,
+    noteSwitch,
+    setFocus,
+    setKeySelect,
+    scrollToBottom,
+    updateRepos,
+  ]);
 
   const deleteNote = useCallback(
     (note_key: string) => {
@@ -138,9 +147,9 @@ const NoteList: React.FC<NoteListProps> = ({
       let other_note_key = undefined;
 
       folder_info.notes_key.forEach((key: string, index: number) => {
-        if (key == note_key) {
+        if (key === note_key) {
           if (folder_info.notes_key.length > 1) {
-            if (index == folder_info.notes_key.length - 1) {
+            if (index === folder_info.notes_key.length - 1) {
               other_note_key = folder_info.notes_key[index - 1];
             } else {
               other_note_key = folder_info.notes_key[index + 1];
@@ -171,7 +180,7 @@ const NoteList: React.FC<NoteListProps> = ({
 
       noteSwitch(data_path, other_note_key);
     },
-    [data_path, currentRepoKey, currentFolderKey]
+    [data_path, currentRepoKey, currentFolderKey, noteSwitch, updateRepos]
   );
 
   const preNotePage = useCallback(() => {
@@ -192,7 +201,7 @@ const NoteList: React.FC<NoteListProps> = ({
       const top = outerRef.current.scrollTop;
       setNoteScrollTop(top + height - 28);
     }
-  }, [noteScrollTop]);
+  }, []);
 
   const noteSwitchByIndex = useCallback(
     (index: number) => {
@@ -202,7 +211,7 @@ const NoteList: React.FC<NoteListProps> = ({
         }
       });
     },
-    [data_path, notes_key]
+    [data_path, notes_key, noteSwitch]
   );
 
   useEffect(() => {
@@ -212,11 +221,11 @@ const NoteList: React.FC<NoteListProps> = ({
   }, [noteScrollTop]);
 
   useEffect(() => {
-    if (numArray.length == 2) {
+    if (numArray.length === 2) {
       noteSwitchByIndex(numArray[0] * 26 + numArray[1]);
       setNumArray([]);
     }
-  }, [numArray]);
+  }, [numArray, noteSwitchByIndex]);
 
   const handleKeyDown = useCallback(
     (e: any) => {
@@ -279,7 +288,7 @@ const NoteList: React.FC<NoteListProps> = ({
         }
       }
     },
-    [numArray, keySelect, notes_key]
+    [numArray, keySelect, notes_key, newNote, nextNotePage, preNotePage]
   );
 
   useEffect(() => {
@@ -314,7 +323,14 @@ const NoteList: React.FC<NoteListProps> = ({
         reorderNote(data_path, currentRepoKey, currentFolderKey, new_notes_key);
       }
     },
-    [data_path, currentRepoKey, currentFolderKey, currentNoteKey, notes_key]
+    [
+      data_path,
+      currentRepoKey,
+      currentFolderKey,
+      currentNoteKey,
+      notes_key,
+      reorderNote,
+    ]
   );
 
   const genAlphaCode1 = (order: number): number => {

@@ -1,5 +1,4 @@
 import styled from "@emotion/styled";
-import { useMemo } from "react";
 const { ipcRenderer } = window.require("electron");
 
 const DirectoryBtn: React.FC<DirectoryBtnProps> = ({

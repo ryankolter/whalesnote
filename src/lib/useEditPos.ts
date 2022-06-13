@@ -1,6 +1,6 @@
 import produce from "immer";
 
-import { useReducer, useCallback } from "react";
+import { useReducer } from "react";
 
 const editPosReducer = produce((state: editPosTypes, action: any) => {
   switch (action.type) {

@@ -149,7 +149,7 @@ const SideBar: React.FC<SideBarProps> = ({
         }
       }
     },
-    [repos_key, keySelect, allowHiddenAllRepoViaEnter]
+    [keySelect, allowHiddenAllRepoViaEnter, setBlur, setFocus, setKeySelect]
   );
 
   useEffect(() => {

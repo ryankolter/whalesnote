@@ -168,7 +168,16 @@ const FolderList: React.FC<FolderListProps> = ({
       noteSwitch(data_path, default_note_key);
       setFocus(cryptoRandomString({ length: 24, type: "alphanumeric" }));
     },
-    [data_path, currentRepoKey]
+    [
+      data_path,
+      currentRepoKey,
+      changeNotesAfterNew,
+      folderSwitch,
+      noteSwitch,
+      repoSwitch,
+      setFocus,
+      updateRepos,
+    ]
   );
 
   // part2 : rename folder
@@ -210,7 +219,14 @@ const FolderList: React.FC<FolderListProps> = ({
       });
       hideRenamePopup();
     }
-  }, [data_path, currentRepoKey, currentFolderKey, curFolderName]);
+  }, [
+    data_path,
+    currentRepoKey,
+    currentFolderKey,
+    curFolderName,
+    hideRenamePopup,
+    updateRepos,
+  ]);
 
   // part3 : delete folder
   const deleteFolder = () => {
@@ -333,7 +349,7 @@ const FolderList: React.FC<FolderListProps> = ({
         }
       });
     },
-    [data_path, folders_key]
+    [data_path, folders_key, folderSwitch]
   );
 
   useEffect(() => {
@@ -348,7 +364,7 @@ const FolderList: React.FC<FolderListProps> = ({
       folderSwitchByIndex(numArray[0] * 10 + numArray[1]);
       setNumArray([]);
     }
-  }, [numArray]);
+  }, [numArray, folderSwitchByIndex]);
 
   // part5 : key event
   const handleKeyDown = useCallback(
@@ -408,7 +424,7 @@ const FolderList: React.FC<FolderListProps> = ({
         }
       }
     },
-    [numArray, keySelect, folders_key]
+    [numArray, keySelect, folders_key, nextFolderPage, preFolderPage]
   );
 
   useEffect(() => {
@@ -437,7 +453,7 @@ const FolderList: React.FC<FolderListProps> = ({
         reorderFolder(data_path, currentRepoKey, new_folders_key);
       }
     },
-    [data_path, currentRepoKey, folders_key]
+    [data_path, currentRepoKey, folders_key, reorderFolder]
   );
 
   const genNumberCode1 = (order: number): number => {

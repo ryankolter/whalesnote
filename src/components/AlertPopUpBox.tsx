@@ -17,7 +17,7 @@ export const AlertPopUpBox: React.FC<AlertPopUpBoxProps> = (props) => {
     return () => {
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, []);
+  }, [onKeyDown]);
 
   return (
     <AlertBox>

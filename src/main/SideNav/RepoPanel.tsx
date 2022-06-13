@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { useMemo, useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import cryptoRandomString from "crypto-random-string";
 import {
   DndContext,
@@ -105,13 +105,13 @@ const RepoList: React.FC<RepoListProps> = ({
           Math.floor(page / 5.0) * repoScrollRef.current.offsetWidth;
       }
     }
-  }, [keySelect, repos_obj]);
+  }, [keySelect, repos_obj, currentRepoKey, repos_key]);
 
   useEffect(() => {
     if (showAllRepo) {
       handleKeySelectShow();
     }
-  }, [showAllRepo]);
+  }, [showAllRepo, handleKeySelectShow]);
 
   //part1: switch repo in panel
   const repoSwitchInPanel = useCallback(
@@ -123,7 +123,7 @@ const RepoList: React.FC<RepoListProps> = ({
           if (key === repo_key) setRepoScrollPage(Math.floor(index / 9.0));
         });
     },
-    [repos_key]
+    [repos_key, repoSwitch, repos_obj]
   );
 
   // part2 : new repo
@@ -142,6 +142,12 @@ const RepoList: React.FC<RepoListProps> = ({
       newRepoSubmit(e, repo_key);
     }
   };
+
+  const scrollToRight = useCallback(() => {
+    if (repoScrollRef && repoScrollRef.current) {
+      repoScrollRef.current.scrollLeft = repoScrollRef.current.scrollWidth;
+    }
+  }, [repoScrollRef]);
 
   const newRepoSubmit = useCallback(
     (e: any, repo_key: string) => {
@@ -243,7 +249,18 @@ const RepoList: React.FC<RepoListProps> = ({
       setAllowHiddenAllRepoViaEnter(true);
       scrollToRight();
     },
-    [data_path]
+    [
+      data_path,
+      changeNotesAfterNew,
+      folderSwitch,
+      noteSwitch,
+      repoSwitchInPanel,
+      scrollToRight,
+      setAllowHiddenAllRepoViaEnter,
+      setFocus,
+      updateDxnote,
+      updateRepos,
+    ]
   );
 
   // part3 : rename repo
@@ -276,7 +293,14 @@ const RepoList: React.FC<RepoListProps> = ({
       hideRenamePopup();
       setAllowHiddenAllRepoViaEnter(true);
     }
-  }, [data_path, currentRepoKey, curRepoName]);
+  }, [
+    data_path,
+    currentRepoKey,
+    curRepoName,
+    hideRenamePopup,
+    setAllowHiddenAllRepoViaEnter,
+    updateRepos,
+  ]);
 
   const handleRenameRepoKeyDown = useCallback(
     (e: any) => {
@@ -384,7 +408,14 @@ const RepoList: React.FC<RepoListProps> = ({
       hideDeletePopup();
       setAllowHiddenAllRepoViaEnter(true);
     }
-  }, [data_path, currentRepoKey, hideDeletePopup]);
+  }, [
+    data_path,
+    currentRepoKey,
+    hideDeletePopup,
+    repoSwitchInPanel,
+    setAllowHiddenAllRepoViaEnter,
+    updateRepos,
+  ]);
 
   const handleDeleteRepoKeyDown = useCallback(
     (e: any) => {
@@ -406,7 +437,7 @@ const RepoList: React.FC<RepoListProps> = ({
       }
       setRepoScrollPage((repoScrollPage) => repoScrollPage - 1);
     }
-  }, [repos_key, repoScrollPage]);
+  }, [repoScrollPage]);
 
   const nextRepoPage = useCallback(() => {
     if (repos_key && repos_key.length > 9) {
@@ -506,12 +537,13 @@ const RepoList: React.FC<RepoListProps> = ({
       }
     },
     [
-      keySelect,
       repos_key,
       repoScrollPage,
       repoSwitchInPanel,
       nextRepoPage,
       preRepoPage,
+      setBlur,
+      setKeySelect,
     ]
   );
 
@@ -537,12 +569,6 @@ const RepoList: React.FC<RepoListProps> = ({
       };
     }
   }, [handleWhell]);
-
-  const scrollToRight = useCallback(() => {
-    if (repoScrollRef && repoScrollRef.current) {
-      repoScrollRef.current.scrollLeft = repoScrollRef.current.scrollWidth;
-    }
-  }, [repoScrollRef]);
 
   const handleDragStart = (event: any) => {
     console.log("handleDragStart");
@@ -571,7 +597,7 @@ const RepoList: React.FC<RepoListProps> = ({
         reorderRepo(data_path, currentRepoKey, new_repos_key);
       }
     },
-    [data_path, currentRepoKey, currentFolderKey, repos_key]
+    [data_path, currentRepoKey, currentFolderKey, repos_key, reorderRepo]
   );
 
   return (
