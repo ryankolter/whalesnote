@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import "easymde/dist/easymde.min.css";
 import "codemirror/addon/scroll/simplescrollbars.css";
+import "codemirror/addon/scroll/simplescrollbars.js";
 import EasyMDE from "easymde";
 import type { Editor, Position } from "codemirror";
 import styled from "@emotion/styled";
@@ -91,7 +92,6 @@ export const MarkdownArea: React.FC<MarkdownAreaProps> = ({
     }
     return () => {
       editor?.toTextArea();
-      // @ts-expect-error
       editor?.cleanup();
     };
   }, [textRef, options]);
