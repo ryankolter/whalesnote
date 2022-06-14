@@ -20,10 +20,11 @@
 // SOFTWARE.
 
 /// <reference types="codemirror"/>
-/// <reference types="marked"/>
+
+import { marked } from 'marked';
 
 interface ArrayOneOrMore<T> extends Array<T> {
-    0: T
+    0: T;
 }
 
 type ToolbarButton =
@@ -72,6 +73,10 @@ declare namespace EasyMDE {
         bold?: string;
         code?: string;
         italic?: string;
+    }
+
+    interface CustomAttributes {
+        [key: string]: string;
     }
 
     interface InsertTextOptions {
@@ -143,6 +148,7 @@ declare namespace EasyMDE {
         noDisable?: boolean;
         noMobile?: boolean;
         icon?: string;
+        attributes?: CustomAttributes;
     }
 
     interface ImageTextsOptions {
@@ -162,15 +168,19 @@ declare namespace EasyMDE {
     }
 
     interface OverlayModeOptions {
-      mode: CodeMirror.Mode<any>
-      combine?: boolean
+        mode: CodeMirror.Mode<any>;
+        combine?: boolean;
+    }
+
+    interface SpellCheckerOptions {
+        codeMirrorInstance: CodeMirror.Editor;
     }
 
     interface Options {
         autoDownloadFontAwesome?: boolean;
         autofocus?: boolean;
         autosave?: AutoSaveOptions;
-        autoRefresh?: boolean | { delay: number };
+        autoRefresh?: boolean | { delay: number; };
         blockStyles?: BlockStyleOptions;
         element?: HTMLElement;
         forceSync?: boolean;
@@ -186,12 +196,13 @@ declare namespace EasyMDE {
         placeholder?: string;
         previewClass?: string | ReadonlyArray<string>;
         previewImagesInEditor?: boolean;
+        imagesPreviewHandler?: (src: string) => string,
         previewRender?: (markdownPlaintext: string, previewElement: HTMLElement) => string;
         promptURLs?: boolean;
         renderingConfig?: RenderingOptions;
         shortcuts?: Shortcuts;
         showIcons?: ReadonlyArray<ToolbarButton>;
-        spellChecker?: boolean;
+        spellChecker?: boolean | ((options: SpellCheckerOptions) => void);
         inputStyle?: 'textarea' | 'contenteditable';
         nativeSpellcheck?: boolean;
         sideBySideFullscreen?: boolean;
@@ -203,6 +214,7 @@ declare namespace EasyMDE {
         onToggleFullScreen?: (goingIntoFullScreen: boolean) => void;
         theme?: string;
         scrollbarStyle?: string;
+        unorderedListStyle?: '*' | '-' | '+';
 
         uploadImage?: boolean;
         imageMaxSize?: number;
@@ -211,6 +223,8 @@ declare namespace EasyMDE {
         imageUploadEndpoint?: string;
         imagePathAbsolute?: boolean;
         imageCSRFToken?: string;
+        imageCSRFName?: string;
+        imageCSRFHeader?: boolean;
         imageTexts?: ImageTextsOptions;
         errorMessages?: ImageErrorTextsOptions;
         errorCallback?: (errorMessage: string) => void;
@@ -218,7 +232,9 @@ declare namespace EasyMDE {
         promptTexts?: PromptTexts;
         syncSideBySidePreviewScroll?: boolean;
 
-        overlayMode?: OverlayModeOptions
+        overlayMode?: OverlayModeOptions;
+
+        direction?: 'ltr' | 'rtl';
     }
 }
 
@@ -229,6 +245,8 @@ declare class EasyMDE {
     value(val: string): void;
 
     codemirror: CodeMirror.Editor;
+
+    cleanup(): void;
 
     toTextArea(): void;
 
@@ -250,6 +268,9 @@ declare class EasyMDE {
     static toggleHeading1: (editor: EasyMDE) => void;
     static toggleHeading2: (editor: EasyMDE) => void;
     static toggleHeading3: (editor: EasyMDE) => void;
+    static toggleHeading4: (editor: EasyMDE) => void;
+    static toggleHeading5: (editor: EasyMDE) => void;
+    static toggleHeading6: (editor: EasyMDE) => void;
     static toggleCodeBlock: (editor: EasyMDE) => void;
     static toggleBlockquote: (editor: EasyMDE) => void;
     static toggleUnorderedList: (editor: EasyMDE) => void;

@@ -7,7 +7,6 @@ require('codemirror/mode/markdown/markdown.js');
 require('codemirror/addon/mode/overlay.js');
 require('codemirror/addon/display/placeholder.js');
 require('codemirror/addon/display/autorefresh.js');
-require('codemirror/addon/scroll/simplescrollbars.js');
 require('codemirror/addon/selection/mark-selection.js');
 require('codemirror/addon/search/searchcursor.js');
 require('codemirror/mode/gfm/gfm.js');
@@ -17,7 +16,7 @@ var marked = require('marked').marked;
 
 
 // Some variables
-var isMac = /Mac/.test(navigator.userAgentData.platform);
+var isMac = /Mac/.test(navigator.platform);
 var anchorToExternalRegex = new RegExp(/(<a.*?https?:\/\/.*?[^a]>)+?/g);
 
 // Mapping of actions that can be bound to keyboard shortcuts or toolbar buttons
@@ -37,6 +36,9 @@ var bindings = {
     'toggleHeading1': toggleHeading1,
     'toggleHeading2': toggleHeading2,
     'toggleHeading3': toggleHeading3,
+    'toggleHeading4': toggleHeading4,
+    'toggleHeading5': toggleHeading5,
+    'toggleHeading6': toggleHeading6,
     'cleanBlock': cleanBlock,
     'drawTable': drawTable,
     'drawHorizontalRule': drawHorizontalRule,
@@ -53,13 +55,21 @@ var shortcuts = {
     'drawLink': 'Cmd-K',
     'toggleHeadingSmaller': 'Cmd-H',
     'toggleHeadingBigger': 'Shift-Cmd-H',
+    'toggleHeading1': 'Ctrl+Alt+1',
+    'toggleHeading2': 'Ctrl+Alt+2',
+    'toggleHeading3': 'Ctrl+Alt+3',
+    'toggleHeading4': 'Ctrl+Alt+4',
+    'toggleHeading5': 'Ctrl+Alt+5',
+    'toggleHeading6': 'Ctrl+Alt+6',
     'cleanBlock': 'Cmd-E',
     'drawImage': 'Cmd-Alt-I',
     'toggleBlockquote': 'Cmd-\'',
     'toggleOrderedList': 'Cmd-Alt-L',
     'toggleUnorderedList': 'Cmd-L',
     'toggleCodeBlock': 'Cmd-Alt-C',
-    'toggleFullScreen': 'F11'
+    'togglePreview': 'Cmd-P',
+    'toggleSideBySide': 'F9',
+    'toggleFullScreen': 'F11',
 };
 
 var getBindingName = function (f) {
@@ -189,9 +199,9 @@ function createToolbarDropdown(options, enableTooltips, shortcuts, parent) {
     var el = createToolbarButton(options, false, enableTooltips, shortcuts, 'button', parent);
     el.className += ' easymde-dropdown';
 
-    el.onclick = function () {
-        el.focus();
-    };
+    // el.onclick = function () {
+    //     el.focus();
+    // };
 
     var content = document.createElement('div');
     content.className = 'easymde-dropdown-content';
@@ -206,7 +216,7 @@ function createToolbarDropdown(options, enableTooltips, shortcuts, parent) {
             childElement = createToolbarButton(child, true, enableTooltips, shortcuts, 'button', parent);
         }
 
-        childElement.addEventListener('click', function (e) { e.stopPropagation(); }, false);
+        //childElement.addEventListener('click', function (e) { e.stopPropagation(); }, false);
         content.appendChild(childElement);
     }
     el.appendChild(content);
@@ -233,7 +243,11 @@ function createToolbarButton(options, enableActions, enableTooltips, shortcuts, 
     el.setAttribute('type', markup);
     enableTooltips = (enableTooltips == undefined) ? true : enableTooltips;
 
-    // Properly hande custom shortcuts
+    if (options.text) {
+        el.innerText = options.text;
+    }
+    
+    // Properly handle custom shortcuts
     if (options.name && options.name in shortcuts) {
         bindings[options.name] = options.action;
     }
@@ -247,6 +261,10 @@ function createToolbarButton(options, enableActions, enableTooltips, shortcuts, 
         }
     }
 
+    if (options.title) {
+        el.setAttribute('aria-label', options.title);
+    }
+    
     if (options.noDisable) {
         el.classList.add('no-disable');
     }
@@ -276,13 +294,15 @@ function createToolbarButton(options, enableActions, enableTooltips, shortcuts, 
 
     el.tabIndex = -1;
 
-    // Create icon element and append as a child to the button
-    var icon = document.createElement('i');
-    for (var iconClassIndex = 0; iconClassIndex < iconClasses.length; iconClassIndex++) {
-        var iconClass = iconClasses[iconClassIndex];
-        icon.classList.add(iconClass);
+    if (iconClasses.length > 0) {
+        // Create icon element and append as a child to the button
+        var icon = document.createElement('i');
+        for (var iconClassIndex = 0; iconClassIndex < iconClasses.length; iconClassIndex++) {
+            var iconClass = iconClasses[iconClassIndex];
+            icon.classList.add(iconClass);
+        }
+        el.appendChild(icon);
     }
-    el.appendChild(icon);
 
     // If there is a custom icon markup set, use that
     if (typeof options.icon !== 'undefined') {
@@ -759,48 +779,63 @@ function toggleCodeBlock(editor) {
  * Action for toggling blockquote.
  */
 function toggleBlockquote(editor) {
-    var cm = editor.codemirror;
-    _toggleLine(cm, 'quote');
+    _toggleLine(editor.codemirror, 'quote');
 }
 
 /**
  * Action for toggling heading size: normal -> h1 -> h2 -> h3 -> h4 -> h5 -> h6 -> normal
  */
 function toggleHeadingSmaller(editor) {
-    var cm = editor.codemirror;
-    _toggleHeading(cm, 'smaller');
+    _toggleHeading(editor.codemirror, 'smaller');
 }
 
 /**
  * Action for toggling heading size: normal -> h6 -> h5 -> h4 -> h3 -> h2 -> h1 -> normal
  */
 function toggleHeadingBigger(editor) {
-    var cm = editor.codemirror;
-    _toggleHeading(cm, 'bigger');
+    _toggleHeading(editor.codemirror, 'bigger');
 }
 
 /**
  * Action for toggling heading size 1
  */
 function toggleHeading1(editor) {
-    var cm = editor.codemirror;
-    _toggleHeading(cm, undefined, 1);
+    _toggleHeading(editor.codemirror, undefined, 1);
 }
 
 /**
  * Action for toggling heading size 2
  */
 function toggleHeading2(editor) {
-    var cm = editor.codemirror;
-    _toggleHeading(cm, undefined, 2);
+    _toggleHeading(editor.codemirror, undefined, 2);
 }
 
 /**
  * Action for toggling heading size 3
  */
 function toggleHeading3(editor) {
-    var cm = editor.codemirror;
-    _toggleHeading(cm, undefined, 3);
+    _toggleHeading(editor.codemirror, undefined, 3);
+}
+
+/**
+ * Action for toggling heading size 4
+ */
+function toggleHeading4(editor) {
+    _toggleHeading(editor.codemirror, undefined, 4);
+}
+
+/**
+ * Action for toggling heading size 5
+ */
+function toggleHeading5(editor) {
+    _toggleHeading(editor.codemirror, undefined, 5);
+}
+
+/**
+ * Action for toggling heading size 6
+ */
+function toggleHeading6(editor) {
+    _toggleHeading(editor.codemirror, undefined, 6);
 }
 
 
@@ -810,7 +845,7 @@ function toggleHeading3(editor) {
 function toggleUnorderedList(editor) {
     var cm = editor.codemirror;
 
-    var listStyle = '-'; // Default
+    var listStyle = '*'; // Default
     if (['-', '+', '*'].includes(editor.options.unorderedListStyle)) {
         listStyle = editor.options.unorderedListStyle;
     }
@@ -823,16 +858,14 @@ function toggleUnorderedList(editor) {
  * Action for toggling ol.
  */
 function toggleOrderedList(editor) {
-    var cm = editor.codemirror;
-    _toggleLine(cm, 'ordered-list');
+    _toggleLine(editor.codemirror, 'ordered-list');
 }
 
 /**
  * Action for clean block (remove headline, list, blockquote code, markers)
  */
 function cleanBlock(editor) {
-    var cm = editor.codemirror;
-    _cleanBlock(cm);
+    _cleanBlock(editor.codemirror);
 }
 
 /**
@@ -901,7 +934,7 @@ function afterImageUploaded(editor, url) {
     var ext = imageName.substring(imageName.lastIndexOf('.') + 1).replace(/\?.*$/, '').toLowerCase();
 
     // Check if media is an image
-    if (['png', 'jpg', 'jpeg', 'gif', 'svg'].includes(ext)) {
+    if (['png', 'jpg', 'jpeg', 'gif', 'svg', 'apng', 'avif', 'webp'].includes(ext)) {
         _replaceSelection(cm, stat.image, options.insertTexts.uploadedImage, url);
     } else {
         var text_link = options.insertTexts.link;
@@ -961,7 +994,6 @@ function redo(editor) {
  * Toggle side by side preview
  */
 function toggleSideBySide(editor) {
-    console.log("toggleSideBySide")
     var cm = editor.codemirror;
     var wrapper = cm.getWrapperElement();
     var preview = wrapper.nextSibling;
@@ -971,7 +1003,6 @@ function toggleSideBySide(editor) {
     var easyMDEContainer = wrapper.parentNode;
 
     if (/editor-preview-active-side/.test(preview.className)) {
-        console.log("have editor-preview-active-side")
         if (editor.options.sideBySideFullscreen === false) {
             // if side-by-side not-fullscreen ok, remove classes when hiding side
             removeClass(easyMDEContainer, 'sided--no-fullscreen');
@@ -1004,15 +1035,14 @@ function toggleSideBySide(editor) {
     // Hide normal preview if active
     var previewNormal = wrapper.lastChild;
     if (/editor-preview-active/.test(previewNormal.className)) {
-        console.log("have editor-preview-active")
         previewNormal.className = previewNormal.className.replace(
             /\s*editor-preview-active\s*/g, ''
         );
         var toolbar = editor.toolbarElements.preview;
-        if (toolbar) {
+        var toolbar_div = editor.toolbar_div;
+        if(toolbar) {
             toolbar.className = toolbar.className.replace(/\s*active\s*/g, '');
         }
-        var toolbar_div = editor.toolbar_div;
         if(toolbar_div){
             toolbar_div.className = toolbar_div.className.replace(/\s*disabled-for-preview*/g, '');
         }
@@ -1044,82 +1074,12 @@ function toggleSideBySide(editor) {
 }
 
 
+
+
+
 /**
  * Preview action.
  */
-
-function previewToEdit(editor){
-    var cm = editor.codemirror;
-    var wrapper = cm.getWrapperElement();
-    var preview = wrapper.lastChild;
-
-    if (!preview || !/editor-preview-full/.test(preview.className)) {
-
-        preview = document.createElement('div');
-        preview.className = 'editor-preview-full';
-
-        if (editor.options.previewClass) {
-
-            if (Array.isArray(editor.options.previewClass)) {
-                for (var i = 0; i < editor.options.previewClass.length; i++) {
-                    preview.className += (' ' + editor.options.previewClass[i]);
-                }
-
-            } else if (typeof editor.options.previewClass === 'string') {
-                preview.className += (' ' + editor.options.previewClass);
-            }
-        }
-
-        wrapper.appendChild(preview);
-    }
-
-    preview.className = preview.className.replace(
-        /\s*editor-preview-active\s*/g, ''
-    );
-
-    preview.innerHTML = editor.options.previewRender(editor.value(), preview);
-}
-
-function SideBySideToPreview(editor){
-    var cm = editor.codemirror;
-    var wrapper = cm.getWrapperElement();
-    var preview = wrapper.lastChild;
-    var sidebyside = wrapper.nextSibling;
-
-    if (!preview || !/editor-preview-full/.test(preview.className)) {
-
-        preview = document.createElement('div');
-        preview.className = 'editor-preview-full';
-
-        if (editor.options.previewClass) {
-
-            if (Array.isArray(editor.options.previewClass)) {
-                for (var i = 0; i < editor.options.previewClass.length; i++) {
-                    preview.className += (' ' + editor.options.previewClass[i]);
-                }
-
-            } else if (typeof editor.options.previewClass === 'string') {
-                preview.className += (' ' + editor.options.previewClass);
-            }
-        }
-
-        wrapper.appendChild(preview);
-    }
-
-    preview.className += ' editor-preview-active';
-    preview.innerHTML = editor.options.previewRender(editor.value(), preview);
-
-    var easyMDEContainer = wrapper.parentNode;
-    if (editor.options.sideBySideFullscreen === false) {
-        // if side-by-side not-fullscreen ok, remove classes when hiding side
-        removeClass(easyMDEContainer, 'sided--no-fullscreen');
-    }
-    sidebyside.className = sidebyside.className.replace(
-        /\s*editor-preview-active-side\s*/g, ''
-    );
-    wrapper.className = wrapper.className.replace(/\s*CodeMirror-sided\s*/g, ' ');
-}
-
 function togglePreview(editor) {
     var cm = editor.codemirror;
     var wrapper = cm.getWrapperElement();
@@ -1176,6 +1136,90 @@ function togglePreview(editor) {
 
 }
 
+/**
+ * Preview to edit.
+ */
+
+function previewToEdit(editor){
+    var cm = editor.codemirror;
+    var wrapper = cm.getWrapperElement();
+    var preview = wrapper.lastChild;
+
+    if (!preview || !/editor-preview-full/.test(preview.className)) {
+
+        preview = document.createElement('div');
+        preview.className = 'editor-preview-full';
+
+        if (editor.options.previewClass) {
+
+            if (Array.isArray(editor.options.previewClass)) {
+                for (var i = 0; i < editor.options.previewClass.length; i++) {
+                    preview.className += (' ' + editor.options.previewClass[i]);
+                }
+
+            } else if (typeof editor.options.previewClass === 'string') {
+                preview.className += (' ' + editor.options.previewClass);
+            }
+        }
+
+        wrapper.appendChild(preview);
+    }
+
+    preview.className = preview.className.replace(
+        /\s*editor-preview-active\s*/g, ''
+    );
+
+    preview.innerHTML = editor.options.previewRender(editor.value(), preview);
+}
+
+/**
+ * sidebyside to preview.
+ */
+
+function SideBySideToPreview(editor){
+    var cm = editor.codemirror;
+    var wrapper = cm.getWrapperElement();
+    var preview = wrapper.lastChild;
+    var sidebyside = wrapper.nextSibling;
+
+    if (!preview || !/editor-preview-full/.test(preview.className)) {
+
+        preview = document.createElement('div');
+        preview.className = 'editor-preview-full';
+
+        if (editor.options.previewClass) {
+
+            if (Array.isArray(editor.options.previewClass)) {
+                for (var i = 0; i < editor.options.previewClass.length; i++) {
+                    preview.className += (' ' + editor.options.previewClass[i]);
+                }
+
+            } else if (typeof editor.options.previewClass === 'string') {
+                preview.className += (' ' + editor.options.previewClass);
+            }
+        }
+
+        wrapper.appendChild(preview);
+    }
+
+    preview.className += ' editor-preview-active';
+    preview.innerHTML = editor.options.previewRender(editor.value(), preview);
+
+    var easyMDEContainer = wrapper.parentNode;
+    if (editor.options.sideBySideFullscreen === false) {
+        // if side-by-side not-fullscreen ok, remove classes when hiding side
+        removeClass(easyMDEContainer, 'sided--no-fullscreen');
+    }
+    sidebyside.className = sidebyside.className.replace(
+        /\s*editor-preview-active-side\s*/g, ''
+    );
+    wrapper.className = wrapper.className.replace(/\s*CodeMirror-sided\s*/g, ' ');
+}
+
+/**
+ * switch three Mode above
+ */
+
 function switchMode(editor) {
     var cm = editor.codemirror;
     var wrapper = cm.getWrapperElement();
@@ -1185,8 +1229,8 @@ function switchMode(editor) {
     var isPreviewActive = /editor-preview-active/.test(preview.className);
     var isSideBySideActive = /editor-preview-active-side/.test(sidebyside.className);
 
-    console.log(isPreviewActive)
-    console.log(isSideBySideActive)
+    console.log(isPreviewActive);
+    console.log(isSideBySideActive);
     // // order : edit preview sidebyside
     // if(!isPreviewActive && !isSideBySideActive){
     //     //in edit mode , change to preview mode
@@ -1209,19 +1253,19 @@ function switchMode(editor) {
     // order : edit sidebyside preview
     if(!isPreviewActive && !isSideBySideActive){
         //in edit mode , change to sidebyside mode
-        console.log("in edit mode , change to sidebyside mode")
-        toggleSideBySide(editor)
-        window.localStorage.setItem("view_mode", "sidebyside")
+        console.log('in edit mode , change to sidebyside mode');
+        toggleSideBySide(editor);
+        window.localStorage.setItem('view_mode', 'sidebyside');
     }else if(isSideBySideActive){
         // in sidebyside mode , change to preview mode
-        console.log("in sidebyside mode , change to preview mode")
+        console.log('in sidebyside mode , change to preview mode');
         SideBySideToPreview(editor);
-        window.localStorage.setItem("view_mode", "preview")
+        window.localStorage.setItem('view_mode', 'preview');
     }else if(isPreviewActive){
         //in preview mode , change to edit mode
-        console.log("in preview mode , change to edit mode")
+        console.log('in preview mode , change to edit mode');
         previewToEdit(editor);
-        window.localStorage.setItem("view_mode", "edit")
+        window.localStorage.setItem('view_mode', 'edit');
     }
 }
 
@@ -1700,6 +1744,23 @@ var toolbarBuiltInButtons = {
     'separator-3': {
         name: 'separator-3',
     },
+    'preview': {
+        name: 'preview',
+        action: togglePreview,
+        className: 'fa fa-eye',
+        noDisable: true,
+        title: 'Toggle Preview',
+        default: true,
+    },
+    'side-by-side': {
+        name: 'side-by-side',
+        action: toggleSideBySide,
+        className: 'fa fa-columns',
+        noDisable: true,
+        noMobile: true,
+        title: 'Toggle Side by Side',
+        default: true,
+    },
     'fullscreen': {
         name: 'fullscreen',
         action: toggleFullScreen,
@@ -1744,7 +1805,7 @@ var toolbarBuiltInButtons = {
         noDisable: true,
         title: 'Switch Mode',
         default: true,
-    }
+    },
 };
 
 var insertTexts = {
@@ -1936,9 +1997,12 @@ function EasyMDE(options) {
     // Import-image default configuration
     options.uploadImage = options.uploadImage || false;
     options.imageMaxSize = options.imageMaxSize || 2097152; // 1024 * 1024 * 2
-    options.imageAccept = options.imageAccept || 'image/png, image/jpeg';
+    options.imageAccept = options.imageAccept || 'image/png, image/jpeg, image/gif, image/avif';
     options.imageTexts = extend({}, imageTexts, options.imageTexts || {});
     options.errorMessages = extend({}, errorMessages, options.errorMessages || {});
+    options.imagePathAbsolute = options.imagePathAbsolute || false;
+    options.imageCSRFName = options.imageCSRFName || 'csrfmiddlewaretoken';
+    options.imageCSRFHeader = options.imageCSRFHeader || false;
 
 
     // Change unique_id to uniqueId for backwards compatibility
@@ -2265,6 +2329,7 @@ EasyMDE.prototype.render = function (el) {
     // to use with sideBySideFullscreen option.
     var easyMDEContainer = document.createElement('div');
     easyMDEContainer.classList.add('EasyMDEContainer');
+    easyMDEContainer.setAttribute('role', 'application');
     var cmWrapper = this.codemirror.getWrapperElement();
     cmWrapper.parentNode.insertBefore(easyMDEContainer, cmWrapper);
     easyMDEContainer.appendChild(cmWrapper);
@@ -2325,6 +2390,14 @@ EasyMDE.prototype.render = function (el) {
                 if (srcAttr && srcAttr.length >= 2) {
                     var keySrc = srcAttr[1];
 
+                    if (options.imagesPreviewHandler) {
+                        var newSrc = options.imagesPreviewHandler(srcAttr[1]);
+                        // defensive check making sure the handler provided by the user returns a string
+                        if (typeof newSrc === 'string') {
+                            keySrc = newSrc;
+                        }
+                    }
+
                     if (!window.EMDEimagesCache[keySrc]) {
                         var img = document.createElement('img');
                         img.onload = function () {
@@ -2350,6 +2423,10 @@ EasyMDE.prototype.render = function (el) {
 
     this.gui.sideBySide = this.createSideBySide();
     this._rendered = this.element;
+
+    if (options.autofocus === true || el.autofocus) {
+        this.codemirror.focus();
+    }
 
     // Fixes CodeMirror bug (#344)
     var temp_cm = this.codemirror;
@@ -2510,10 +2587,11 @@ EasyMDE.prototype.uploadImage = function (file, onSuccess, onError) {
     var formData = new FormData();
     formData.append('image', file);
 
-    // insert CSRF token if provided in config.
-    if (self.options.imageCSRFToken) {
-        formData.append('csrfmiddlewaretoken', self.options.imageCSRFToken);
+    // insert CSRF body token if provided in config.
+    if (self.options.imageCSRFToken && !self.options.imageCSRFHeader) {
+        formData.append(self.options.imageCSRFName, self.options.imageCSRFToken);
     }
+
     var request = new XMLHttpRequest();
     request.upload.onprogress = function (event) {
         if (event.lengthComputable) {
@@ -2522,6 +2600,11 @@ EasyMDE.prototype.uploadImage = function (file, onSuccess, onError) {
         }
     };
     request.open('POST', this.options.imageUploadEndpoint);
+
+    // insert CSRF header token if provided in config.
+    if (self.options.imageCSRFToken && self.options.imageCSRFHeader) {
+        request.setRequestHeader(self.options.imageCSRFName, self.options.imageCSRFToken);
+    }
 
     request.onload = function () {
         try {
@@ -2602,7 +2685,7 @@ EasyMDE.prototype.setPreviewMaxHeight = function () {
     var paddingTop = parseInt(window.getComputedStyle(wrapper).paddingTop);
     var borderTopWidth = parseInt(window.getComputedStyle(wrapper).borderTopWidth);
     var previewMaxHeight;
-    if( this.options.maxHeight.includes('calc')){
+    if(this.options.maxHeight.includes('calc')){
         var extraHeight = ' + ' + (paddingTop * 2 + borderTopWidth * 2).toString() + 'px)';
         previewMaxHeight = this.options.maxHeight.replace(')', extraHeight);
     }else{
@@ -2611,9 +2694,7 @@ EasyMDE.prototype.setPreviewMaxHeight = function () {
         previewMaxHeight = wrapperMaxHeight.toString() + 'px';
     }
 
-    console.log(previewMaxHeight);
     preview.style.height = previewMaxHeight;
-    
 };
 
 EasyMDE.prototype.createSideBySide = function () {
@@ -2690,6 +2771,7 @@ EasyMDE.prototype.createToolbar = function (items) {
 
     var bar = document.createElement('div');
     bar.className = 'editor-toolbar';
+    bar.setAttribute('role', 'toolbar');
 
     var self = this;
 
@@ -2928,10 +3010,13 @@ EasyMDE.prototype.value = function (val) {
     }
 };
 
+/**
+ * Get the display obj.
+ */
 EasyMDE.prototype.getCmDisplay = function(){
     var cm = this.codemirror;
     return cm.display;
-}
+};
 
 
 /**
@@ -2946,6 +3031,9 @@ EasyMDE.toggleHeadingBigger = toggleHeadingBigger;
 EasyMDE.toggleHeading1 = toggleHeading1;
 EasyMDE.toggleHeading2 = toggleHeading2;
 EasyMDE.toggleHeading3 = toggleHeading3;
+EasyMDE.toggleHeading4 = toggleHeading4;
+EasyMDE.toggleHeading5 = toggleHeading5;
+EasyMDE.toggleHeading6 = toggleHeading6;
 EasyMDE.toggleCodeBlock = toggleCodeBlock;
 EasyMDE.toggleUnorderedList = toggleUnorderedList;
 EasyMDE.toggleOrderedList = toggleOrderedList;
@@ -2992,6 +3080,15 @@ EasyMDE.prototype.toggleHeading2 = function () {
 EasyMDE.prototype.toggleHeading3 = function () {
     toggleHeading3(this);
 };
+EasyMDE.prototype.toggleHeading4 = function () {
+    toggleHeading4(this);
+};
+EasyMDE.prototype.toggleHeading5 = function () {
+    toggleHeading5(this);
+};
+EasyMDE.prototype.toggleHeading6 = function () {
+    toggleHeading6(this);
+};
 EasyMDE.prototype.toggleCodeBlock = function () {
     toggleCodeBlock(this);
 };
@@ -3034,6 +3131,7 @@ EasyMDE.prototype.toggleSideBySide = function () {
 EasyMDE.prototype.toggleFullScreen = function () {
     toggleFullScreen(this);
 };
+
 EasyMDE.prototype.switchMode = function () {
     switchMode(this);
 };

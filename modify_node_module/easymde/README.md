@@ -2,7 +2,7 @@
 
 [![npm version](https://img.shields.io/npm/v/easymde.svg?style=for-the-badge)](https://www.npmjs.com/package/easymde)
 [![npm version](https://img.shields.io/npm/v/easymde/next.svg?style=for-the-badge)](https://www.npmjs.com/package/easymde/v/next)
-[![Build Status](https://img.shields.io/travis/Ionaru/easy-markdown-editor/master.svg?style=for-the-badge)](https://travis-ci.org/Ionaru/easy-markdown-editor)
+[![Build Status](https://img.shields.io/github/workflow/status/ionaru/easy-markdown-editor/Test%20&%20Deploy/master?style=for-the-badge)](https://github.com/Ionaru/easy-markdown-editor/actions)
 
 > This repository is a fork of
 [SimpleMDE, made by Sparksuite](https://github.com/sparksuite/simplemde-markdown-editor/).
@@ -51,7 +51,7 @@ The editor is entirely customizable, from theming to toolbar buttons and javascr
 Via [npm](https://www.npmjs.com/package/easymde):
 
 ```
-npm install easymde --save
+npm install easymde
 ```
 
 Via the *UNPKG* CDN:
@@ -61,6 +61,11 @@ Via the *UNPKG* CDN:
 <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
 ```
 
+Or *jsDelivr*:
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
+<script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
+```
 
 ## How to use
 
@@ -71,7 +76,7 @@ After installing and/or importing the module, you can load EasyMDE onto the firs
 ```html
 <textarea></textarea>
 <script>
-var easyMDE = new EasyMDE();
+const easyMDE = new EasyMDE();
 </script>
 ```
 
@@ -80,7 +85,7 @@ Alternatively you can select a specific TextArea, via Javascript:
 ```html
 <textarea id="my-text-area"></textarea>
 <script>
-var easyMDE = new EasyMDE({element: document.getElementById('my-text-area')});
+const easyMDE = new EasyMDE({element: document.getElementById('my-text-area')});
 </script>
 ```
 
@@ -89,7 +94,7 @@ Or via jQuery:
 ```html
 <textarea id="my-text-area"></textarea>
 <script>
-var easyMDE = new EasyMDE({element: $('#my-text-area')[0]});
+const easyMDE = new EasyMDE({element: $('#my-text-area')[0]});
 </script>
 ```
 
@@ -131,6 +136,7 @@ easyMDE.value('New input for **EasyMDE**');
   - **bold**: Can be set to `**` or `__`. Defaults to `**`.
   - **code**: Can be set to  ```` ``` ```` or `~~~`.  Defaults to ```` ``` ````.
   - **italic**: Can be set to `*` or `_`. Defaults to `*`.
+- **unorderedListStyle**: can be `*`, `-` or `+`. Defaults to `*`.
 - **scrollbarStyle**: Chooses a scrollbar implementation. The default is "native", showing native scrollbars. The core library also provides the "null" style, which completely hides the scrollbars. Addons can implement additional scrollbar models.
 - **element**: The DOM element for the TextArea to use. Defaults to the first TextArea on the page.
 - **forceSync**: If set to `true`, force text changes made in EasyMDE to be immediately stored in original text area. Defaults to `false`.
@@ -154,7 +160,7 @@ easyMDE.value('New input for **EasyMDE**');
   - **underscoresBreakWords**: If set to `true`, let underscores be a delimiter for separating words. Defaults to `false`.
 - **overlayMode**: Pass a custom codemirror [overlay mode](https://codemirror.net/doc/manual.html#modeapi) to parse and style the Markdown during editing.
   - **mode**: A codemirror mode object.
-  - **combine**: If set to `false`, will *replace* CSS classes returned by the default Markdown mode. Otherwise the classes returned by the custom mode will be combined with the classes returned by the default mode. Defaults to `true`. 
+  - **combine**: If set to `false`, will *replace* CSS classes returned by the default Markdown mode. Otherwise the classes returned by the custom mode will be combined with the classes returned by the default mode. Defaults to `true`.
 - **placeholder**: If set, displays a custom placeholder message.
 - **previewClass**: A string or array of strings that will be applied to the preview screen when activated. Defaults to `"editor-preview"`.
 - **previewRender**: Custom function for parsing the plaintext Markdown and returning HTML. Used when user previews.
@@ -185,7 +191,7 @@ easyMDE.value('New input for **EasyMDE**');
     - **typeNotAllowed**: The user send a file type which doesn't match the `imageAccept` list, or the server returned this error code. Defaults to `This image type is not allowed.`.
     - **fileTooLarge**: The size of the image being imported is bigger than the `imageMaxSize`, or if the server returned this error code. Defaults to `Image #image_name# is too big (#image_size#).\nMaximum file size is #image_max_size#.`.
     - **importError**: An unexpected error occurred when uploading the image. Defaults to `Something went wrong when uploading the image #image_name#.`.
-- **errorCallback**: A callback function used to define how to display an error message. Defaults to `function(errorMessage) {alert(errorMessage);};`.
+- **errorCallback**: A callback function used to define how to display an error message. Defaults to `(errorMessage) => alert(errorMessage)`.
 - **renderingConfig**: Adjust settings for parsing the Markdown during previewing (not editing).
   - **codeSyntaxHighlighting**: If set to `true`, will highlight using [highlight.js](https://github.com/isagalaev/highlight.js). Defaults to `false`. To use this feature you must include highlight.js on your page or pass in using the `hljs` option. For example, include the script and the CSS files like:<br>`<script src="https://cdn.jsdelivr.net/highlight.js/latest/highlight.min.js"></script>`<br>`<link rel="stylesheet" href="https://cdn.jsdelivr.net/highlight.js/latest/styles/github.min.css">`
   - **hljs**: An injectible instance of [highlight.js](https://github.com/isagalaev/highlight.js). If you don't want to rely on the global namespace (`window.hljs`), you can provide an instance here. Defaults to `undefined`.
@@ -194,7 +200,7 @@ easyMDE.value('New input for **EasyMDE**');
   - **sanitizerFunction**: Custom function for sanitizing the HTML output of markdown renderer.
 - **shortcuts**: Keyboard shortcuts associated with this instance. Defaults to the [array of shortcuts](#keyboard-shortcuts).
 - **showIcons**: An array of icon names to show. Can be used to show specific icons hidden by default without completely customizing the toolbar.
-- **spellChecker**: If set to `false`, disable the spell checker. Defaults to `true`.
+- **spellChecker**: If set to `false`, disable the spell checker. Defaults to `true`.  Optionally pass a CodeMirrorSpellChecker-compliant function.
 - **inputStyle**: `textarea` or `contenteditable`. Defaults to `textarea` for desktop and `contenteditable` for mobile. `contenteditable` option is necessary to enable nativeSpellcheck.
 - **nativeSpellcheck**: If set to `false`, disable native spell checker. Defaults to `true`.
 - **sideBySideFullscreen**: If set to `false`, allows side-by-side editing without going into fullscreen. Defaults to `true`.
@@ -206,105 +212,106 @@ easyMDE.value('New input for **EasyMDE**');
 - **theme**: Override the theme. Defaults to `easymde`.
 - **toolbar**: If set to `false`, hide the toolbar. Defaults to the [array of icons](#toolbar-icons).
 - **toolbarTips**: If set to `false`, disable toolbar button tips. Defaults to `true`.
+- **direction**: `rtl` or `ltr`. Changes text direction to support right-to-left languages. Defaults to `ltr`.
 
 
 ### Options example
 
 Most options demonstrate the non-default behavior:
 
-```JavaScript
-var editor = new EasyMDE({
-	autofocus: true,
-	autosave: {
-		enabled: true,
-		uniqueId: "MyUniqueID",
-		delay: 1000,
-		submit_delay: 5000,
-		timeFormat: {
-			locale: 'en-US',
-			format: {
-				year: 'numeric',
-				month: 'long',
-				day: '2-digit',
-				hour: '2-digit',
-				minute: '2-digit',
-			},
-		},
-		text: "Autosaved: "
-	},
-	blockStyles: {
-		bold: "__",
-		italic: "_",
-	},
-	element: document.getElementById("MyID"),
-	forceSync: true,
-	hideIcons: ["guide", "heading"],
-	indentWithTabs: false,
-	initialValue: "Hello world!",
-	insertTexts: {
-		horizontalRule: ["", "\n\n-----\n\n"],
-		image: ["![](http://", ")"],
-		link: ["[", "](http://)"],
-		table: ["", "\n\n| Column 1 | Column 2 | Column 3 |\n| -------- | -------- | -------- |\n| Text     | Text      | Text     |\n\n"],
-	},
-	lineWrapping: false,
-	minHeight: "500px",
-	parsingConfig: {
-		allowAtxHeaderWithoutSpace: true,
-		strikethrough: false,
-		underscoresBreakWords: true,
-	},
-	placeholder: "Type here...",
+```js
+const editor = new EasyMDE({
+    autofocus: true,
+    autosave: {
+        enabled: true,
+        uniqueId: "MyUniqueID",
+        delay: 1000,
+        submit_delay: 5000,
+        timeFormat: {
+            locale: 'en-US',
+            format: {
+                year: 'numeric',
+                month: 'long',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+            },
+        },
+        text: "Autosaved: "
+    },
+    blockStyles: {
+        bold: "__",
+        italic: "_",
+    },
+    unorderedListStyle: "-",
+    element: document.getElementById("MyID"),
+    forceSync: true,
+    hideIcons: ["guide", "heading"],
+    indentWithTabs: false,
+    initialValue: "Hello world!",
+    insertTexts: {
+        horizontalRule: ["", "\n\n-----\n\n"],
+        image: ["![](http://", ")"],
+        link: ["[", "](https://)"],
+        table: ["", "\n\n| Column 1 | Column 2 | Column 3 |\n| -------- | -------- | -------- |\n| Text     | Text      | Text     |\n\n"],
+    },
+    lineWrapping: false,
+    minHeight: "500px",
+    parsingConfig: {
+        allowAtxHeaderWithoutSpace: true,
+        strikethrough: false,
+        underscoresBreakWords: true,
+    },
+    placeholder: "Type here...",
 
-	previewClass: "my-custom-styling",
-	previewClass: ["my-custom-styling", "more-custom-styling"],
+    previewClass: "my-custom-styling",
+    previewClass: ["my-custom-styling", "more-custom-styling"],
 
-	previewRender: function(plainText) {
-		return customMarkdownParser(plainText); // Returns HTML from a custom parser
-	},
-	previewRender: function(plainText, preview) { // Async method
-		setTimeout(function(){
-			preview.innerHTML = customMarkdownParser(plainText);
-		}, 250);
+    previewRender: (plainText) => customMarkdownParser(plainText), // Returns HTML from a custom parser
+    previewRender: (plainText, preview) => { // Async method
+        setTimeout(() => {
+            preview.innerHTML = customMarkdownParser(plainText);
+        }, 250);
 
-		return "Loading...";
-	},
-	promptURLs: true,
-	promptTexts: {
-		image: "Custom prompt for URL:",
-		link: "Custom prompt for URL:",
-	},
-	renderingConfig: {
-		singleLineBreaks: false,
-		codeSyntaxHighlighting: true,
-		sanitizerFunction: function(renderedHTML) {
-			// Using DOMPurify and only allowing <b> tags
-			return DOMPurify.sanitize(renderedHTML, {ALLOWED_TAGS: ['b']})
-		},
-	},
-	shortcuts: {
-		drawTable: "Cmd-Alt-T"
-	},
-	showIcons: ["code", "table"],
-	spellChecker: false,
-	status: false,
-	status: ["autosave", "lines", "words", "cursor"], // Optional usage
-	status: ["autosave", "lines", "words", "cursor", {
-		className: "keystrokes",
-		defaultValue: function(el) {
-			this.keystrokes = 0;
-			el.innerHTML = "0 Keystrokes";
-		},
-		onUpdate: function(el) {
-			el.innerHTML = ++this.keystrokes + " Keystrokes";
-		},
-	}], // Another optional usage, with a custom status bar item that counts keystrokes
-	styleSelectedText: false,
-	sideBySideFullscreen: false,
-	syncSideBySidePreviewScroll: false,
-	tabSize: 4,
-	toolbar: false,
-	toolbarTips: false,
+        return "Loading...";
+    },
+    promptURLs: true,
+    promptTexts: {
+        image: "Custom prompt for URL:",
+        link: "Custom prompt for URL:",
+    },
+    renderingConfig: {
+        singleLineBreaks: false,
+        codeSyntaxHighlighting: true,
+        sanitizerFunction: (renderedHTML) => {
+            // Using DOMPurify and only allowing <b> tags
+            return DOMPurify.sanitize(renderedHTML, {ALLOWED_TAGS: ['b']})
+        },
+    },
+    shortcuts: {
+        drawTable: "Cmd-Alt-T"
+    },
+    showIcons: ["code", "table"],
+    spellChecker: false,
+    status: false,
+    status: ["autosave", "lines", "words", "cursor"], // Optional usage
+    status: ["autosave", "lines", "words", "cursor", {
+        className: "keystrokes",
+        defaultValue: (el) => {
+            el.setAttribute('data-keystrokes', 0);
+        },
+        onUpdate: (el) => {
+            const keystrokes = Number(el.getAttribute('data-keystrokes')) + 1;
+            el.innerHTML = `${keystrokes} Keystrokes`;
+            el.setAttribute('data-keystrokes', keystrokes);
+        },
+    }], // Another optional usage, with a custom status bar item that counts keystrokes
+    styleSelectedText: false,
+    sideBySideFullscreen: false,
+    syncSideBySidePreviewScroll: false,
+    tabSize: 4,
+    toolbar: false,
+    toolbarTips: false,
 });
 ```
 
@@ -347,41 +354,47 @@ Customize the toolbar using the `toolbar` option.
 
 Only the order of existing buttons:
 
-```JavaScript
-var easyMDE = new EasyMDE({
-	toolbar: ["bold", "italic", "heading", "|", "quote"]
+```js
+const easyMDE = new EasyMDE({
+    toolbar: ["bold", "italic", "heading", "|", "quote"]
 });
 ```
 
 All information and/or add your own icons
 
-```Javascript
-var easyMDE = new EasyMDE({
-	toolbar: [{
-			name: "bold",
-			action: EasyMDE.toggleBold,
-			className: "fa fa-bold",
-			title: "Bold",
-		},
-		{
-			name: "custom",
-			action: function customFunction(editor){
-				// Add your own code
-			},
-			className: "fa fa-star",
-			title: "Custom Button",
-		},
-		"|" // Separator
-		// [, ...]
-	]
+```js
+const easyMDE = new EasyMDE({
+    toolbar: [
+        {
+            name: "bold",
+            action: EasyMDE.toggleBold,
+            className: "fa fa-bold",
+            title: "Bold",
+        },
+        "italics", // shortcut to pre-made button
+        {
+            name: "custom",
+            action: (editor) => {
+                // Add your own code
+            },
+            className: "fa fa-star",
+            title: "Custom Button",
+            attributes: { // for custom attributes
+                id: "custom-id",
+                "data-value": "custom value" // HTML5 data-* attributes need to be enclosed in quotation marks ("") because of the dash (-) in its name.
+            }
+        },
+        "|" // Separator
+        // [, ...]
+    ]
 });
 ```
 
 Put some buttons on dropdown menu
 
-```Javascript
-var easyMDE = new EasyMDE({
-	toolbar: [{
+```js
+const easyMDE = new EasyMDE({
+    toolbar: [{
                 name: "heading",
                 action: EasyMDE.toggleHeadingSmaller,
                 className: "fa fa-header",
@@ -413,8 +426,8 @@ var easyMDE = new EasyMDE({
                     }
                 ]
             },
-		// [, ...]
-	]
+        // [, ...]
+    ]
 });
 ```
 
@@ -441,13 +454,13 @@ Shortcut (Windows / Linux) | Shortcut (macOS) | Action
 
 Here is how you can change a few, while leaving others untouched:
 
-```JavaScript
-var editor = new EasyMDE({
-	shortcuts: {
-		"toggleOrderedList": "Ctrl-Alt-K", // alter the shortcut for toggleOrderedList
-		"toggleCodeBlock": null, // unbind Ctrl-Alt-C
-		"drawTable": "Cmd-Alt-T", // bind Cmd-Alt-T to drawTable action, which doesn't come with a default shortcut
-	}
+```js
+const editor = new EasyMDE({
+    shortcuts: {
+        "toggleOrderedList": "Ctrl-Alt-K", // alter the shortcut for toggleOrderedList
+        "toggleCodeBlock": null, // unbind Ctrl-Alt-C
+        "drawTable": "Cmd-Alt-T", // bind Cmd-Alt-T to drawTable action, which doesn't come with a default shortcut
+    }
 });
 ```
 
@@ -462,10 +475,10 @@ The list of actions that can be bound is the same as the list of built-in action
 
 You can catch the following list of events: https://codemirror.net/doc/manual.html#events
 
-```JavaScript
-var easyMDE = new EasyMDE();
-easyMDE.codemirror.on("change", function(){
-	console.log(easyMDE.value());
+```js
+const easyMDE = new EasyMDE();
+easyMDE.codemirror.on("change", () => {
+    console.log(easyMDE.value());
 });
 ```
 
@@ -474,8 +487,8 @@ easyMDE.codemirror.on("change", function(){
 
 You can revert to the initial text area by calling the `toTextArea` method. Note that this clears up the autosave (if enabled) associated with it. The text area will retain any text from the destroyed EasyMDE instance.
 
-```JavaScript
-var easyMDE = new EasyMDE();
+```js
+const easyMDE = new EasyMDE();
 // ...
 easyMDE.toTextArea();
 easyMDE = null;
@@ -489,7 +502,7 @@ If you need to remove installed listeners (when editor not needed anymore), call
 The following self-explanatory methods may be of use while developing with EasyMDE.
 
 ```js
-var easyMDE = new EasyMDE();
+const easyMDE = new EasyMDE();
 easyMDE.isPreviewActive(); // returns boolean
 easyMDE.isSideBySideActive(); // returns boolean
 easyMDE.isFullscreenActive(); // returns boolean
