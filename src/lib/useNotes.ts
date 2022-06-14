@@ -1,6 +1,6 @@
 import produce from "immer";
 
-import { useReducer, useCallback } from "react";
+import { useReducer, useCallback, useRef } from "react";
 const { ipcRenderer } = window.require("electron");
 
 const notesReducer = produce((state: notesTypes, action: any) => {
@@ -101,7 +101,7 @@ const notesReducer = produce((state: notesTypes, action: any) => {
 
 export const useNotes = () => {
   const [state, dispatch] = useReducer(notesReducer, {});
-  let saveTimer: NodeJS.Timeout | null = null;
+  let saveTimer = useRef<NodeJS.Timeout | null>(null);
 
   const repoNotesFetch = useCallback((data_path, repos, repo_key) => {
     if (!repo_key) return;
@@ -188,11 +188,11 @@ export const useNotes = () => {
     note_content: string
   ) => {
     if (repo_key && folder_key && note_key) {
-      if (saveTimer) {
-        clearTimeout(saveTimer);
+      if (saveTimer.current) {
+        clearTimeout(saveTimer.current);
       }
 
-      saveTimer = setTimeout(() => {
+      saveTimer.current = setTimeout(() => {
         saveNow(data_path, repo_key, folder_key, note_key);
       }, 800);
 

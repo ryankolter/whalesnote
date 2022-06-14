@@ -1,5 +1,5 @@
 import produce from "immer";
-import { useReducer, useCallback } from "react";
+import { useReducer, useCallback, useRef } from "react";
 const { ipcRenderer } = window.require("electron");
 
 const reposReducer = produce((state: object, action: any) => {
@@ -113,7 +113,7 @@ const reposReducer = produce((state: object, action: any) => {
 
 export const useRepos = () => {
   const [state, dispatch] = useReducer(reposReducer, {});
-  let renameSaveTimer: NodeJS.Timeout | null = null;
+  let renameSaveTimer = useRef<NodeJS.Timeout | null>(null);
 
   const updateRepos = useCallback((action_name, obj) => {
     switch (action_name) {
@@ -219,11 +219,11 @@ export const useRepos = () => {
     new_title: string
   ) => {
     if (repo_key && folder_key && note_key) {
-      if (renameSaveTimer) {
-        clearTimeout(renameSaveTimer);
+      if (renameSaveTimer.current) {
+        clearTimeout(renameSaveTimer.current);
       }
 
-      renameSaveTimer = setTimeout(() => {
+      renameSaveTimer.current = setTimeout(() => {
         renameSaveNow(data_path, repo_key, folder_key, note_key, new_title);
       }, 500);
     }
