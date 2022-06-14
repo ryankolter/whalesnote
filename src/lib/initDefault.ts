@@ -6,17 +6,20 @@ const initDefault = () => {
 };
 
 const updateDefaultData = () => {
+  let repo_id = cryptoRandomString({ length: 12, type: "alphanumeric" });
+  let folder_id = cryptoRandomString({ length: 12, type: "alphanumeric" });
+  let note_id = cryptoRandomString({ length: 12, type: "alphanumeric" });
   let default_data: Data = {
     repos: {
-      DEFAULTREPO1: {
+      [repo_id]: {
         repo_name: "默认仓库",
-        folders_key: ["DEFAULTFOLD1"],
+        folders_key: [folder_id],
         folders_obj: {
-          DEFAULTFOLD1: {
+          [folder_id]: {
             folder_name: "默认文件夹",
-            notes_key: ["DEFAULTNOTE1"],
+            notes_key: [note_id],
             notes_obj: {
-              DEFAULTNOTE1: {
+              [note_id]: {
                 title: "空笔记",
               },
             },
@@ -25,21 +28,21 @@ const updateDefaultData = () => {
       },
     },
     notes: {
-      DEFAULTREPO1: {
-        DEFAULTFOLD1: {
-          DEFAULTNOTE1: "",
+      [repo_id]: {
+        [folder_id]: {
+          [note_id]: "",
         },
       },
     },
     dxnote: {
       id: cryptoRandomString({ length: 10, type: "alphanumeric" }),
-      repos_key: ["DEFAULTREPO1"],
-      cur_repo_key: "DEFAULTREPO1",
+      repos_key: [repo_id],
+      cur_repo_key: repo_id,
       repos: {
-        DEFAULTREPO1: {
-          cur_folder_key: "DEFAULTFOLD1",
+        [repo_id]: {
+          cur_folder_key: folder_id,
           folders: {
-            DEFAULTFOLD1: "DEFAULTNOTE1",
+            [folder_id]: note_id,
           },
         },
       },
