@@ -123,7 +123,6 @@ const App = () => {
           currentRepoKey={currentRepoKey}
           currentFolderKey={currentFolderKey}
           currentNoteKey={currentNoteKey}
-          notes={notes}
           content={
             currentRepoKey &&
             currentFolderKey &&
