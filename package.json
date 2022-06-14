@@ -57,7 +57,10 @@
     "eject": "react-scripts eject",
     "prepare": "husky install",
     "electron": "electron .",
-    "cors-server": "node server/cors-server.js"
+    "cors-server": "node server/cors-server.js",
+    "dist-win32": "electron-builder --win --ia32",
+    "dist-win64": "electron-builder --win --x64",
+    "dist-mac": "electron-builder --mac"
   },
   "eslintConfig": {
     "extends": [
@@ -88,6 +91,8 @@
     "@types/react-transition-group": "^4.4.4",
     "@types/react-window": "^1.8.5",
     "@types/socket.io-client": "^3.0.0",
+    "electron": "^19.0.4",
+    "electron-builder": "^23.0.3",
     "eslint-config-prettier": "^8.3.0",
     "husky": "^7.0.4",
     "lint-staged": "^12.1.7",
