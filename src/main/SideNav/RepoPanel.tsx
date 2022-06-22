@@ -44,6 +44,7 @@ const RepoList: React.FC<RepoListProps> = ({
   setFocus,
   setBlur,
   setKeySelect,
+  setShowAllRepo,
   setAllowHiddenAllRepoViaEnter,
 }) => {
   const [activeId, setActiveId] = useState(null);
@@ -91,6 +92,13 @@ const RepoList: React.FC<RepoListProps> = ({
   const repoScrollRef = useRef<HTMLDivElement>(null);
 
   const repo_group_number = useRef([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+
+  const closeRepoList = useCallback(() => {
+    if (keySelect) {
+      setKeySelect(false);
+    }
+    setShowAllRepo(false);
+  }, [keySelect, setKeySelect, setShowAllRepo]);
 
   const handleKeySelectShow = useCallback(() => {
     if (keySelect) {
@@ -162,10 +170,6 @@ const RepoList: React.FC<RepoListProps> = ({
         length: 12,
         type: "alphanumeric",
       });
-      const default_note_key = cryptoRandomString({
-        length: 12,
-        type: "alphanumeric",
-      });
 
       let dxnote_info = ipcRenderer.sendSync("readJson", {
         file_path: `${data_path}/dxnote_info.json`,
@@ -192,31 +196,14 @@ const RepoList: React.FC<RepoListProps> = ({
 
       // default folder
       let folder_info = {
-        folder_name: "默认文件夹",
-        notes_key: [default_note_key],
+        folder_name: "默认分类",
+        notes_key: [],
         notes_obj: {},
-      };
-
-      folder_info.notes_obj[default_note_key] = {
-        title: "空笔记",
       };
 
       ipcRenderer.sendSync("writeJson", {
         file_path: `${data_path}/${repo_key}/${default_folder_key}/folder_info.json`,
         obj: folder_info,
-      });
-
-      //default note
-      let note_info = {
-        createAt: new Date(),
-        updatedAt: new Date(),
-        type: "markdown",
-        content: "",
-      };
-
-      ipcRenderer.sendSync("writeCson", {
-        file_path: `${data_path}/${repo_key}/${default_folder_key}/${default_note_key}.cson`,
-        obj: note_info,
       });
 
       updateDxnote(data_path);
@@ -232,19 +219,12 @@ const RepoList: React.FC<RepoListProps> = ({
         repo_key,
         folder_key: default_folder_key,
       });
-      changeNotesAfterNew("note", {
-        data_path,
-        repo_key,
-        folder_key: default_folder_key,
-        note_key: default_note_key,
-      });
 
       setNewRepoKey("");
       setNewRepoName("");
       repoSwitchInPanel(repo_key);
       setRepoScrollPage(Math.ceil(dxnote_info.repos_key.length / 9) - 1);
       folderSwitch(data_path, default_folder_key);
-      noteSwitch(data_path, default_note_key);
       setFocus(cryptoRandomString({ length: 24, type: "alphanumeric" }));
       setAllowHiddenAllRepoViaEnter(true);
       scrollToRight();
@@ -253,7 +233,6 @@ const RepoList: React.FC<RepoListProps> = ({
       data_path,
       changeNotesAfterNew,
       folderSwitch,
-      noteSwitch,
       repoSwitchInPanel,
       scrollToRight,
       setAllowHiddenAllRepoViaEnter,
@@ -602,25 +581,13 @@ const RepoList: React.FC<RepoListProps> = ({
 
   return (
     <RepoListContainer>
-      {newRepoKey ? (
-        <TextInput
-          key={newRepoKey}
-          value={newRepoName}
-          className="repoNameInput"
-          placeholder="输入仓库名后回车"
-          autoFocus={true}
-          onBlur={(e) => newRepoSubmit(e, newRepoKey)}
-          onChange={(e) => newRepoInputChange(e)}
-          onKeyUp={(e) => newRepoInputEnter(e, newRepoKey)}
-        />
-      ) : (
-        <div></div>
-      )}
-      {data_path && !newRepoKey ? (
-        <RepoAddBtn onClick={newRepo}>+</RepoAddBtn>
-      ) : (
-        <div></div>
-      )}
+      <CloseRepoListBtn
+        onClick={() => {
+          closeRepoList();
+        }}
+      >
+        x
+      </CloseRepoListBtn>
       <ReposScroll ref={repoScrollRef}>
         <Repos ref={outerRef}>
           {repos_key && repos_obj ? (
@@ -771,6 +738,37 @@ const RepoList: React.FC<RepoListProps> = ({
           ) : (
             <></>
           )}
+          {data_path && !newRepoKey ? (
+            <RepoAddBtn onClick={newRepo}>
+              +
+              {repos_key &&
+              repos_key.filter((key) => repos_obj && repos_obj[key]).length ==
+                1 ? (
+                <AddReposTips>
+                  <div>点击按钮</div>
+                  <div>添加新资料库</div>
+                </AddReposTips>
+              ) : (
+                <></>
+              )}
+            </RepoAddBtn>
+          ) : (
+            <div></div>
+          )}
+          {newRepoKey ? (
+            <TextInput
+              key={newRepoKey}
+              value={newRepoName}
+              className="repoNameInput"
+              placeholder="输入新的资料库名"
+              autoFocus={true}
+              onBlur={(e) => newRepoSubmit(e, newRepoKey)}
+              onChange={(e) => newRepoInputChange(e)}
+              onKeyUp={(e) => newRepoInputEnter(e, newRepoKey)}
+            />
+          ) : (
+            <div></div>
+          )}
           <RepoItemPadding></RepoItemPadding>
         </Repos>
       </ReposScroll>
@@ -807,6 +805,17 @@ const RepoListContainer = styled.div({
   minWidth: "0",
 });
 
+const CloseRepoListBtn = styled.div({
+  width: "20px",
+  height: "20px",
+  lineHeight: "18px",
+  fontSize: "20px",
+  color: "#939395",
+  padding: "5px 10px",
+  margin: "0 0 2px 0",
+  cursor: "pointer",
+});
+
 const ReposScroll = styled.div(
   {
     overflow: "auto",
@@ -833,16 +842,16 @@ const Repos = styled.div({
   height: "calc(9 * (28px + 4px) + 5px)",
 });
 
-const RepoItem = styled.div`
-  position: relative;
-  display: flex;
-  width: 100%;
-  height: 28px;
-  line-height: 28px;
-  margin: 0 10px 4px 10px;
-  color: #939395;
-  cursor: pointer;
-`;
+const RepoItem = styled.div({
+  position: "relative",
+  display: "flex",
+  width: "100%",
+  height: "28px",
+  lineHeight: "28px",
+  margin: "0 10px 4px 10px",
+  color: "#939395",
+  cursor: "pointer",
+});
 
 const RepoItemName = styled.div({
   padding: "0 10px",
@@ -911,20 +920,38 @@ const MenuLi = styled.li(
 }`
 );
 
-const RepoAddBtn = styled.div`
-  width: 32px;
-  height: 32px;
-  line-height: 26px;
-  margin: 0px 10px 10px 0;
-  font-size: 28px;
-  border-radius: 5px;
-  display: flex;
-  align-item: center;
-  justify-content: center;
-  color: #939395;
-  background-color: rgba(58, 64, 76, 0.3);
-  cursor: pointer;
-`;
+const RepoAddBtn = styled.div({
+  position: "relative",
+  width: "28px",
+  height: "28px",
+  lineHeight: "24px",
+  margin: "5px 10px 0 20px",
+  fontSize: "28px",
+  borderRadius: "5px",
+  display: "flex",
+  alignItem: "center",
+  justifyContent: "center",
+  color: "#939395",
+  backgroundColor: "rgba(58, 64, 76, 0.3)",
+  cursor: "pointer",
+});
+
+const AddReposTips = styled.div({
+  color: "#939395",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  width: "90px",
+  marginTop: "20px",
+  fontSize: "14px",
+  position: "absolute",
+  bottom: "-80px",
+  left: "10px",
+  border: "1px dotted rgba(58, 64, 76)",
+  padding: "5px 10px",
+  borderRadius: "5px",
+  background: "rgba(47, 51, 56)",
+});
 
 type RepoListProps = {
   data_path: string;
@@ -952,6 +979,7 @@ type RepoListProps = {
   setFocus: (focus: string) => void;
   setBlur: (focus: string) => void;
   setKeySelect: (state: boolean) => void;
+  setShowAllRepo: (state: boolean) => void;
   setAllowHiddenAllRepoViaEnter: (state: boolean) => void;
 };
 

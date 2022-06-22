@@ -21,6 +21,7 @@ import { Sortable } from "../../components/Sortable";
 import { TextInput } from "../../components/TextInput";
 import { AlertPopUp } from "../../components/AlertPopUp";
 import { InputPopUp } from "../../components/InputPopUp";
+import folderIcon from "../../resources/icon/folderIcon.svg";
 import newFolderIcon from "../../resources/icon/newFolderIcon.svg";
 import { usePopUp } from "../../lib/usePopUp";
 import useContextMenu from "../../lib/useContextMenu";
@@ -103,11 +104,6 @@ const FolderList: React.FC<FolderListProps> = ({
 
       if (!currentRepoKey) return;
 
-      const default_note_key = cryptoRandomString({
-        length: 12,
-        type: "alphanumeric",
-      });
-
       let repo_info = ipcRenderer.sendSync("readJson", {
         file_path: `${data_path}/${currentRepoKey}/repo_info.json`,
       });
@@ -119,30 +115,13 @@ const FolderList: React.FC<FolderListProps> = ({
 
       let folder_info = {
         folder_name: e.target.value,
-        notes_key: [default_note_key],
+        notes_key: [],
         notes_obj: {},
-      };
-
-      folder_info.notes_obj[default_note_key] = {
-        title: "空笔记",
       };
 
       ipcRenderer.sendSync("writeJson", {
         file_path: `${data_path}/${currentRepoKey}/${folder_key}/folder_info.json`,
         obj: folder_info,
-      });
-
-      //default note
-      let note_info = {
-        createAt: new Date(),
-        updatedAt: new Date(),
-        type: "markdown",
-        content: "",
-      };
-
-      ipcRenderer.sendSync("writeCson", {
-        file_path: `${data_path}/${currentRepoKey}/${folder_key}/${default_note_key}.cson`,
-        obj: note_info,
       });
 
       updateRepos("folder", {
@@ -155,17 +134,10 @@ const FolderList: React.FC<FolderListProps> = ({
         repo_key: currentRepoKey,
         folder_key,
       });
-      changeNotesAfterNew("note", {
-        data_path,
-        repo_key: currentRepoKey,
-        folder_key,
-        note_key: default_note_key,
-      });
       setNewFolderKey("");
       setNewFolderName("");
       repoSwitch(currentRepoKey);
       folderSwitch(data_path, folder_key);
-      noteSwitch(data_path, default_note_key);
       setFocus(cryptoRandomString({ length: 24, type: "alphanumeric" }));
     },
     [
@@ -173,7 +145,6 @@ const FolderList: React.FC<FolderListProps> = ({
       currentRepoKey,
       changeNotesAfterNew,
       folderSwitch,
-      noteSwitch,
       repoSwitch,
       setFocus,
       updateRepos,
@@ -467,13 +438,7 @@ const FolderList: React.FC<FolderListProps> = ({
   return (
     <FolderListContainer width={width}>
       <FolderTopBar>
-        {data_path ? (
-          <FolderAddBtn onClick={() => newFolder()}>
-            <img src={newFolderIcon} alt="" />
-          </FolderAddBtn>
-        ) : (
-          <div></div>
-        )}
+        <FolderTopTitle>分类</FolderTopTitle>
       </FolderTopBar>
       {folders_key && folders_obj ? (
         <DndContext
@@ -497,6 +462,9 @@ const FolderList: React.FC<FolderListProps> = ({
                     <Sortable key={key} id={key}>
                       <FolderItem
                         key={`item-${key}`}
+                        className={
+                          currentFolderKey === key ? "folderItemSelected" : ""
+                        }
                         style={{
                           backgroundColor:
                             currentFolderKey === key ? "#3a404c" : "",
@@ -512,7 +480,12 @@ const FolderList: React.FC<FolderListProps> = ({
                           }
                         }}
                       >
-                        {folders_obj[key]["folder_name"]}
+                        <FolderIcon>
+                          <FolderIconImg src={folderIcon} alt="" />
+                        </FolderIcon>
+                        <FolderName>
+                          {folders_obj[key]["folder_name"]}
+                        </FolderName>
                         {keySelect &&
                         currentFolderKey !== key &&
                         index < 10 * 10 ? (
@@ -555,12 +528,19 @@ const FolderList: React.FC<FolderListProps> = ({
               ) : (
                 <></>
               )}
+              {data_path && !newFolderKey ? (
+                <FolderAddBtn onClick={() => newFolder()}>
+                  <img src={newFolderIcon} alt="" />
+                </FolderAddBtn>
+              ) : (
+                <div></div>
+              )}
               {newFolderKey ? (
                 <TextInput
                   key={newFolderKey}
                   value={newFolderName}
                   className="folderNameInput"
-                  placeholder="输入文件夹名后回车"
+                  placeholder="输入新的分类名"
                   autoFocus={true}
                   onBlur={(e) => newFolderConfirm(e, newFolderKey)}
                   onChange={(e) => newFolderInputChange(e)}
@@ -576,12 +556,20 @@ const FolderList: React.FC<FolderListProps> = ({
               {activeId && folders_obj ? (
                 <FolderItem
                   key={activeId}
+                  className={
+                    currentFolderKey === activeId ? "folderItemSelected" : ""
+                  }
                   style={{
                     backgroundColor:
                       currentFolderKey === activeId ? "#3a404c" : "",
                   }}
                 >
-                  {folders_obj[activeId]["folder_name"]}
+                  <FolderIcon>
+                    <FolderIconImg src={folderIcon} alt="" />
+                  </FolderIcon>
+                  <FolderName>
+                    {folders_obj[activeId]["folder_name"]}
+                  </FolderName>
                 </FolderItem>
               ) : null}
             </div>
@@ -624,7 +612,6 @@ const FolderListContainer = styled.div(
     display: "flex",
     flexDirection: "column",
     height: "100%",
-    borderRight: "1px solid rgba(58,64,76,0.8)",
     minWidth: "100px",
   },
   (props: { width: number }) => ({
@@ -635,16 +622,13 @@ const FolderListContainer = styled.div(
 const FolderTopBar = styled.div({
   display: "flex",
   alignItems: "center",
+  justifyContent: "space-around",
   flexDirection: "row",
-  margin: "10px 16px",
+  margin: "20px 16px 10px 6px",
 });
 
-const FolderAddBtn = styled.div({
-  width: "18px",
-  height: "18px; ",
-  display: "flex",
-  alignItem: "center",
-  justifyContent: "center",
+const FolderTopTitle = styled.div({
+  height: "24px",
   color: "#939395",
   cursor: "pointer",
 });
@@ -677,20 +661,41 @@ const Folders = styled.div(
 //     border-radius: 3px;
 // }
 
-const FolderItem = styled.div`
-  position: relative;
-  height: 28px;
-  line-height: 28px;
-  font-size: 14px;
-  padding: 0 16px;
-  color: #939395;
-  cursor: pointer;
-  white-space: nowrap;
-  &:hover {
+const FolderItem = styled.div(
+  {
+    display: "flex",
+    alignItems: "center",
+    position: "relative",
+    height: "28px",
+    lineHeight: "14px",
+    fontSize: "14px",
+    margin: "0 10px 4px 0",
+    padding: "0 0 0 8px",
+    color: "#939395",
+    cursor: "pointer",
+  },
+  `&:hover {
     color: #ddd;
     background-color: rgba(47, 51, 56, 0.2);
-  }
-`;
+  }`
+);
+
+const FolderIcon = styled.div({
+  width: "14px",
+  height: "14px",
+  marginRight: "8px",
+});
+
+const FolderIconImg = styled.img({
+  width: "14px",
+  height: "14px",
+});
+
+const FolderName = styled.div({
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+});
 
 const FolderKeyTab = styled.div({
   position: "absolute",
@@ -730,27 +735,21 @@ const MenuLi = styled.li(
     cursor: "pointer",
   },
   `&:hover {
-background-color: #EBEBEB; 
-}`
+    background-color: #EBEBEB; 
+  }
+`
 );
 
-// const FolderBottomBar = styled.div({
-//     display: 'flex',
-//     alignItems: 'center',
-//     flexDirection: 'row-reverse',
-//     padding: '8px'
-// })
-
-// const MoreFolder = styled.div({
-//     width: '26px',
-//     height: '26px',
-//     padding: '3px',
-//     display: 'flex',
-//     alignItem: 'center',
-//     justifyContent: 'center',
-//     color: '#939395',
-//     cursor: 'pointer'
-// })
+const FolderAddBtn = styled.div({
+  width: "14px",
+  height: "14px",
+  margin: "10px 0 0 0",
+  padding: "0 10px 10px 8px",
+  display: "flex",
+  alignItem: "center",
+  color: "#939395",
+  cursor: "pointer",
+});
 
 type FolderListProps = {
   data_path: string;

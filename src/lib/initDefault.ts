@@ -12,26 +12,20 @@ const updateDefaultData = () => {
   let default_data: Data = {
     repos: {
       [repo_id]: {
-        repo_name: "默认仓库",
+        repo_name: "1号资料库",
         folders_key: [folder_id],
         folders_obj: {
           [folder_id]: {
-            folder_name: "默认文件夹",
-            notes_key: [note_id],
-            notes_obj: {
-              [note_id]: {
-                title: "空笔记",
-              },
-            },
+            folder_name: "默认分类",
+            notes_key: [],
+            notes_obj: {},
           },
         },
       },
     },
     notes: {
       [repo_id]: {
-        [folder_id]: {
-          [note_id]: "",
-        },
+        [folder_id]: {},
       },
     },
     dxnote: {
@@ -41,9 +35,7 @@ const updateDefaultData = () => {
       repos: {
         [repo_id]: {
           cur_folder_key: folder_id,
-          folders: {
-            [folder_id]: note_id,
-          },
+          folders: {},
         },
       },
     },

@@ -36,14 +36,14 @@ body {
 
 .repoNameInput {
   width: 120px;
-  height: 29px;
-  line-height: 29px;
+  height: 28px;
+  line-height: 28px;
   border: none;
   outline: none;
   flex: 1;
   font-size: 14px;
   border-bottom: 1px solid #939395;
-  margin-bottom: 10px;
+  margin: 0 0 0 20px;
 }
 
 .folderNameInput {
@@ -56,6 +56,20 @@ body {
   flex: 1;
   font-size: 14px;
   border-bottom: 1px solid #939395;
+}
+
+.folderItemSelected:before {
+  position: absolute;
+  top: 0px;
+  right: -20px;
+  display: block;
+  height: 12px;
+  content: "";
+  border-bottom: 8px solid transparent;
+  border-top: 8px solid transparent;
+  border-left: 10px solid rgb(58, 64, 76);
+  border-right: 10px solid transparent;
+  cursor: pointer;
 }
 
 .lastScrollPos {

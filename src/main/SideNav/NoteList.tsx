@@ -70,7 +70,7 @@ const NoteList: React.FC<NoteListProps> = ({
 
     folder_info.notes_key.push(note_key);
     folder_info.notes_obj[note_key] = {
-      title: "空笔记",
+      title: "新建文档",
     };
 
     ipcRenderer.sendSync("writeJson", {
@@ -343,7 +343,7 @@ const NoteList: React.FC<NoteListProps> = ({
 
   return (
     <NoteListContainer width={width}>
-      <ColumnHeader>
+      <NoteAddFloat>
         {data_path ? (
           <NoteAddBtn
             onKeyDown={(e) => handleKeyDown(e)}
@@ -354,7 +354,7 @@ const NoteList: React.FC<NoteListProps> = ({
         ) : (
           <div></div>
         )}
-      </ColumnHeader>
+      </NoteAddFloat>
       {notes_key && notes_obj ? (
         <DndContext
           sensors={sensors}
@@ -422,6 +422,15 @@ const NoteList: React.FC<NoteListProps> = ({
                     </Sortable>
                   );
                 })}
+              {notes_key.filter((key) => notes_obj && notes_obj[key]).length ===
+              0 ? (
+                <AddNotesTips>
+                  <div>点击按钮</div>
+                  <div>添加新文档</div>
+                </AddNotesTips>
+              ) : (
+                <></>
+              )}
               <div
                 style={{ clear: "both", height: "1px", width: "100%" }}
                 ref={notesEnd}
@@ -459,7 +468,7 @@ const NoteList: React.FC<NoteListProps> = ({
           </DragOverlay>
         </DndContext>
       ) : (
-        <></>
+        <div>没有东西</div>
       )}
       {/* <NoteBottomBar>
                 <MoreNote><img src={moreBtnIcon} alt='' /></MoreNote>
@@ -480,16 +489,22 @@ const NoteListContainer = styled.div(
   })
 );
 
-const ColumnHeader = styled.div({
+const NoteAddFloat = styled.div({
+  position: "absolute",
+  bottom: "10px",
+  right: "10px",
   display: "flex",
   alignItems: "center",
   flexDirection: "row",
-  margin: "10px 16px",
+  borderRadius: "30px",
+  background: "#3A404C",
+  zIndex: "9999",
 });
 
 const NoteAddBtn = styled.div({
-  width: "16px",
-  height: "16px; ",
+  width: "20px",
+  height: "20px",
+  padding: "16px",
   display: "flex",
   alignItem: "center",
   justifyContent: "center",
@@ -502,7 +517,10 @@ const Notes = styled.div(
     overflowY: "scroll",
     flex: "1",
     minHeight: "0",
-    paddingBottom: "50px",
+    marginTop: "16px",
+    padding: "10px 0 50px 0",
+    border: "1px solid rgba(58, 64, 76, 0.8)",
+    borderRadius: "8px",
     scrollBehavior: "smooth",
   },
   `
@@ -512,23 +530,26 @@ const Notes = styled.div(
 `
 );
 
-const NoteItem = styled.div`
-  position: relative;
-  height: 36px;
-  line-height: 36px;
-  padding: 0 5px;
-  margin: 0 10px;
-  font-size: 14px;
-  color: #939395;
-  cursor: pointer;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  &:hover {
+const NoteItem = styled.div(
+  {
+    position: "relative",
+    height: "36px",
+    lineHeight: "36px",
+    padding: "0 10px",
+    margin: "0 10px",
+    fontSize: "14px",
+    color: "#939395",
+    cursor: "pointer",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+  },
+  `&:hover {
     color: #ddd;
     background-color: rgba(47, 51, 56, 0.2);
   }
-`;
+`
+);
 
 const NoteKeyTab = styled.div({
   position: "absolute",
@@ -542,6 +563,22 @@ const NoteKeyTab = styled.div({
   padding: "2px 4px",
   borderRadius: "4px",
   backgroundColor: "rgb(58, 64, 76)",
+});
+
+const AddNotesTips = styled.div({
+  color: "#939395",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  marginTop: "20px",
+  fontSize: "14px",
+  position: "absolute",
+  bottom: "80px",
+  right: "20px",
+  border: "1px dotted rgba(58, 64, 76)",
+  padding: "5px 10px",
+  borderRadius: "5px",
+  background: "rgba(47, 51, 56)",
 });
 
 const MenuUl = styled.ul(

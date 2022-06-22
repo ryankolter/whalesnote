@@ -33,14 +33,12 @@ const SideBar: React.FC<SideBarProps> = ({
   setBlur,
   setKeySelect,
 }) => {
-  let [folderWidth, setFolderWidth] = useState(150);
+  let [folderWidth, setFolderWidth] = useState(130);
   let [noteWidth, setNoteWidth] = useState(200);
 
   let [showAllRepo, setShowAllRepo] = useState(false);
   let [allowHiddenAllRepoViaEnter, setAllowHiddenAllRepoViaEnter] =
     useState(true);
-
-  const repoNameLeaveTimer = useRef<NodeJS.Timeout | null>(null);
 
   useMemo(() => {
     ipcRenderer.on("selectedFolder", (event: any, path: string) => {
@@ -159,107 +157,35 @@ const SideBar: React.FC<SideBarProps> = ({
     };
   }, [handleKeyDown]);
 
-  const handleRepoNameMouseEnter = useCallback(() => {
-    if (keySelect) return;
-    setShowAllRepo(true);
-  }, [keySelect]);
-
-  const handleRepoNameMouseLeave = useCallback(() => {
-    if (keySelect) return;
-    repoNameLeaveTimer.current = setTimeout(() => {
-      setShowAllRepo(false);
-    }, 150);
-  }, [keySelect]);
-
-  const handleRepoPanelMouseEnter = useCallback(() => {
-    if (keySelect) return;
-    if (repoNameLeaveTimer.current) {
-      clearTimeout(repoNameLeaveTimer.current);
+  const repoNameClickHandler = useCallback(() => {
+    if (showAllRepo && keySelect) {
+      setKeySelect(false);
     }
-    setShowAllRepo(true);
-  }, [keySelect]);
-
-  const handleRepoPanelMouseLeave = useCallback(() => {
-    if (keySelect) return;
-    setShowAllRepo(false);
-  }, [keySelect]);
+    setShowAllRepo((showAllRepo) => !showAllRepo);
+  }, [showAllRepo, keySelect]);
 
   return (
     <LeftPanel>
       <ToolBar>
         <SearchInput placeholder="搜索" />
       </ToolBar>
-      <List>
-        <FolderList
-          data_path={data_path}
-          folders_key={folders_key}
-          folders_obj={folders_obj}
-          currentRepoKey={currentRepoKey}
-          currentFolderKey={currentFolderKey}
-          keySelect={keySelect}
-          repoSwitch={repoSwitch}
-          folderSwitch={folderSwitch}
-          noteSwitch={noteSwitch}
-          updateRepos={updateRepos}
-          changeNotesAfterNew={changeNotesAfterNew}
-          reorderFolder={reorderFolder}
-          setFocus={setFocus}
-          width={folderWidth}
-        />
-        <NoteList
-          data_path={data_path}
-          notes_key={notes_key}
-          notes_obj={notes_obj}
-          currentRepoKey={currentRepoKey}
-          currentFolderKey={currentFolderKey}
-          currentNoteKey={currentNoteKey}
-          keySelect={keySelect}
-          repoSwitch={repoSwitch}
-          folderSwitch={folderSwitch}
-          noteSwitch={noteSwitch}
-          updateRepos={updateRepos}
-          changeNotesAfterNew={changeNotesAfterNew}
-          reorderNote={reorderNote}
-          setFocus={setFocus}
-          setKeySelect={setKeySelect}
-          width={noteWidth}
-        />
-      </List>
-      <RepoBar>
-        <DirectoryBtnArea>
-          {data_path ? (
-            <DirectoryBtn
-              data_path={data_path}
-              addDataPath={addDataPath}
-              panelWidth={folderWidth + noteWidth}
-            />
-          ) : (
-            <PathAddBtn onClick={addDataPath}>添加目录</PathAddBtn>
-          )}
-        </DirectoryBtnArea>
-        <RepoNameArea
-          onMouseEnter={() => {
-            handleRepoNameMouseEnter();
-          }}
-          onMouseLeave={() => {
-            handleRepoNameMouseLeave();
+      <SelectArea>
+        <CurRepoNameTag
+          repoNameTagWidth={folderWidth + noteWidth}
+          onClick={() => {
+            repoNameClickHandler();
           }}
         >
-          <CurRepoName width={noteWidth}>
+          <RepoNameLabel>
             {repos_obj && currentRepoKey && repos_obj[currentRepoKey]
               ? repos_obj[currentRepoKey].repo_name
               : ""}
-          </CurRepoName>
-        </RepoNameArea>
+          </RepoNameLabel>
+          <RepoSwitchBtn>更多&gt;&gt;</RepoSwitchBtn>
+        </CurRepoNameTag>
         <AllRepo
           cutWidth={folderWidth + noteWidth}
           style={{ display: showAllRepo ? "block" : "none" }}
-          onMouseEnter={() => {
-            handleRepoPanelMouseEnter();
-          }}
-          onMouseLeave={() => {
-            handleRepoPanelMouseLeave();
-          }}
         >
           <RepoPanel
             data_path={data_path}
@@ -280,9 +206,59 @@ const SideBar: React.FC<SideBarProps> = ({
             setFocus={setFocus}
             setBlur={setBlur}
             setKeySelect={setKeySelect}
+            setShowAllRepo={setShowAllRepo}
             setAllowHiddenAllRepoViaEnter={setAllowHiddenAllRepoViaEnter}
           />
         </AllRepo>
+        <List>
+          <FolderList
+            data_path={data_path}
+            folders_key={folders_key}
+            folders_obj={folders_obj}
+            currentRepoKey={currentRepoKey}
+            currentFolderKey={currentFolderKey}
+            keySelect={keySelect}
+            repoSwitch={repoSwitch}
+            folderSwitch={folderSwitch}
+            noteSwitch={noteSwitch}
+            updateRepos={updateRepos}
+            changeNotesAfterNew={changeNotesAfterNew}
+            reorderFolder={reorderFolder}
+            setFocus={setFocus}
+            width={folderWidth}
+          />
+          <NoteList
+            data_path={data_path}
+            notes_key={notes_key}
+            notes_obj={notes_obj}
+            currentRepoKey={currentRepoKey}
+            currentFolderKey={currentFolderKey}
+            currentNoteKey={currentNoteKey}
+            keySelect={keySelect}
+            repoSwitch={repoSwitch}
+            folderSwitch={folderSwitch}
+            noteSwitch={noteSwitch}
+            updateRepos={updateRepos}
+            changeNotesAfterNew={changeNotesAfterNew}
+            reorderNote={reorderNote}
+            setFocus={setFocus}
+            setKeySelect={setKeySelect}
+            width={noteWidth}
+          />
+        </List>
+      </SelectArea>
+      <RepoBar>
+        <DirectoryBtnArea>
+          {data_path ? (
+            <DirectoryBtn
+              data_path={data_path}
+              addDataPath={addDataPath}
+              panelWidth={folderWidth + noteWidth}
+            />
+          ) : (
+            <PathAddBtn onClick={addDataPath}>添加目录</PathAddBtn>
+          )}
+        </DirectoryBtnArea>
       </RepoBar>
     </LeftPanel>
   );
@@ -295,7 +271,27 @@ const LeftPanel = styled.div({
 });
 
 const ToolBar = styled.div({
-  margin: "8px 18px 0 18px",
+  margin: "4px 16px 0 16px",
+});
+
+const SearchInput = styled.input({
+  border: "none",
+  outline: "none",
+  flex: "1",
+  fontSize: "14px",
+  lineHeight: "20px",
+  letterSpacing: "1px",
+  width: "100%",
+  padding: "10px",
+});
+
+const SelectArea = styled.div({
+  position: "relative",
+  display: "flex",
+  flexDirection: "column",
+  flex: "1",
+  minHeight: "0",
+  margin: "4px 10px 0 10px",
 });
 
 const RepoBar = styled.div({
@@ -335,38 +331,16 @@ const PathAddBtn = styled.div(
 `
 );
 
-const RepoNameArea = styled.div(
+const CurRepoNameTag = styled.div(
   {
-    position: "relative",
-    cursor: "pointer",
-  },
-  `
-    &::before {
-        position: absolute;
-        top: 0;
-        left: -32px;
-        display: block;
-        content: '';
-        border-bottom: 16px solid transparent;
-        border-top: 16px solid rgb(58, 64, 76);
-        border-left: 16px solid transparent;
-        border-right: 16px solid rgb(58, 64, 76);
-        cursor: pointer;
-    }
-`
-);
-
-const CurRepoName = styled.div(
-  {
-    position: "relative",
-    textAlign: "center",
-    height: "24px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    height: "40px",
     minWidth: "60px",
-    lineHeight: "24px",
-    fontSize: "16px",
-    padding: "4px 12px 4px 6px",
-    marginBottom: "8px",
-    borderBottomRightRadius: "4px",
+    lineHeight: "40px",
+    paddingRight: "20px",
+    borderRadius: "4px",
     backgroundColor: "rgb(58, 64, 76)",
     color: "#939395",
     cursor: "pointer",
@@ -374,45 +348,51 @@ const CurRepoName = styled.div(
     textOverflow: "ellipsis",
     wordBreak: "break-all",
   },
-  (props: { width: number }) => ({
-    width: "calc( " + props.width + "px - 18px)",
+  (props: { repoNameTagWidth: number }) => ({
+    width: props.repoNameTagWidth,
   })
 );
+
+const RepoNameLabel = styled.div({
+  flex: 1,
+  textAlign: "center",
+  fontSize: "16px",
+  padding: "0 30px",
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+});
+
+const RepoSwitchBtn = styled.div({
+  height: "40px",
+  lineHeight: "40px",
+  fontSize: "14px",
+});
 
 const AllRepo = styled.div(
   {
     position: "absolute",
-    bottom: "8px",
-    padding: "20px",
+    top: "-40px",
+    padding: "10px",
     boxSizing: "border-box",
     border: "1px solid rgba(58, 64, 76)",
-    borderRadius: "16px",
+    borderRadius: "8px",
     backgroundColor: "#2C3033",
     zIndex: "9999",
   },
   (props: { cutWidth: number }) => ({
-    left: props.cutWidth,
-    width: "calc( 100vw - " + props.cutWidth + "px - 5px)",
+    left: "calc( " + props.cutWidth + "px + 15px)",
+    width: "calc( 100vw - " + props.cutWidth + "px - 35px)",
   })
 );
-
-const SearchInput = styled.input({
-  border: "none",
-  outline: "none",
-  flex: "1",
-  fontSize: "14px",
-  lineHeight: "20px",
-  letterSpacing: "1px",
-  width: "100%",
-});
 
 const List = styled.div({
   display: "flex",
   alignItem: "center",
   flex: "1",
   minHeight: "0",
-  borderBottom: "1px solid rgba(58, 64, 76, 0.8)",
   borderBottomLeftRadius: "4px",
+  padding: "0 0 0 5px",
 });
 
 type SideBarProps = {

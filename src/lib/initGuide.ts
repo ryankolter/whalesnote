@@ -9,7 +9,7 @@ const updateGuideData = () => {
   let guide_data: Data = {
     repos: {
       DEFAULTREPO1: {
-        repo_name: "默认仓库",
+        repo_name: "1号资料库",
         folders_key: ["SIMPLEGUIDE1", "MIDDLEGUIDE1"],
         folders_obj: {
           SIMPLEGUIDE1: {

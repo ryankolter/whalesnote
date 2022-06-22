@@ -159,8 +159,8 @@ export const MarkdownArea: React.FC<MarkdownAreaProps> = ({
       if (doc) {
         let first_line_content = doc
           .getLine(doc.firstLine())
-          .replace(/^[#-\_*>\s]+/g, "");
-        let new_name: string = first_line_content || "空笔记";
+          .replace(/^[#\-\_*>\s]+/g, "");
+        let new_name: string = first_line_content || "新建文档";
         renameNote(
           data_path,
           currentRepoKey,
