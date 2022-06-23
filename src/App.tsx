@@ -10,9 +10,9 @@ import initData from "./lib/init";
 import SideBar from "./main/SideNav";
 
 import { MarkdownArea } from "./components/markdownArea";
-//import SocketServerBtn from "./components/socketServerBtn";
+import SocketServerBtn from "./components/socketServerBtn";
 
-//import SocketClientBtn from "./socketClientBtn";
+import SocketClientBtn from "./socketClientBtn";
 import "./resources/css/font_awesome.css";
 import "./resources/my_highlight_styles/editor/solarized-dark.min.css";
 import "./resources/my_highlight_styles/preview/solarized-dark.min.css";
@@ -169,15 +169,6 @@ const AppContainer = styled.div({
   flexDirection: "column",
   overflow: "hidden",
 });
-
-// const AddPathTips = styled.div({
-//   position: "fixed",
-//   bottom: "40px",
-//   width: "100vw",
-//   height: "100vh",
-//   background: "rgba(0,0,0,0.5)",
-//   zIndex: "99999",
-// })
 
 const RepoContent = styled.div({
   display: "flex",

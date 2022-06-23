@@ -1,26 +1,24 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useCallback } from "react";
 const { ipcRenderer, clipboard } = window.require("electron");
 
 const SocketServerBtn: React.FC<SocketServerBtnProps> = () => {
   let [port, setPort] = useState<number>();
   let [status, setStatus] = useState<string>("close");
 
-  const openBtn = () => {
-    let randomPort = 8087; //randomInt(1024,65535);
-    setPort(randomPort);
-    openHttpServer(randomPort);
-  };
+  const randomInt = useCallback((min: number, max: number) => {
+    return Math.floor(Math.random() * (max - min)) + min;
+  }, []);
 
-  const openHttpServer = (port: number) => {
+  const openHttpServer = useCallback((port: number) => {
     ipcRenderer.once(
       "openHttpStatus",
       (
         event: any,
-        { status, message }: { status: boolean; message: string }
+        { httpStatus, message }: { httpStatus: boolean; message: string }
       ) => {
         console.log("open back:" + message);
-        if (!status) {
-          let randomPort = randomInt(1024, 65535);
+        if (!httpStatus) {
+          let randomPort = randomInt(5000, 65535);
           setPort(randomPort);
           openHttpServer(randomPort);
         } else {
@@ -33,37 +31,39 @@ const SocketServerBtn: React.FC<SocketServerBtnProps> = () => {
       }
     );
     ipcRenderer.send("askOpenHttp", { port: port });
-  };
+  }, []);
 
-  const closeBtn = () => {
-    closeHttpServer();
-  };
+  const openBtn = useCallback(() => {
+    let randomPort = 8087; //randomInt(5000,65535);
+    setPort(randomPort);
+    openHttpServer(randomPort);
+  }, [openHttpServer]);
 
-  const closeHttpServer = () => {
+  const closeHttpServer = useCallback(() => {
     console.log("want close");
     ipcRenderer.once(
       "closeHttpStatus",
       (
         event: any,
-        { status, message }: { status: boolean; message: string }
+        { httpStatus, message }: { httpStatus: boolean; message: string }
       ) => {
         console.log("close back:" + message);
-        if (status) {
+        if (httpStatus) {
           setStatus("close");
         } else {
         }
       }
     );
     ipcRenderer.send("askcloseHttp");
-  };
+  }, []);
 
-  const randomInt = (min: number, max: number) => {
-    return Math.floor(Math.random() * (max - min)) + min;
-  };
+  const closeBtn = useCallback(() => {
+    closeHttpServer();
+  }, []);
 
-  const sendMessage = () => {
+  const sendMessage = useCallback(() => {
     ipcRenderer.send("pcSendMessage", { data: "这条信息是PC主动送出的" });
-  };
+  }, []);
 
   return (
     <div>
@@ -75,7 +75,6 @@ const SocketServerBtn: React.FC<SocketServerBtnProps> = () => {
       <input type="button" value="服务器发送信息" onClick={sendMessage} />
     </div>
   );
-  return <div></div>;
 };
 
 type SocketServerBtnProps = {};

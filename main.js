@@ -4,27 +4,20 @@ const path = require("path");
 const CSON = require("cson");
 const fse = require("fs-extra");
 
-app.on("ready", () => {
-  createWindow();
-  processIPC();
-});
+if (!app.requestSingleInstanceLock()) {
+  app.quit();
+  process.exit(0);
+}
 
-app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
-    app.quit();
-  }
-});
-
-app.on("activate", () => {
-  if (win === null) {
-    createWindow();
-  }
-});
+app.disableHardwareAcceleration();
 
 let win = null;
 
-const createWindow = () => {
+const createWindow = async () => {
   win = new BrowserWindow({
+    show: false,
+    vibrancy: "under-window",
+    visualEffectState: "active",
     width: 1080,
     height: 720,
     minWidth: 500,
@@ -36,12 +29,24 @@ const createWindow = () => {
     },
   });
 
-  win.loadFile(path.join(__dirname, "/build/index.html"));
+  win?.loadFile(path.join(__dirname, "/build/index.html"));
 
-  win.webContents.openDevTools();
+  win?.webContents.openDevTools();
 
-  win.on("closed", () => {
-    win = null;
+  win?.webContents.on(
+    "select-bluetooth-device",
+    (event, deviceList, callback) => {
+      event.preventDefault();
+      if (deviceList && deviceList.length > 0) {
+        callback(deviceList[0].deviceId);
+      }
+    }
+  );
+
+  win.on("ready-to-show", () => {
+    if (!win?.isVisible()) {
+      win?.show();
+    }
   });
 };
 
@@ -54,30 +59,30 @@ const processIPC = () => {
     const io = require("socket.io")(server);
     io.on("connection", (s) => {
       socket = s;
-      socket.on("mobileAndPC", (data) => {
+      socket.on("MobileToPc", (data) => {
         console.log("电脑收到消息:" + data);
       });
       socket.emit("connectSuccess", "电脑已经连上!");
     });
 
     server.on("listening", () => {
-      win.webContents.send("openHttpStatus", {
-        status: true,
+      win?.webContents.send("openHttpStatus", {
+        httpStatus: true,
         message: `open http on ${port} success!!`,
       });
       console.log("这里服务器被开启，要上报坐标");
     });
 
     server.once("close", () => {
-      win.webContents.send("closeHttpSuccess");
+      win?.webContents.send("closeHttpSuccess");
       console.log("这里服务器被停止");
     });
 
     server.on("error", (err) => {
       console.log(err);
       if (err.code === "EADDRINUSE") {
-        win.webContents.send("openHttpStatus", {
-          status: false,
+        win?.webContents.send("openHttpStatus", {
+          httpStatus: false,
           message: `open http on ${port} failed!!`,
         });
       }
@@ -91,20 +96,20 @@ const processIPC = () => {
     console.log(result);
 
     if (result._connections > 0) {
-      win.webContents.send("closeHttpStatus", {
-        status: false,
+      win?.webContents.send("closeHttpStatus", {
+        httpStatus: false,
         message: `close http failed!!`,
       });
     } else {
-      win.webContents.send("closeHttpStatus", {
-        status: true,
+      win?.webContents.send("closeHttpStatus", {
+        httpStatus: true,
         message: `close http success!!`,
       });
     }
   });
 
   ipcMain.on("pcSendMessage", (event, { data }) => {
-    socket?.emit("mobileAndPC", data);
+    socket?.emit("PcToMobile", data);
   });
 
   ipcMain.on("folderExist", (event, { folder_path }) => {
@@ -178,3 +183,26 @@ const processIPC = () => {
     shell.showItemInFolder(folder_path);
   });
 };
+
+app.whenReady().then(() => {
+  createWindow();
+
+  app.on("activate", () => {
+    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+  });
+
+  processIPC();
+});
+
+app.on("second-instance", () => {
+  if (win) {
+    if (win.isMinimized()) win.restore();
+    win.focus();
+  }
+});
+
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") {
+    app.quit();
+  }
+});

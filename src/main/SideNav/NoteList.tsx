@@ -56,7 +56,6 @@ const NoteList: React.FC<NoteListProps> = ({
 
   const scrollToBottom = () => {
     if (notesEnd && notesEnd.current) {
-      console.log(notesEnd.current);
       notesEnd.current.scrollIntoView({ behavior: "smooth" });
     }
   };

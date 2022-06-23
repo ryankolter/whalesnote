@@ -1,43 +1,37 @@
-import { useEffect, useState } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 import webSocket, { Socket } from "socket.io-client";
 
 const SocketClientBtn: React.FC<SocketClientBtnProps> = () => {
-  const [client, setClient] = useState<Socket | null>(null);
+  //const [client, setClient] = useState<Socket | null>(null);
+  const client = useRef<Socket | null>(null);
   let [status, setStatus] = useState<string>("close");
 
-  const connectWebSocket = () => {
-    setClient(
-      webSocket(`http://localhost:8087`, {
-        reconnection: false,
-      })
-    );
-  };
+  const connectWebSocket = useCallback(() => {
+    client.current = webSocket(`http://localhost:8087`, {
+      reconnection: false,
+    });
 
-  useEffect(() => {
-    initWebSocket();
-  }, [client]);
-
-  const initWebSocket = () => {
-    client?.once("connectSuccess", (data) => {
+    client.current?.once("connectSuccess", (data) => {
       setStatus("open");
       console.log("connect to PC success!");
       console.log("Mobile收到PC的信息:" + data);
     });
-    client?.on("mobileAndPC", (data) => {
+    client.current?.on("PcToMobile", (data) => {
       console.log("Mobile收到PC的信息:" + data);
     });
-  };
+  }, []);
 
-  const disconnectWebSocket = () => {
-    let result = client?.close();
+  const disconnectWebSocket = useCallback(() => {
+    let result = client.current?.close();
     console.log(result);
     setStatus("close");
+    client.current = null;
     console.log("disconnect success!");
-  };
+  }, []);
 
-  const sendMessage = () => {
-    client?.emit("mobileAndPC", "这条信息是Mobile主动送出的");
-  };
+  const sendMessage = useCallback(() => {
+    client.current?.emit("MobileToPc", "这条信息是Mobile主动送出的");
+  }, []);
 
   return (
     <div>
