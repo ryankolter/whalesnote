@@ -221,7 +221,27 @@ const NoteList: React.FC<NoteListProps> = ({
 
   useEffect(() => {
     if (numArray.length === 2) {
-      noteSwitchByIndex(numArray[0] * 26 + numArray[1]);
+      let new_index = 0;
+      if (numArray[0] < 8) {
+        if (numArray[1] < 8) {
+          new_index = numArray[0] * 22 + numArray[1];
+        } else if (numArray[1] > 11) {
+          new_index = numArray[0] * 22 + numArray[1] - 4;
+        }
+      } else if (numArray[0] > 11) {
+        if (numArray[1] < 8) {
+          new_index = (numArray[0] - 4) * 22 + numArray[1];
+        } else if (numArray[1] > 11) {
+          new_index = (numArray[0] - 4) * 22 + numArray[1] - 4;
+        }
+      }
+      noteSwitchByIndex(new_index);
+      if (outerRef && outerRef.current) {
+        const height = outerRef.current.offsetHeight;
+        let offset = new_index * 36 - height / 4;
+        if (offset < 0) offset = 0;
+        setNoteScrollTop(offset);
+      }
       setNumArray([]);
     }
   }, [numArray, noteSwitchByIndex]);
@@ -248,10 +268,20 @@ const NoteList: React.FC<NoteListProps> = ({
         if (e.keyCode === 73 && !e.metaKey && keySelect) {
           preNotePage();
         }
-        if (e.keyCode >= 65 && e.keyCode <= 90 && !e.metaKey && keySelect) {
+        if (
+          ((e.keyCode >= 65 && e.keyCode <= 72) ||
+            (e.keyCode >= 77 && e.keyCode <= 90)) &&
+          !e.metaKey &&
+          keySelect
+        ) {
           const num = parseInt(e.keyCode) - 65;
           if (numArray.length === 0) {
-            if (notes_key && num < Math.ceil(notes_key.length / 26)) {
+            if (
+              notes_key &&
+              ((num < 8 && num < Math.ceil(notes_key.length / 22)) ||
+                (num > 11 && num < Math.ceil(notes_key.length / 22) + 4))
+            ) {
+              console.log(num);
               setNumArray((state) => state.concat([num]));
             }
           } else {
@@ -275,7 +305,12 @@ const NoteList: React.FC<NoteListProps> = ({
           preNotePage();
         }
 
-        if (e.keyCode >= 65 && e.keyCode <= 90 && !e.ctrlKey && keySelect) {
+        if (
+          ((e.keyCode >= 65 && e.keyCode <= 72) ||
+            (e.keyCode >= 77 && e.keyCode <= 90)) &&
+          !e.ctrlKey &&
+          keySelect
+        ) {
           const num = parseInt(e.keyCode) - 65;
           if (numArray.length === 0) {
             if (notes_key && num < Math.ceil(notes_key.length / 26)) {
@@ -333,11 +368,19 @@ const NoteList: React.FC<NoteListProps> = ({
   );
 
   const genAlphaCode1 = (order: number): number => {
-    return Math.ceil(order / 26) + 64;
+    if (order <= 8 * 22) {
+      return Math.ceil(order / 22) + 64;
+    } else {
+      return 4 + Math.ceil(order / 22) + 64;
+    }
   };
 
   const genAlphaCode2 = (order: number): number => {
-    return (order % 26 === 0 ? 26 : order % 26) + 64;
+    if (order % 22 <= 8) {
+      return (order % 22 === 0 ? 26 : order % 22) + 64;
+    } else {
+      return (order % 22) + 4 + 64;
+    }
   };
 
   return (
@@ -389,7 +432,7 @@ const NoteList: React.FC<NoteListProps> = ({
                         {notes_obj[key]["title"]}
                         {keySelect &&
                         currentNoteKey !== key &&
-                        index < 26 * 26 ? (
+                        index < 22 * 22 ? (
                           <NoteKeyTab>
                             <span
                               style={{
@@ -398,6 +441,9 @@ const NoteList: React.FC<NoteListProps> = ({
                                   numArray[0] + 65 === genAlphaCode1(index + 1)
                                     ? "#E9E9E9"
                                     : "",
+                                width: "10px",
+                                display: "flex",
+                                justifyContent: "center",
                               }}
                             >
                               {String.fromCharCode(genAlphaCode1(index + 1))}
@@ -409,6 +455,9 @@ const NoteList: React.FC<NoteListProps> = ({
                                   numArray[1] + 65 === genAlphaCode2(index + 1)
                                     ? "#E9E9E9"
                                     : "",
+                                width: "10px",
+                                display: "flex",
+                                justifyContent: "center",
                               }}
                             >
                               {String.fromCharCode(genAlphaCode2(index + 1))}
@@ -517,7 +566,7 @@ const Notes = styled.div(
     flex: "1",
     minHeight: "0",
     marginTop: "16px",
-    padding: "10px 0 50px 0",
+    padding: "10px 0 70px 0",
     border: "1px solid rgba(58, 64, 76, 0.8)",
     borderRadius: "8px",
     scrollBehavior: "smooth",
@@ -551,10 +600,12 @@ const NoteItem = styled.div(
 );
 
 const NoteKeyTab = styled.div({
+  display: "flex",
+  alignItems: "center",
   position: "absolute",
   top: "4px",
   right: "8px",
-  width: "18px",
+  width: "20px",
   height: "13px",
   lineHeight: "13px",
   fontSize: "13px",

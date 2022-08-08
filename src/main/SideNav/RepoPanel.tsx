@@ -888,7 +888,7 @@ const RepoGroupItem = styled.div({
 });
 
 const RepoItemPadding = styled.div({
-  width: "calc(100% / 5 * 4)",
+  width: "calc(100% / 5 * 4 - 58px)",
   height: "100%",
 });
 

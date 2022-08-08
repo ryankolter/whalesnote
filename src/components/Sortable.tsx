@@ -11,6 +11,7 @@ export const Sortable = (props: any) => {
       {...listeners}
       {...attributes}
       className={props.className}
+      style={{ outline: "none", border: "none" }}
     >
       {props.children}
     </div>
