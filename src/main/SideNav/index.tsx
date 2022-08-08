@@ -7,7 +7,7 @@ import NoteList from "./NoteList";
 import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 const { ipcRenderer } = window.require("electron");
 
-const SideBar: React.FC<SideBarProps> = ({
+const SideNav: React.FC<SideNavProps> = ({
   data_path,
   repos_key,
   repos_obj,
@@ -396,7 +396,7 @@ const List = styled.div({
   padding: "0 0 0 5px",
 });
 
-type SideBarProps = {
+type SideNavProps = {
   data_path: string;
   repos_key: string[] | undefined;
   repos_obj: object | undefined;
@@ -439,4 +439,4 @@ type SideBarProps = {
   setKeySelect: (keySelect: boolean) => void;
 };
 
-export default SideBar;
+export default SideNav;

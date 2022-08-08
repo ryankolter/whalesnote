@@ -7,9 +7,10 @@ import { useDxnote } from "./lib/useDxnote";
 
 import initData from "./lib/init";
 
-import SideBar from "./main/SideNav";
+import SideNav from "./main/SideNav";
+import CenterArea from "./main/CenterArea";
 
-import { MarkdownArea } from "./components/markdownArea";
+import { MarkdownArea } from "./main/CenterArea/MarkdownArea";
 import SocketServerBtn from "./components/socketServerBtn";
 
 import SocketClientBtn from "./socketClientBtn";
@@ -84,7 +85,7 @@ const App = () => {
 
       </AddPathTips> */}
       <RepoContent>
-        <SideBar
+        <SideNav
           data_path={dataPath}
           repos_key={dxnote.repos_key}
           repos_obj={repos}
@@ -114,7 +115,7 @@ const App = () => {
           setBlur={setBlur}
           setKeySelect={setKeySelect}
         />
-        <MarkdownArea
+        <CenterArea
           data_path={dataPath}
           updateNote={updateNote}
           renameNote={renameNote}
@@ -133,26 +134,8 @@ const App = () => {
               ? notes[currentRepoKey][currentFolderKey][currentNoteKey]
               : ""
           }
-          editPos={
-            currentRepoKey &&
-            currentFolderKey &&
-            currentNoteKey &&
-            editPos[currentRepoKey] &&
-            editPos[currentRepoKey][currentFolderKey] &&
-            editPos[currentRepoKey][currentFolderKey][currentNoteKey]
-              ? editPos[currentRepoKey][currentFolderKey][currentNoteKey]
-              : { cursor_line: -1, cursor_ch: -1 }
-          }
-          editLine={
-            currentRepoKey &&
-            currentFolderKey &&
-            currentNoteKey &&
-            editLine[currentRepoKey] &&
-            editLine[currentRepoKey][currentFolderKey] &&
-            editLine[currentRepoKey][currentFolderKey][currentNoteKey]
-              ? editLine[currentRepoKey][currentFolderKey][currentNoteKey]
-              : 0
-          }
+          editPos={editPos}
+          editLine={editLine}
           focus={focus}
           blur={blur}
         />
