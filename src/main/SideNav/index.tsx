@@ -65,14 +65,16 @@ const SideBar: React.FC<SideBarProps> = ({
         if ((e.keyCode === 48 || e.keyCode === 96) && e.metaKey) {
           if (keySelect) {
             setKeySelect(false);
-            setShowAllRepo(false);
             setFocus(cryptoRandomString({ length: 24, type: "alphanumeric" }));
           } else {
             setKeySelect(true);
-            setShowAllRepo(true);
             // 只有这里才会让它初始化为显示框框
             setBlur(cryptoRandomString({ length: 24, type: "alphanumeric" }));
           }
+        }
+
+        if (e.keyCode === 90 && !e.metaKey && keySelect) {
+          setShowAllRepo((showAllRepo) => !showAllRepo);
         }
 
         //nromal enter and extra enter
@@ -113,13 +115,15 @@ const SideBar: React.FC<SideBarProps> = ({
         if ((e.keyCode === 48 || e.keyCode === 96) && e.ctrlKey) {
           if (keySelect) {
             setKeySelect(false);
-            setShowAllRepo(false);
             setFocus(cryptoRandomString({ length: 24, type: "alphanumeric" }));
           } else {
             setKeySelect(true);
-            setShowAllRepo(true);
             setBlur(cryptoRandomString({ length: 24, type: "alphanumeric" }));
           }
+        }
+
+        if (e.keyCode === 90 && !e.ctrlKey && keySelect) {
+          setShowAllRepo((showAllRepo) => !showAllRepo);
         }
 
         //nromal enter and extra enter
@@ -158,9 +162,6 @@ const SideBar: React.FC<SideBarProps> = ({
   }, [handleKeyDown]);
 
   const repoNameClickHandler = useCallback(() => {
-    if (showAllRepo && keySelect) {
-      setKeySelect(false);
-    }
     setShowAllRepo((showAllRepo) => !showAllRepo);
   }, [showAllRepo, keySelect]);
 

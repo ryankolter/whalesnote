@@ -270,7 +270,7 @@ const NoteList: React.FC<NoteListProps> = ({
         }
         if (
           ((e.keyCode >= 65 && e.keyCode <= 72) ||
-            (e.keyCode >= 77 && e.keyCode <= 90)) &&
+            (e.keyCode >= 77 && e.keyCode <= 89)) &&
           !e.metaKey &&
           keySelect
         ) {
@@ -307,7 +307,7 @@ const NoteList: React.FC<NoteListProps> = ({
 
         if (
           ((e.keyCode >= 65 && e.keyCode <= 72) ||
-            (e.keyCode >= 77 && e.keyCode <= 90)) &&
+            (e.keyCode >= 77 && e.keyCode <= 89)) &&
           !e.ctrlKey &&
           keySelect
         ) {
@@ -432,7 +432,7 @@ const NoteList: React.FC<NoteListProps> = ({
                         {notes_obj[key]["title"]}
                         {keySelect &&
                         currentNoteKey !== key &&
-                        index < 22 * 22 ? (
+                        index < 22 * 21 ? (
                           <NoteKeyTab>
                             <span
                               style={{

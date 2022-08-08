@@ -348,18 +348,15 @@ const FolderList: React.FC<FolderListProps> = ({
       if (process.platform === "darwin") {
         //console.log('这是mac系统');
 
-        // arrow bottom 40 change to K 75
-        if (e.keyCode === 75 && e.metaKey && keySelect) {
+        // arrow bottom 40 and L 76
+        if ((e.keyCode === 76 || e.keyCode === 40) && !e.metaKey && keySelect) {
           nextFolderPage();
         }
-        // arrow bottom 38 change to I 73
-        if (e.keyCode === 73 && e.metaKey && keySelect) {
+        // arrow bottom 38 and J 74
+        if ((e.keyCode === 74 || e.keyCode === 38) && !e.metaKey && keySelect) {
           preFolderPage();
         }
-        // if(e.keyCode >= 48 && e.keyCode <= 57  && !e.metaKey && true){
-        //     const num = (parseInt(e.keyCode) - 49 + 10) % 10 + 1;
-        //     switchFolderByNum(num)
-        // }05
+
         if (e.keyCode >= 48 && e.keyCode <= 57 && !e.metaKey && keySelect) {
           const num = parseInt(e.keyCode) - 48;
           if (numArray.length === 0) {
@@ -374,13 +371,13 @@ const FolderList: React.FC<FolderListProps> = ({
       if (process.platform === "win32" || process.platform === "linux") {
         //console.log('这是windows/linux系统');
 
-        // arrow bottom 40 change to K 75
-        if (e.keyCode === 75 && e.ctrlKey && keySelect) {
+        // arrow bottom 40 and L 76
+        if ((e.keyCode === 76 || e.keyCode === 40) && !e.ctrlKey && keySelect) {
           nextFolderPage();
         }
 
-        // arrow bottom 38 change to I 73
-        if (e.keyCode === 73 && e.ctrlKey && keySelect) {
+        // arrow bottom 38 and J 74
+        if ((e.keyCode === 74 || e.keyCode === 38) && !e.ctrlKey && keySelect) {
           preFolderPage();
         }
         if (e.keyCode >= 48 && e.keyCode <= 57 && !e.ctrlKey && keySelect) {

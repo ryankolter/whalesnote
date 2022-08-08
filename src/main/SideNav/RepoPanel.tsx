@@ -94,9 +94,6 @@ const RepoList: React.FC<RepoListProps> = ({
   const repo_group_number = useRef([1, 2, 3, 4, 5, 6, 7, 8, 9]);
 
   const closeRepoList = useCallback(() => {
-    if (keySelect) {
-      setKeySelect(false);
-    }
     setShowAllRepo(false);
   }, [keySelect, setKeySelect, setShowAllRepo]);
 
