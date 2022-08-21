@@ -165,8 +165,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
 
 const MarkdownEditorContainer = styled.div({
   width: "100%",
-  height: "calc(100vh - 40px - 20px)",
-  margin: "20px 10px 10px 0",
+  height: "100%",
 });
 
 type MarkdownEditorProps = {

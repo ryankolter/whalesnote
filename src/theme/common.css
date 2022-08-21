@@ -1,5 +1,5 @@
 .cm-editor {
-  color: #999183;
+  color: #a9b7c6;
   background-color: inherit !important;
   word-spacing: 5px;
   padding: 10px 0 0 0;
@@ -36,19 +36,186 @@
 .cm-scroller::-webkit-scrollbar {
   width: 9px;
 }
+
 .cm-scroller::-webkit-scrollbar-track {
   background-color: inherit !important;
 }
+
 .cm-scroller::-webkit-scrollbar-thumb {
   background-color: hsla(0, 0%, 78%, 0.2);
   border-radius: 3px;
 }
 
 .ͼ11 {
-  color: #999183;
+  color: #a9b7c6;
 }
 
 .ͼ13 {
   color: #999999;
   letter-spacing: 0.6px;
+}
+
+/* render style in common  */
+
+.rd-theme-common {
+  font-family: Luca, Monaco, Menlo, "Ubuntu Mono", Consolas, source-code-pro,
+    monospace !important;
+  top: 50px;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 5px 10px;
+  user-select: text;
+  overflow-y: auto;
+}
+
+.rd-theme-common::-webkit-scrollbar {
+  display: none;
+}
+
+.rd-theme-common code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+  border: none;
+  border-radius: 5px;
+  margin: 0 5px;
+  padding: 1px 5px;
+  font-size: 0.9em;
+}
+
+.rd-theme-common pre {
+  border-radius: 8px !important;
+}
+
+.rd-theme-common p {
+  margin: 1.2em 0;
+}
+
+.rd-theme-common pre code {
+  font-size: 1em;
+}
+
+.rd-theme-common pre code.hljs::-webkit-scrollbar {
+  display: none;
+}
+
+.rd-theme-common h1 {
+  font-size: 28px !important;
+  line-height: 40px !important;
+}
+
+.rd-theme-common h2 {
+  font-size: 22px !important;
+  line-height: 30px !important;
+  margin-block-start: 1.5em !important;
+  margin-block-end: 1em !important;
+  padding-bottom: 0.1em !important;
+}
+
+.rd-theme-common h3 {
+  font-size: 18px !important;
+  line-height: 26px !important;
+  margin-block-start: 2em !important;
+  margin-block-end: 1em !important;
+}
+
+.rd-theme-common h4 {
+  font-size: 16px !important;
+  line-height: 22px !important;
+  margin-block-start: 1em !important;
+  margin-block-end: 1em !important;
+}
+
+.rd-theme-common blockquote {
+  margin-left: 1.3em !important;
+}
+
+.rd-theme-common blockquote::before {
+  display: inline;
+  content: "▲";
+  margin-right: -0.5em;
+  margin-left: -1.1em;
+}
+
+.rd-theme-common blockquote p {
+  display: inline;
+  font-style: italic;
+}
+
+.rd-theme-common hr {
+  border-top: none;
+  margin: 2em 0;
+}
+
+.rd-theme-common img {
+  width: 100%;
+  margin-bottom: 1em;
+}
+
+.rd-theme-common a {
+  text-decoration: auto;
+}
+
+.rd-theme-common a:hover {
+  text-decoration: underline;
+  text-decoration-line: underline;
+  text-decoration-style: initial;
+  text-decoration-color: initial;
+}
+
+.rd-theme-common ul {
+  list-style-type: decimal;
+  margin-left: -0.5em !important;
+}
+
+.rd-theme-common ul li {
+  margin: 1.5em 0 0 0 !important;
+}
+
+.rd-theme-common ul > li > ul {
+  margin-bottom: 1em !important;
+  margin-top: 0.8em;
+  padding-top: 0.3em;
+  list-style-type: none;
+}
+
+.rd-theme-common ul > li > ul > li {
+  margin: 0.7em 0 1.8em -0.7em !important;
+}
+
+.rd-theme-common ul > li > ul > li > p {
+  margin: 0 0 !important;
+}
+
+.rd-theme-common ul > li > ul > li > ul {
+  margin-top: 0.8em;
+  padding-top: 0.3em;
+  list-style-type: none;
+}
+
+.rd-theme-common ul > li > ul > li > ul > li {
+  margin: 0 0 0.5em -0.7em !important;
+}
+
+/* .editor-statusbar */
+
+.editor-statusbar {
+  user-select: text;
+}
+
+.editor-statusbar .autosave {
+  display: none;
+}
+
+.editor-statusbar .lines {
+  display: none;
+}
+
+.editor-statusbar .words:before {
+  content: "统计字数: " !important;
+}
+
+.editor-statusbar .cursor:before {
+  content: "光标位置: " !important;
+  margin-left: 6px;
 }
