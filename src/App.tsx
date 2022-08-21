@@ -10,7 +10,6 @@ import initData from "./lib/init";
 import SideNav from "./main/SideNav";
 import CenterArea from "./main/CenterArea";
 
-import { MarkdownArea } from "./main/CenterArea/MarkdownArea";
 import SocketServerBtn from "./components/socketServerBtn";
 
 import SocketClientBtn from "./socketClientBtn";
@@ -26,6 +25,7 @@ const App = () => {
   );
   const [focus, setFocus] = useState("");
   const [blur, setBlur] = useState("");
+  const [theme, setTheme] = useState("dark");
   const [keySelect, setKeySelect] = useState(false);
   const [showAddPathTips, setShowAddPathTips] = useState(false);
   const [
@@ -138,6 +138,7 @@ const App = () => {
           editLine={editLine}
           focus={focus}
           blur={blur}
+          theme={theme}
         />
       </RepoContent>
       {/* <SocketClientBtn/>

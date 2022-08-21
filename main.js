@@ -29,7 +29,8 @@ const createWindow = async () => {
     },
   });
 
-  win?.loadFile(path.join(__dirname, "/build/index.html"));
+  //win?.loadFile(path.join(__dirname, "/build/index.html"));
+  win?.loadURL("http://localhost:3000");
 
   win?.webContents.openDevTools();
 

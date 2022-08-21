@@ -18,6 +18,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
   editLine,
   focus,
   blur,
+  theme,
   updateNote,
   renameNote,
   updateEditPos,
@@ -56,6 +57,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
       }
       focus={focus}
       blur={blur}
+      theme={theme}
     />
   );
 };
@@ -70,6 +72,7 @@ type CenterAreaProps = {
   editLine: editLinesTypes;
   focus: string;
   blur: string;
+  theme: string;
   updateNote: (
     data_path: string,
     repo_key: string,

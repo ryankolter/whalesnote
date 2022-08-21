@@ -655,8 +655,9 @@ const MenuLi = styled.li(
     cursor: "pointer",
   },
   `&:hover {
-background-color: #EBEBEB; 
-}`
+    background-color: #EBEBEB; 
+  }
+`
 );
 
 type NoteListProps = {
