@@ -2,10 +2,25 @@
   color: #999183;
   background-color: inherit !important;
   word-spacing: 5px;
+  padding: 10px 0 0 0;
+}
+
+.cm-gutter {
+  line-height: 24px;
 }
 
 .cm-gutters {
   background-color: inherit !important;
+}
+
+.cm-foldGutter {
+  width: 14px;
+  padding: 0 4px 0 0;
+}
+
+.cm-foldGutter .cm-gutterElement {
+  font-size: 16px;
+  transform: translateY(-4px);
 }
 
 .cm-focused {
@@ -15,6 +30,7 @@
 .cm-line {
   font-size: 15px;
   font-family: "Luca", "helvetica", "arial", "sans-serif";
+  line-height: 24px;
 }
 
 .cm-scroller::-webkit-scrollbar {
@@ -26,4 +42,13 @@
 .cm-scroller::-webkit-scrollbar-thumb {
   background-color: hsla(0, 0%, 78%, 0.2);
   border-radius: 3px;
+}
+
+.ͼ11 {
+  color: #999183;
+}
+
+.ͼ13 {
+  color: #999999;
+  letter-spacing: 0.6px;
 }
