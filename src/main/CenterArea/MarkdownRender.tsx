@@ -16,7 +16,7 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
 
   useEffect(() => {
     setResult(md.current.render(content));
-  }, [data_path, currentRepoKey, currentFolderKey, currentNoteKey]);
+  }, [data_path, currentRepoKey, currentFolderKey, currentNoteKey, content]);
 
   const wrappedClassNames =
     typeof theme === "string" ? `rd-theme-${theme}` : "rd-theme";

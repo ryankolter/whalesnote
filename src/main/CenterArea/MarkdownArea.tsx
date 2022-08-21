@@ -56,26 +56,8 @@ export const MarkdownArea: React.FC<MarkdownAreaProps> = ({
           currentNoteKey={currentNoteKey}
           content={content}
           theme={theme}
-          editPos={
-            currentRepoKey &&
-            currentFolderKey &&
-            currentNoteKey &&
-            editPos[currentRepoKey] &&
-            editPos[currentRepoKey][currentFolderKey] &&
-            editPos[currentRepoKey][currentFolderKey][currentNoteKey]
-              ? editPos[currentRepoKey][currentFolderKey][currentNoteKey]
-              : { cursor_line: -1, cursor_ch: -1 }
-          }
-          editLine={
-            currentRepoKey &&
-            currentFolderKey &&
-            currentNoteKey &&
-            editLine[currentRepoKey] &&
-            editLine[currentRepoKey][currentFolderKey] &&
-            editLine[currentRepoKey][currentFolderKey][currentNoteKey]
-              ? editLine[currentRepoKey][currentFolderKey][currentNoteKey]
-              : 0
-          }
+          editPos={editPos}
+          editLine={editLine}
           focus={focus}
           blur={blur}
         />
