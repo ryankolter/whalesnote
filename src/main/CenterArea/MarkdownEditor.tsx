@@ -33,7 +33,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
   const noteSwitchRef = useRef<boolean>(false);
 
   const onChange = useCallback(
-    (new_value, viewUpdate) => {
+    (new_value: string, viewUpdate: any) => {
       if (!noteSwitchRef.current) {
         console.log("????");
         updateNote(

@@ -103,26 +103,32 @@ export const useNotes = () => {
   const [state, dispatch] = useReducer(notesReducer, {});
   let saveTimer = useRef<NodeJS.Timeout | null>(null);
 
-  const repoNotesFetch = useCallback((data_path, repos, repo_key) => {
-    if (!repo_key) return;
-    dispatch({
-      type: "fetchNotesInOneRepo",
-      data_path,
-      repos,
-      repo_key,
-    });
-  }, []);
+  const repoNotesFetch = useCallback(
+    (data_path: string | null, repos: any, repo_key: string | undefined) => {
+      if (!repo_key) return;
+      dispatch({
+        type: "fetchNotesInOneRepo",
+        data_path,
+        repos,
+        repo_key,
+      });
+    },
+    []
+  );
 
-  const folderNotesFetch = useCallback((data_path, repos, repo_key) => {
-    dispatch({
-      type: "fetchNotesInOneFolder",
-      data_path,
-      repos,
-      repo_key,
-    });
-  }, []);
+  const folderNotesFetch = useCallback(
+    (data_path: string | null, repos: any, repo_key: string | undefined) => {
+      dispatch({
+        type: "fetchNotesInOneFolder",
+        data_path,
+        repos,
+        repo_key,
+      });
+    },
+    []
+  );
 
-  const changeNotesAfterNew = useCallback((action_name, obj) => {
+  const changeNotesAfterNew = useCallback((action_name: string, obj: any) => {
     switch (action_name) {
       case "repo": {
         let { data_path, repo_key } = obj;
@@ -158,7 +164,7 @@ export const useNotes = () => {
   }, []);
 
   const initNotes = useCallback(
-    (folder) => dispatch({ type: "init", new_state: folder }),
+    (folder: any) => dispatch({ type: "init", new_state: folder }),
     []
   );
 

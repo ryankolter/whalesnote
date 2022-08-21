@@ -133,34 +133,43 @@ export const useDxnote = () => {
     repos: {},
   });
 
-  const switchRepo = useCallback((dataPath, repoKey) => {
-    repoKey = repoKey ? repoKey : undefined;
-    dispatch({
-      type: "switch_repo",
-      data_path: dataPath,
-      repo_key: repoKey,
-    });
-  }, []);
+  const switchRepo = useCallback(
+    (dataPath: string, repoKey: string | undefined) => {
+      repoKey = repoKey ? repoKey : undefined;
+      dispatch({
+        type: "switch_repo",
+        data_path: dataPath,
+        repo_key: repoKey,
+      });
+    },
+    []
+  );
 
-  const switchFolder = useCallback((dataPath, folderKey) => {
-    folderKey = folderKey ? folderKey : undefined;
-    dispatch({
-      type: "switch_folder",
-      data_path: dataPath,
-      folder_key: folderKey,
-    });
-  }, []);
+  const switchFolder = useCallback(
+    (dataPath: string | null, folderKey: string | undefined) => {
+      folderKey = folderKey ? folderKey : undefined;
+      dispatch({
+        type: "switch_folder",
+        data_path: dataPath,
+        folder_key: folderKey,
+      });
+    },
+    []
+  );
 
-  const switchNote = useCallback((dataPath, noteKey) => {
-    noteKey = noteKey ? noteKey : undefined;
-    dispatch({
-      type: "switch_note",
-      data_path: dataPath,
-      note_key: noteKey,
-    });
-  }, []);
+  const switchNote = useCallback(
+    (dataPath: string | null, noteKey: string | undefined) => {
+      noteKey = noteKey ? noteKey : undefined;
+      dispatch({
+        type: "switch_note",
+        data_path: dataPath,
+        note_key: noteKey,
+      });
+    },
+    []
+  );
 
-  const updateDxnote = useCallback((data_path: string) => {
+  const updateDxnote = useCallback((data_path: string | null) => {
     dispatch({
       type: "updateDxnote",
       data_path: data_path,
@@ -206,7 +215,7 @@ export const useDxnote = () => {
     }
   };
 
-  const initDxnote = useCallback((new_dxnote) => {
+  const initDxnote = useCallback((new_dxnote: any) => {
     dispatch({ type: "init", new_state: new_dxnote });
   }, []);
 

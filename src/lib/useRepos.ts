@@ -115,7 +115,7 @@ export const useRepos = () => {
   const [state, dispatch] = useReducer(reposReducer, {});
   let renameSaveTimer = useRef<NodeJS.Timeout | null>(null);
 
-  const updateRepos = useCallback((action_name, obj) => {
+  const updateRepos = useCallback((action_name: string, obj: any) => {
     switch (action_name) {
       case "repo": {
         let { data_path, repo_key } = obj;
@@ -187,7 +187,7 @@ export const useRepos = () => {
   // },[])
 
   const initRepo = useCallback(
-    (newRepo) => dispatch({ type: "init", new_state: newRepo }),
+    (newRepo: any) => dispatch({ type: "init", new_state: newRepo }),
     []
   );
 

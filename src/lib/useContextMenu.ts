@@ -6,7 +6,7 @@ const useContextMenu = (outerRef: any) => {
   const [menu, showMenu] = useState(false);
 
   const handleContextMenu = useCallback(
-    (event) => {
+    (event: MouseEvent) => {
       event.preventDefault();
       if (outerRef && outerRef.current.contains(event.target)) {
         setXPos(`${event.pageX}px`);
