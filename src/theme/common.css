@@ -3,6 +3,8 @@
     background-color: inherit !important;
     word-spacing: 5px;
     margin: 15px 0 0 0;
+    height: calc(100% - 15px);
+    tab-size: 4;
 }
 
 .cm-gutter {
@@ -195,6 +197,10 @@
 
 .rd-theme-common ul > li > ul > li > ul > li {
     margin: 0 0 0.5em -0.7em !important;
+}
+
+.rd-theme-common pre code.hljs {
+  tab-size: 4;
 }
 
 /* .editor-statusbar */
