@@ -25,7 +25,7 @@ import { usePopUp } from "../../lib/usePopUp";
 import useContextMenu from "../../lib/useContextMenu";
 const { ipcRenderer } = window.require("electron");
 
-const RepoList: React.FC<RepoListProps> = ({
+const RepoPanel: React.FC<RepoListProps> = ({
   data_path,
   repos_key,
   repos_obj,
@@ -980,4 +980,4 @@ type RepoListProps = {
   setAllowHiddenAllRepoViaEnter: (state: boolean) => void;
 };
 
-export default RepoList;
+export default RepoPanel;

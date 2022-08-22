@@ -515,8 +515,10 @@ const NoteList: React.FC<NoteListProps> = ({
             </div>
           </DragOverlay>
         </DndContext>
+      ) : data_path ? (
+        <div>空空如也</div>
       ) : (
-        <div>没有东西</div>
+        <></>
       )}
       {/* <NoteBottomBar>
                 <MoreNote><img src={moreBtnIcon} alt='' /></MoreNote>

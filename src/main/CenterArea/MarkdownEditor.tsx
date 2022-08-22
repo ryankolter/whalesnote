@@ -27,7 +27,6 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
 }) => {
   const editor = useRef<HTMLDivElement>(null);
   const view = useRef<EditorView>();
-  const [state, setState] = useState<EditorState>();
 
   const [showScrollPos, setShowScrollPos] = useState(false);
 
@@ -50,7 +49,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
         console.log(doc);
         if (doc) {
           let first_line_content = doc
-            .lineAt(1)
+            .lineAt(0)
             .text.replace(/^[#\-\_*>\s]+/g, "");
           let new_name: string = first_line_content || "新建文档";
           console.log(new_name);
@@ -75,16 +74,8 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     ]
   );
 
-  const changeShowScrollPos = useCallback(() => {
-    console.log(editLine);
-    if (editLine && editLine > 10) {
-      setShowScrollPos(true);
-    } else {
-      setShowScrollPos(false);
-    }
-  }, [editLine]);
-
   const handleScrollEvent = useCallback(() => {
+    console.log("handleScrollEvent");
     if (autoScroll.current) {
       autoScroll.current = false;
       return;
@@ -95,14 +86,12 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     }
     scrollSaveTimerRef.current = setTimeout(() => {
       if (view.current) {
-        let line = view.current.state.doc.lineAt(
-          view.current.elementAtHeight(
-            Math.abs(view.current.contentDOM.getBoundingClientRect().top)
-          ).from
-        ).number;
+        let line = view.current.elementAtHeight(
+          Math.abs(view.current.contentDOM.getBoundingClientRect().top)
+        ).from;
         console.log(line);
 
-        if (line <= 1) {
+        if (line <= 0) {
           return;
         }
         setShowScrollPos(false);
@@ -127,49 +116,44 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
 
   const autoScrollToLine = useCallback(() => {
     if (view.current) {
-      const doc = view.current.state.doc;
-      if (doc) {
-        let row_count = doc.lines;
-        let start_line =
-          editLine < row_count && editLine > 0 ? editLine + 1 : editLine;
-        console.log(start_line);
-        console.log(
-          EditorView.scrollIntoView(start_line, {
-            y: "nearest",
-          })
-        );
-        view.current.dispatch({
-          effects: EditorView.scrollIntoView(start_line, {
-            y: "nearest",
-          }),
-        });
-        // if (codemirror) {
-        //     const rect = codemirror.getWrapperElement().getBoundingClientRect();
-        //     const topVisibleLine = codemirror.lineAtHeight(rect.top, "window");
-        //     const bottomVisibleLine = codemirror.lineAtHeight(
-        //     rect.bottom,
-        //     "window"
-        //     );
-        //     if (
-        //     editPos.cursor_line > topVisibleLine &&
-        //     editPos.cursor_line < bottomVisibleLine
-        //     ) {
-        //     codemirror?.focus();
-        //     if (editPos.cursor_line !== -1) {
-        //         codemirror?.setCursor({
-        //         ch: editPos.cursor_ch,
-        //         line: editPos.cursor_line,
-        //         });
-        //     } else {
-        //         codemirror?.setCursor({
-        //         ch: 0,
-        //         line: start_line,
-        //         });
-        //     }
-        //     }
-        // }
-        setShowScrollPos(false);
-      }
+      let max_height = view.current.contentDOM.getBoundingClientRect().height;
+      let start_line =
+        editLine <= max_height - 24 && editLine > 0
+          ? editLine + 24
+          : max_height;
+      console.log(start_line);
+
+      view.current?.dispatch({
+        effects: EditorView.scrollIntoView(start_line, {
+          y: "start",
+        }),
+      });
+      // if (codemirror) {
+      //     const rect = codemirror.getWrapperElement().getBoundingClientRect();
+      //     const topVisibleLine = codemirror.lineAtHeight(rect.top, "window");
+      //     const bottomVisibleLine = codemirror.lineAtHeight(
+      //     rect.bottom,
+      //     "window"
+      //     );
+      //     if (
+      //     editPos.cursor_line > topVisibleLine &&
+      //     editPos.cursor_line < bottomVisibleLine
+      //     ) {
+      //     codemirror?.focus();
+      //     if (editPos.cursor_line !== -1) {
+      //         codemirror?.setCursor({
+      //         ch: editPos.cursor_ch,
+      //         line: editPos.cursor_line,
+      //         });
+      //     } else {
+      //         codemirror?.setCursor({
+      //         ch: 0,
+      //         line: start_line,
+      //         });
+      //     }
+      //     }
+      // }
+      setShowScrollPos(false);
     }
   }, [editPos, editLine]);
 
@@ -197,7 +181,6 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
   let getExtensions = [
     basicSetup,
     updateListener,
-    scrollListener,
     defaultThemeOption,
     keymap.of([indentWithTab]),
     EditorView.lineWrapping,
@@ -211,9 +194,8 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     if (editor.current) {
       const defaultState = EditorState.create({
         doc: content,
-        extensions: [getExtensions],
+        extensions: [...getExtensions, scrollListener],
       });
-      setState(defaultState);
       view.current = new EditorView({
         state: defaultState,
         parent: editor.current,
@@ -223,46 +205,62 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     return () => {
       view.current?.destroy();
       view.current = undefined;
-      setState(undefined);
     };
   }, []);
 
   useEffect(() => {
     view.current?.dispatch({
-      effects: StateEffect.reconfigure.of(getExtensions),
+      effects: StateEffect.reconfigure.of([...getExtensions, scrollListener]),
     });
   }, [onChange, handleScrollEvent]);
 
   useEffect(() => {
-    console.log("trigger switch");
+    autoScroll.current = true;
     noteSwitchRef.current = true;
     setTimeout(() => {
       noteSwitchRef.current = false;
     }, 500);
 
-    autoScroll.current = true;
-
     const newState = EditorState.create({
       doc: content,
-      extensions: [getExtensions],
+      extensions: [...getExtensions, EditorView.editable.of(false)],
     });
-    setState(newState);
     view.current?.setState(newState);
 
-    view.current?.dispatch({
-      effects: EditorView.scrollIntoView(0, {
-        y: "nearest",
-      }),
-    });
+    setTimeout(() => {
+      view.current?.dispatch({
+        effects: EditorView.scrollIntoView(0, {
+          y: "start",
+        }),
+      });
+    }, 0);
 
-    changeShowScrollPos();
+    setTimeout(() => {
+      view.current?.dispatch({
+        effects: StateEffect.reconfigure.of([
+          ...getExtensions,
+          EditorView.editable.of(true),
+          scrollListener,
+        ]),
+      });
+    }, 250);
+
+    editLine && editLine > 10
+      ? setShowScrollPos(true)
+      : setShowScrollPos(false);
   }, [data_path, currentRepoKey, currentFolderKey, currentNoteKey]);
 
   useEffect(() => {
+    console.log("focus");
     if (focus === "") return;
     view.current?.focus();
-    view.current?.dispatch({ selection: { anchor: 1 } });
   }, [focus]);
+
+  useEffect(() => {
+    console.log("blur");
+    if (blur === "") return;
+    view.current?.contentDOM.blur();
+  }, [blur]);
 
   const wrappedClassNames =
     typeof theme === "string" ? `cm-theme-${theme}` : "cm-theme";
@@ -270,7 +268,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
   return (
     <MarkdownEditorContainer>
       {showScrollPos ? (
-        <div className="lastScrollPos" onClick={() => autoScrollToLine()}>
+        <div className="lastScrollPos" onClick={autoScrollToLine}>
           上次在
         </div>
       ) : (

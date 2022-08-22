@@ -435,7 +435,7 @@ const FolderList: React.FC<FolderListProps> = ({
   return (
     <FolderListContainer width={width}>
       <FolderTopBar>
-        <FolderTopTitle>分类</FolderTopTitle>
+        {data_path ? <FolderTopTitle>分类</FolderTopTitle> : <></>}
       </FolderTopBar>
       {folders_key && folders_obj ? (
         <DndContext
