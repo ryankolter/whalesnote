@@ -56,8 +56,8 @@ const App = () => {
       updateNote,
     },
   ] = useNotes();
-  const [editPos, { updateEditPos }] = useEditPos();
-  const [editLine, { updateEditLine }] = useEditLine();
+  const [cursorHeads, { updateCursorHead }] = useEditPos();
+  const [fromPos, { updateFromPos }] = useEditLine();
 
   useMemo(() => {
     if (!window.localStorage.getItem("view_mode")) {
@@ -119,8 +119,8 @@ const App = () => {
           data_path={dataPath}
           updateNote={updateNote}
           renameNote={renameNote}
-          updateEditPos={updateEditPos}
-          updateEditLine={updateEditLine}
+          updateCursorHead={updateCursorHead}
+          updateFromPos={updateFromPos}
           currentRepoKey={currentRepoKey}
           currentFolderKey={currentFolderKey}
           currentNoteKey={currentNoteKey}
@@ -134,8 +134,8 @@ const App = () => {
               ? notes[currentRepoKey][currentFolderKey][currentNoteKey]
               : ""
           }
-          editPos={editPos}
-          editLine={editLine}
+          cursorHeads={cursorHeads}
+          fromPos={fromPos}
           focus={focus}
           blur={blur}
           theme={theme}

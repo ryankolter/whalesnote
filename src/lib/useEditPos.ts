@@ -2,15 +2,14 @@ import produce from "immer";
 
 import { useReducer } from "react";
 
-const editPosReducer = produce((state: editPosTypes, action: any) => {
+const editPosReducer = produce((state: cursorHeadTypes, action: any) => {
   switch (action.type) {
     case "update": {
       state[action.repo_key] || (state[action.repo_key] = {});
       state[action.repo_key][action.folder_key] ||
         (state[action.repo_key][action.folder_key] = {});
       state[action.repo_key][action.folder_key][action.note_key] =
-        action.edit_pos;
-      console.log(action.edit_pos);
+        action.cursor_head;
       return state;
     }
   }
@@ -19,11 +18,11 @@ const editPosReducer = produce((state: editPosTypes, action: any) => {
 export const useEditPos = () => {
   const [state, dispatch] = useReducer(editPosReducer, {});
 
-  const updateEditPos = (
+  const updateCursorHead = (
     repo_key: string,
     folder_key: string,
     note_key: string,
-    edit_pos: { cursor_line: number; cursor_ch: number }
+    cursor_head: number
   ) => {
     if (repo_key && folder_key && note_key) {
       dispatch({
@@ -31,15 +30,15 @@ export const useEditPos = () => {
         repo_key,
         folder_key,
         note_key,
-        edit_pos,
+        cursor_head,
       });
     }
   };
 
-  return [state, { updateEditPos }] as const;
+  return [state, { updateCursorHead }] as const;
 };
 
-export type editPosTypes = {
+export type cursorHeadTypes = {
   [key: string]: {
     [key: string]: {
       [key: string]: any;

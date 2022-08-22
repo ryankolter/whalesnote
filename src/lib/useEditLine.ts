@@ -9,8 +9,8 @@ const editLineReducer = produce((state: editLinesTypes, action: any) => {
       state[action.repo_key][action.folder_key] ||
         (state[action.repo_key][action.folder_key] = {});
       state[action.repo_key][action.folder_key][action.note_key] =
-        action.edit_line;
-      console.log(action.edit_line);
+        action.from_pos;
+      console.log(action.from_pos);
       return state;
     }
   }
@@ -19,11 +19,11 @@ const editLineReducer = produce((state: editLinesTypes, action: any) => {
 export const useEditLine = () => {
   const [state, dispatch] = useReducer(editLineReducer, {});
 
-  const updateEditLine = (
+  const updateFromPos = (
     repo_key: string,
     folder_key: string,
     note_key: string,
-    edit_line: number
+    from_pos: number
   ) => {
     if (repo_key && folder_key && note_key) {
       dispatch({
@@ -31,12 +31,12 @@ export const useEditLine = () => {
         repo_key,
         folder_key,
         note_key,
-        edit_line,
+        from_pos,
       });
     }
   };
 
-  return [state, { updateEditLine }] as const;
+  return [state, { updateFromPos }] as const;
 };
 
 export type editLinesTypes = {

@@ -10,15 +10,15 @@ export const MarkdownArea: React.FC<MarkdownAreaProps> = ({
   currentFolderKey,
   currentNoteKey,
   content,
-  editPos,
-  editLine,
+  cursorHead,
+  fromPos,
   focus,
   blur,
   theme,
   updateNote,
   renameNote,
-  updateEditPos,
-  updateEditLine,
+  updateCursorHead,
+  updateFromPos,
 }) => {
   const [editorHeight, setEditorHeight] = useState("calc(100vh - 40px - 20px)");
   const [renderHeight, setRenderHeight] = useState("0");
@@ -49,15 +49,15 @@ export const MarkdownArea: React.FC<MarkdownAreaProps> = ({
           data_path={data_path}
           updateNote={updateNote}
           renameNote={renameNote}
-          updateEditPos={updateEditPos}
-          updateEditLine={updateEditLine}
+          updateCursorHead={updateCursorHead}
+          updateFromPos={updateFromPos}
           currentRepoKey={currentRepoKey}
           currentFolderKey={currentFolderKey}
           currentNoteKey={currentNoteKey}
           content={content}
           theme={theme}
-          editPos={editPos}
-          editLine={editLine}
+          cursorHead={cursorHead}
+          fromPos={fromPos}
           focus={focus}
           blur={blur}
         />
@@ -138,7 +138,7 @@ const MarkdownAreaContainer = styled.div({
   position: "relative",
   flex: "1",
   minWidth: "0",
-  margin: "20px 10px 10px 0",
+  margin: "10px 10px 10px 0",
 });
 
 const EditorPanel = styled.div(
@@ -221,8 +221,8 @@ type MarkdownAreaProps = {
   currentFolderKey: string;
   currentNoteKey: string;
   content: string;
-  editPos: editPos;
-  editLine: number;
+  cursorHead: number;
+  fromPos: number;
   focus: string;
   blur: string;
   theme: string;
@@ -240,21 +240,16 @@ type MarkdownAreaProps = {
     note_key: string,
     new_title: string
   ) => void;
-  updateEditPos: (
+  updateCursorHead: (
     repo_key: string,
     folder_key: string,
     note_key: string,
-    edit_pos: editPos
+    cursor_head: number
   ) => void;
-  updateEditLine: (
+  updateFromPos: (
     repo_key: string,
     folder_key: string,
     note_key: string,
-    edit_line: number
+    from_pos: number
   ) => void;
-};
-
-type editPos = {
-  cursor_line: number;
-  cursor_ch: number;
 };

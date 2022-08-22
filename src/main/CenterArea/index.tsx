@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import cryptoRandomString from "crypto-random-string";
 import { MarkdownArea } from "./MarkdownArea";
 
-import { editPosTypes } from "../../lib/useEditPos";
+import { cursorHeadTypes } from "../../lib/useEditPos";
 import { editLinesTypes } from "../../lib/useEditLine";
 
 import { useState, useCallback, useEffect, useRef, useMemo } from "react";
@@ -14,45 +14,45 @@ const CenterArea: React.FC<CenterAreaProps> = ({
   currentFolderKey,
   currentNoteKey,
   content,
-  editPos,
-  editLine,
+  cursorHeads,
+  fromPos,
   focus,
   blur,
   theme,
   updateNote,
   renameNote,
-  updateEditPos,
-  updateEditLine,
+  updateCursorHead,
+  updateFromPos,
 }) => {
   return (
     <MarkdownArea
       data_path={data_path}
       updateNote={updateNote}
       renameNote={renameNote}
-      updateEditPos={updateEditPos}
-      updateEditLine={updateEditLine}
+      updateCursorHead={updateCursorHead}
+      updateFromPos={updateFromPos}
       currentRepoKey={currentRepoKey}
       currentFolderKey={currentFolderKey}
       currentNoteKey={currentNoteKey}
       content={content}
-      editPos={
+      cursorHead={
         currentRepoKey &&
         currentFolderKey &&
         currentNoteKey &&
-        editPos[currentRepoKey] &&
-        editPos[currentRepoKey][currentFolderKey] &&
-        editPos[currentRepoKey][currentFolderKey][currentNoteKey]
-          ? editPos[currentRepoKey][currentFolderKey][currentNoteKey]
-          : { cursor_line: -1, cursor_ch: -1 }
+        cursorHeads[currentRepoKey] &&
+        cursorHeads[currentRepoKey][currentFolderKey] &&
+        cursorHeads[currentRepoKey][currentFolderKey][currentNoteKey]
+          ? cursorHeads[currentRepoKey][currentFolderKey][currentNoteKey]
+          : -1
       }
-      editLine={
+      fromPos={
         currentRepoKey &&
         currentFolderKey &&
         currentNoteKey &&
-        editLine[currentRepoKey] &&
-        editLine[currentRepoKey][currentFolderKey] &&
-        editLine[currentRepoKey][currentFolderKey][currentNoteKey]
-          ? editLine[currentRepoKey][currentFolderKey][currentNoteKey]
+        fromPos[currentRepoKey] &&
+        fromPos[currentRepoKey][currentFolderKey] &&
+        fromPos[currentRepoKey][currentFolderKey][currentNoteKey]
+          ? fromPos[currentRepoKey][currentFolderKey][currentNoteKey]
           : 0
       }
       focus={focus}
@@ -68,8 +68,8 @@ type CenterAreaProps = {
   currentFolderKey: string;
   currentNoteKey: string;
   content: string;
-  editPos: editPosTypes;
-  editLine: editLinesTypes;
+  cursorHeads: cursorHeadTypes;
+  fromPos: editLinesTypes;
   focus: string;
   blur: string;
   theme: string;
@@ -87,23 +87,18 @@ type CenterAreaProps = {
     note_key: string,
     new_title: string
   ) => void;
-  updateEditPos: (
+  updateCursorHead: (
     repo_key: string,
     folder_key: string,
     note_key: string,
-    edit_pos: editPos
+    cursor_head: number
   ) => void;
-  updateEditLine: (
+  updateFromPos: (
     repo_key: string,
     folder_key: string,
     note_key: string,
-    edit_line: number
+    from_pos: number
   ) => void;
-};
-
-type editPos = {
-  cursor_line: number;
-  cursor_ch: number;
 };
 
 export default CenterArea;

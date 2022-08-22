@@ -15,15 +15,15 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
   currentFolderKey,
   currentNoteKey,
   content,
-  editPos,
-  editLine,
+  cursorHead,
+  fromPos,
   theme,
   focus,
   blur,
   updateNote,
   renameNote,
-  updateEditPos,
-  updateEditLine,
+  updateCursorHead,
+  updateFromPos,
 }) => {
   const editor = useRef<HTMLDivElement>(null);
   const view = useRef<EditorView>();
@@ -34,7 +34,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
   const scrollSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
   const noteSwitchRef = useRef<boolean>(false);
 
-  const onChange = useCallback(
+  const docChangeHandler = useCallback(
     (new_value: string, viewUpdate: any) => {
       if (!noteSwitchRef.current) {
         console.log("????");
@@ -70,8 +70,23 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
       currentNoteKey,
       renameNote,
       updateNote,
-      view,
     ]
+  );
+
+  const selectionSetHandler = useCallback(
+    (vu: ViewUpdate) => {
+      if (view.current) {
+        let cursorHead = view.current.state.selection.main.head;
+        console.log(cursorHead);
+        updateCursorHead(
+          currentRepoKey,
+          currentFolderKey,
+          currentNoteKey,
+          cursorHead
+        );
+      }
+    },
+    [data_path, currentRepoKey, currentFolderKey, currentNoteKey]
   );
 
   const handleScrollEvent = useCallback(() => {
@@ -86,76 +101,60 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     }
     scrollSaveTimerRef.current = setTimeout(() => {
       if (view.current) {
-        let line = view.current.elementAtHeight(
-          Math.abs(view.current.contentDOM.getBoundingClientRect().top)
-        ).from;
-        console.log(line);
+        console.log(
+          view.current.elementAtHeight(
+            Math.abs(view.current.contentDOM.getBoundingClientRect().top)
+          )
+        );
 
-        if (line <= 0) {
-          return;
-        }
+        //add the margin 10px and 15px to the top value
+        let fromPos = view.current.elementAtHeight(
+          Math.abs(view.current.contentDOM.getBoundingClientRect().top) +
+            10 +
+            15
+        ).from;
+
         setShowScrollPos(false);
-        updateEditLine(currentRepoKey, currentFolderKey, currentNoteKey, line);
+        updateFromPos(
+          currentRepoKey,
+          currentFolderKey,
+          currentNoteKey,
+          fromPos
+        );
       }
     }, 100);
   }, [currentRepoKey, currentFolderKey, currentNoteKey]);
 
-  const handleCursorActivity = useCallback(() => {
-    if (view.current) {
-      let pos = view.current.state.selection.main.head;
-      if (pos === 0 || pos === 1) {
-        return;
-      }
-      setShowScrollPos(false);
-      updateEditPos(currentRepoKey, currentFolderKey, currentNoteKey, {
-        cursor_line: pos,
-        cursor_ch: 0,
-      });
-    }
-  }, [currentRepoKey, currentFolderKey, currentNoteKey]);
-
   const autoScrollToLine = useCallback(() => {
+    console.log("autoScrollToLine");
     if (view.current) {
       let max_height = view.current.contentDOM.getBoundingClientRect().height;
+
+      console.log("recover line: " + fromPos);
+
       let start_line =
-        editLine <= max_height - 24 && editLine > 0
-          ? editLine + 24
-          : max_height;
+        fromPos <= max_height && fromPos > 0 ? fromPos : max_height;
       console.log(start_line);
+
+      view.current?.requestMeasure();
 
       view.current?.dispatch({
         effects: EditorView.scrollIntoView(start_line, {
           y: "start",
         }),
       });
-      // if (codemirror) {
-      //     const rect = codemirror.getWrapperElement().getBoundingClientRect();
-      //     const topVisibleLine = codemirror.lineAtHeight(rect.top, "window");
-      //     const bottomVisibleLine = codemirror.lineAtHeight(
-      //     rect.bottom,
-      //     "window"
-      //     );
-      //     if (
-      //     editPos.cursor_line > topVisibleLine &&
-      //     editPos.cursor_line < bottomVisibleLine
-      //     ) {
-      //     codemirror?.focus();
-      //     if (editPos.cursor_line !== -1) {
-      //         codemirror?.setCursor({
-      //         ch: editPos.cursor_ch,
-      //         line: editPos.cursor_line,
-      //         });
-      //     } else {
-      //         codemirror?.setCursor({
-      //         ch: 0,
-      //         line: start_line,
-      //         });
-      //     }
-      //     }
-      // }
+
+      if (cursorHead !== -1) {
+        view.current?.focus();
+
+        console.log(cursorHead);
+        view.current?.dispatch({
+          selection: { anchor: cursorHead },
+        });
+      }
       setShowScrollPos(false);
     }
-  }, [editPos, editLine]);
+  }, [cursorHead, fromPos]);
 
   const defaultThemeOption = EditorView.theme({
     "&": {
@@ -164,11 +163,11 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
   });
 
   const updateListener = EditorView.updateListener.of((vu: ViewUpdate) => {
-    if (vu.docChanged && typeof onChange === "function") {
-      console.log("onchange");
+    if (vu.docChanged && typeof docChangeHandler === "function") {
+      console.log("docChanged");
       const doc = vu.state.doc;
       const value = doc.toString();
-      onChange(value, vu);
+      docChangeHandler(value, vu);
     }
   });
 
@@ -177,6 +176,15 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
       handleScrollEvent();
     },
   });
+
+  const cursorActiveListener = EditorView.updateListener.of(
+    (vu: ViewUpdate) => {
+      if (vu.selectionSet && typeof selectionSetHandler === "function") {
+        console.log("selectionSet");
+        selectionSetHandler(vu);
+      }
+    }
+  );
 
   let getExtensions = [
     basicSetup,
@@ -194,7 +202,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     if (editor.current) {
       const defaultState = EditorState.create({
         doc: content,
-        extensions: [...getExtensions, scrollListener],
+        extensions: [...getExtensions, scrollListener, cursorActiveListener],
       });
       view.current = new EditorView({
         state: defaultState,
@@ -210,9 +218,13 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
 
   useEffect(() => {
     view.current?.dispatch({
-      effects: StateEffect.reconfigure.of([...getExtensions, scrollListener]),
+      effects: StateEffect.reconfigure.of([
+        ...getExtensions,
+        scrollListener,
+        cursorActiveListener,
+      ]),
     });
-  }, [onChange, handleScrollEvent]);
+  }, [docChangeHandler, selectionSetHandler, handleScrollEvent]);
 
   useEffect(() => {
     autoScroll.current = true;
@@ -241,13 +253,12 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
           ...getExtensions,
           EditorView.editable.of(true),
           scrollListener,
+          cursorActiveListener,
         ]),
       });
     }, 250);
 
-    editLine && editLine > 10
-      ? setShowScrollPos(true)
-      : setShowScrollPos(false);
+    fromPos && fromPos > 10 ? setShowScrollPos(true) : setShowScrollPos(false);
   }, [data_path, currentRepoKey, currentFolderKey, currentNoteKey]);
 
   useEffect(() => {
@@ -291,8 +302,8 @@ type MarkdownEditorProps = {
   currentFolderKey: string;
   currentNoteKey: string;
   content: string;
-  editPos: editPos;
-  editLine: number;
+  cursorHead: number;
+  fromPos: number;
   focus: string;
   blur: string;
   theme: string;
@@ -310,21 +321,16 @@ type MarkdownEditorProps = {
     note_key: string,
     new_title: string
   ) => void;
-  updateEditPos: (
+  updateCursorHead: (
     repo_key: string,
     folder_key: string,
     note_key: string,
-    edit_pos: editPos
+    cursor_head: number
   ) => void;
-  updateEditLine: (
+  updateFromPos: (
     repo_key: string,
     folder_key: string,
     note_key: string,
-    edit_line: number
+    from_pos: number
   ) => void;
-};
-
-type editPos = {
-  cursor_line: number;
-  cursor_ch: number;
 };
