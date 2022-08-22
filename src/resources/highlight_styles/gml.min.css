@@ -1,36 +1,36 @@
 pre code.hljs {
-  display: block;
-  overflow-x: auto;
-  padding: 1em;
+    display: block;
+    overflow-x: auto;
+    padding: 1em;
 }
 code.hljs {
-  padding: 3px 5px;
+    padding: 3px 5px;
 }
 .hljs {
-  background: #222;
-  color: silver;
+    background: #222;
+    color: silver;
 }
 .hljs-keyword {
-  color: #ffb871;
-  font-weight: 700;
+    color: #ffb871;
+    font-weight: 700;
 }
 .hljs-built_in {
-  color: #ffb871;
+    color: #ffb871;
 }
 .hljs-literal {
-  color: #ff8080;
+    color: #ff8080;
 }
 .hljs-symbol {
-  color: #58e55a;
+    color: #58e55a;
 }
 .hljs-comment {
-  color: #5b995b;
+    color: #5b995b;
 }
 .hljs-string {
-  color: #ff0;
+    color: #ff0;
 }
 .hljs-number {
-  color: #ff8080;
+    color: #ff8080;
 }
 .hljs-addition,
 .hljs-attribute,
@@ -57,11 +57,11 @@ code.hljs {
 .hljs-title,
 .hljs-type,
 .hljs-variable {
-  color: silver;
+    color: silver;
 }
 .hljs-emphasis {
-  font-style: italic;
+    font-style: italic;
 }
 .hljs-strong {
-  font-weight: 700;
+    font-weight: 700;
 }

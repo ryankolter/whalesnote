@@ -1,225 +1,225 @@
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: #2c3033;
-  user-select: none;
-  font-weight: 500;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+        "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+        "Helvetica Neue", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #2c3033;
+    user-select: none;
+    font-weight: 500;
 }
 
 .repoItemSort {
-  position: relative;
-  display: flex;
-  width: calc(20% - 20px);
-  height: 28px;
-  line-height: 28px;
-  margin: 0 10px 4px 10px;
-  color: #939395;
-  cursor: pointer;
+    position: relative;
+    display: flex;
+    width: calc(20% - 20px);
+    height: 28px;
+    line-height: 28px;
+    margin: 0 10px 4px 10px;
+    color: #939395;
+    cursor: pointer;
 }
 
 .repoItem .repoItemContent {
-  transition: all 0.5s linear;
-  visibility: hidden;
-  opacity: 0;
-  transition-delay: 0.25s;
+    transition: all 0.5s linear;
+    visibility: hidden;
+    opacity: 0;
+    transition-delay: 0.25s;
 }
 
 .repoItem:hover .repoItemContent {
-  visibility: visible;
-  opacity: 1;
-  transition-duration: 0.05s;
-  transition-delay: 0.15s;
+    visibility: visible;
+    opacity: 1;
+    transition-duration: 0.05s;
+    transition-delay: 0.15s;
 }
 
 .repoNameInput {
-  width: 120px;
-  height: 28px;
-  line-height: 28px;
-  border: none;
-  outline: none;
-  flex: 1;
-  font-size: 14px;
-  border-bottom: 1px solid #939395;
-  margin: 0 0 0 20px;
+    width: 120px;
+    height: 28px;
+    line-height: 28px;
+    border: none;
+    outline: none;
+    flex: 1;
+    font-size: 14px;
+    border-bottom: 1px solid #939395;
+    margin: 0 0 0 20px;
 }
 
 .folderNameInput {
-  width: 100%;
-  height: 32px;
-  line-height: 32px;
-  padding: 0 16px;
-  border: none;
-  outline: none;
-  flex: 1;
-  font-size: 14px;
-  border-bottom: 1px solid #939395;
+    width: 100%;
+    height: 32px;
+    line-height: 32px;
+    padding: 0 16px;
+    border: none;
+    outline: none;
+    flex: 1;
+    font-size: 14px;
+    border-bottom: 1px solid #939395;
 }
 
 .folderItemSelected:before {
-  position: absolute;
-  top: 0px;
-  right: -20px;
-  display: block;
-  height: 12px;
-  content: "";
-  border-bottom: 8px solid transparent;
-  border-top: 8px solid transparent;
-  border-left: 10px solid rgb(58, 64, 76);
-  border-right: 10px solid transparent;
-  cursor: pointer;
+    position: absolute;
+    top: 0px;
+    right: -20px;
+    display: block;
+    height: 12px;
+    content: "";
+    border-bottom: 8px solid transparent;
+    border-top: 8px solid transparent;
+    border-left: 10px solid rgb(58, 64, 76);
+    border-right: 10px solid transparent;
+    cursor: pointer;
 }
 
 .lastScrollPos {
-  position: absolute;
-  left: 15px;
-  bottom: 100px;
-  height: 30px;
-  line-height: 30px;
-  font-size: 16px;
-  padding: 0 12px 0 6px;
-  z-index: 9;
-  color: #939395;
-  background-color: #3a404c;
-  cursor: pointer;
+    position: absolute;
+    left: 15px;
+    bottom: 100px;
+    height: 30px;
+    line-height: 30px;
+    font-size: 16px;
+    padding: 0 12px 0 6px;
+    z-index: 9;
+    color: #939395;
+    background-color: #3a404c;
+    cursor: pointer;
 }
 
 .lastScrollPos:before {
-  border: 15px dashed transparent;
-  border-right: 15px solid #3a404c;
-  content: "";
-  font-size: 0;
-  height: 0;
-  left: -15px;
-  transform: translateX(-50%);
-  overflow: hidden;
-  position: absolute;
-  top: 0;
-  width: 0;
+    border: 15px dashed transparent;
+    border-right: 15px solid #3a404c;
+    content: "";
+    font-size: 0;
+    height: 0;
+    left: -15px;
+    transform: translateX(-50%);
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    width: 0;
 }
 
 .scroll-hidden {
-  visibility: hidden;
+    visibility: hidden;
 }
 
 .show-alert-mask {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 9999;
-  animation: show-alert-mask-ani ease-out 0.8s forwards;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    animation: show-alert-mask-ani ease-out 0.8s forwards;
 }
 
 @keyframes show-alert-mask-ani {
-  0% {
-    background-color: rgba(0, 0, 0, 0);
-  }
+    0% {
+        background-color: rgba(0, 0, 0, 0);
+    }
 
-  100% {
-    background-color: rgba(0, 0, 0, 0.6);
-  }
+    100% {
+        background-color: rgba(0, 0, 0, 0.6);
+    }
 }
 
 .hide-alert-mask {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 9999;
-  animation: hide-alert-mask-ani ease-out 0.5s forwards;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    animation: hide-alert-mask-ani ease-out 0.5s forwards;
 }
 
 @keyframes hide-alert-mask-ani {
-  0% {
-    background-color: rgba(0, 0, 0, 0.6);
-  }
+    0% {
+        background-color: rgba(0, 0, 0, 0.6);
+    }
 
-  100% {
-    background-color: rgba(0, 0, 0, 0);
-  }
+    100% {
+        background-color: rgba(0, 0, 0, 0);
+    }
 }
 
 button {
-  color: #e8e6e3 !important;
+    color: #e8e6e3 !important;
 }
 
 input {
-  color: #a9b7c6 !important;
-  background-color: #2c3033 !important;
+    color: #a9b7c6 !important;
+    background-color: #2c3033 !important;
 }
 
 .EasyMDEContainer {
-  background: #2c3033;
+    background: #2c3033;
 }
 
 /* .CodeMirror */
 
 .CodeMirror {
-  overflow: hidden;
-  padding-top: 60px;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  background: #2c3033 !important;
-  border: 1px solid rgb(58, 62, 65) !important;
-  border-top-right-radius: 0px !important;
-  color: #a9b7c6 !important;
-  font-family: Luca, Monaco, Menlo, "Ubuntu Mono", Consolas, source-code-pro,
-    monospace !important;
+    overflow: hidden;
+    padding-top: 60px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    background: #2c3033 !important;
+    border: 1px solid rgb(58, 62, 65) !important;
+    border-top-right-radius: 0px !important;
+    color: #a9b7c6 !important;
+    font-family: Luca, Monaco, Menlo, "Ubuntu Mono", Consolas, source-code-pro,
+        monospace !important;
 }
 
 .CodeMirror .cm-header-1 {
-  font-size: 28px !important;
-  line-height: 40px !important;
+    font-size: 28px !important;
+    line-height: 40px !important;
 }
 
 .CodeMirror .cm-header-2 {
-  font-size: 22px !important;
-  line-height: 30px !important;
+    font-size: 22px !important;
+    line-height: 30px !important;
 }
 
 .CodeMirror .cm-header-3 {
-  font-size: 18px !important;
-  line-height: 26px !important;
+    font-size: 18px !important;
+    line-height: 26px !important;
 }
 
 .CodeMirror .cm-header-4 {
-  font-size: 16px !important;
-  line-height: 22px !important;
+    font-size: 16px !important;
+    line-height: 22px !important;
 }
 
 /* .CodeMirror-xxx */
 
 .CodeMirror-scroll {
-  min-height: 100px;
-  border-radius: 0.5rem;
+    min-height: 100px;
+    border-radius: 0.5rem;
 }
 
 .CodeMirror-cursor {
-  border-left: 1px solid #a9b7c6 !important;
+    border-left: 1px solid #a9b7c6 !important;
 }
 
 .CodeMirror-line {
-  letter-spacing: 0.6px;
+    letter-spacing: 0.6px;
 }
 
 .CodeMirror-selected {
-  background-color: #272727 !important;
+    background-color: #272727 !important;
 }
 
 .CodeMirror-overlayscroll-vertical {
-  width: 8px !important;
+    width: 8px !important;
 }
 
 .CodeMirror-overlayscroll-vertical div {
-  background: rgba(200, 200, 200, 0.2) !important;
+    background: rgba(200, 200, 200, 0.2) !important;
 }
 
 .hljs {
-  color: #93a1a1 !important;
-  background: #212121 !important;
+    color: #93a1a1 !important;
+    background: #212121 !important;
 }

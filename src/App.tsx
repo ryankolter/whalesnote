@@ -20,146 +20,133 @@ import { useEditPos } from "./lib/useEditPos";
 import { useEditLine } from "./lib/useEditLine";
 
 const App = () => {
-  const [dataPath, setDataPath] = useState<string>(
-    window.localStorage.getItem("dxnote_data_path") || ""
-  );
-  const [focus, setFocus] = useState("");
-  const [blur, setBlur] = useState("");
-  const [theme, setTheme] = useState("dark");
-  const [keySelect, setKeySelect] = useState(false);
-  const [showAddPathTips, setShowAddPathTips] = useState(false);
-  const [
-    dxnote,
-    {
-      switchRepo,
-      switchFolder,
-      switchNote,
-      updateDxnote,
-      currentRepoKey,
-      currentFolderKey,
-      currentNoteKey,
-      reorderRepo,
-      initDxnote,
-    },
-  ] = useDxnote();
-  const [
-    repos,
-    { updateRepos, initRepo, renameNote, reorderFolder, reorderNote },
-  ] = useRepos();
-  const [
-    notes,
-    {
-      repoNotesFetch,
-      folderNotesFetch,
-      changeNotesAfterNew,
-      initNotes,
-      updateNote,
-    },
-  ] = useNotes();
-  const [cursorHeads, { updateCursorHead }] = useEditPos();
-  const [fromPos, { updateFromPos }] = useEditLine();
+    const [dataPath, setDataPath] = useState<string>(
+        window.localStorage.getItem("dxnote_data_path") || ""
+    );
+    const [focus, setFocus] = useState("");
+    const [blur, setBlur] = useState("");
+    const [theme, setTheme] = useState("dark");
+    const [keySelect, setKeySelect] = useState(false);
+    const [showAddPathTips, setShowAddPathTips] = useState(false);
+    const [
+        dxnote,
+        {
+            switchRepo,
+            switchFolder,
+            switchNote,
+            updateDxnote,
+            currentRepoKey,
+            currentFolderKey,
+            currentNoteKey,
+            reorderRepo,
+            initDxnote,
+        },
+    ] = useDxnote();
+    const [repos, { updateRepos, initRepo, renameNote, reorderFolder, reorderNote }] = useRepos();
+    const [
+        notes,
+        { repoNotesFetch, folderNotesFetch, changeNotesAfterNew, initNotes, updateNote },
+    ] = useNotes();
+    const [cursorHeads, { updateCursorHead }] = useEditPos();
+    const [fromPos, { updateFromPos }] = useEditLine();
 
-  useMemo(() => {
-    if (!window.localStorage.getItem("view_mode")) {
-      window.localStorage.setItem("view_mode", "sidebyside");
-    }
-    let new_data = initData(dataPath);
-    if (new_data) {
-      initDxnote(new_data.dxnote);
-      initRepo(new_data.repos);
-      initNotes(new_data.notes);
-    } else {
-      console.log("no data path");
-      setShowAddPathTips(true);
-    }
-  }, [dataPath, setShowAddPathTips]);
+    useMemo(() => {
+        if (!window.localStorage.getItem("view_mode")) {
+            window.localStorage.setItem("view_mode", "sidebyside");
+        }
+        let new_data = initData(dataPath);
+        if (new_data) {
+            initDxnote(new_data.dxnote);
+            initRepo(new_data.repos);
+            initNotes(new_data.notes);
+        } else {
+            console.log("no data path");
+            setShowAddPathTips(true);
+        }
+    }, [dataPath, setShowAddPathTips]);
 
-  const repoSwitch = (repo_key: string | undefined) => {
-    repoNotesFetch(dataPath, repos, repo_key);
-    switchRepo(dataPath, repo_key);
-  };
+    const repoSwitch = (repo_key: string | undefined) => {
+        repoNotesFetch(dataPath, repos, repo_key);
+        switchRepo(dataPath, repo_key);
+    };
 
-  return (
-    <AppContainer>
-      {/* <AddPathTips>
+    return (
+        <AppContainer>
+            {/* <AddPathTips>
 
       </AddPathTips> */}
-      <RepoContent>
-        <SideNav
-          data_path={dataPath}
-          repos_key={dxnote.repos_key}
-          repos_obj={repos}
-          currentRepoKey={currentRepoKey}
-          currentFolderKey={currentFolderKey}
-          currentNoteKey={currentNoteKey}
-          folders_key={repos[currentRepoKey]?.folders_key}
-          folders_obj={repos[currentRepoKey]?.folders_obj}
-          notes_key={
-            repos[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_key
-          }
-          notes_obj={
-            repos[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj
-          }
-          keySelect={keySelect}
-          repoSwitch={repoSwitch}
-          folderSwitch={switchFolder}
-          noteSwitch={switchNote}
-          updateDxnote={updateDxnote}
-          updateRepos={updateRepos}
-          changeNotesAfterNew={changeNotesAfterNew}
-          setDataPath={setDataPath}
-          reorderRepo={reorderRepo}
-          reorderFolder={reorderFolder}
-          reorderNote={reorderNote}
-          setFocus={setFocus}
-          setBlur={setBlur}
-          setKeySelect={setKeySelect}
-        />
-        <CenterArea
-          data_path={dataPath}
-          updateNote={updateNote}
-          renameNote={renameNote}
-          updateCursorHead={updateCursorHead}
-          updateFromPos={updateFromPos}
-          currentRepoKey={currentRepoKey}
-          currentFolderKey={currentFolderKey}
-          currentNoteKey={currentNoteKey}
-          content={
-            currentRepoKey &&
-            currentFolderKey &&
-            currentNoteKey &&
-            notes[currentRepoKey] &&
-            notes[currentRepoKey][currentFolderKey] &&
-            notes[currentRepoKey][currentFolderKey][currentNoteKey]
-              ? notes[currentRepoKey][currentFolderKey][currentNoteKey]
-              : ""
-          }
-          cursorHeads={cursorHeads}
-          fromPos={fromPos}
-          focus={focus}
-          blur={blur}
-          theme={theme}
-        />
-      </RepoContent>
-      {/* <SocketClientBtn/>
+            <RepoContent>
+                <SideNav
+                    data_path={dataPath}
+                    repos_key={dxnote.repos_key}
+                    repos_obj={repos}
+                    currentRepoKey={currentRepoKey}
+                    currentFolderKey={currentFolderKey}
+                    currentNoteKey={currentNoteKey}
+                    folders_key={repos[currentRepoKey]?.folders_key}
+                    folders_obj={repos[currentRepoKey]?.folders_obj}
+                    notes_key={repos[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_key}
+                    notes_obj={repos[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj}
+                    keySelect={keySelect}
+                    repoSwitch={repoSwitch}
+                    folderSwitch={switchFolder}
+                    noteSwitch={switchNote}
+                    updateDxnote={updateDxnote}
+                    updateRepos={updateRepos}
+                    changeNotesAfterNew={changeNotesAfterNew}
+                    setDataPath={setDataPath}
+                    reorderRepo={reorderRepo}
+                    reorderFolder={reorderFolder}
+                    reorderNote={reorderNote}
+                    setFocus={setFocus}
+                    setBlur={setBlur}
+                    setKeySelect={setKeySelect}
+                />
+                <CenterArea
+                    data_path={dataPath}
+                    updateNote={updateNote}
+                    renameNote={renameNote}
+                    updateCursorHead={updateCursorHead}
+                    updateFromPos={updateFromPos}
+                    currentRepoKey={currentRepoKey}
+                    currentFolderKey={currentFolderKey}
+                    currentNoteKey={currentNoteKey}
+                    content={
+                        currentRepoKey &&
+                        currentFolderKey &&
+                        currentNoteKey &&
+                        notes[currentRepoKey] &&
+                        notes[currentRepoKey][currentFolderKey] &&
+                        notes[currentRepoKey][currentFolderKey][currentNoteKey]
+                            ? notes[currentRepoKey][currentFolderKey][currentNoteKey]
+                            : ""
+                    }
+                    cursorHeads={cursorHeads}
+                    fromPos={fromPos}
+                    focus={focus}
+                    blur={blur}
+                    theme={theme}
+                />
+            </RepoContent>
+            {/* <SocketClientBtn/>
             <SocketServerBtn/> */}
-    </AppContainer>
-  );
+        </AppContainer>
+    );
 };
 
 const AppContainer = styled.div({
-  height: "100vh",
-  display: "flex",
-  flexDirection: "column",
-  overflow: "hidden",
+    height: "100vh",
+    display: "flex",
+    flexDirection: "column",
+    overflow: "hidden",
 });
 
 const RepoContent = styled.div({
-  display: "flex",
-  alignItem: "center",
-  flex: "1",
-  minHeight: "0",
-  width: "100vw",
+    display: "flex",
+    alignItem: "center",
+    flex: "1",
+    minHeight: "0",
+    width: "100vw",
 });
 
 export default App;

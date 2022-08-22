@@ -1,3 +1,9 @@
 build
+dist
 coverage
+src/resources
+*.css
+*.json
+*.html
+*.md
 modify_node_module

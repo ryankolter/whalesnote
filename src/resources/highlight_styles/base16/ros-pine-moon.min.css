@@ -6,35 +6,35 @@
   Version: 2021.09.0
 */
 pre code.hljs {
-  display: block;
-  overflow-x: auto;
-  padding: 1em;
+    display: block;
+    overflow-x: auto;
+    padding: 1em;
 }
 code.hljs {
-  padding: 3px 5px;
+    padding: 3px 5px;
 }
 .hljs {
-  color: #e0def4;
-  background: #232136;
+    color: #e0def4;
+    background: #232136;
 }
 .hljs ::selection,
 .hljs::selection {
-  background-color: #393552;
-  color: #e0def4;
+    background-color: #393552;
+    color: #e0def4;
 }
 .hljs-comment {
-  color: #59546d;
+    color: #59546d;
 }
 .hljs-tag {
-  color: #817c9c;
+    color: #817c9c;
 }
 .hljs-operator,
 .hljs-punctuation,
 .hljs-subst {
-  color: #e0def4;
+    color: #e0def4;
 }
 .hljs-operator {
-  opacity: 0.7;
+    opacity: 0.7;
 }
 .hljs-bullet,
 .hljs-deletion,
@@ -42,7 +42,7 @@ code.hljs {
 .hljs-selector-tag,
 .hljs-template-variable,
 .hljs-variable {
-  color: #ecebf0;
+    color: #ecebf0;
 }
 .hljs-attr,
 .hljs-link,
@@ -50,53 +50,53 @@ code.hljs {
 .hljs-number,
 .hljs-symbol,
 .hljs-variable.constant_ {
-  color: #eb6f92;
+    color: #eb6f92;
 }
 .hljs-class .hljs-title,
 .hljs-title,
 .hljs-title.class_ {
-  color: #f6c177;
+    color: #f6c177;
 }
 .hljs-strong {
-  font-weight: 700;
-  color: #f6c177;
+    font-weight: 700;
+    color: #f6c177;
 }
 .hljs-addition,
 .hljs-code,
 .hljs-string,
 .hljs-title.class_.inherited__ {
-  color: #ea9a97;
+    color: #ea9a97;
 }
 .hljs-built_in,
 .hljs-doctag,
 .hljs-keyword.hljs-atrule,
 .hljs-quote,
 .hljs-regexp {
-  color: #3e8fb0;
+    color: #3e8fb0;
 }
 .hljs-attribute,
 .hljs-function .hljs-title,
 .hljs-section,
 .hljs-title.function_,
 .ruby .hljs-property {
-  color: #9ccfd8;
+    color: #9ccfd8;
 }
 .diff .hljs-meta,
 .hljs-keyword,
 .hljs-template-tag,
 .hljs-type {
-  color: #c4a7e7;
+    color: #c4a7e7;
 }
 .hljs-emphasis {
-  color: #c4a7e7;
-  font-style: italic;
+    color: #c4a7e7;
+    font-style: italic;
 }
 .hljs-meta,
 .hljs-meta .hljs-keyword,
 .hljs-meta .hljs-string {
-  color: #b9b9bc;
+    color: #b9b9bc;
 }
 .hljs-meta .hljs-keyword,
 .hljs-meta-keyword {
-  font-weight: 700;
+    font-weight: 700;
 }
