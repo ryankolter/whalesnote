@@ -8,7 +8,7 @@ import { useDxnote } from "./lib/useDxnote";
 import initData from "./lib/init";
 
 import SideNav from "./main/SideNav";
-import CenterArea from "./main/CenterArea";
+import CenterArea from "./main/CenterArea/index";
 
 import SocketServerBtn from "./components/socketServerBtn";
 
@@ -78,11 +78,11 @@ const App = () => {
             <RepoContent>
                 <SideNav
                     data_path={dataPath}
-                    repos_key={dxnote.repos_key}
-                    repos_obj={repos}
                     currentRepoKey={currentRepoKey}
                     currentFolderKey={currentFolderKey}
                     currentNoteKey={currentNoteKey}
+                    repos_key={dxnote.repos_key}
+                    repos_obj={repos}
                     folders_key={repos[currentRepoKey]?.folders_key}
                     folders_obj={repos[currentRepoKey]?.folders_obj}
                     notes_key={repos[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_key}
@@ -104,13 +104,29 @@ const App = () => {
                 />
                 <CenterArea
                     data_path={dataPath}
-                    updateNote={updateNote}
-                    renameNote={renameNote}
-                    updateCursorHead={updateCursorHead}
-                    updateFromPos={updateFromPos}
                     currentRepoKey={currentRepoKey}
                     currentFolderKey={currentFolderKey}
                     currentNoteKey={currentNoteKey}
+                    repos_key={dxnote.repos_key}
+                    repos_obj={repos}
+                    folders_key={repos[currentRepoKey]?.folders_key}
+                    folders_obj={repos[currentRepoKey]?.folders_obj}
+                    notes_key={repos[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_key}
+                    notes_obj={repos[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj}
+                    keySelect={keySelect}
+                    repoSwitch={repoSwitch}
+                    folderSwitch={switchFolder}
+                    noteSwitch={switchNote}
+                    updateDxnote={updateDxnote}
+                    updateRepos={updateRepos}
+                    changeNotesAfterNew={changeNotesAfterNew}
+                    setDataPath={setDataPath}
+                    reorderRepo={reorderRepo}
+                    reorderFolder={reorderFolder}
+                    reorderNote={reorderNote}
+                    setFocus={setFocus}
+                    setBlur={setBlur}
+                    setKeySelect={setKeySelect}
                     content={
                         currentRepoKey &&
                         currentFolderKey &&
@@ -121,11 +137,33 @@ const App = () => {
                             ? notes[currentRepoKey][currentFolderKey][currentNoteKey]
                             : ""
                     }
-                    cursorHeads={cursorHeads}
-                    fromPos={fromPos}
+                    cursorHead={
+                        currentRepoKey &&
+                        currentFolderKey &&
+                        currentNoteKey &&
+                        cursorHeads[currentRepoKey] &&
+                        cursorHeads[currentRepoKey][currentFolderKey] &&
+                        cursorHeads[currentRepoKey][currentFolderKey][currentNoteKey]
+                            ? cursorHeads[currentRepoKey][currentFolderKey][currentNoteKey]
+                            : -1
+                    }
+                    fromPos={
+                        currentRepoKey &&
+                        currentFolderKey &&
+                        currentNoteKey &&
+                        fromPos[currentRepoKey] &&
+                        fromPos[currentRepoKey][currentFolderKey] &&
+                        fromPos[currentRepoKey][currentFolderKey][currentNoteKey]
+                            ? fromPos[currentRepoKey][currentFolderKey][currentNoteKey]
+                            : 0
+                    }
                     focus={focus}
                     blur={blur}
                     theme={theme}
+                    updateNote={updateNote}
+                    renameNote={renameNote}
+                    updateCursorHead={updateCursorHead}
+                    updateFromPos={updateFromPos}
                 />
             </RepoContent>
             {/* <SocketClientBtn/>

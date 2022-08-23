@@ -548,7 +548,6 @@ const Notes = styled.div(
         overflowY: "scroll",
         flex: "1",
         minHeight: "0",
-        marginTop: "16px",
         padding: "10px 0 70px 0",
         border: "1px solid rgba(58, 64, 76, 0.8)",
         borderRadius: "8px",

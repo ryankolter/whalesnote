@@ -600,7 +600,7 @@ const FolderTopBar = styled.div({
     alignItems: "center",
     justifyContent: "space-around",
     flexDirection: "row",
-    margin: "20px 16px 10px 6px",
+    margin: "10px 16px 10px 6px",
 });
 
 const FolderTopTitle = styled.div({

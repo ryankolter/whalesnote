@@ -33,7 +33,8 @@ const DirectoryBtnContainer = styled.div(
         lineHeight: "32px",
         fontSize: "16px",
         padding: "0 10px",
-        marginTop: "8px",
+        margin: "4px 10px 4px 0",
+        borderRadius: " 4px",
         color: "#939395",
         backgroundColor: "rgb(58, 64, 76)",
     },
@@ -41,25 +42,13 @@ const DirectoryBtnContainer = styled.div(
   &:hover .path_panel{
       display: block;
   }
-  &::before {
-      position: absolute;
-      top: 0px;
-      right: -32px;
-      display: block;
-      content: '';
-      border-bottom: 16px solid rgb(58, 64, 76);
-      border-top: 16px solid transparent;
-      border-left: 16px solid rgb(58, 64, 76);
-      border-right: 16px solid transparent;
-      cursor: pointer;
-  }
 `
 );
 
 const PathPanel = styled.div(
     {
         position: "absolute",
-        bottom: "32px",
+        top: "32px",
         left: "0",
         display: "none",
         fontSize: "14px",

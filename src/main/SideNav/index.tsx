@@ -1,6 +1,5 @@
 import styled from "@emotion/styled";
 import cryptoRandomString from "crypto-random-string";
-import RepoPanel from "./RepoPanel";
 import DirectoryBtn from "./DirectoryBtn";
 import FolderList from "./FolderList";
 import NoteList from "./NoteList";
@@ -204,49 +203,20 @@ const SideNav: React.FC<SideNavProps> = ({
     return (
         <LeftPanel>
             <ToolBar>
+                <DirectoryBtnArea>
+                    {data_path ? (
+                        <DirectoryBtn
+                            data_path={data_path}
+                            addDataPath={addDataPath}
+                            panelWidth={folderWidth + noteWidth}
+                        />
+                    ) : (
+                        <PathAddBtn onClick={addDataPath}>添加目录</PathAddBtn>
+                    )}
+                </DirectoryBtnArea>
                 <SearchInput placeholder='搜索' />
             </ToolBar>
             <SelectArea>
-                <CurRepoNameTag
-                    repoNameTagWidth={folderWidth + noteWidth}
-                    onClick={() => {
-                        repoNameClickHandler();
-                    }}
-                >
-                    <RepoNameLabel>
-                        {repos_obj && currentRepoKey && repos_obj[currentRepoKey]
-                            ? repos_obj[currentRepoKey].repo_name
-                            : ""}
-                    </RepoNameLabel>
-                    <RepoSwitchBtn>更多&gt;&gt;</RepoSwitchBtn>
-                </CurRepoNameTag>
-                <AllRepo
-                    cutWidth={folderWidth + noteWidth}
-                    style={{ display: showAllRepo ? "block" : "none" }}
-                >
-                    <RepoPanel
-                        data_path={data_path}
-                        repos_key={repos_key}
-                        repos_obj={repos_obj}
-                        currentRepoKey={currentRepoKey}
-                        currentFolderKey={currentFolderKey}
-                        keySelect={keySelect}
-                        showAllRepo={showAllRepo}
-                        repoSwitch={repoSwitch}
-                        folderSwitch={folderSwitch}
-                        noteSwitch={noteSwitch}
-                        updateDxnote={updateDxnote}
-                        updateRepos={updateRepos}
-                        changeNotesAfterNew={changeNotesAfterNew}
-                        setDataPath={setDataPath}
-                        reorderRepo={reorderRepo}
-                        setFocus={setFocus}
-                        setBlur={setBlur}
-                        setKeySelect={setKeySelect}
-                        setShowAllRepo={setShowAllRepo}
-                        setAllowHiddenAllRepoViaEnter={setAllowHiddenAllRepoViaEnter}
-                    />
-                </AllRepo>
                 <List>
                     <FolderList
                         data_path={data_path}
@@ -284,19 +254,6 @@ const SideNav: React.FC<SideNavProps> = ({
                     />
                 </List>
             </SelectArea>
-            <RepoBar>
-                <DirectoryBtnArea>
-                    {data_path ? (
-                        <DirectoryBtn
-                            data_path={data_path}
-                            addDataPath={addDataPath}
-                            panelWidth={folderWidth + noteWidth}
-                        />
-                    ) : (
-                        <PathAddBtn onClick={addDataPath}>添加目录</PathAddBtn>
-                    )}
-                </DirectoryBtnArea>
-            </RepoBar>
         </LeftPanel>
     );
 };
@@ -308,7 +265,8 @@ const LeftPanel = styled.div({
 });
 
 const ToolBar = styled.div({
-    margin: "4px 16px 0 16px",
+    display: "flex",
+    margin: "10px 16px 0 16px",
 });
 
 const SearchInput = styled.input({
@@ -328,100 +286,24 @@ const SelectArea = styled.div({
     flexDirection: "column",
     flex: "1",
     minHeight: "0",
-    margin: "4px 10px 0 10px",
-});
-
-const RepoBar = styled.div({
-    display: "flex",
-    justifyContent: "space-between",
+    margin: "10px 10px 10px 10px",
 });
 
 const DirectoryBtnArea = styled.div();
 
-const PathAddBtn = styled.div(
-    {
-        position: "relative",
-        height: "32px",
-        lineHeight: "32px",
-        display: "flex",
-        alignItem: "center",
-        justifyContent: "center",
-        padding: "0 10px",
-        marginTop: "8px",
-        color: "#939395",
-        backgroundColor: "rgb(58, 64, 76)",
-        cursor: "pointer",
-    },
-    `
-  &::before {
-      position: absolute;
-      top: 0px;
-      right: -32px;
-      display: block;
-      content: '';
-      border-bottom: 16px solid rgb(58, 64, 76);
-      border-top: 16px solid transparent;
-      border-left: 16px solid rgb(58, 64, 76);
-      border-right: 16px solid transparent;
-      cursor: pointer;
-  }
-`
-);
-
-const CurRepoNameTag = styled.div(
-    {
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        height: "40px",
-        minWidth: "60px",
-        lineHeight: "40px",
-        paddingRight: "20px",
-        borderRadius: "4px",
-        backgroundColor: "rgb(58, 64, 76)",
-        color: "#939395",
-        cursor: "pointer",
-        overflow: "hidden !important",
-        textOverflow: "ellipsis",
-        wordBreak: "break-all",
-    },
-    (props: { repoNameTagWidth: number }) => ({
-        width: props.repoNameTagWidth,
-    })
-);
-
-const RepoNameLabel = styled.div({
-    flex: 1,
-    textAlign: "center",
-    fontSize: "16px",
-    padding: "0 30px",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
+const PathAddBtn = styled.div({
+    position: "relative",
+    height: "32px",
+    lineHeight: "32px",
+    display: "flex",
+    alignItem: "center",
+    justifyContent: "center",
+    padding: "0 10px",
+    marginTop: "8px",
+    color: "#939395",
+    backgroundColor: "rgb(58, 64, 76)",
+    cursor: "pointer",
 });
-
-const RepoSwitchBtn = styled.div({
-    height: "40px",
-    lineHeight: "40px",
-    fontSize: "14px",
-});
-
-const AllRepo = styled.div(
-    {
-        position: "absolute",
-        top: "-40px",
-        padding: "10px",
-        boxSizing: "border-box",
-        border: "1px solid rgba(58, 64, 76)",
-        borderRadius: "8px",
-        backgroundColor: "#2C3033",
-        zIndex: "9999",
-    },
-    (props: { cutWidth: number }) => ({
-        left: "calc( " + props.cutWidth + "px + 15px)",
-        width: "calc( 100vw - " + props.cutWidth + "px - 35px)",
-    })
-);
 
 const List = styled.div({
     display: "flex",
