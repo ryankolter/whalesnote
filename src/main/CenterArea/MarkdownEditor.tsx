@@ -37,14 +37,11 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     const docChangeHandler = useCallback(
         (new_value: string, viewUpdate: any) => {
             if (!noteSwitchRef.current) {
-                console.log("????");
                 updateNote(data_path, currentRepoKey, currentFolderKey, currentNoteKey, new_value);
                 const doc = view.current?.state.doc;
-                console.log(doc);
                 if (doc) {
                     let first_line_content = doc.lineAt(0).text.replace(/^[#\-\_*>\s]+/g, "");
                     let new_name: string = first_line_content || "新建文档";
-                    console.log(new_name);
                     renameNote(
                         data_path,
                         currentRepoKey,
@@ -62,7 +59,6 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
         (vu: ViewUpdate) => {
             if (view.current) {
                 let cursorHead = view.current.state.selection.main.head;
-                console.log(cursorHead);
                 updateCursorHead(currentRepoKey, currentFolderKey, currentNoteKey, cursorHead);
             }
         },
@@ -81,12 +77,6 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
         }
         scrollSaveTimerRef.current = setTimeout(() => {
             if (view.current) {
-                console.log(
-                    view.current.elementAtHeight(
-                        Math.abs(view.current.contentDOM.getBoundingClientRect().top)
-                    )
-                );
-
                 //add the margin 10px and 15px to the top value
                 let fromPos = view.current.elementAtHeight(
                     Math.abs(view.current.contentDOM.getBoundingClientRect().top) + 10 + 15
@@ -102,13 +92,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
         console.log("autoScrollToLine");
         if (view.current) {
             let max_height = view.current.contentDOM.getBoundingClientRect().height;
-
-            console.log("recover line: " + fromPos);
-
             let start_line = fromPos <= max_height && fromPos > 0 ? fromPos : max_height;
-            console.log(start_line);
-
-            view.current?.requestMeasure();
 
             view.current?.dispatch({
                 effects: EditorView.scrollIntoView(start_line, {
@@ -118,8 +102,6 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
 
             if (cursorHead !== -1) {
                 view.current?.focus();
-
-                console.log(cursorHead);
                 view.current?.dispatch({
                     selection: { anchor: cursorHead },
                 });
@@ -232,7 +214,6 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     }, [data_path, currentRepoKey, currentFolderKey, currentNoteKey]);
 
     useEffect(() => {
-        console.log("focus");
         if (focus === "") return;
         view.current?.focus();
     }, [focus]);

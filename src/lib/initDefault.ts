@@ -17,15 +17,21 @@ const updateDefaultData = () => {
                 folders_obj: {
                     [folder_id]: {
                         folder_name: "默认分类",
-                        notes_key: [],
-                        notes_obj: {},
+                        notes_key: [note_id],
+                        notes_obj: {
+                            [note_id]: {
+                                title: "新建文档",
+                            },
+                        },
                     },
                 },
             },
         },
         notes: {
             [repo_id]: {
-                [folder_id]: {},
+                [folder_id]: {
+                    [note_id]: "",
+                },
             },
         },
         dxnote: {
@@ -35,7 +41,9 @@ const updateDefaultData = () => {
             repos: {
                 [repo_id]: {
                     cur_folder_key: folder_id,
-                    folders: {},
+                    folders: {
+                        [folder_id]: note_id,
+                    },
                 },
             },
         },

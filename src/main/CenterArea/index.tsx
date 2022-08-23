@@ -32,6 +32,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
     setFocus,
     setBlur,
     setKeySelect,
+    setShowAssistantPanel,
     cursorHead,
     fromPos,
     focus,
@@ -48,6 +49,9 @@ const CenterArea: React.FC<CenterAreaProps> = ({
 
     const [renderPanelState, setRenderPanelState] = useState("hidden");
 
+    const [showHiddenUpPart, setShowHiddenUpPart] = useState(false);
+    const [showAllDownPart, setShowAllDownPart] = useState(false);
+
     let [showAllRepo, setShowAllRepo] = useState(false);
     let [allowHiddenAllRepoViaEnter, setAllowHiddenAllRepoViaEnter] = useState(true);
 
@@ -60,14 +64,20 @@ const CenterArea: React.FC<CenterAreaProps> = ({
             setEditorHeight("calc(100vh - 40px - 12px)");
             setRenderHeight("0");
             setRenderTop("calc(100vh - 20px)");
+            setShowAllDownPart(false);
+            setShowHiddenUpPart(true);
         } else if (renderPanelState === "half") {
             setEditorHeight("calc(50vh - 30px)");
             setRenderHeight("calc(50vh - 30px)");
             setRenderTop("calc(50vh - 20px)");
+            setShowAllDownPart(false);
+            setShowHiddenUpPart(false);
         } else if (renderPanelState === "all") {
             setEditorHeight("calc(100vh - 40px - 12px)");
             setRenderHeight("calc(100vh - 40px - 10px)");
             setRenderTop("0");
+            setShowAllDownPart(true);
+            setShowHiddenUpPart(false);
         }
     }, [renderPanelState]);
 
@@ -85,12 +95,16 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                 if ((e.keyCode === 48 || e.keyCode === 96) && e.metaKey) {
                     if (keySelect) {
                         setKeySelect(false);
-                        setFocus(
-                            cryptoRandomString({
-                                length: 24,
-                                type: "alphanumeric",
-                            })
-                        );
+                        if (currentNoteKey) {
+                            setTimeout(() => {
+                                setFocus(
+                                    cryptoRandomString({
+                                        length: 24,
+                                        type: "alphanumeric",
+                                    })
+                                );
+                            }, 0);
+                        }
                     } else {
                         setKeySelect(true);
                         // 只有这里才会让它初始化为显示框框
@@ -114,14 +128,16 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                     allowHiddenAllRepoViaEnter
                 ) {
                     setKeySelect(false);
-                    setTimeout(() => {
-                        setFocus(
-                            cryptoRandomString({
-                                length: 24,
-                                type: "alphanumeric",
-                            })
-                        );
-                    }, 0);
+                    if (currentNoteKey) {
+                        setTimeout(() => {
+                            setFocus(
+                                cryptoRandomString({
+                                    length: 24,
+                                    type: "alphanumeric",
+                                })
+                            );
+                        }, 0);
+                    }
                 }
 
                 if ((e.keyCode === 13 || e.keyCode === 108) && allowHiddenAllRepoViaEnter) {
@@ -144,6 +160,17 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                     }
                     setShowAllRepo(false);
                 }
+
+                //switch among hidden, half, all
+                if ((e.keyCode === 191 || e.keyCode === 47) && e.metaKey) {
+                    if (renderPanelState === "hidden") {
+                        setRenderPanelState("half");
+                    } else if (renderPanelState === "half") {
+                        setRenderPanelState("all");
+                    } else if (renderPanelState === "all") {
+                        setRenderPanelState("hidden");
+                    }
+                }
             }
             if (process.platform === "win32" || process.platform === "linux") {
                 //console.log('这是windows系统');
@@ -152,12 +179,16 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                 if ((e.keyCode === 48 || e.keyCode === 96) && e.ctrlKey) {
                     if (keySelect) {
                         setKeySelect(false);
-                        setFocus(
-                            cryptoRandomString({
-                                length: 24,
-                                type: "alphanumeric",
-                            })
-                        );
+                        if (currentNoteKey) {
+                            setTimeout(() => {
+                                setFocus(
+                                    cryptoRandomString({
+                                        length: 24,
+                                        type: "alphanumeric",
+                                    })
+                                );
+                            }, 0);
+                        }
                     } else {
                         setKeySelect(true);
                         setBlur(
@@ -176,14 +207,16 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                 //nromal enter and extra enter
                 if ((e.keyCode === 13 || e.keyCode === 108) && keySelect) {
                     setKeySelect(false);
-                    setTimeout(() => {
-                        setFocus(
-                            cryptoRandomString({
-                                length: 24,
-                                type: "alphanumeric",
-                            })
-                        );
-                    }, 0);
+                    if (currentNoteKey) {
+                        setTimeout(() => {
+                            setFocus(
+                                cryptoRandomString({
+                                    length: 24,
+                                    type: "alphanumeric",
+                                })
+                            );
+                        }, 0);
+                    }
                 }
 
                 if (e.keyCode === 13 || e.keyCode === 108) {
@@ -206,9 +239,29 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                     }
                     setShowAllRepo(false);
                 }
+
+                //switch among hidden, half, all
+                if ((e.keyCode === 191 || e.keyCode === 47) && e.ctrlKey) {
+                    if (renderPanelState === "hidden") {
+                        setRenderPanelState("half");
+                    } else if (renderPanelState === "half") {
+                        setRenderPanelState("all");
+                    } else if (renderPanelState === "all") {
+                        setRenderPanelState("hidden");
+                    }
+                }
             }
         },
-        [keySelect, allowHiddenAllRepoViaEnter, setBlur, setFocus, setKeySelect]
+        [
+            currentNoteKey,
+            keySelect,
+            allowHiddenAllRepoViaEnter,
+            renderPanelState,
+            setBlur,
+            setFocus,
+            setKeySelect,
+            setRenderPanelState,
+        ]
     );
 
     useEffect(() => {
@@ -251,7 +304,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                 ) : (
                     <></>
                 )}
-                {renderPanelState === "hidden" ? (
+                {showHiddenUpPart ? (
                     <HiddenToHalfBtn
                         onClick={() => {
                             setRenderPanelState("half");
@@ -260,7 +313,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                 ) : (
                     <></>
                 )}
-                {renderPanelState === "hidden" ? (
+                {showHiddenUpPart ? (
                     <HiddenToAllBtn
                         onClick={() => {
                             setRenderPanelState("all");
@@ -296,7 +349,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                 ) : (
                     <></>
                 )}
-                {renderPanelState === "all" ? (
+                {showAllDownPart ? (
                     <AllToHiddenBtn
                         onClick={() => {
                             setRenderPanelState("hidden");
@@ -306,43 +359,74 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                     <></>
                 )}
             </RenderPanel>
-            <BreakCrumb>
-                <CurRepoNameTag
-                    onClick={() => {
-                        repoNameClickHandler();
-                    }}
-                >
-                    <RepoNameLabel>
-                        {repos_obj && currentRepoKey && repos_obj[currentRepoKey]
-                            ? repos_obj[currentRepoKey].repo_name
-                            : ""}
-                    </RepoNameLabel>
-                </CurRepoNameTag>
-                <AllRepo style={{ display: showAllRepo ? "block" : "none" }}>
-                    <RepoPanel
-                        data_path={data_path}
-                        repos_key={repos_key}
-                        repos_obj={repos_obj}
-                        currentRepoKey={currentRepoKey}
-                        currentFolderKey={currentFolderKey}
-                        keySelect={keySelect}
-                        showAllRepo={showAllRepo}
-                        repoSwitch={repoSwitch}
-                        folderSwitch={folderSwitch}
-                        noteSwitch={noteSwitch}
-                        updateDxnote={updateDxnote}
-                        updateRepos={updateRepos}
-                        changeNotesAfterNew={changeNotesAfterNew}
-                        setDataPath={setDataPath}
-                        reorderRepo={reorderRepo}
-                        setFocus={setFocus}
-                        setBlur={setBlur}
-                        setKeySelect={setKeySelect}
-                        setShowAllRepo={setShowAllRepo}
-                        setAllowHiddenAllRepoViaEnter={setAllowHiddenAllRepoViaEnter}
-                    />
-                </AllRepo>
-            </BreakCrumb>
+            <BottomRow>
+                <BreakCrumb>
+                    <CurRepoNameTag
+                        onClick={() => {
+                            repoNameClickHandler();
+                        }}
+                    >
+                        <RepoNameLabel>
+                            {repos_obj && currentRepoKey && repos_obj[currentRepoKey]
+                                ? repos_obj[currentRepoKey].repo_name
+                                : ""}
+                        </RepoNameLabel>
+                    </CurRepoNameTag>
+                    <GreaterTag>&gt;</GreaterTag>
+                    <CurFolderNameTag>
+                        <FolderNameLabel>
+                            {folders_obj && currentFolderKey && folders_obj[currentFolderKey]
+                                ? folders_obj[currentFolderKey].folder_name
+                                : ""}
+                        </FolderNameLabel>
+                    </CurFolderNameTag>
+                    <GreaterTag>&gt;</GreaterTag>
+                    <CurNoteNameTag>
+                        <NoteNameLabel>
+                            {notes_obj && currentNoteKey && notes_obj[currentNoteKey]
+                                ? notes_obj[currentNoteKey]["title"]
+                                : ""}
+                        </NoteNameLabel>
+                    </CurNoteNameTag>
+                    {showAllRepo ? (
+                        <AllRepo>
+                            <RepoPanel
+                                data_path={data_path}
+                                repos_key={repos_key}
+                                repos_obj={repos_obj}
+                                currentRepoKey={currentRepoKey}
+                                currentFolderKey={currentFolderKey}
+                                keySelect={keySelect}
+                                showAllRepo={showAllRepo}
+                                repoSwitch={repoSwitch}
+                                folderSwitch={folderSwitch}
+                                noteSwitch={noteSwitch}
+                                updateDxnote={updateDxnote}
+                                updateRepos={updateRepos}
+                                changeNotesAfterNew={changeNotesAfterNew}
+                                setDataPath={setDataPath}
+                                reorderRepo={reorderRepo}
+                                setFocus={setFocus}
+                                setBlur={setBlur}
+                                setKeySelect={setKeySelect}
+                                setShowAllRepo={setShowAllRepo}
+                                setAllowHiddenAllRepoViaEnter={setAllowHiddenAllRepoViaEnter}
+                            />
+                        </AllRepo>
+                    ) : (
+                        <></>
+                    )}
+                </BreakCrumb>
+                <AssistantActive>
+                    <AssistantActiveBtn
+                        onClick={() => {
+                            setShowAssistantPanel(
+                                (shohAssistantPanel: boolean) => !shohAssistantPanel
+                            );
+                        }}
+                    ></AssistantActiveBtn>
+                </AssistantActive>
+            </BottomRow>
         </CenterAreaContainer>
     );
 };
@@ -378,9 +462,9 @@ const HiddenToHalfBtn = styled.div({
     height: "25px",
     width: "40px",
     position: "absolute",
-    right: "40px",
+    right: "90px",
     top: "-15px",
-    backgroundColor: "#000",
+    backgroundColor: "#666",
     zIndex: "99999",
 });
 
@@ -388,7 +472,7 @@ const HiddenToAllBtn = styled.div({
     height: "40px",
     width: "40px",
     position: "absolute",
-    right: "0",
+    right: "50px",
     top: "-30px",
     backgroundColor: "#999",
     zIndex: "99999",
@@ -398,9 +482,9 @@ const HalfToHiddenBtn = styled.div({
     height: "25px",
     width: "40px",
     position: "absolute",
-    right: "40px",
+    right: "90px",
     top: "0",
-    backgroundColor: "#000",
+    backgroundColor: "#666",
     zIndex: "99999",
 });
 
@@ -408,7 +492,7 @@ const HalfToAllBtn = styled.div({
     height: "40px",
     width: "40px",
     position: "absolute",
-    right: "0",
+    right: "50px",
     top: "-40px",
     backgroundColor: "#999",
     zIndex: "99999",
@@ -418,9 +502,9 @@ const AllToHalfBtn = styled.div({
     height: "25px",
     width: "40px",
     position: "absolute",
-    right: "40px",
+    right: "90px",
     top: "0",
-    backgroundColor: "#000",
+    backgroundColor: "#666",
     zIndex: "99999",
 });
 
@@ -428,21 +512,30 @@ const AllToHiddenBtn = styled.div({
     height: "40px",
     width: "40px",
     position: "absolute",
-    right: "0",
+    right: "50px",
     top: "0",
     backgroundColor: "#999",
     zIndex: "99999",
 });
 
-const BreakCrumb = styled.div({
+const BottomRow = styled.div({
     width: "100%",
-    height: "32px",
     position: "absolute",
     left: "0",
     bottom: "0",
     display: "flex",
     alignItems: "center",
-    padding: "4px",
+    zIndex: "9999",
+});
+
+const BreakCrumb = styled.div({
+    width: "100%",
+    height: "32px",
+    flex: "1",
+    minWidth: "0",
+    display: "flex",
+    alignItems: "center",
+    padding: "4px 4px 4px 0",
     zIndex: "9999",
 });
 
@@ -461,7 +554,6 @@ const CurRepoNameTag = styled.div({
 
 const RepoNameLabel = styled.div({
     flex: 1,
-    textAlign: "center",
     fontSize: "16px",
     padding: "0 30px",
     overflow: "hidden",
@@ -469,9 +561,49 @@ const RepoNameLabel = styled.div({
     whiteSpace: "nowrap",
 });
 
+const CurFolderNameTag = styled.div({
+    height: "32px",
+    lineHeight: "32px",
+    color: "#939395",
+    overflow: "hidden !important",
+    textOverflow: "ellipsis",
+    wordBreak: "break-all",
+});
+
+const FolderNameLabel = styled.div({
+    flex: 1,
+    fontSize: "14px",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+});
+
+const CurNoteNameTag = styled.div({
+    height: "32px",
+    lineHeight: "32px",
+    color: "#939395",
+    overflow: "hidden !important",
+    textOverflow: "ellipsis",
+    wordBreak: "break-all",
+});
+
+const NoteNameLabel = styled.div({
+    flex: 1,
+    fontSize: "14px",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+});
+
+const GreaterTag = styled.div({
+    color: "#939395",
+    padding: "0 15px",
+});
+
 const AllRepo = styled.div({
-    width: "85%",
+    width: "calc(100% - 100px)",
     position: "absolute",
+    left: "0",
     bottom: "40px",
     padding: "10px",
     boxSizing: "border-box",
@@ -479,6 +611,20 @@ const AllRepo = styled.div({
     borderRadius: "8px",
     backgroundColor: "#2C3033",
     zIndex: "9999",
+});
+
+const AssistantActive = styled.div({
+    width: "140px",
+    height: "40px",
+    display: "flex",
+    flexDirection: "row-reverse",
+});
+
+const AssistantActiveBtn = styled.div({
+    width: "36px",
+    height: "36px",
+    margin: "2px 5px",
+    backgroundColor: "#666666",
 });
 
 type CenterAreaProps = {
@@ -511,6 +657,7 @@ type CenterAreaProps = {
     setFocus: (focus: string) => void;
     setBlur: (focus: string) => void;
     setKeySelect: (keySelect: boolean) => void;
+    setShowAssistantPanel: any;
     content: string;
     cursorHead: number;
     fromPos: number;

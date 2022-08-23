@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import styled from "@emotion/styled";
+import cryptoRandomString from "crypto-random-string";
 
 import { useRepos } from "./lib/useRepos";
 import { useNotes } from "./lib/useNotes";
@@ -18,6 +19,7 @@ import "./resources/my_highlight_styles/editor/solarized-dark.min.css";
 import "./resources/my_highlight_styles/preview/solarized-dark.min.css";
 import { useEditPos } from "./lib/useEditPos";
 import { useEditLine } from "./lib/useEditLine";
+import AssistantPanel from "./main/AssistantPanel";
 
 const App = () => {
     const [dataPath, setDataPath] = useState<string>(
@@ -28,6 +30,7 @@ const App = () => {
     const [theme, setTheme] = useState("dark");
     const [keySelect, setKeySelect] = useState(false);
     const [showAddPathTips, setShowAddPathTips] = useState(false);
+    const [showAssistantPanel, setShowAssistantPanel] = useState(false);
     const [
         dxnote,
         {
@@ -59,6 +62,14 @@ const App = () => {
             initDxnote(new_data.dxnote);
             initRepo(new_data.repos);
             initNotes(new_data.notes);
+            setTimeout(() => {
+                setFocus(
+                    cryptoRandomString({
+                        length: 24,
+                        type: "alphanumeric",
+                    })
+                );
+            }, 0);
         } else {
             console.log("no data path");
             setShowAddPathTips(true);
@@ -102,69 +113,75 @@ const App = () => {
                     setBlur={setBlur}
                     setKeySelect={setKeySelect}
                 />
-                <CenterArea
-                    data_path={dataPath}
-                    currentRepoKey={currentRepoKey}
-                    currentFolderKey={currentFolderKey}
-                    currentNoteKey={currentNoteKey}
-                    repos_key={dxnote.repos_key}
-                    repos_obj={repos}
-                    folders_key={repos[currentRepoKey]?.folders_key}
-                    folders_obj={repos[currentRepoKey]?.folders_obj}
-                    notes_key={repos[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_key}
-                    notes_obj={repos[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj}
-                    keySelect={keySelect}
-                    repoSwitch={repoSwitch}
-                    folderSwitch={switchFolder}
-                    noteSwitch={switchNote}
-                    updateDxnote={updateDxnote}
-                    updateRepos={updateRepos}
-                    changeNotesAfterNew={changeNotesAfterNew}
-                    setDataPath={setDataPath}
-                    reorderRepo={reorderRepo}
-                    reorderFolder={reorderFolder}
-                    reorderNote={reorderNote}
-                    setFocus={setFocus}
-                    setBlur={setBlur}
-                    setKeySelect={setKeySelect}
-                    content={
-                        currentRepoKey &&
-                        currentFolderKey &&
-                        currentNoteKey &&
-                        notes[currentRepoKey] &&
-                        notes[currentRepoKey][currentFolderKey] &&
-                        notes[currentRepoKey][currentFolderKey][currentNoteKey]
-                            ? notes[currentRepoKey][currentFolderKey][currentNoteKey]
-                            : ""
-                    }
-                    cursorHead={
-                        currentRepoKey &&
-                        currentFolderKey &&
-                        currentNoteKey &&
-                        cursorHeads[currentRepoKey] &&
-                        cursorHeads[currentRepoKey][currentFolderKey] &&
-                        cursorHeads[currentRepoKey][currentFolderKey][currentNoteKey]
-                            ? cursorHeads[currentRepoKey][currentFolderKey][currentNoteKey]
-                            : -1
-                    }
-                    fromPos={
-                        currentRepoKey &&
-                        currentFolderKey &&
-                        currentNoteKey &&
-                        fromPos[currentRepoKey] &&
-                        fromPos[currentRepoKey][currentFolderKey] &&
-                        fromPos[currentRepoKey][currentFolderKey][currentNoteKey]
-                            ? fromPos[currentRepoKey][currentFolderKey][currentNoteKey]
-                            : 0
-                    }
-                    focus={focus}
-                    blur={blur}
-                    theme={theme}
-                    updateNote={updateNote}
-                    renameNote={renameNote}
-                    updateCursorHead={updateCursorHead}
-                    updateFromPos={updateFromPos}
-                />
+                {dataPath ? (
+                    <CenterArea
+                        data_path={dataPath}
+                        currentRepoKey={currentRepoKey}
+                        currentFolderKey={currentFolderKey}
+                        currentNoteKey={currentNoteKey}
+                        repos_key={dxnote.repos_key}
+                        repos_obj={repos}
+                        folders_key={repos[currentRepoKey]?.folders_key}
+                        folders_obj={repos[currentRepoKey]?.folders_obj}
+                        notes_key={repos[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_key}
+                        notes_obj={repos[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj}
+                        keySelect={keySelect}
+                        repoSwitch={repoSwitch}
+                        folderSwitch={switchFolder}
+                        noteSwitch={switchNote}
+                        updateDxnote={updateDxnote}
+                        updateRepos={updateRepos}
+                        changeNotesAfterNew={changeNotesAfterNew}
+                        setDataPath={setDataPath}
+                        reorderRepo={reorderRepo}
+                        reorderFolder={reorderFolder}
+                        reorderNote={reorderNote}
+                        setFocus={setFocus}
+                        setBlur={setBlur}
+                        setKeySelect={setKeySelect}
+                        content={
+                            currentRepoKey &&
+                            currentFolderKey &&
+                            currentNoteKey &&
+                            notes[currentRepoKey] &&
+                            notes[currentRepoKey][currentFolderKey] &&
+                            notes[currentRepoKey][currentFolderKey][currentNoteKey]
+                                ? notes[currentRepoKey][currentFolderKey][currentNoteKey]
+                                : ""
+                        }
+                        cursorHead={
+                            currentRepoKey &&
+                            currentFolderKey &&
+                            currentNoteKey &&
+                            cursorHeads[currentRepoKey] &&
+                            cursorHeads[currentRepoKey][currentFolderKey] &&
+                            cursorHeads[currentRepoKey][currentFolderKey][currentNoteKey]
+                                ? cursorHeads[currentRepoKey][currentFolderKey][currentNoteKey]
+                                : -1
+                        }
+                        fromPos={
+                            currentRepoKey &&
+                            currentFolderKey &&
+                            currentNoteKey &&
+                            fromPos[currentRepoKey] &&
+                            fromPos[currentRepoKey][currentFolderKey] &&
+                            fromPos[currentRepoKey][currentFolderKey][currentNoteKey]
+                                ? fromPos[currentRepoKey][currentFolderKey][currentNoteKey]
+                                : 0
+                        }
+                        focus={focus}
+                        blur={blur}
+                        theme={theme}
+                        updateNote={updateNote}
+                        renameNote={renameNote}
+                        updateCursorHead={updateCursorHead}
+                        updateFromPos={updateFromPos}
+                        setShowAssistantPanel={setShowAssistantPanel}
+                    />
+                ) : (
+                    <></>
+                )}
+                {showAssistantPanel ? <AssistantPanel /> : <></>}
             </RepoContent>
             {/* <SocketClientBtn/>
             <SocketServerBtn/> */}

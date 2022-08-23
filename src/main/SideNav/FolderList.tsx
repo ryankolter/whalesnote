@@ -92,6 +92,11 @@ const FolderList: React.FC<FolderListProps> = ({
 
             if (!currentRepoKey) return;
 
+            const note_key = cryptoRandomString({
+                length: 12,
+                type: "alphanumeric",
+            });
+
             let repo_info = ipcRenderer.sendSync("readJson", {
                 file_path: `${data_path}/${currentRepoKey}/repo_info.json`,
             });
@@ -103,8 +108,12 @@ const FolderList: React.FC<FolderListProps> = ({
 
             let folder_info = {
                 folder_name: e.target.value,
-                notes_key: [],
-                notes_obj: {},
+                notes_key: [note_key],
+                notes_obj: {
+                    [note_key]: {
+                        title: "新建文档",
+                    },
+                },
             };
 
             ipcRenderer.sendSync("writeJson", {
@@ -126,7 +135,15 @@ const FolderList: React.FC<FolderListProps> = ({
             setNewFolderName("");
             repoSwitch(currentRepoKey);
             folderSwitch(data_path, folder_key);
-            setFocus(cryptoRandomString({ length: 24, type: "alphanumeric" }));
+            noteSwitch(data_path, note_key);
+            setTimeout(() => {
+                setFocus(
+                    cryptoRandomString({
+                        length: 24,
+                        type: "alphanumeric",
+                    })
+                );
+            }, 0);
         },
         [
             data_path,
@@ -328,13 +345,16 @@ const FolderList: React.FC<FolderListProps> = ({
             // console.log(e.keyCode)
             if (process.platform === "darwin") {
                 //console.log('这是mac系统');
+                if (e.keyCode === 78 && e.metaKey && e.shiftKey) {
+                    newFolder();
+                }
 
-                // arrow bottom 40 and L 76
-                if ((e.keyCode === 76 || e.keyCode === 40) && !e.metaKey && keySelect) {
+                // arrow right 39 or L 76
+                if ((e.keyCode === 76 || e.keyCode === 39) && !e.metaKey && keySelect) {
                     nextFolderPage();
                 }
-                // arrow bottom 38 and J 74
-                if ((e.keyCode === 74 || e.keyCode === 38) && !e.metaKey && keySelect) {
+                // arrow left 37 or J 74
+                if ((e.keyCode === 74 || e.keyCode === 37) && !e.metaKey && keySelect) {
                     preFolderPage();
                 }
 
@@ -351,14 +371,17 @@ const FolderList: React.FC<FolderListProps> = ({
             }
             if (process.platform === "win32" || process.platform === "linux") {
                 //console.log('这是windows/linux系统');
+                if (e.keyCode === 78 && e.ctrlKey && e.shiftKey) {
+                    newFolder();
+                }
 
-                // arrow bottom 40 and L 76
-                if ((e.keyCode === 76 || e.keyCode === 40) && !e.ctrlKey && keySelect) {
+                // arrow right 39 or L 76
+                if ((e.keyCode === 76 || e.keyCode === 39) && !e.ctrlKey && keySelect) {
                     nextFolderPage();
                 }
 
-                // arrow bottom 38 and J 74
-                if ((e.keyCode === 74 || e.keyCode === 38) && !e.ctrlKey && keySelect) {
+                // arrow left 37 or J 74
+                if ((e.keyCode === 74 || e.keyCode === 37) && !e.ctrlKey && keySelect) {
                     preFolderPage();
                 }
                 if (e.keyCode >= 48 && e.keyCode <= 57 && !e.ctrlKey && keySelect) {
@@ -589,6 +612,8 @@ const FolderListContainer = styled.div(
         flexDirection: "column",
         height: "100%",
         minWidth: "100px",
+        paddingBottom: "20px",
+        boxSizing: "border-box",
     },
     (props: { width: number }) => ({
         width: props.width,

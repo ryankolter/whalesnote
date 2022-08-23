@@ -76,8 +76,6 @@ const RepoPanel: React.FC<RepoListProps> = ({
 
     const repoScrollRef = useRef<HTMLDivElement>(null);
 
-    const repo_group_number = useRef([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-
     const closeRepoList = useCallback(() => {
         setShowAllRepo(false);
     }, [keySelect, setKeySelect, setShowAllRepo]);
@@ -156,6 +154,11 @@ const RepoPanel: React.FC<RepoListProps> = ({
                 type: "alphanumeric",
             });
 
+            const default_note_key = cryptoRandomString({
+                length: 12,
+                type: "alphanumeric",
+            });
+
             let dxnote_info = ipcRenderer.sendSync("readJson", {
                 file_path: `${data_path}/dxnote_info.json`,
             });
@@ -182,8 +185,12 @@ const RepoPanel: React.FC<RepoListProps> = ({
             // default folder
             let folder_info = {
                 folder_name: "默认分类",
-                notes_key: [],
-                notes_obj: {},
+                notes_key: [default_note_key],
+                notes_obj: {
+                    [default_note_key]: {
+                        title: "新建文档",
+                    },
+                },
             };
 
             ipcRenderer.sendSync("writeJson", {
@@ -210,9 +217,18 @@ const RepoPanel: React.FC<RepoListProps> = ({
             repoSwitchInPanel(repo_key);
             setRepoScrollPage(Math.ceil(dxnote_info.repos_key.length / 9) - 1);
             folderSwitch(data_path, default_folder_key);
-            setFocus(cryptoRandomString({ length: 24, type: "alphanumeric" }));
+            noteSwitch(data_path, default_note_key);
             setAllowHiddenAllRepoViaEnter(true);
             scrollToRight();
+            setShowAllRepo(false);
+            setTimeout(() => {
+                setFocus(
+                    cryptoRandomString({
+                        length: 24,
+                        type: "alphanumeric",
+                    })
+                );
+            }, 0);
         },
         [
             data_path,
@@ -731,18 +747,21 @@ const RepoPanel: React.FC<RepoListProps> = ({
                         <></>
                     )}
                     {data_path && !newRepoKey ? (
-                        <RepoAddBtn onClick={newRepo}>
-                            +
-                            {repos_key &&
-                            repos_key.filter((key) => repos_obj && repos_obj[key]).length == 1 ? (
-                                <AddReposTips>
-                                    <div>点击按钮</div>
-                                    <div>添加新资料库</div>
-                                </AddReposTips>
-                            ) : (
-                                <></>
-                            )}
-                        </RepoAddBtn>
+                        <RepoAdd>
+                            <RepoAddBtn onClick={newRepo}>
+                                +
+                                {repos_key &&
+                                repos_key.filter((key) => repos_obj && repos_obj[key]).length ==
+                                    1 ? (
+                                    <AddReposTips>
+                                        <div>点击按钮</div>
+                                        <div>添加新资料库</div>
+                                    </AddReposTips>
+                                ) : (
+                                    <></>
+                                )}
+                            </RepoAddBtn>
+                        </RepoAdd>
                     ) : (
                         <div></div>
                     )}
@@ -879,7 +898,7 @@ const RepoGroupItem = styled.div({
 });
 
 const RepoItemPadding = styled.div({
-    width: "calc(100% / 5 * 4 - 58px)",
+    width: "calc(100% / 5 * 4)",
     height: "100%",
 });
 
@@ -910,6 +929,10 @@ const MenuLi = styled.li(
     background-color: #EBEBEB; 
 }`
 );
+
+const RepoAdd = styled.div({
+    width: "calc(20% - 20px)",
+});
 
 const RepoAddBtn = styled.div({
     position: "relative",

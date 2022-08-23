@@ -89,7 +89,14 @@ const NoteList: React.FC<NoteListProps> = ({
             note_key,
         });
         noteSwitch(data_path, note_key);
-        setFocus(cryptoRandomString({ length: 24, type: "alphanumeric" }));
+        setTimeout(() => {
+            setFocus(
+                cryptoRandomString({
+                    length: 24,
+                    type: "alphanumeric",
+                })
+            );
+        }, 0);
         setTimeout(() => {
             scrollToBottom();
         }, 0);
@@ -243,17 +250,17 @@ const NoteList: React.FC<NoteListProps> = ({
             // console.log(e.keyCode)
             if (process.platform === "darwin") {
                 //console.log('这是mac系统');
-                if (e.keyCode === 78 && e.metaKey) {
+                if (e.keyCode === 78 && e.metaKey && !e.shiftKey) {
                     newNote();
                 }
 
-                // arrow bottom 40 change to K 75
-                if (e.keyCode === 75 && !e.metaKey && keySelect) {
+                // arrow bottom 40 or K 75
+                if ((e.keyCode === 40 || e.keyCode === 75) && !e.metaKey && keySelect) {
                     nextNotePage();
                 }
 
-                // arrow bottom 38 change to I 73
-                if (e.keyCode === 73 && !e.metaKey && keySelect) {
+                // arrow bottom 38 or I 73
+                if ((e.keyCode === 38 || e.keyCode === 73) && !e.metaKey && keySelect) {
                     preNotePage();
                 }
                 if (
@@ -279,17 +286,17 @@ const NoteList: React.FC<NoteListProps> = ({
             }
             if (process.platform === "win32" || process.platform === "linux") {
                 //console.log('这是windows/linux系统');
-                if (e.keyCode === 78 && e.ctrlKey) {
+                if (e.keyCode === 78 && e.ctrlKey && !e.shiftKey) {
                     newNote();
                 }
 
-                // arrow bottom 40 change to K 75
-                if (e.keyCode === 75 && !e.ctrlKey && keySelect) {
+                // arrow bottom 40 or K 75
+                if ((e.keyCode === 40 || e.keyCode === 75) && !e.ctrlKey && keySelect) {
                     nextNotePage();
                 }
 
-                // arrow bottom 38 change to I 73
-                if (e.keyCode === 73 && !e.ctrlKey && keySelect) {
+                // arrow bottom 38 or I 73
+                if ((e.keyCode === 38 || e.keyCode === 73) && !e.ctrlKey && keySelect) {
                     preNotePage();
                 }
 
@@ -448,7 +455,7 @@ const NoteList: React.FC<NoteListProps> = ({
                                         </Sortable>
                                     );
                                 })}
-                            {notes_key.filter((key) => notes_obj && notes_obj[key]).length === 0 ? (
+                            {notes_key.filter((key) => notes_obj && notes_obj[key]).length <= 1 ? (
                                 <AddNotesTips>
                                     <div>点击按钮</div>
                                     <div>添加新文档</div>
@@ -522,8 +529,8 @@ const NoteListContainer = styled.div(
 
 const NoteAddFloat = styled.div({
     position: "absolute",
-    bottom: "10px",
-    right: "10px",
+    bottom: "16px",
+    right: "16px",
     display: "flex",
     alignItems: "center",
     flexDirection: "row",
