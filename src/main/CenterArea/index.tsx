@@ -32,6 +32,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
     setFocus,
     setBlur,
     setKeySelect,
+    showAssistantPanel,
     setShowAssistantPanel,
     cursorHead,
     fromPos,
@@ -48,9 +49,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
     const [renderTop, setRenderTop] = useState("calc(100vh - 20px)");
 
     const [renderPanelState, setRenderPanelState] = useState("hidden");
-
-    const [showHiddenUpPart, setShowHiddenUpPart] = useState(false);
-    const [showAllDownPart, setShowAllDownPart] = useState(false);
+    const [showSwitchModePanel, setShowSwitchModePanel] = useState(false);
 
     let [showAllRepo, setShowAllRepo] = useState(false);
     let [allowHiddenAllRepoViaEnter, setAllowHiddenAllRepoViaEnter] = useState(true);
@@ -64,20 +63,14 @@ const CenterArea: React.FC<CenterAreaProps> = ({
             setEditorHeight("calc(100vh - 40px - 12px)");
             setRenderHeight("0");
             setRenderTop("calc(100vh - 20px)");
-            setShowAllDownPart(false);
-            setShowHiddenUpPart(true);
         } else if (renderPanelState === "half") {
             setEditorHeight("calc(50vh - 30px)");
             setRenderHeight("calc(50vh - 30px)");
             setRenderTop("calc(50vh - 20px)");
-            setShowAllDownPart(false);
-            setShowHiddenUpPart(false);
         } else if (renderPanelState === "all") {
             setEditorHeight("calc(100vh - 40px - 12px)");
             setRenderHeight("calc(100vh - 40px - 10px)");
             setRenderTop("0");
-            setShowAllDownPart(true);
-            setShowHiddenUpPart(false);
         }
     }, [renderPanelState]);
 
@@ -304,60 +297,6 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                 ) : (
                     <></>
                 )}
-                {showHiddenUpPart ? (
-                    <HiddenToHalfBtn
-                        onClick={() => {
-                            setRenderPanelState("half");
-                        }}
-                    ></HiddenToHalfBtn>
-                ) : (
-                    <></>
-                )}
-                {showHiddenUpPart ? (
-                    <HiddenToAllBtn
-                        onClick={() => {
-                            setRenderPanelState("all");
-                        }}
-                    ></HiddenToAllBtn>
-                ) : (
-                    <></>
-                )}
-                {renderPanelState === "half" ? (
-                    <HalfToHiddenBtn
-                        onClick={() => {
-                            setRenderPanelState("hidden");
-                        }}
-                    ></HalfToHiddenBtn>
-                ) : (
-                    <></>
-                )}
-                {renderPanelState === "half" ? (
-                    <HalfToAllBtn
-                        onClick={() => {
-                            setRenderPanelState("all");
-                        }}
-                    ></HalfToAllBtn>
-                ) : (
-                    <></>
-                )}
-                {renderPanelState === "all" ? (
-                    <AllToHalfBtn
-                        onClick={() => {
-                            setRenderPanelState("half");
-                        }}
-                    ></AllToHalfBtn>
-                ) : (
-                    <></>
-                )}
-                {showAllDownPart ? (
-                    <AllToHiddenBtn
-                        onClick={() => {
-                            setRenderPanelState("hidden");
-                        }}
-                    ></AllToHiddenBtn>
-                ) : (
-                    <></>
-                )}
             </RenderPanel>
             <BottomRow>
                 <BreakCrumb>
@@ -417,14 +356,58 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                         <></>
                     )}
                 </BreakCrumb>
+                <SwitchMode>
+                    <SwitchModeBtn
+                        onClick={() => {
+                            setShowSwitchModePanel((showSwitchModePanel) => !showSwitchModePanel);
+                        }}
+                    >
+                        {renderPanelState === "hidden" ? <ModeName>编辑</ModeName> : <></>}
+                        {renderPanelState === "half" ? <ModeName>编辑+预览</ModeName> : <></>}
+                        {renderPanelState === "all" ? <ModeName>预览</ModeName> : <></>}
+                        <Triangle></Triangle>
+                    </SwitchModeBtn>
+                    {showSwitchModePanel ? (
+                        <SwitchModePanel>
+                            <ModeOption
+                                onClick={() => {
+                                    setRenderPanelState("hidden");
+                                    setShowSwitchModePanel(false);
+                                }}
+                            >
+                                编辑
+                            </ModeOption>
+                            <ModeOption
+                                onClick={() => {
+                                    setRenderPanelState("all");
+                                    setShowSwitchModePanel(false);
+                                }}
+                            >
+                                预览
+                            </ModeOption>
+                            <ModeOption
+                                onClick={() => {
+                                    setRenderPanelState("half");
+                                    setShowSwitchModePanel(false);
+                                }}
+                            >
+                                编辑+预览
+                            </ModeOption>
+                        </SwitchModePanel>
+                    ) : (
+                        <></>
+                    )}
+                </SwitchMode>
                 <AssistantActive>
                     <AssistantActiveBtn
                         onClick={() => {
                             setShowAssistantPanel(
-                                (shohAssistantPanel: boolean) => !shohAssistantPanel
+                                (showAssistantPanel: boolean) => !showAssistantPanel
                             );
                         }}
-                    ></AssistantActiveBtn>
+                    >
+                        {showAssistantPanel ? <div>&gt;</div> : <div>&lt;</div>}
+                    </AssistantActiveBtn>
                 </AssistantActive>
             </BottomRow>
         </CenterAreaContainer>
@@ -457,66 +440,6 @@ const RenderPanel = styled.div(
         height: props.heightValue,
     })
 );
-
-const HiddenToHalfBtn = styled.div({
-    height: "25px",
-    width: "40px",
-    position: "absolute",
-    right: "90px",
-    top: "-15px",
-    backgroundColor: "#666",
-    zIndex: "99999",
-});
-
-const HiddenToAllBtn = styled.div({
-    height: "40px",
-    width: "40px",
-    position: "absolute",
-    right: "50px",
-    top: "-30px",
-    backgroundColor: "#999",
-    zIndex: "99999",
-});
-
-const HalfToHiddenBtn = styled.div({
-    height: "25px",
-    width: "40px",
-    position: "absolute",
-    right: "90px",
-    top: "0",
-    backgroundColor: "#666",
-    zIndex: "99999",
-});
-
-const HalfToAllBtn = styled.div({
-    height: "40px",
-    width: "40px",
-    position: "absolute",
-    right: "50px",
-    top: "-40px",
-    backgroundColor: "#999",
-    zIndex: "99999",
-});
-
-const AllToHalfBtn = styled.div({
-    height: "25px",
-    width: "40px",
-    position: "absolute",
-    right: "90px",
-    top: "0",
-    backgroundColor: "#666",
-    zIndex: "99999",
-});
-
-const AllToHiddenBtn = styled.div({
-    height: "40px",
-    width: "40px",
-    position: "absolute",
-    right: "50px",
-    top: "0",
-    backgroundColor: "#999",
-    zIndex: "99999",
-});
 
 const BottomRow = styled.div({
     width: "100%",
@@ -613,18 +536,85 @@ const AllRepo = styled.div({
     zIndex: "9999",
 });
 
+const SwitchMode = styled.div({
+    position: "relative",
+    height: "40px",
+    display: "flex",
+    flexDirection: "row-reverse",
+    cursor: "pointer",
+});
+
+const SwitchModeBtn = styled.div({
+    display: "flex",
+    justifyContent: "center",
+    width: "100px",
+    boxSizing: "border-box",
+    height: "28px",
+    margin: "7px 5px",
+    padding: "0 14px",
+    backgroundColor: "rgb(58, 64, 76)",
+    borderRadius: "14px",
+});
+
+const ModeName = styled.div({
+    fontSize: "14px",
+    lineHeight: "28px",
+    color: "#939395",
+});
+
+const Triangle = styled.div({
+    display: "block",
+    height: "0",
+    width: "0",
+    marginLeft: "4px",
+    borderBottom: "9px solid #939395",
+    borderTop: "9px solid transparent",
+    borderLeft: "6px solid transparent",
+    borderRight: "6px solid transparent",
+});
+
+const SwitchModePanel = styled.div({
+    position: "absolute",
+    bottom: "34px",
+    left: "calc(50% - 50px)",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    width: "100px",
+    padding: "5px 0",
+    color: "#939395",
+    backgroundColor: "#2C3033",
+    border: "1px solid rgba(58, 64, 76)",
+    borderRadius: "4px",
+});
+
+const ModeOption = styled.div({
+    display: "flex",
+    justifyContent: "center",
+    width: "100%",
+    padding: "5px",
+});
+
 const AssistantActive = styled.div({
-    width: "140px",
+    width: "50px",
     height: "40px",
     display: "flex",
     flexDirection: "row-reverse",
 });
 
 const AssistantActiveBtn = styled.div({
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
     width: "36px",
     height: "36px",
+    lintHeight: "36px",
+    boxSizing: "border-box",
     margin: "2px 5px",
-    backgroundColor: "#666666",
+    border: "1px solid rgba(58, 64, 76)",
+    borderRadius: "18px",
+    fontSize: "18px",
+    color: "#939395",
 });
 
 type CenterAreaProps = {
@@ -639,6 +629,7 @@ type CenterAreaProps = {
     currentFolderKey: string;
     currentNoteKey: string;
     keySelect: boolean;
+    showAssistantPanel: boolean;
     repoSwitch: (repoKey: string | undefined) => void;
     folderSwitch: (dataPath: string | null, folderKey: string | undefined) => void;
     noteSwitch: (data_path: string | null, note_key: string | undefined) => void;

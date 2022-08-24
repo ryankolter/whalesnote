@@ -54,9 +54,6 @@ const App = () => {
     const [fromPos, { updateFromPos }] = useEditLine();
 
     useMemo(() => {
-        if (!window.localStorage.getItem("view_mode")) {
-            window.localStorage.setItem("view_mode", "sidebyside");
-        }
         let new_data = initData(dataPath);
         if (new_data) {
             initDxnote(new_data.dxnote);
@@ -176,6 +173,7 @@ const App = () => {
                         renameNote={renameNote}
                         updateCursorHead={updateCursorHead}
                         updateFromPos={updateFromPos}
+                        showAssistantPanel={showAssistantPanel}
                         setShowAssistantPanel={setShowAssistantPanel}
                     />
                 ) : (
