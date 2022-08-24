@@ -9,7 +9,6 @@ const editLineReducer = produce((state: editLinesTypes, action: any) => {
             state[action.repo_key][action.folder_key] ||
                 (state[action.repo_key][action.folder_key] = {});
             state[action.repo_key][action.folder_key][action.note_key] = action.from_pos;
-            console.log(action.from_pos);
             return state;
         }
     }

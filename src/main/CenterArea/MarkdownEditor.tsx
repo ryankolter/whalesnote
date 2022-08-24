@@ -214,6 +214,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     }, [data_path, currentRepoKey, currentFolderKey, currentNoteKey]);
 
     useEffect(() => {
+        console.log("focus");
         if (focus === "") return;
         view.current?.focus();
     }, [focus]);

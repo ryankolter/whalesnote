@@ -14,18 +14,10 @@ export const InputPopUpBox: React.FC<InputPopUpBoxProps> = (props) => {
 
     const onChangeHandle = useCallback(
         (event: any) => {
-            console.log(event.target.value);
             setValue(event.target.value);
         },
         [setValue]
     );
-
-    // useEffect(() => {
-    //     document.addEventListener('keydown', onKeyDown);
-    //     return () => {
-    //         document.removeEventListener('keydown', onKeyDown);
-    //     }
-    // },[])
 
     return (
         <InputBox>

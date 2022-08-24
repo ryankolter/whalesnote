@@ -68,7 +68,6 @@ const App = () => {
                 );
             }, 0);
         } else {
-            console.log("no data path");
             setShowAddPathTips(true);
         }
     }, [dataPath, setShowAddPathTips]);

@@ -83,7 +83,6 @@ const FolderList: React.FC<FolderListProps> = ({
 
     const newFolderConfirm = useCallback(
         (e: any, folder_key: string) => {
-            console.log("newFolderConfirm");
             if (e.target.value === "") {
                 setNewFolderKey("");
                 setNewFolderName("");
@@ -178,7 +177,6 @@ const FolderList: React.FC<FolderListProps> = ({
     };
 
     const renameFolderConfirm = useCallback(() => {
-        console.log(curFolderName);
         if (currentRepoKey && currentFolderKey) {
             let folder_info = ipcRenderer.sendSync("readJson", {
                 file_path: `${data_path}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
@@ -328,7 +326,6 @@ const FolderList: React.FC<FolderListProps> = ({
     }, [folderScrollTop]);
 
     useEffect(() => {
-        console.log(numArray);
         if (numArray.length === 2) {
             folderSwitchByIndex(numArray[0] * 10 + numArray[1]);
             setNumArray([]);

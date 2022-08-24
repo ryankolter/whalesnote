@@ -142,7 +142,6 @@ const RepoPanel: React.FC<RepoListProps> = ({
 
     const newRepoSubmit = useCallback(
         (e: any, repo_key: string) => {
-            console.log("newRepoSubmit");
             if (e.target.value === "") {
                 setNewRepoKey("");
                 setNewRepoName("");
@@ -258,8 +257,6 @@ const RepoPanel: React.FC<RepoListProps> = ({
     };
 
     const renameRepoConfirm = useCallback(() => {
-        console.log("renameRepoConfirm");
-        console.log(curRepoName);
         if (currentRepoKey) {
             let repo_info = ipcRenderer.sendSync("readJson", {
                 file_path: `${data_path}/${currentRepoKey}/repo_info.json`,
@@ -305,9 +302,7 @@ const RepoPanel: React.FC<RepoListProps> = ({
     };
 
     const deleteRepoConfirm = useCallback(() => {
-        console.log("deleteRepoConfirm");
         if (currentRepoKey) {
-            console.log("delete repo");
             let repo_info = ipcRenderer.sendSync("readJson", {
                 file_path: `${data_path}/${currentRepoKey}/repo_info.json`,
             });
@@ -543,21 +538,17 @@ const RepoPanel: React.FC<RepoListProps> = ({
     }, [handleWhell]);
 
     const handleDragStart = (event: any) => {
-        console.log("handleDragStart");
         setActiveId(event.active.id);
     };
 
     const handleDragEnd = useCallback(
         (event: any) => {
             setActiveId(null);
-            console.log("handleDragEnd");
             const { active, over } = event;
 
             if (!over) return;
-            console.log("handleDragEnd2");
 
             if (active.id !== over.id && repos_key && currentRepoKey && currentFolderKey) {
-                console.log("handleDragEnd3");
                 const oldIndex = repos_key.indexOf(active.id);
                 const newIndex = repos_key.indexOf(over.id);
                 let new_repos_key = arrayMove(repos_key, oldIndex, newIndex);

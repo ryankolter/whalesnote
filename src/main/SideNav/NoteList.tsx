@@ -276,7 +276,6 @@ const NoteList: React.FC<NoteListProps> = ({
                             ((num < 8 && num < Math.ceil(notes_key.length / 22)) ||
                                 (num > 11 && num < Math.ceil(notes_key.length / 22) + 4))
                         ) {
-                            console.log(num);
                             setNumArray((state) => state.concat([num]));
                         }
                     } else {
@@ -335,7 +334,6 @@ const NoteList: React.FC<NoteListProps> = ({
         (event: any) => {
             setActiveId(null);
             const { active, over } = event;
-            console.log(event);
 
             if (!over) return;
 

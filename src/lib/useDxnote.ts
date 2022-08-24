@@ -186,7 +186,6 @@ export const useDxnote = () => {
     }, [state]);
 
     const reorderRepo = (data_path: string, repo_key: string, new_repos_key: string[]) => {
-        console.log("reorderRepo");
         if (repo_key) {
             dispatch({
                 type: "reorderRepo",
