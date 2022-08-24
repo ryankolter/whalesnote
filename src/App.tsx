@@ -1,6 +1,8 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback, useRef } from "react";
 import styled from "@emotion/styled";
 import cryptoRandomString from "crypto-random-string";
+import MiniSearch from "minisearch";
+import nodejieba from "nodejieba";
 
 import { useRepos } from "./lib/useRepos";
 import { useNotes } from "./lib/useNotes";
@@ -20,6 +22,8 @@ import "./resources/my_highlight_styles/preview/solarized-dark.min.css";
 import { useEditPos } from "./lib/useEditPos";
 import { useEditLine } from "./lib/useEditLine";
 import AssistantPanel from "./main/AssistantPanel";
+
+const { ipcRenderer } = window.require("electron");
 
 const App = () => {
     const [dataPath, setDataPath] = useState<string>(
@@ -48,10 +52,20 @@ const App = () => {
     const [repos, { updateRepos, initRepo, renameNote, reorderFolder, reorderNote }] = useRepos();
     const [
         notes,
-        { repoNotesFetch, folderNotesFetch, changeNotesAfterNew, initNotes, updateNote },
+        {
+            allRepoNotesFetch,
+            repoNotesFetch,
+            folderNotesFetch,
+            changeNotesAfterNew,
+            initNotes,
+            updateNote,
+        },
     ] = useNotes();
     const [cursorHeads, { updateCursorHead }] = useEditPos();
     const [fromPos, { updateFromPos }] = useEditLine();
+
+    const miniSearch = useRef<any>();
+    const [showUpdateIndexTips, setShowUpdateIndexTips] = useState(true);
 
     useMemo(() => {
         let new_data = initData(dataPath);
@@ -59,6 +73,32 @@ const App = () => {
             initDxnote(new_data.dxnote);
             initRepo(new_data.repos);
             initNotes(new_data.notes);
+            let search = ipcRenderer.sendSync("readJson", {
+                file_path: `${dataPath}/search.json`,
+            });
+            if (search) {
+                setShowUpdateIndexTips(false);
+                miniSearch.current = MiniSearch.loadJS(search, {
+                    fields: ["title", "content"],
+                    storeFields: ["id", "type", "title"],
+                    tokenize: (string, _fieldName) => {
+                        let result = ipcRenderer.sendSync("nodejieba", {
+                            word: string,
+                        });
+                        return result;
+                    },
+                    searchOptions: {
+                        boost: { title: 2 },
+                        fuzzy: 0.2,
+                        tokenize: (string: string) => {
+                            let result = ipcRenderer.sendSync("nodejieba", {
+                                word: string,
+                            });
+                            return result;
+                        },
+                    },
+                });
+            }
             setTimeout(() => {
                 setFocus(
                     cryptoRandomString({
@@ -70,11 +110,107 @@ const App = () => {
         } else {
             setShowAddPathTips(true);
         }
-    }, [dataPath, setShowAddPathTips]);
+    }, [dataPath, setShowAddPathTips, setShowUpdateIndexTips]);
 
-    const repoSwitch = (repo_key: string | undefined) => {
-        repoNotesFetch(dataPath, repos, repo_key);
-        switchRepo(dataPath, repo_key);
+    const repoSwitch = useCallback(
+        (repo_key: string | undefined) => {
+            repoNotesFetch(dataPath, dxnote, repos, repo_key);
+            switchRepo(dataPath, repo_key);
+        },
+        [dataPath, dxnote, repos]
+    );
+
+    const folderSwitch = useCallback(
+        (repo_key: string | undefined, folder_key: string | undefined) => {
+            folderNotesFetch(dataPath, dxnote, repos, repo_key, folder_key);
+            switchFolder(dataPath, folder_key);
+        },
+        [dataPath, dxnote, repos]
+    );
+
+    const updateMiniSearch = useCallback(() => {
+        console.log("updateMiniSearch");
+
+        let all_notes = {};
+        let repos_key = dxnote.repos_key;
+        repos_key.forEach((repo_key: string) => {
+            if (!all_notes[repo_key]) {
+                all_notes[repo_key] = {};
+            }
+            let folders_key = repos[repo_key].folders_key;
+            folders_key.forEach((folder_key: string) => {
+                if (!all_notes[repo_key][folder_key]) {
+                    let folder_info = ipcRenderer.sendSync("readJson", {
+                        file_path: `${dataPath}/${repo_key}/${folder_key}/folder_info.json`,
+                    });
+                    if (folder_info && folder_info.notes_obj) {
+                        all_notes[repo_key][folder_key] = {};
+                        Object.keys(folder_info.notes_obj).forEach((note_key) => {
+                            let note_info = ipcRenderer.sendSync("readCson", {
+                                file_path: `${dataPath}/${repo_key}/${folder_key}/${note_key}.cson`,
+                            });
+                            if (note_info) {
+                                all_notes[repo_key][folder_key][note_key] = note_info.content;
+                            }
+                        });
+                    }
+                }
+            });
+        });
+
+        let documents: any = [];
+        Object.keys(all_notes).forEach((repo_key: string) => {
+            Object.keys(all_notes[repo_key]).forEach((folder_key: string) => {
+                Object.keys(all_notes[repo_key][folder_key]).forEach((note_key: string) => {
+                    let id = `${repo_key}-${folder_key}-${note_key}`;
+                    let title = repos[repo_key].folders_obj[folder_key].notes_obj[note_key].title;
+                    if (title === "新建文档") title = "";
+                    let content = all_notes[repo_key][folder_key][note_key];
+                    documents.push({
+                        id: id,
+                        type: "note",
+                        title: title,
+                        content: content,
+                    });
+                });
+            });
+        });
+        console.log(documents);
+        miniSearch.current = new MiniSearch({
+            fields: ["title", "content"],
+            storeFields: ["id", "type", "title"],
+            tokenize: (string, _fieldName) => {
+                let result = ipcRenderer.sendSync("nodejieba", {
+                    word: string,
+                });
+                return result;
+            },
+            searchOptions: {
+                boost: { title: 2 },
+                fuzzy: 0.2,
+                tokenize: (string: string) => {
+                    let result = ipcRenderer.sendSync("nodejieba", {
+                        word: string,
+                    });
+                    return result;
+                },
+            },
+        });
+        miniSearch.current.addAll(documents);
+
+        ipcRenderer.sendSync("writeJsonStr", {
+            file_path: `${dataPath}/search.json`,
+            str: JSON.stringify(miniSearch.current),
+        });
+
+        console.log("success");
+    }, [dataPath, dxnote, repos]);
+
+    const searchNote = (word: string) => {
+        if (!miniSearch.current) return [];
+        return miniSearch.current.search(word, {
+            filter: (result: any) => result.type === "note",
+        });
     };
 
     return (
@@ -96,7 +232,7 @@ const App = () => {
                     notes_obj={repos[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj}
                     keySelect={keySelect}
                     repoSwitch={repoSwitch}
-                    folderSwitch={switchFolder}
+                    folderSwitch={folderSwitch}
                     noteSwitch={switchNote}
                     updateDxnote={updateDxnote}
                     updateRepos={updateRepos}
@@ -108,6 +244,8 @@ const App = () => {
                     setFocus={setFocus}
                     setBlur={setBlur}
                     setKeySelect={setKeySelect}
+                    updateMiniSearch={updateMiniSearch}
+                    searchNote={searchNote}
                 />
                 {dataPath ? (
                     <CenterArea
@@ -123,7 +261,7 @@ const App = () => {
                         notes_obj={repos[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj}
                         keySelect={keySelect}
                         repoSwitch={repoSwitch}
-                        folderSwitch={switchFolder}
+                        folderSwitch={folderSwitch}
                         noteSwitch={switchNote}
                         updateDxnote={updateDxnote}
                         updateRepos={updateRepos}

@@ -1,54 +1,85 @@
 import produce from "immer";
 
 import { useReducer, useCallback, useRef } from "react";
+import { forEachChild } from "typescript";
 const { ipcRenderer } = window.require("electron");
 
 const notesReducer = produce((state: notesTypes, action: any) => {
     switch (action.type) {
+        case "fetchNotesInAllRepos": {
+            let repos_key = action.dxnote.repos_key;
+            repos_key.forEach((repo_key: string) => {
+                if (!state[repo_key]) {
+                    state[repo_key] = {};
+                }
+                let folders_key = action.repos[repo_key].folders_key;
+                folders_key.forEach((folder_key: string) => {
+                    if (!state[repo_key][folder_key]) {
+                        let folder_info = ipcRenderer.sendSync("readJson", {
+                            file_path: `${action.data_path}/${repo_key}/${folder_key}/folder_info.json`,
+                        });
+                        if (folder_info && folder_info.notes_obj) {
+                            state[repo_key][folder_key] = {};
+                            Object.keys(folder_info.notes_obj).forEach((note_key) => {
+                                let note_info = ipcRenderer.sendSync("readCson", {
+                                    file_path: `${action.data_path}/${repo_key}/${folder_key}/${note_key}.cson`,
+                                });
+                                if (note_info) {
+                                    state[repo_key][folder_key][note_key] = note_info.content;
+                                }
+                            });
+                        }
+                    }
+                });
+            });
+            return state;
+        }
         case "fetchNotesInOneRepo": {
             if (!state[action.repo_key]) {
                 state[action.repo_key] = {};
                 let folders_key = action.repos[action.repo_key].folders_key;
-                folders_key.forEach((folder_key: string) => {
-                    let folder_info = ipcRenderer.sendSync("readJson", {
-                        file_path: `${action.data_path}/${action.repo_key}/${folder_key}/folder_info.json`,
-                    });
-                    if (folder_info && folder_info.notes_obj) {
-                        state[action.repo_key][folder_key] = {};
-                        Object.keys(folder_info.notes_obj).forEach((note_key) => {
-                            let note_info = ipcRenderer.sendSync("readCson", {
-                                file_path: `${action.data_path}/${action.repo_key}/${folder_key}/${note_key}.cson`,
-                            });
-                            if (note_info) {
-                                state[action.repo_key][folder_key][note_key] = note_info.content;
-                            }
+                folders_key.forEach((folder_key: string, index: number) => {
+                    if (
+                        index === 0 ||
+                        folder_key === action.dxnote["repos"][action.repo_key]["cur_folder_key"]
+                    ) {
+                        let folder_info = ipcRenderer.sendSync("readJson", {
+                            file_path: `${action.data_path}/${action.repo_key}/${folder_key}/folder_info.json`,
                         });
+                        if (folder_info && folder_info.notes_obj) {
+                            state[action.repo_key][folder_key] = {};
+                            Object.keys(folder_info.notes_obj).forEach((note_key) => {
+                                let note_info = ipcRenderer.sendSync("readCson", {
+                                    file_path: `${action.data_path}/${action.repo_key}/${folder_key}/${note_key}.cson`,
+                                });
+                                if (note_info) {
+                                    state[action.repo_key][folder_key][note_key] =
+                                        note_info.content;
+                                }
+                            });
+                        }
                     }
                 });
             }
             return state;
         }
         case "fetchNotesInOneFolder": {
-            // if(!state[action.repo_key]){
-            //     state[action.repo_key] = {}
-            //     let folders_key = action.repos[action.repo_key].folders_key;
-            //     folders_key.forEach((folder_key: string) => {
-            //         let folder_info = ipcRenderer.sendSync('readJson', {
-            //             file_path: `${action.data_path}/${action.repo_key}/${folder_key}/folder_info.json`,
-            //         })
-            //         if(folder_info && folder_info.notes_obj){
-            //             state[action.repo_key][folder_key] = {}
-            //             Object.keys(folder_info.notes_obj).forEach((note_key) => {
-            //                 let note_info = ipcRenderer.sendSync('readCson', {
-            //                     file_path: `${action.data_path}/${action.repo_key}/${folder_key}/${note_key}.cson`,
-            //                 })
-            //                 if(note_info){
-            //                     state[action.repo_key][folder_key][note_key] = note_info.content
-            //                 }
-            //             })
-            //         }
-            //     })
-            // }
+            if (!state[action.repo_key][action.folder_key]) {
+                let folder_info = ipcRenderer.sendSync("readJson", {
+                    file_path: `${action.data_path}/${action.repo_key}/${action.folder_key}/folder_info.json`,
+                });
+                if (folder_info && folder_info.notes_obj) {
+                    state[action.repo_key][action.folder_key] = {};
+                    Object.keys(folder_info.notes_obj).forEach((note_key) => {
+                        let note_info = ipcRenderer.sendSync("readCson", {
+                            file_path: `${action.data_path}/${action.repo_key}/${action.folder_key}/${note_key}.cson`,
+                        });
+                        if (note_info) {
+                            state[action.repo_key][action.folder_key][note_key] = note_info.content;
+                        }
+                    });
+                }
+            }
             return state;
         }
         case "addRepo": {
@@ -99,12 +130,22 @@ export const useNotes = () => {
     const [state, dispatch] = useReducer(notesReducer, {});
     let saveTimer = useRef<NodeJS.Timeout | null>(null);
 
+    const allRepoNotesFetch = (data_path: string | null, dxnote: any, repos: any) => {
+        dispatch({
+            type: "fetchNotesInAllRepos",
+            data_path,
+            dxnote,
+            repos,
+        });
+    };
+
     const repoNotesFetch = useCallback(
-        (data_path: string | null, repos: any, repo_key: string | undefined) => {
+        (data_path: string | null, dxnote: any, repos: any, repo_key: string | undefined) => {
             if (!repo_key) return;
             dispatch({
                 type: "fetchNotesInOneRepo",
                 data_path,
+                dxnote,
                 repos,
                 repo_key,
             });
@@ -113,12 +154,20 @@ export const useNotes = () => {
     );
 
     const folderNotesFetch = useCallback(
-        (data_path: string | null, repos: any, repo_key: string | undefined) => {
+        (
+            data_path: string | null,
+            dxnote: any,
+            repos: any,
+            repo_key: string | undefined,
+            folder_key: string | undefined
+        ) => {
             dispatch({
                 type: "fetchNotesInOneFolder",
                 data_path,
+                dxnote,
                 repos,
                 repo_key,
+                folder_key,
             });
         },
         []
@@ -206,6 +255,7 @@ export const useNotes = () => {
     return [
         state,
         {
+            allRepoNotesFetch,
             repoNotesFetch,
             folderNotesFetch,
             changeNotesAfterNew,

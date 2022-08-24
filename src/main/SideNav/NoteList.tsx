@@ -656,7 +656,7 @@ type NoteListProps = {
     currentNoteKey: string | undefined;
     keySelect: boolean;
     repoSwitch: (repo_key: string) => void;
-    folderSwitch: (data_path: string | null, folder_key: string) => void;
+    folderSwitch: (repo_key: string | undefined, folder_key: string) => void;
     noteSwitch: (data_path: string | null, note_key: string | undefined) => void;
     updateRepos: (action_name: string, obj: object) => void;
     changeNotesAfterNew: (action_name: string, obj: object) => void;

@@ -631,7 +631,7 @@ type CenterAreaProps = {
     keySelect: boolean;
     showAssistantPanel: boolean;
     repoSwitch: (repoKey: string | undefined) => void;
-    folderSwitch: (dataPath: string | null, folderKey: string | undefined) => void;
+    folderSwitch: (repo_key: string | undefined, folderKey: string | undefined) => void;
     noteSwitch: (data_path: string | null, note_key: string | undefined) => void;
     updateDxnote: (data_path: string) => void;
     updateRepos: (action_name: string, obj: object) => void;

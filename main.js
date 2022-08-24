@@ -3,6 +3,7 @@ const { app, Menu, BrowserWindow, ipcMain, dialog, shell } = require("electron")
 const path = require("path");
 const CSON = require("cson");
 const fse = require("fs-extra");
+const nodejieba = require("nodejieba");
 
 if (!app.requestSingleInstanceLock()) {
     app.quit();
@@ -221,6 +222,13 @@ const processIPC = () => {
         event.returnValue = true;
     });
 
+    ipcMain.on("writeJsonStr", (event, { file_path, str }) => {
+        console.log("writeJsonStr: " + file_path);
+        fse.ensureFileSync(file_path);
+        fse.writeFileSync(file_path, str);
+        event.returnValue = true;
+    });
+
     ipcMain.on("readCson", (event, { file_path }) => {
         console.log("readCson: " + file_path);
         if (!fse.pathExistsSync(file_path)) {
@@ -268,6 +276,10 @@ const processIPC = () => {
 
     ipcMain.on("open-folder", (event, { folder_path }) => {
         shell.showItemInFolder(folder_path);
+    });
+
+    ipcMain.on("nodejieba", (event, { word }) => {
+        event.returnValue = nodejieba.cut(word);
     });
 };
 

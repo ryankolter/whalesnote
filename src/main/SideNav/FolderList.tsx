@@ -133,7 +133,7 @@ const FolderList: React.FC<FolderListProps> = ({
             setNewFolderKey("");
             setNewFolderName("");
             repoSwitch(currentRepoKey);
-            folderSwitch(data_path, folder_key);
+            folderSwitch(currentRepoKey, folder_key);
             noteSwitch(data_path, note_key);
             setTimeout(() => {
                 setFocus(
@@ -274,7 +274,7 @@ const FolderList: React.FC<FolderListProps> = ({
                 folder_key: currentFolderKey,
             });
             repoSwitch(currentRepoKey);
-            folderSwitch(data_path, other_folder_key);
+            folderSwitch(currentRepoKey, other_folder_key);
             hideDeletePopup();
         }
     }, [
@@ -312,7 +312,7 @@ const FolderList: React.FC<FolderListProps> = ({
         (index: number) => {
             folders_key?.forEach((key, i) => {
                 if (index === i) {
-                    folderSwitch(data_path, key);
+                    folderSwitch(currentRepoKey, key);
                 }
             });
         },
@@ -463,12 +463,12 @@ const FolderList: React.FC<FolderListProps> = ({
                                                 }}
                                                 onClick={() => {
                                                     if (currentFolderKey !== key) {
-                                                        folderSwitch(data_path, key);
+                                                        folderSwitch(currentRepoKey, key);
                                                     }
                                                 }}
                                                 onContextMenu={() => {
                                                     if (currentFolderKey !== key) {
-                                                        folderSwitch(data_path, key);
+                                                        folderSwitch(currentRepoKey, key);
                                                     }
                                                 }}
                                             >
@@ -757,7 +757,7 @@ type FolderListProps = {
     currentFolderKey: string | undefined;
     keySelect: boolean;
     repoSwitch: (id: string | undefined) => void;
-    folderSwitch: (dataPath: string | null, folderKey: string | undefined) => void;
+    folderSwitch: (repo_key: string | undefined, folderKey: string | undefined) => void;
     noteSwitch: (data_path: string | null, note_key: string | undefined) => void;
     updateRepos: (action_name: string, obj: object) => void;
     changeNotesAfterNew: (action_name: string, obj: object) => void;
