@@ -88,7 +88,7 @@ const NoteList: React.FC<NoteListProps> = ({
             folder_key: currentFolderKey,
             note_key,
         });
-        noteSwitch(data_path, note_key);
+        noteSwitch(note_key);
         setTimeout(() => {
             setFocus(
                 cryptoRandomString({
@@ -172,7 +172,7 @@ const NoteList: React.FC<NoteListProps> = ({
                 folder_key: currentFolderKey,
             });
 
-            noteSwitch(data_path, other_note_key);
+            noteSwitch(other_note_key);
         },
         [data_path, currentRepoKey, currentFolderKey, noteSwitch, updateRepos]
     );
@@ -201,11 +201,11 @@ const NoteList: React.FC<NoteListProps> = ({
         (index: number) => {
             notes_key?.forEach((key, i) => {
                 if (index === i) {
-                    noteSwitch(data_path, key);
+                    noteSwitch(key);
                 }
             });
         },
-        [data_path, notes_key, noteSwitch]
+        [notes_key, noteSwitch]
     );
 
     useEffect(() => {
@@ -400,10 +400,9 @@ const NoteList: React.FC<NoteListProps> = ({
                                                     backgroundColor:
                                                         currentNoteKey === key ? "#3a404c" : "",
                                                 }}
-                                                onClick={() => noteSwitch(data_path, key)}
+                                                onClick={() => noteSwitch(key)}
                                                 onContextMenu={() => {
-                                                    if (currentNoteKey !== key)
-                                                        noteSwitch(data_path, key);
+                                                    if (currentNoteKey !== key) noteSwitch(key);
                                                 }}
                                             >
                                                 {notes_obj[key]["title"]}
@@ -489,10 +488,9 @@ const NoteList: React.FC<NoteListProps> = ({
                                         backgroundColor:
                                             currentNoteKey === activeId ? "#3a404c" : "",
                                     }}
-                                    onClick={() => noteSwitch(data_path, activeId)}
+                                    onClick={() => noteSwitch(activeId)}
                                     onContextMenu={() => {
-                                        if (currentNoteKey !== activeId)
-                                            noteSwitch(data_path, activeId);
+                                        if (currentNoteKey !== activeId) noteSwitch(activeId);
                                     }}
                                 >
                                     {notes_obj[activeId]["title"]}
@@ -657,7 +655,7 @@ type NoteListProps = {
     keySelect: boolean;
     repoSwitch: (repo_key: string) => void;
     folderSwitch: (repo_key: string | undefined, folder_key: string) => void;
-    noteSwitch: (data_path: string | null, note_key: string | undefined) => void;
+    noteSwitch: (note_key: string | undefined) => void;
     updateRepos: (action_name: string, obj: object) => void;
     changeNotesAfterNew: (action_name: string, obj: object) => void;
     reorderNote: (

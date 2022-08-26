@@ -279,7 +279,12 @@ const processIPC = () => {
     });
 
     ipcMain.on("nodejieba", (event, { word }) => {
-        event.returnValue = nodejieba.cut(word);
+        let en_word = word.replace(/[^a-zA-Z]/g, " ").replace(/\s+/g, " ");
+        let zh_word = word.replace(/[a-zA-Z]/g, " ").replace(/\s+/g, " ");
+        let result = [...en_word.split(" "), ...nodejieba.cut(zh_word)];
+        result = result.filter((w) => w !== " " && w !== "");
+        console.log(result);
+        event.returnValue = result;
     });
 };
 

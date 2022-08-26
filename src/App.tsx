@@ -13,10 +13,11 @@ import initData from "./lib/init";
 import SideNav from "./main/SideNav";
 import CenterArea from "./main/CenterArea/index";
 
+import WaitingMask from "./components/WaitingMask";
+
 import SocketServerBtn from "./components/socketServerBtn";
 
 import SocketClientBtn from "./socketClientBtn";
-import "./resources/css/font_awesome.css";
 import "./resources/my_highlight_styles/editor/solarized-dark.min.css";
 import "./resources/my_highlight_styles/preview/solarized-dark.min.css";
 import { useEditPos } from "./lib/useEditPos";
@@ -66,6 +67,7 @@ const App = () => {
 
     const miniSearch = useRef<any>();
     const [showUpdateIndexTips, setShowUpdateIndexTips] = useState(true);
+    const [showWaitingMask, setShowWaitingMask] = useState(false);
 
     useMemo(() => {
         let new_data = initData(dataPath);
@@ -80,7 +82,7 @@ const App = () => {
                 setShowUpdateIndexTips(false);
                 miniSearch.current = MiniSearch.loadJS(search, {
                     fields: ["title", "content"],
-                    storeFields: ["id", "type", "title"],
+                    storeFields: ["id", "type", "title", "folder_name"],
                     tokenize: (string, _fieldName) => {
                         let result = ipcRenderer.sendSync("nodejieba", {
                             word: string,
@@ -94,10 +96,13 @@ const App = () => {
                             let result = ipcRenderer.sendSync("nodejieba", {
                                 word: string,
                             });
+                            result = result.filter((w: string) => w !== " ");
                             return result;
                         },
                     },
                 });
+            } else {
+                miniSearch.current = null;
             }
             setTimeout(() => {
                 setFocus(
@@ -128,8 +133,16 @@ const App = () => {
         [dataPath, dxnote, repos]
     );
 
+    const noteSwitch = useCallback(
+        (note_key: string | undefined) => {
+            switchNote(dataPath, note_key);
+        },
+        [dataPath]
+    );
+
     const updateMiniSearch = useCallback(() => {
-        console.log("updateMiniSearch");
+        console.log("updateMiniSearch begin");
+        setShowWaitingMask(true);
 
         let all_notes = {};
         let repos_key = dxnote.repos_key;
@@ -160,25 +173,28 @@ const App = () => {
 
         let documents: any = [];
         Object.keys(all_notes).forEach((repo_key: string) => {
+            let folders_obj = repos[repo_key].folders_obj;
             Object.keys(all_notes[repo_key]).forEach((folder_key: string) => {
+                let folder_name = folders_obj[folder_key]["folder_name"];
                 Object.keys(all_notes[repo_key][folder_key]).forEach((note_key: string) => {
                     let id = `${repo_key}-${folder_key}-${note_key}`;
                     let title = repos[repo_key].folders_obj[folder_key].notes_obj[note_key].title;
                     if (title === "新建文档") title = "";
                     let content = all_notes[repo_key][folder_key][note_key];
                     documents.push({
-                        id: id,
+                        id,
                         type: "note",
-                        title: title,
-                        content: content,
+                        title,
+                        folder_name,
+                        content,
                     });
                 });
             });
         });
-        console.log(documents);
+
         miniSearch.current = new MiniSearch({
             fields: ["title", "content"],
-            storeFields: ["id", "type", "title"],
+            storeFields: ["id", "type", "title", "folder_name"],
             tokenize: (string, _fieldName) => {
                 let result = ipcRenderer.sendSync("nodejieba", {
                     word: string,
@@ -192,6 +208,7 @@ const App = () => {
                     let result = ipcRenderer.sendSync("nodejieba", {
                         word: string,
                     });
+                    result = result.filter((w: string) => w !== " ");
                     return result;
                 },
             },
@@ -203,8 +220,11 @@ const App = () => {
             str: JSON.stringify(miniSearch.current),
         });
 
-        console.log("success");
-    }, [dataPath, dxnote, repos]);
+        setShowUpdateIndexTips(false);
+        setShowWaitingMask(false);
+
+        console.log("updateMiniSearch success");
+    }, [dataPath, dxnote, repos, setShowUpdateIndexTips, setShowWaitingMask]);
 
     const searchNote = (word: string) => {
         if (!miniSearch.current) return [];
@@ -217,7 +237,8 @@ const App = () => {
         <AppContainer>
             {/* <AddPathTips>
 
-      </AddPathTips> */}
+        </AddPathTips> */}
+            <WaitingMask in={showWaitingMask} timeout={300}></WaitingMask>
             <RepoContent>
                 <SideNav
                     data_path={dataPath}
@@ -231,9 +252,10 @@ const App = () => {
                     notes_key={repos[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_key}
                     notes_obj={repos[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj}
                     keySelect={keySelect}
+                    showUpdateIndexTips={showUpdateIndexTips}
                     repoSwitch={repoSwitch}
                     folderSwitch={folderSwitch}
-                    noteSwitch={switchNote}
+                    noteSwitch={noteSwitch}
                     updateDxnote={updateDxnote}
                     updateRepos={updateRepos}
                     changeNotesAfterNew={changeNotesAfterNew}
@@ -262,7 +284,7 @@ const App = () => {
                         keySelect={keySelect}
                         repoSwitch={repoSwitch}
                         folderSwitch={folderSwitch}
-                        noteSwitch={switchNote}
+                        noteSwitch={noteSwitch}
                         updateDxnote={updateDxnote}
                         updateRepos={updateRepos}
                         changeNotesAfterNew={changeNotesAfterNew}

@@ -134,7 +134,7 @@ const FolderList: React.FC<FolderListProps> = ({
             setNewFolderName("");
             repoSwitch(currentRepoKey);
             folderSwitch(currentRepoKey, folder_key);
-            noteSwitch(data_path, note_key);
+            noteSwitch(note_key);
             setTimeout(() => {
                 setFocus(
                     cryptoRandomString({
@@ -756,9 +756,9 @@ type FolderListProps = {
     currentRepoKey: string | undefined;
     currentFolderKey: string | undefined;
     keySelect: boolean;
-    repoSwitch: (id: string | undefined) => void;
+    repoSwitch: (repo_key: string | undefined) => void;
     folderSwitch: (repo_key: string | undefined, folderKey: string | undefined) => void;
-    noteSwitch: (data_path: string | null, note_key: string | undefined) => void;
+    noteSwitch: (note_key: string | undefined) => void;
     updateRepos: (action_name: string, obj: object) => void;
     changeNotesAfterNew: (action_name: string, obj: object) => void;
     reorderFolder: (data_path: string, repo_key: string, new_folders_key: string[]) => void;

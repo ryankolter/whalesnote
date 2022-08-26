@@ -45,8 +45,8 @@ const TrashList: React.FC<TrashListProps> = ({
                             }}
                             onClick={() => {
                                 repoSwitch(arr[0]);
-                                folderSwitch(currentRepoKey, arr[1]);
-                                noteSwitch(data_path, arr[2]);
+                                folderSwitch(arr[0], arr[1]);
+                                noteSwitch(arr[2]);
                             }}
                             // onContextMenu={()=>noteSwitch(data_path, arr[2])}
                         >
@@ -171,7 +171,7 @@ type TrashListProps = {
     currentNoteKey: string | undefined;
     repoSwitch: (repo_key: string) => void;
     folderSwitch: (repo_key: string | undefined, folder_key: string) => void;
-    noteSwitch: (data_path: string | null, note_key: string | undefined) => void;
+    noteSwitch: (note_key: string | undefined) => void;
     width: number;
 };
 

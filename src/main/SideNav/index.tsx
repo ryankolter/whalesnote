@@ -1,8 +1,9 @@
+import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import styled from "@emotion/styled";
 import DirectoryBtn from "./DirectoryBtn";
 import FolderList from "./FolderList";
 import NoteList from "./NoteList";
-import { useState, useCallback, useEffect, useRef, useMemo } from "react";
+
 const { ipcRenderer } = window.require("electron");
 
 const SideNav: React.FC<SideNavProps> = ({
@@ -17,6 +18,7 @@ const SideNav: React.FC<SideNavProps> = ({
     currentFolderKey,
     currentNoteKey,
     keySelect,
+    showUpdateIndexTips,
     repoSwitch,
     folderSwitch,
     noteSwitch,
@@ -53,18 +55,24 @@ const SideNav: React.FC<SideNavProps> = ({
     const handleSearchInputChange = useCallback(
         (event: any) => {
             setWord(event.target.value);
+            if (!showSearchPanel) setShowSearchPanel(true);
         },
-        [setWord]
+        [setWord, showSearchPanel, setShowSearchPanel]
     );
 
     const handleSearchInputEnter = useCallback(
         (event: any) => {
             if (event.keyCode === 13) {
                 setWord(event.target.value);
+                if (!showSearchPanel) setShowSearchPanel(true);
             }
         },
-        [setWord]
+        [setWord, showSearchPanel, setShowSearchPanel]
     );
+
+    const handleSearchInputFocus = useCallback(() => {
+        if (!showSearchPanel) setShowSearchPanel(true);
+    }, [showSearchPanel, setShowSearchPanel]);
 
     const search = useCallback(() => {
         if (word === "" || word === "　") {
@@ -72,11 +80,28 @@ const SideNav: React.FC<SideNavProps> = ({
             return;
         }
         if (!showSearchPanel) setShowSearchPanel(true);
-        setSearchResults(searchNote(word));
+        let search_result = searchNote(word);
+        setSearchResults(search_result);
     }, [word, showSearchPanel, setShowSearchPanel, setSearchResults, searchNote]);
 
+    const resultSwitch = useCallback(
+        (id: string) => {
+            let arr = id.split("-");
+            repoSwitch(arr[0]);
+            folderSwitch(arr[0], arr[1]);
+            noteSwitch(arr[2]);
+        },
+        [data_path, repoSwitch, folderSwitch, noteSwitch]
+    );
+
     useEffect(() => {
+        if (word === "") {
+            setShowSearchPanel(false);
+            setSearchResults([]);
+            return;
+        }
         search();
+        console.log(word);
     }, [word]);
 
     return (
@@ -96,20 +121,14 @@ const SideNav: React.FC<SideNavProps> = ({
                 {data_path ? (
                     <Search>
                         <SearchInput
-                            onKeyDown={handleSearchInputEnter}
                             onChange={handleSearchInputChange}
+                            onKeyDown={handleSearchInputEnter}
+                            onFocus={handleSearchInputFocus}
                             placeholder='搜索'
                         />
                         {showSearchPanel ? (
                             <SearchPanel>
                                 <SearchTool>
-                                    <CloseSearchPanelBtn
-                                        onClick={() => {
-                                            setShowSearchPanel(false);
-                                        }}
-                                    >
-                                        x
-                                    </CloseSearchPanelBtn>
                                     <UpdateIndex>
                                         <UpdateIndexBtn
                                             onClick={() => {
@@ -117,19 +136,56 @@ const SideNav: React.FC<SideNavProps> = ({
                                                 search();
                                             }}
                                         >
-                                            更新索引
+                                            {showUpdateIndexTips ? (
+                                                <div>生成搜索树</div>
+                                            ) : (
+                                                <div>更新搜索树</div>
+                                            )}
                                         </UpdateIndexBtn>
                                     </UpdateIndex>
+                                    <CloseSearchPanelBtn
+                                        onClick={() => {
+                                            setShowSearchPanel(false);
+                                        }}
+                                    >
+                                        x
+                                    </CloseSearchPanelBtn>
                                 </SearchTool>
-                                <SearchResults>
+                                {showUpdateIndexTips ? (
+                                    <UpdateIndexTips>
+                                        <div>搜索功能需要搜索树</div>
+                                        <div>请点击上方生成</div>
+                                    </UpdateIndexTips>
+                                ) : (
+                                    <></>
+                                )}
+                                <SearchResultList>
                                     {searchResults && searchResults.length > 0 ? (
                                         searchResults.map((result: any) => {
-                                            return <div key={result.id}>{result.title}</div>;
+                                            return (
+                                                <SearchResult
+                                                    onClick={() => {
+                                                        resultSwitch(result.id);
+                                                    }}
+                                                    key={result.id}
+                                                    style={{
+                                                        backgroundColor:
+                                                            currentNoteKey ===
+                                                            result.id.split("-")[2]
+                                                                ? "#3a404c"
+                                                                : "",
+                                                    }}
+                                                >
+                                                    <FolderName>{result.folder_name}</FolderName>
+                                                    <Seperator>&gt;</Seperator>
+                                                    <TitleName>{result.title}</TitleName>
+                                                </SearchResult>
+                                            );
                                         })
                                     ) : (
                                         <></>
                                     )}
-                                </SearchResults>
+                                </SearchResultList>
                             </SearchPanel>
                         ) : (
                             <></>
@@ -229,7 +285,6 @@ const SearchPanel = styled.div({
 const SearchTool = styled.div({
     display: "flex",
     alignItem: "center",
-    height: "40px",
 });
 
 const CloseSearchPanelBtn = styled.div({
@@ -245,7 +300,7 @@ const CloseSearchPanelBtn = styled.div({
 
 const UpdateIndex = styled.div({
     display: "flex",
-    flexDirection: "row-reverse",
+    flexDirection: "row",
     alignItem: "center",
     flex: "1",
     minWidth: "0",
@@ -255,20 +310,71 @@ const UpdateIndexBtn = styled.div({
     display: "flex",
     alignItem: "center",
     justifyContent: "center",
-    width: "60px",
     height: "28px",
     lineHeight: "28px",
     fontSize: "14px",
-    padding: "0 4px",
+    padding: "0 8px",
     borderRadius: " 4px",
     color: "#939395",
     backgroundColor: "rgb(58, 64, 76)",
+    cursor: "pointer",
 });
 
-const SearchResults = styled.div({
+const UpdateIndexTips = styled.div({
+    position: "absolute",
+    left: "10px",
+    top: "40px",
+    color: "#939395",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    width: "140px",
+    marginTop: "20px",
+    fontSize: "14px",
+    border: "1px dotted rgba(58, 64, 76)",
+    padding: "5px 10px",
+    borderRadius: "5px",
+    background: "rgba(47, 51, 56)",
+});
+
+const SearchResultList = styled.div({
     flex: "1",
     minHeight: "0",
     color: "#939395",
+});
+
+const SearchResult = styled.div({
+    display: "flex",
+    height: "36px",
+    lineHeight: "36px",
+    padding: "0 10px",
+    fontSize: "14px",
+    color: "#939395",
+    cursor: "pointer",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+});
+
+const FolderName = styled.div({
+    width: "70px",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+});
+
+const Seperator = styled.div({
+    width: "25px",
+    marginLeft: "5px",
+    display: "flex",
+});
+
+const TitleName = styled.div({
+    flex: "1",
+    minWidth: "0",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
 });
 
 const SelectArea = styled.div({
@@ -318,9 +424,10 @@ type SideNavProps = {
     currentFolderKey: string | undefined;
     currentNoteKey: string;
     keySelect: boolean;
-    repoSwitch: (repoKey: string | undefined) => void;
+    showUpdateIndexTips: boolean;
+    repoSwitch: (repo_key: string | undefined) => void;
     folderSwitch: (repo_key: string | undefined, folderKey: string | undefined) => void;
-    noteSwitch: (data_path: string | null, note_key: string | undefined) => void;
+    noteSwitch: (note_key: string | undefined) => void;
     updateDxnote: (data_path: string) => void;
     updateRepos: (action_name: string, obj: object) => void;
     changeNotesAfterNew: (action_name: string, obj: object) => void;

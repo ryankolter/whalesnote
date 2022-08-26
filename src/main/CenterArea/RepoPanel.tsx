@@ -216,7 +216,7 @@ const RepoPanel: React.FC<RepoListProps> = ({
             repoSwitchInPanel(repo_key);
             setRepoScrollPage(Math.ceil(dxnote_info.repos_key.length / 9) - 1);
             folderSwitch(repo_key, default_folder_key);
-            noteSwitch(data_path, default_note_key);
+            noteSwitch(default_note_key);
             setAllowHiddenAllRepoViaEnter(true);
             scrollToRight();
             setShowAllRepo(false);
@@ -966,9 +966,9 @@ type RepoListProps = {
     currentFolderKey: string | undefined;
     keySelect: boolean;
     showAllRepo: boolean;
-    repoSwitch: (id: string | undefined) => void;
+    repoSwitch: (repo_key: string | undefined) => void;
     folderSwitch: (repo_key: string | undefined, folderKey: string | undefined) => void;
-    noteSwitch: (data_path: string | null, note_key: string | undefined) => void;
+    noteSwitch: (note_key: string | undefined) => void;
     updateDxnote: (data_path: string) => void;
     updateRepos: (action_name: string, obj: object) => void;
     changeNotesAfterNew: (action_name: string, obj: object) => void;
