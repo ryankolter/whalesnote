@@ -580,7 +580,6 @@ const SwitchModePanel = styled.div({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    width: "100px",
     padding: "5px 0",
     color: "#939395",
     backgroundColor: "#2C3033",

@@ -131,6 +131,8 @@ const FolderList: React.FC<FolderListProps> = ({
                 folder_key,
             });
 
+            folderSwitch(currentRepoKey, folder_key);
+
             let note_info = {
                 createAt: new Date(),
                 updatedAt: new Date(),
@@ -146,20 +148,18 @@ const FolderList: React.FC<FolderListProps> = ({
             updateRepos("note", {
                 data_path,
                 repo_key: currentRepoKey,
-                folder_key: currentFolderKey,
+                folder_key: folder_key,
             });
             changeNotesAfterNew("note", {
                 data_path,
                 repo_key: currentRepoKey,
-                folder_key: currentFolderKey,
+                folder_key: folder_key,
                 note_key,
             });
+            noteSwitch(note_key);
 
             setNewFolderKey("");
             setNewFolderName("");
-            repoSwitch(currentRepoKey);
-            folderSwitch(currentRepoKey, folder_key);
-            noteSwitch(note_key);
             setTimeout(() => {
                 setFocus(
                     cryptoRandomString({
