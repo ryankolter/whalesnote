@@ -1,4 +1,4 @@
-import { useCallback, useRef, useEffect, useState } from "react";
+import { useCallback, useRef, useEffect, useState, useMemo } from "react";
 import styled from "@emotion/styled";
 import { basicSetup } from "codemirror";
 import { EditorState, StateEffect, SelectionRange } from "@codemirror/state";
@@ -139,7 +139,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
         }
     });
 
-    function myCompletions(CompletionContext: any) {
+    const myCompletions = useCallback((CompletionContext: any) => {
         let word = CompletionContext.matchBefore(/\s*```[a-z]*/);
         let assistant_word = CompletionContext.matchBefore(/```[a-z]*/);
 
@@ -168,7 +168,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
             to: word.to,
             options,
         };
-    }
+    }, []);
 
     let getExtensions = [
         basicSetup,
