@@ -130,6 +130,31 @@ const FolderList: React.FC<FolderListProps> = ({
                 repo_key: currentRepoKey,
                 folder_key,
             });
+
+            let note_info = {
+                createAt: new Date(),
+                updatedAt: new Date(),
+                type: "markdown",
+                content: "",
+            };
+
+            ipcRenderer.sendSync("writeCson", {
+                file_path: `${data_path}/${currentRepoKey}/${folder_key}/${note_key}.cson`,
+                obj: note_info,
+            });
+
+            updateRepos("note", {
+                data_path,
+                repo_key: currentRepoKey,
+                folder_key: currentFolderKey,
+            });
+            changeNotesAfterNew("note", {
+                data_path,
+                repo_key: currentRepoKey,
+                folder_key: currentFolderKey,
+                note_key,
+            });
+
             setNewFolderKey("");
             setNewFolderName("");
             repoSwitch(currentRepoKey);

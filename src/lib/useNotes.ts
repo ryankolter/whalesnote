@@ -114,12 +114,22 @@ const notesReducer = produce((state: notesTypes, action: any) => {
             if (note_info) {
                 note_info.content = state[action.repo_key][action.folder_key][action.note_key];
                 note_info.updatedAt = new Date();
+                ipcRenderer.sendSync("writeCson", {
+                    file_path: `${action.data_path}/${action.repo_key}/${action.folder_key}/${action.note_key}.cson`,
+                    obj: note_info,
+                });
+            } else {
+                let new_note_info = {
+                    createAt: new Date(),
+                    updatedAt: new Date(),
+                    type: "markdown",
+                    content: state[action.repo_key][action.folder_key][action.note_key],
+                };
+                ipcRenderer.sendSync("writeCson", {
+                    file_path: `${action.data_path}/${action.repo_key}/${action.folder_key}/${action.note_key}.cson`,
+                    obj: new_note_info,
+                });
             }
-
-            ipcRenderer.sendSync("writeCson", {
-                file_path: `${action.data_path}/${action.repo_key}/${action.folder_key}/${action.note_key}.cson`,
-                obj: note_info,
-            });
 
             return state;
         }
