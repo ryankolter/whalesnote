@@ -8,6 +8,7 @@ import { oneDark } from "@codemirror/theme-one-dark";
 import { indentUnit } from "@codemirror/language";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { languages } from "@codemirror/language-data";
+import { autocompletion } from "@codemirror/autocomplete";
 
 export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     data_path,
@@ -138,6 +139,37 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
         }
     });
 
+    function myCompletions(CompletionContext: any) {
+        let word = CompletionContext.matchBefore(/\s*```[a-z]*/);
+        let assistant_word = CompletionContext.matchBefore(/```[a-z]*/);
+
+        if (!word || (word.from == word.to && !CompletionContext.explicit)) return null;
+
+        let space_count = word.to - word.from - (assistant_word.to - assistant_word.from);
+
+        let langs = ["bash", "js", "go"];
+        let options = [];
+
+        for (let lang of langs) {
+            let label = "```" + lang + "\n";
+            for (let i = 0; i < space_count; ++i) {
+                label += " ";
+            }
+            label += "\n";
+            for (let i = 0; i < space_count; ++i) {
+                label += " ";
+            }
+            label += "```";
+            options.push({ label });
+        }
+
+        return {
+            from: word.from + space_count,
+            to: word.to,
+            options,
+        };
+    }
+
     let getExtensions = [
         basicSetup,
         updateListener,
@@ -146,6 +178,10 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
         EditorView.lineWrapping,
         markdown({ base: markdownLanguage, codeLanguages: languages }),
         indentUnit.of("    "),
+        autocompletion({
+            activateOnTyping: true,
+            override: [myCompletions],
+        }),
     ];
 
     getExtensions.push(oneDark);
