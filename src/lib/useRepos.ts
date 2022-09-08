@@ -1,11 +1,11 @@
-import produce from "immer";
-import { useReducer, useCallback, useRef } from "react";
-const { ipcRenderer } = window.require("electron");
+import produce from 'immer';
+import { useReducer, useCallback, useRef } from 'react';
+const { ipcRenderer } = window.require('electron');
 
 const reposReducer = produce((state: object, action: any) => {
     switch (action.type) {
-        case "fetchRepo": {
-            let repo_info = ipcRenderer.sendSync("readJson", {
+        case 'fetchRepo': {
+            const repo_info = ipcRenderer.sendSync('readJson', {
                 file_path: `${action.data_path}/${action.repo_key}/repo_info.json`,
             });
             if (!state[action.repo_key]) {
@@ -24,15 +24,15 @@ const reposReducer = produce((state: object, action: any) => {
 
             return state;
         }
-        case "fetchFolder": {
+        case 'fetchFolder': {
             if (!state[action.repo_key]) return state;
 
-            let repo_info = ipcRenderer.sendSync("readJson", {
+            const repo_info = ipcRenderer.sendSync('readJson', {
                 file_path: `${action.data_path}/${action.repo_key}/repo_info.json`,
             });
             state[action.repo_key].folders_key = repo_info.folders_key;
 
-            let folder_info = ipcRenderer.sendSync("readJson", {
+            const folder_info = ipcRenderer.sendSync('readJson', {
                 file_path: `${action.data_path}/${action.repo_key}/${action.folder_key}/folder_info.json`,
             });
 
@@ -44,11 +44,11 @@ const reposReducer = produce((state: object, action: any) => {
 
             return state;
         }
-        case "fetchNote": {
+        case 'fetchNote': {
             if (!state[action.repo_key]) return state;
             if (!state[action.repo_key].folders_obj[action.folder_key]) return state;
 
-            let folder_info = ipcRenderer.sendSync("readJson", {
+            const folder_info = ipcRenderer.sendSync('readJson', {
                 file_path: `${action.data_path}/${action.repo_key}/${action.folder_key}/folder_info.json`,
             });
 
@@ -58,23 +58,23 @@ const reposReducer = produce((state: object, action: any) => {
 
             return state;
         }
-        case "init": {
+        case 'init': {
             state = action.new_state;
             return state;
         }
-        case "rename": {
-            let old_title =
+        case 'rename': {
+            const old_title =
                 state[action.repo_key].folders_obj[action.folder_key].notes_obj[action.note_key]
                     .title;
             if (old_title !== action.new_title) {
                 state[action.repo_key].folders_obj[action.folder_key].notes_obj[
                     action.note_key
                 ].title = action.new_title;
-                let folder_info = ipcRenderer.sendSync("readJson", {
+                const folder_info = ipcRenderer.sendSync('readJson', {
                     file_path: `${action.data_path}/${action.repo_key}/${action.folder_key}/folder_info.json`,
                 });
                 folder_info.notes_obj[action.note_key].title = action.new_title;
-                ipcRenderer.sendSync("writeJson", {
+                ipcRenderer.sendSync('writeJson', {
                     file_path: `${action.data_path}/${action.repo_key}/${action.folder_key}/folder_info.json`,
                     obj: folder_info,
                 });
@@ -82,25 +82,25 @@ const reposReducer = produce((state: object, action: any) => {
 
             return state;
         }
-        case "reorderFolder": {
+        case 'reorderFolder': {
             state[action.repo_key].folders_key = action.new_folders_key;
-            let repo_info = ipcRenderer.sendSync("readJson", {
+            const repo_info = ipcRenderer.sendSync('readJson', {
                 file_path: `${action.data_path}/${action.repo_key}/repo_info.json`,
             });
             repo_info.folders_key = action.new_folders_key;
-            ipcRenderer.sendSync("writeJson", {
+            ipcRenderer.sendSync('writeJson', {
                 file_path: `${action.data_path}/${action.repo_key}/repo_info.json`,
                 obj: repo_info,
             });
             return state;
         }
-        case "reorderNote": {
+        case 'reorderNote': {
             state[action.repo_key].folders_obj[action.folder_key].notes_key = action.new_notes_key;
-            let folder_info = ipcRenderer.sendSync("readJson", {
+            const folder_info = ipcRenderer.sendSync('readJson', {
                 file_path: `${action.data_path}/${action.repo_key}/${action.folder_key}/folder_info.json`,
             });
             folder_info.notes_key = action.new_notes_key;
-            ipcRenderer.sendSync("writeJson", {
+            ipcRenderer.sendSync('writeJson', {
                 file_path: `${action.data_path}/${action.repo_key}/${action.folder_key}/folder_info.json`,
                 obj: folder_info,
             });
@@ -111,33 +111,33 @@ const reposReducer = produce((state: object, action: any) => {
 
 export const useRepos = () => {
     const [state, dispatch] = useReducer(reposReducer, {});
-    let renameSaveTimerObj = useRef<Map<string, NodeJS.Timeout>>(new Map());
+    const renameSaveTimerObj = useRef<Map<string, NodeJS.Timeout>>(new Map());
 
     const updateRepos = useCallback((action_name: string, obj: any) => {
         switch (action_name) {
-            case "repo": {
-                let { data_path, repo_key } = obj;
+            case 'repo': {
+                const { data_path, repo_key } = obj;
                 dispatch({
-                    type: "fetchRepo",
+                    type: 'fetchRepo',
                     data_path,
                     repo_key,
                 });
                 break;
             }
-            case "folder": {
-                let { data_path, repo_key, folder_key } = obj;
+            case 'folder': {
+                const { data_path, repo_key, folder_key } = obj;
                 dispatch({
-                    type: "fetchFolder",
+                    type: 'fetchFolder',
                     data_path,
                     repo_key,
                     folder_key,
                 });
                 break;
             }
-            case "note": {
-                let { data_path, repo_key, folder_key } = obj;
+            case 'note': {
+                const { data_path, repo_key, folder_key } = obj;
                 dispatch({
-                    type: "fetchNote",
+                    type: 'fetchNote',
                     data_path,
                     repo_key,
                     folder_key,
@@ -148,7 +148,7 @@ export const useRepos = () => {
     }, []);
 
     const initRepo = useCallback(
-        (newRepo: any) => dispatch({ type: "init", new_state: newRepo }),
+        (newRepo: any) => dispatch({ type: 'init', new_state: newRepo }),
         []
     );
 
@@ -161,7 +161,7 @@ export const useRepos = () => {
             new_title: string
         ) => {
             dispatch({
-                type: "rename",
+                type: 'rename',
                 data_path,
                 repo_key,
                 folder_key,
@@ -197,7 +197,7 @@ export const useRepos = () => {
     const reorderFolder = (data_path: string, repo_key: string, new_folders_key: string[]) => {
         if (repo_key) {
             dispatch({
-                type: "reorderFolder",
+                type: 'reorderFolder',
                 data_path,
                 repo_key,
                 new_folders_key,
@@ -213,7 +213,7 @@ export const useRepos = () => {
     ) => {
         if (repo_key && folder_key) {
             dispatch({
-                type: "reorderNote",
+                type: 'reorderNote',
                 data_path,
                 repo_key,
                 folder_key,

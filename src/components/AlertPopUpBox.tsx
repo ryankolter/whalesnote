@@ -1,5 +1,5 @@
-import styled from "@emotion/styled";
-import { useEffect } from "react";
+import styled from '@emotion/styled';
+import { useEffect } from 'react';
 
 interface AlertPopUpBoxProps {
     title: string;
@@ -13,9 +13,9 @@ export const AlertPopUpBox: React.FC<AlertPopUpBoxProps> = (props) => {
     const { title, content, onCancel, onConfirm, onKeyDown } = props;
 
     useEffect(() => {
-        window.addEventListener("keydown", onKeyDown);
+        window.addEventListener('keydown', onKeyDown);
         return () => {
-            window.removeEventListener("keydown", onKeyDown);
+            window.removeEventListener('keydown', onKeyDown);
         };
     }, [onKeyDown]);
 
@@ -31,47 +31,47 @@ export const AlertPopUpBox: React.FC<AlertPopUpBoxProps> = (props) => {
 };
 
 const AlertBox = styled.div({
-    position: "fixed",
-    boxSizing: "border-box",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: "290px",
-    padding: "30px 20px",
-    borderRadius: "5px",
-    fontSize: "14px",
-    color: "#C8C8C8",
-    backgroundColor: "#2C3033",
-    zIndex: "999999",
+    position: 'fixed',
+    boxSizing: 'border-box',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '290px',
+    padding: '30px 20px',
+    borderRadius: '5px',
+    fontSize: '14px',
+    color: '#C8C8C8',
+    backgroundColor: '#2C3033',
+    zIndex: '999999',
 });
 
 const AlertContent = styled.div({
-    textAlign: "center",
+    textAlign: 'center',
 });
 
 const Operation = styled.div({
-    display: "flex",
-    justifyContent: "space-around",
+    display: 'flex',
+    justifyContent: 'space-around',
 });
 
 const CancelBtn = styled.div({
-    width: "40%",
-    fontSize: "16px",
-    marginTop: "20px",
-    padding: "4px 0",
-    borderRadius: "5px",
-    textAlign: "center",
-    backgroundColor: "#464646",
-    cursor: "pointer",
+    width: '40%',
+    fontSize: '16px',
+    marginTop: '20px',
+    padding: '4px 0',
+    borderRadius: '5px',
+    textAlign: 'center',
+    backgroundColor: '#464646',
+    cursor: 'pointer',
 });
 
 const ConfirmBtn = styled.div({
-    width: "40%",
-    fontSize: "16px",
-    marginTop: "20px",
-    padding: "4px 0",
-    borderRadius: "5px",
-    textAlign: "center",
-    backgroundColor: "#464646",
-    cursor: "pointer",
+    width: '40%',
+    fontSize: '16px',
+    marginTop: '20px',
+    padding: '4px 0',
+    borderRadius: '5px',
+    textAlign: 'center',
+    backgroundColor: '#464646',
+    cursor: 'pointer',
 });

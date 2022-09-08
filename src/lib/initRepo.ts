@@ -1,18 +1,18 @@
-import initDefault from "./initDefault";
-const { ipcRenderer } = window.require("electron");
+import initDefault from './initDefault';
+const { ipcRenderer } = window.require('electron');
 
 export const initExistRepo = (data_path: string) => {
-    let dxnote = ipcRenderer.sendSync("readJson", {
+    let dxnote = ipcRenderer.sendSync('readJson', {
         file_path: `${data_path}/dxnote_info.json`,
     });
 
-    let repos = {};
-    let notes = {};
-    let first_repo_key = "";
-    let valid_repos_key: string[] = [];
+    const repos = {};
+    const notes = {};
+    let first_repo_key = '';
+    const valid_repos_key: string[] = [];
 
     dxnote.repos_key.forEach((repo_key: string) => {
-        let repo_info = ipcRenderer.sendSync("readJson", {
+        const repo_info = ipcRenderer.sendSync('readJson', {
             file_path: `${data_path}/${repo_key}/repo_info.json`,
         });
         if (repo_info) {
@@ -22,9 +22,9 @@ export const initExistRepo = (data_path: string) => {
                 folders_key: repo_info.folders_key,
                 folders_obj: {},
             };
-            let valid_folders_key: string[] = [];
+            const valid_folders_key: string[] = [];
             repo_info.folders_key.forEach((folder_key: string) => {
-                let folder_info = ipcRenderer.sendSync("readJson", {
+                const folder_info = ipcRenderer.sendSync('readJson', {
                     file_path: `${data_path}/${repo_key}/${folder_key}/folder_info.json`,
                 });
                 if (folder_info) {
@@ -35,7 +35,7 @@ export const initExistRepo = (data_path: string) => {
             if (repo_info.folders_key.length !== valid_folders_key.length) {
                 repos[repo_key].folders_key = valid_folders_key;
                 repo_info.folders_key = valid_folders_key;
-                ipcRenderer.sendSync("writeJson", {
+                ipcRenderer.sendSync('writeJson', {
                     file_path: `${data_path}/${repo_key}/repo_info.json`,
                     obj: repo_info,
                 });
@@ -47,14 +47,14 @@ export const initExistRepo = (data_path: string) => {
 
     if (dxnote.repos_key.length !== valid_repos_key.length) {
         dxnote.repos_key = valid_repos_key;
-        ipcRenderer.sendSync("writeJson", {
+        ipcRenderer.sendSync('writeJson', {
             file_path: `${data_path}/dxnote_info.json`,
             obj: dxnote,
         });
     }
 
     if (first_repo_key) {
-        let init_repo_key = "";
+        let init_repo_key = '';
         let folders_key = [];
 
         if (repos[dxnote.cur_repo_key]) {
@@ -65,10 +65,10 @@ export const initExistRepo = (data_path: string) => {
             folders_key = repos[first_repo_key].folders_key;
 
             dxnote = {
-                cur_repo_key: "DEFAULTREPO1",
+                cur_repo_key: 'DEFAULTREPO1',
                 repos: {
                     DEFAULTREPO1: {
-                        cur_folder_key: "",
+                        cur_folder_key: '',
                         folders: {},
                     },
                 },
@@ -77,13 +77,13 @@ export const initExistRepo = (data_path: string) => {
 
         notes[init_repo_key] = {};
         folders_key.forEach((folder_key: string) => {
-            let folder_info = ipcRenderer.sendSync("readJson", {
+            const folder_info = ipcRenderer.sendSync('readJson', {
                 file_path: `${data_path}/${init_repo_key}/${folder_key}/folder_info.json`,
             });
             if (folder_info && folder_info.notes_obj) {
                 notes[init_repo_key][folder_key] = {};
                 Object.keys(folder_info.notes_obj).forEach((note_key) => {
-                    let note_info = ipcRenderer.sendSync("readCson", {
+                    const note_info = ipcRenderer.sendSync('readCson', {
                         file_path: `${data_path}/${init_repo_key}/${folder_key}/${note_key}.cson`,
                     });
                     if (note_info) {
@@ -104,48 +104,48 @@ export const initExistRepo = (data_path: string) => {
 };
 
 export const initEmptyRepo = (data_path: string) => {
-    let data = initDefault();
-    let repos = data.repos;
-    let notes = data.notes;
-    let dxnote = data.dxnote;
+    const data = initDefault();
+    const repos = data.repos;
+    const notes = data.notes;
+    const dxnote = data.dxnote;
 
-    ipcRenderer.sendSync("writeJson", {
+    ipcRenderer.sendSync('writeJson', {
         file_path: `${data_path}/dxnote_info.json`,
         obj: dxnote,
     });
 
     dxnote.repos_key.forEach((repo_key, index) => {
-        let repo = repos[repo_key];
+        const repo = repos[repo_key];
         if (repo) {
-            let repo_info = {
+            const repo_info = {
                 repo_name: repo.repo_name,
                 folders_key: repo.folders_key,
             };
-            ipcRenderer.sendSync("writeJson", {
+            ipcRenderer.sendSync('writeJson', {
                 file_path: `${data_path}/${repo_key}/repo_info.json`,
                 obj: repo_info,
             });
             Object.keys(repo.folders_obj).forEach((folder_key, index) => {
-                let folder = repo.folders_obj[folder_key];
+                const folder = repo.folders_obj[folder_key];
                 if (folder) {
-                    ipcRenderer.sendSync("writeJson", {
+                    ipcRenderer.sendSync('writeJson', {
                         file_path: `${data_path}/${repo_key}/${folder_key}/folder_info.json`,
                         obj: folder,
                     });
                     Object.keys(folder.notes_obj).forEach((note_key, index) => {
-                        let note = folder.notes_obj[note_key];
+                        const note = folder.notes_obj[note_key];
                         if (
                             note &&
                             notes[repo_key][folder_key] &&
                             notes[repo_key][folder_key][note_key]
                         ) {
-                            let note_info = {
+                            const note_info = {
                                 createAt: new Date(),
                                 updatedAt: new Date(),
-                                type: "markdown",
+                                type: 'markdown',
                                 content: notes[repo_key][folder_key][note_key],
                             };
-                            ipcRenderer.sendSync("writeCson", {
+                            ipcRenderer.sendSync('writeCson', {
                                 file_path: `${data_path}/${repo_key}/${folder_key}/${note_key}.cson`,
                                 obj: note_info,
                             });

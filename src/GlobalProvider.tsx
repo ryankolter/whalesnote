@@ -1,12 +1,12 @@
-import { createContext, useCallback, useState, useMemo } from "react";
+import { createContext, useCallback, useState, useMemo } from 'react';
 
-import { useRepos } from "./lib/useRepos";
-import { useNotes } from "./lib/useNotes";
-import { useDxnote } from "./lib/useDxnote";
-import { useEditPos } from "./lib/useEditPos";
-import { useEditLine } from "./lib/useEditLine";
+import { useRepos } from './lib/useRepos';
+import { useNotes } from './lib/useNotes';
+import { useDxnote } from './lib/useDxnote';
+import { useEditPos } from './lib/useEditPos';
+import { useEditLine } from './lib/useEditLine';
 
-let initContext: {
+const initContext: {
     dataPath: string;
     setDataPath: (path: string) => void;
     dxnote: any;
@@ -65,7 +65,7 @@ let initContext: {
         from_pos: number
     ) => void;
 } = {
-    dataPath: "",
+    dataPath: '',
     setDataPath: () => {},
     dxnote: null,
     initDxnote: () => {},
@@ -74,9 +74,9 @@ let initContext: {
     repoSwitch: () => {},
     folderSwitch: () => {},
     noteSwitch: () => {},
-    currentRepoKey: "",
-    currentFolderKey: "",
-    currentNoteKey: "",
+    currentRepoKey: '',
+    currentFolderKey: '',
+    currentNoteKey: '',
     repos_obj: null,
     initRepo: () => {},
     updateRepos: () => {},
@@ -90,7 +90,7 @@ let initContext: {
     repoNotesFetch: null,
     folderNotesFetch: null,
     changeNotesAfterNew: () => {},
-    content: "",
+    content: '',
     cursorHead: 0,
     fromPos: 0,
     updateCursorHead: () => {},
@@ -100,7 +100,7 @@ export const GlobalContext = createContext(initContext);
 
 export const GlobalProvider = ({ children }: { children: any }) => {
     const [dataPath, setDataPath] = useState<string>(
-        window.localStorage.getItem("dxnote_data_path") || ""
+        window.localStorage.getItem('dxnote_data_path') || ''
     );
     const [
         dxnote,
@@ -154,9 +154,9 @@ export const GlobalProvider = ({ children }: { children: any }) => {
         },
         [dataPath]
     );
-    console.log("render");
+    console.log('render');
 
-    let content = useMemo(
+    const content = useMemo(
         () =>
             currentRepoKey &&
             currentFolderKey &&
@@ -165,11 +165,11 @@ export const GlobalProvider = ({ children }: { children: any }) => {
             notes[currentRepoKey][currentFolderKey] &&
             notes[currentRepoKey][currentFolderKey][currentNoteKey]
                 ? notes[currentRepoKey][currentFolderKey][currentNoteKey]
-                : "",
+                : '',
         [currentRepoKey, currentFolderKey, currentNoteKey, notes]
     );
 
-    let cursorHead = useMemo(
+    const cursorHead = useMemo(
         () =>
             currentRepoKey &&
             currentFolderKey &&
@@ -182,7 +182,7 @@ export const GlobalProvider = ({ children }: { children: any }) => {
         [currentRepoKey, currentFolderKey, currentNoteKey, cursorHeads]
     );
 
-    let fromPos = useMemo(
+    const fromPos = useMemo(
         () =>
             currentRepoKey &&
             currentFolderKey &&

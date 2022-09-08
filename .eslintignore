@@ -1,0 +1,11 @@
+build/*
+dist/*
+coverage/*
+src/resources/*
+*.css
+*.json
+*.html
+*.md
+commitlint.config.js
+config-overrides.js
+main.js

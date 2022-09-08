@@ -1,8 +1,8 @@
-import { useEffect, useCallback, useState } from "react";
+import { useEffect, useCallback, useState } from 'react';
 
 const useContextMenu = (outerRef: any) => {
-    const [xPos, setXPos] = useState("0px");
-    const [yPos, setYPos] = useState("0px");
+    const [xPos, setXPos] = useState('0px');
+    const [yPos, setYPos] = useState('0px');
     const [menu, showMenu] = useState(false);
 
     const handleContextMenu = useCallback(
@@ -24,11 +24,11 @@ const useContextMenu = (outerRef: any) => {
     }, [showMenu]);
 
     useEffect(() => {
-        document.addEventListener("click", handleClick);
-        document.addEventListener("contextmenu", handleContextMenu);
+        document.addEventListener('click', handleClick);
+        document.addEventListener('contextmenu', handleContextMenu);
         return () => {
-            document.removeEventListener("click", handleClick);
-            document.removeEventListener("contextmenu", handleContextMenu);
+            document.removeEventListener('click', handleClick);
+            document.removeEventListener('contextmenu', handleContextMenu);
         };
     }, [handleClick, handleContextMenu]);
 

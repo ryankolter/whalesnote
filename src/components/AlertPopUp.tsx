@@ -1,5 +1,5 @@
-import styled from "@emotion/styled";
-import { AlertPopUpBox } from "./AlertPopUpBox";
+import styled from '@emotion/styled';
+import { AlertPopUpBox } from './AlertPopUpBox';
 
 interface AlertPopUpProps {
     popupState: boolean;
@@ -8,7 +8,7 @@ interface AlertPopUpProps {
     content: string;
     onCancel: () => void;
     onConfirm: () => void;
-    onKeyDown: (e: any) => void;
+    onKeyDown: (e: Event) => void;
 }
 
 export const AlertPopUp: React.FC<AlertPopUpProps> = (props) => {
@@ -17,8 +17,8 @@ export const AlertPopUp: React.FC<AlertPopUpProps> = (props) => {
     return (
         <AlertPopUpContainer>
             <div
-                className={popupState ? "show-alert-mask" : "hide-alert-mask"}
-                style={maskState ? { display: "block" } : { display: "none" }}
+                className={popupState ? 'show-alert-mask' : 'hide-alert-mask'}
+                style={maskState ? { display: 'block' } : { display: 'none' }}
             ></div>
             {popupState ? (
                 <AlertPopUpBox

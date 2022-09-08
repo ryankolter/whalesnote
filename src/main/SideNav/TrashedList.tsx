@@ -1,9 +1,9 @@
-import styled from "@emotion/styled";
-import cryptoRandomString from "crypto-random-string";
-import { useCallback, useRef } from "react";
-import { useEffect } from "react";
-import useContextMenu from "../../lib/useContextMenu";
-const { ipcRenderer } = window.require("electron");
+import styled from '@emotion/styled';
+import cryptoRandomString from 'crypto-random-string';
+import { useCallback, useRef } from 'react';
+import { useEffect } from 'react';
+import useContextMenu from '../../lib/useContextMenu';
+const { ipcRenderer } = window.require('electron');
 
 const TrashList: React.FC<TrashListProps> = ({
     repos,
@@ -21,13 +21,13 @@ const TrashList: React.FC<TrashListProps> = ({
     const { xPos, yPos, menu } = useContextMenu(outerRef);
 
     const deleteNote = (note_key: string) => {
-        let folder_info = ipcRenderer.sendSync("readJson", {
+        const folder_info = ipcRenderer.sendSync('readJson', {
             file_path: `${data_path}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
         });
 
         folder_info.notes_obj[note_key].isTrashed = true;
 
-        ipcRenderer.sendSync("writeJson", {
+        ipcRenderer.sendSync('writeJson', {
             file_path: `${data_path}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
             obj: folder_info,
         });
@@ -36,13 +36,13 @@ const TrashList: React.FC<TrashListProps> = ({
     return (
         <NoteListContainer width={width}>
             <Notes ref={outerRef}>
-                {Array.from(repos["TRASHED_LIST"])?.map((str: any) => {
-                    let arr = str.split("-");
+                {Array.from(repos.TRASHED_LIST)?.map((str: any) => {
+                    const arr = str.split('-');
                     return (
                         <NoteItem
                             key={arr[2]}
                             style={{
-                                backgroundColor: currentNoteKey === arr[2] ? "#3a404c" : "",
+                                backgroundColor: currentNoteKey === arr[2] ? '#3a404c' : '',
                             }}
                             onClick={() => {
                                 repoSwitch(data_path, arr[0]);
@@ -70,9 +70,9 @@ const TrashList: React.FC<TrashListProps> = ({
 
 const NoteListContainer = styled.div(
     {
-        display: "flex",
-        flexDirection: "column",
-        height: "100%",
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%',
     },
     (props: { width: number }) => ({
         width: props.width,
@@ -80,29 +80,29 @@ const NoteListContainer = styled.div(
 );
 
 const ColumnHeader = styled.div({
-    display: "flex",
-    alignItems: "center",
-    flexDirection: "row-reverse",
-    margin: "10px 16px",
+    display: 'flex',
+    alignItems: 'center',
+    flexDirection: 'row-reverse',
+    margin: '10px 16px',
 });
 
 const iconBtnStyle = {
-    width: "16px",
-    height: "16px; ",
-    display: "flex",
-    alignItem: "center",
-    justifyContent: "center",
-    color: "#939395",
-    cursor: "pointer",
+    width: '16px',
+    height: '16px; ',
+    display: 'flex',
+    alignItem: 'center',
+    justifyContent: 'center',
+    color: '#939395',
+    cursor: 'pointer',
 };
 
 const NoteAddBtn = styled.div(iconBtnStyle);
 
 const Notes = styled.div(
     {
-        overflowY: "scroll",
-        flex: "1",
-        minHeight: "0",
+        overflowY: 'scroll',
+        flex: '1',
+        minHeight: '0',
     },
     `
     &::-webkit-scrollbar {
@@ -127,13 +127,13 @@ const NoteItem = styled.div`
 
 const MenuUl = styled.ul(
     {
-        listStyleType: "none",
-        position: "fixed",
-        padding: "4px 0",
-        border: "1px solid #BABABA",
-        color: "#000000",
-        backgroundColor: "#FFFFFF",
-        zIndex: "99999",
+        listStyleType: 'none',
+        position: 'fixed',
+        padding: '4px 0',
+        border: '1px solid #BABABA',
+        color: '#000000',
+        backgroundColor: '#FFFFFF',
+        zIndex: '99999',
     },
     (props: { top: string; left: string }) => ({
         top: props.top,
@@ -143,10 +143,10 @@ const MenuUl = styled.ul(
 
 const MenuLi = styled.li(
     {
-        padding: "0 22px",
-        fontSize: "12px",
-        lineHeight: "22px",
-        cursor: "pointer",
+        padding: '0 22px',
+        fontSize: '12px',
+        lineHeight: '22px',
+        cursor: 'pointer',
     },
     `&:hover {
 background-color: #EBEBEB; 
@@ -156,15 +156,15 @@ background-color: #EBEBEB;
 const MoreNote = styled.div(iconBtnStyle);
 
 const NoteBottomBar = styled.div({
-    display: "flex",
-    alignItems: "center",
-    flexDirection: "row-reverse",
-    margin: "10px 16px",
-    fontSize: "18px",
+    display: 'flex',
+    alignItems: 'center',
+    flexDirection: 'row-reverse',
+    margin: '10px 16px',
+    fontSize: '18px',
 });
 
 type TrashListProps = {
-    repos: object;
+    repos: any;
     data_path: string;
     notes_key: string[] | undefined;
     notes_obj: object | undefined;

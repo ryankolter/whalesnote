@@ -1,22 +1,22 @@
-import { useState, useMemo, useCallback, useRef } from "react";
-import styled from "@emotion/styled";
-import { GlobalProvider } from "./GlobalProvider";
+import { useState, useMemo, useCallback, useRef } from 'react';
+import styled from '@emotion/styled';
+import { GlobalProvider } from './GlobalProvider';
 
-import SideNav from "./main/SideNav";
-import CenterArea from "./main/CenterArea/index";
-import WaitingMask from "./components/WaitingMask";
+import SideNav from './main/SideNav';
+import CenterArea from './main/CenterArea/index';
+import WaitingMask from './components/WaitingMask';
 
-import SocketServerBtn from "./components/socketServerBtn";
-import SocketClientBtn from "./socketClientBtn";
+import SocketServerBtn from './components/socketServerBtn';
+import SocketClientBtn from './socketClientBtn';
 
-import "./resources/my_highlight_styles/editor/solarized-dark.min.css";
-import "./resources/my_highlight_styles/preview/solarized-dark.min.css";
-import AssistantPanel from "./main/AssistantPanel";
+import './resources/my_highlight_styles/editor/solarized-dark.min.css';
+import './resources/my_highlight_styles/preview/solarized-dark.min.css';
+import AssistantPanel from './main/AssistantPanel';
 
 const App = () => {
-    const [focus, setFocus] = useState("");
-    const [blur, setBlur] = useState("");
-    const [theme, setTheme] = useState("dark");
+    const [focus, setFocus] = useState('');
+    const [blur, setBlur] = useState('');
+    const [theme, setTheme] = useState('dark');
     const [keySelect, setKeySelect] = useState(false);
     const [showAssistantPanel, setShowAssistantPanel] = useState(false);
 
@@ -55,18 +55,18 @@ const App = () => {
 };
 
 const AppContainer = styled.div({
-    height: "100vh",
-    display: "flex",
-    flexDirection: "column",
-    overflow: "hidden",
+    height: '100vh',
+    display: 'flex',
+    flexDirection: 'column',
+    overflow: 'hidden',
 });
 
 const RepoContent = styled.div({
-    display: "flex",
-    alignItem: "center",
-    flex: "1",
-    minHeight: "0",
-    width: "100vw",
+    display: 'flex',
+    alignItem: 'center',
+    flex: '1',
+    minHeight: '0',
+    width: '100vw',
 });
 
 export default App;

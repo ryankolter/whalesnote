@@ -1,5 +1,5 @@
-import classNames from "classnames";
-import { useRef, useEffect } from "react";
+import classNames from 'classnames';
+import { useRef, useEffect } from 'react';
 
 interface TextInputProps
     extends React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> {
@@ -19,7 +19,7 @@ export const TextInput: React.FC<TextInputProps> = (props) => {
         <div>
             <input
                 ref={textAreaRef}
-                className={classNames("textInput", className)}
+                className={classNames('textInput', className)}
                 {...restProps}
                 value={value}
                 autoFocus={autoFocus}

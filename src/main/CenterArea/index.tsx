@@ -1,11 +1,11 @@
-import { useContext, useCallback, useEffect, useState } from "react";
-import cryptoRandomString from "crypto-random-string";
-import styled from "@emotion/styled";
-import RepoPanel from "./RepoPanel";
-import { MarkdownEditor } from "./MarkdownEditor";
-import { MarkdownRender } from "./MarkdownRender";
+import { useContext, useCallback, useEffect, useState } from 'react';
+import cryptoRandomString from 'crypto-random-string';
+import styled from '@emotion/styled';
+import RepoPanel from './RepoPanel';
+import { MarkdownEditor } from './MarkdownEditor';
+import { MarkdownRender } from './MarkdownRender';
 
-import { GlobalContext } from "../../GlobalProvider";
+import { GlobalContext } from '../../GlobalProvider';
 
 const CenterArea: React.FC<CenterAreaProps> = ({
     keySelect,
@@ -18,7 +18,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
     blur,
     theme,
 }) => {
-    console.log("CenterArea render");
+    console.log('CenterArea render');
     const {
         dataPath,
         dxnote,
@@ -29,37 +29,37 @@ const CenterArea: React.FC<CenterAreaProps> = ({
         content,
     } = useContext(GlobalContext);
 
-    let repos_key = dxnote.repos_key;
-    let folders_obj = repos_obj[currentRepoKey]?.folders_obj;
-    let notes_obj = repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj;
+    const repos_key = dxnote.repos_key;
+    const folders_obj = repos_obj[currentRepoKey]?.folders_obj;
+    const notes_obj = repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj;
 
-    const [editorHeight, setEditorHeight] = useState("calc(100vh - 40px - 20px)");
-    const [renderHeight, setRenderHeight] = useState("0");
-    const [renderTop, setRenderTop] = useState("calc(100vh - 20px)");
+    const [editorHeight, setEditorHeight] = useState('calc(100vh - 40px - 20px)');
+    const [renderHeight, setRenderHeight] = useState('0');
+    const [renderTop, setRenderTop] = useState('calc(100vh - 20px)');
 
-    const [renderPanelState, setRenderPanelState] = useState("hidden");
+    const [renderPanelState, setRenderPanelState] = useState('hidden');
     const [showSwitchModePanel, setShowSwitchModePanel] = useState(false);
 
-    let [showAllRepo, setShowAllRepo] = useState(false);
-    let [allowHiddenAllRepoViaEnter, setAllowHiddenAllRepoViaEnter] = useState(true);
+    const [showAllRepo, setShowAllRepo] = useState(false);
+    const [allowHiddenAllRepoViaEnter, setAllowHiddenAllRepoViaEnter] = useState(true);
 
     const repoNameClickHandler = useCallback(() => {
         setShowAllRepo((showAllRepo) => !showAllRepo);
     }, [showAllRepo, keySelect]);
 
     useEffect(() => {
-        if (renderPanelState === "hidden") {
-            setEditorHeight("calc(100vh - 40px - 12px)");
-            setRenderHeight("0");
-            setRenderTop("calc(100vh - 20px)");
-        } else if (renderPanelState === "half") {
-            setEditorHeight("calc(50vh - 30px)");
-            setRenderHeight("calc(50vh - 30px)");
-            setRenderTop("calc(50vh - 20px)");
-        } else if (renderPanelState === "all") {
-            setEditorHeight("calc(100vh - 40px - 12px)");
-            setRenderHeight("calc(100vh - 40px - 10px)");
-            setRenderTop("0");
+        if (renderPanelState === 'hidden') {
+            setEditorHeight('calc(100vh - 40px - 12px)');
+            setRenderHeight('0');
+            setRenderTop('calc(100vh - 20px)');
+        } else if (renderPanelState === 'half') {
+            setEditorHeight('calc(50vh - 30px)');
+            setRenderHeight('calc(50vh - 30px)');
+            setRenderTop('calc(50vh - 20px)');
+        } else if (renderPanelState === 'all') {
+            setEditorHeight('calc(100vh - 40px - 12px)');
+            setRenderHeight('calc(100vh - 40px - 10px)');
+            setRenderTop('0');
         }
     }, [renderPanelState]);
 
@@ -70,8 +70,8 @@ const CenterArea: React.FC<CenterAreaProps> = ({
             // console.log(e.altKey)
             // console.log(e.metaKey)
             // console.log(e.keyCode)
-            if (process.platform === "darwin") {
-                //console.log('这是mac系统');
+            if (process.platform === 'darwin') {
+                // console.log('这是mac系统');
 
                 // normal number 0 and extra number 0
                 if ((e.keyCode === 48 || e.keyCode === 96) && e.metaKey) {
@@ -82,7 +82,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                                 setFocus(
                                     cryptoRandomString({
                                         length: 24,
-                                        type: "alphanumeric",
+                                        type: 'alphanumeric',
                                     })
                                 );
                             }, 0);
@@ -93,7 +93,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                         setBlur(
                             cryptoRandomString({
                                 length: 24,
-                                type: "alphanumeric",
+                                type: 'alphanumeric',
                             })
                         );
                     }
@@ -115,7 +115,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                             setFocus(
                                 cryptoRandomString({
                                     length: 24,
-                                    type: "alphanumeric",
+                                    type: 'alphanumeric',
                                 })
                             );
                         }, 0);
@@ -135,7 +135,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                             setBlur(
                                 cryptoRandomString({
                                     length: 24,
-                                    type: "alphanumeric",
+                                    type: 'alphanumeric',
                                 })
                             );
                         }, 0);
@@ -145,16 +145,16 @@ const CenterArea: React.FC<CenterAreaProps> = ({
 
                 //switch among hidden, half, all
                 if ((e.keyCode === 191 || e.keyCode === 47) && e.metaKey) {
-                    if (renderPanelState === "hidden") {
-                        setRenderPanelState("half");
-                    } else if (renderPanelState === "half") {
-                        setRenderPanelState("all");
-                    } else if (renderPanelState === "all") {
-                        setRenderPanelState("hidden");
+                    if (renderPanelState === 'hidden') {
+                        setRenderPanelState('half');
+                    } else if (renderPanelState === 'half') {
+                        setRenderPanelState('all');
+                    } else if (renderPanelState === 'all') {
+                        setRenderPanelState('hidden');
                     }
                 }
             }
-            if (process.platform === "win32" || process.platform === "linux") {
+            if (process.platform === 'win32' || process.platform === 'linux') {
                 //console.log('这是windows系统');
 
                 // normal number 0 and extra number 0
@@ -166,7 +166,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                                 setFocus(
                                     cryptoRandomString({
                                         length: 24,
-                                        type: "alphanumeric",
+                                        type: 'alphanumeric',
                                     })
                                 );
                             }, 0);
@@ -176,7 +176,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                         setBlur(
                             cryptoRandomString({
                                 length: 24,
-                                type: "alphanumeric",
+                                type: 'alphanumeric',
                             })
                         );
                     }
@@ -194,7 +194,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                             setFocus(
                                 cryptoRandomString({
                                     length: 24,
-                                    type: "alphanumeric",
+                                    type: 'alphanumeric',
                                 })
                             );
                         }, 0);
@@ -214,7 +214,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                             setBlur(
                                 cryptoRandomString({
                                     length: 24,
-                                    type: "alphanumeric",
+                                    type: 'alphanumeric',
                                 })
                             );
                         }, 0);
@@ -224,12 +224,12 @@ const CenterArea: React.FC<CenterAreaProps> = ({
 
                 //switch among hidden, half, all
                 if ((e.keyCode === 191 || e.keyCode === 47) && e.ctrlKey) {
-                    if (renderPanelState === "hidden") {
-                        setRenderPanelState("half");
-                    } else if (renderPanelState === "half") {
-                        setRenderPanelState("all");
-                    } else if (renderPanelState === "all") {
-                        setRenderPanelState("hidden");
+                    if (renderPanelState === 'hidden') {
+                        setRenderPanelState('half');
+                    } else if (renderPanelState === 'half') {
+                        setRenderPanelState('all');
+                    } else if (renderPanelState === 'all') {
+                        setRenderPanelState('hidden');
                     }
                 }
             }
@@ -247,9 +247,9 @@ const CenterArea: React.FC<CenterAreaProps> = ({
     );
 
     useEffect(() => {
-        document.addEventListener("keydown", handleKeyDown);
+        document.addEventListener('keydown', handleKeyDown);
         return () => {
-            document.removeEventListener("keydown", handleKeyDown);
+            document.removeEventListener('keydown', handleKeyDown);
         };
     }, [handleKeyDown]);
 
@@ -259,7 +259,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                 <MarkdownEditor theme={theme} focus={focus} blur={blur} />
             </EditorPanel>
             <RenderPanel topValue={renderTop} heightValue={renderHeight}>
-                {renderPanelState !== "hidden" ? (
+                {renderPanelState !== 'hidden' ? (
                     <MarkdownRender content={content} theme={theme} />
                 ) : (
                     <></>
@@ -275,7 +275,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                         <RepoNameLabel>
                             {repos_obj && currentRepoKey && repos_obj[currentRepoKey]
                                 ? repos_obj[currentRepoKey].repo_name
-                                : ""}
+                                : ''}
                         </RepoNameLabel>
                     </CurRepoNameTag>
                     <GreaterTag>&gt;</GreaterTag>
@@ -283,15 +283,15 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                         <FolderNameLabel>
                             {folders_obj && currentFolderKey && folders_obj[currentFolderKey]
                                 ? folders_obj[currentFolderKey].folder_name
-                                : ""}
+                                : ''}
                         </FolderNameLabel>
                     </CurFolderNameTag>
                     <GreaterTag>&gt;</GreaterTag>
                     <CurNoteNameTag>
                         <NoteNameLabel>
                             {notes_obj && currentNoteKey && notes_obj[currentNoteKey]
-                                ? notes_obj[currentNoteKey]["title"]
-                                : ""}
+                                ? notes_obj[currentNoteKey].title
+                                : ''}
                         </NoteNameLabel>
                     </CurNoteNameTag>
                     {showAllRepo ? (
@@ -317,16 +317,16 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                             setShowSwitchModePanel((showSwitchModePanel) => !showSwitchModePanel);
                         }}
                     >
-                        {renderPanelState === "hidden" ? <ModeName>编辑</ModeName> : <></>}
-                        {renderPanelState === "half" ? <ModeName>编辑+预览</ModeName> : <></>}
-                        {renderPanelState === "all" ? <ModeName>预览</ModeName> : <></>}
+                        {renderPanelState === 'hidden' ? <ModeName>编辑</ModeName> : <></>}
+                        {renderPanelState === 'half' ? <ModeName>编辑+预览</ModeName> : <></>}
+                        {renderPanelState === 'all' ? <ModeName>预览</ModeName> : <></>}
                         <Triangle></Triangle>
                     </SwitchModeBtn>
                     {showSwitchModePanel ? (
                         <SwitchModePanel>
                             <ModeOption
                                 onClick={() => {
-                                    setRenderPanelState("hidden");
+                                    setRenderPanelState('hidden');
                                     setShowSwitchModePanel(false);
                                 }}
                             >
@@ -334,7 +334,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                             </ModeOption>
                             <ModeOption
                                 onClick={() => {
-                                    setRenderPanelState("all");
+                                    setRenderPanelState('all');
                                     setShowSwitchModePanel(false);
                                 }}
                             >
@@ -342,7 +342,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                             </ModeOption>
                             <ModeOption
                                 onClick={() => {
-                                    setRenderPanelState("half");
+                                    setRenderPanelState('half');
                                     setShowSwitchModePanel(false);
                                 }}
                             >
@@ -372,15 +372,15 @@ const CenterArea: React.FC<CenterAreaProps> = ({
 };
 
 const CenterAreaContainer = styled.div({
-    position: "relative",
-    flex: "1",
-    minWidth: "0",
-    margin: "10px 10px 0 0",
+    position: 'relative',
+    flex: '1',
+    minWidth: '0',
+    margin: '10px 10px 0 0',
 });
 
 const EditorPanel = styled.div(
     {
-        width: "100%",
+        width: '100%',
     },
     (props: { heightValue: string }) => ({
         height: props.heightValue,
@@ -389,8 +389,8 @@ const EditorPanel = styled.div(
 
 const RenderPanel = styled.div(
     {
-        position: "absolute",
-        width: "100%",
+        position: 'absolute',
+        width: '100%',
     },
     (props: { topValue: string; heightValue: string }) => ({
         top: props.topValue,
@@ -399,178 +399,178 @@ const RenderPanel = styled.div(
 );
 
 const BottomRow = styled.div({
-    width: "100%",
-    position: "absolute",
-    left: "0",
-    bottom: "0",
-    display: "flex",
-    alignItems: "center",
-    zIndex: "9999",
+    width: '100%',
+    position: 'absolute',
+    left: '0',
+    bottom: '0',
+    display: 'flex',
+    alignItems: 'center',
+    zIndex: '9999',
 });
 
 const BreakCrumb = styled.div({
-    width: "100%",
-    height: "32px",
-    flex: "1",
-    minWidth: "0",
-    display: "flex",
-    alignItems: "center",
-    padding: "4px 4px 4px 0",
-    zIndex: "9999",
+    width: '100%',
+    height: '32px',
+    flex: '1',
+    minWidth: '0',
+    display: 'flex',
+    alignItems: 'center',
+    padding: '4px 4px 4px 0',
+    zIndex: '9999',
 });
 
 const CurRepoNameTag = styled.div({
-    height: "32px",
-    minWidth: "60px",
-    lineHeight: "32px",
-    borderRadius: "4px",
-    backgroundColor: "rgb(58, 64, 76)",
-    color: "#939395",
-    cursor: "pointer",
-    overflow: "hidden !important",
-    textOverflow: "ellipsis",
-    wordBreak: "break-all",
+    height: '32px',
+    minWidth: '60px',
+    lineHeight: '32px',
+    borderRadius: '4px',
+    backgroundColor: 'rgb(58, 64, 76)',
+    color: '#939395',
+    cursor: 'pointer',
+    overflow: 'hidden !important',
+    textOverflow: 'ellipsis',
+    wordBreak: 'break-all',
 });
 
 const RepoNameLabel = styled.div({
     flex: 1,
-    fontSize: "16px",
-    padding: "0 30px",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
+    fontSize: '16px',
+    padding: '0 30px',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
 });
 
 const CurFolderNameTag = styled.div({
-    height: "32px",
-    lineHeight: "32px",
-    color: "#939395",
-    overflow: "hidden !important",
-    textOverflow: "ellipsis",
-    wordBreak: "break-all",
+    height: '32px',
+    lineHeight: '32px',
+    color: '#939395',
+    overflow: 'hidden !important',
+    textOverflow: 'ellipsis',
+    wordBreak: 'break-all',
 });
 
 const FolderNameLabel = styled.div({
     flex: 1,
-    fontSize: "14px",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
+    fontSize: '14px',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
 });
 
 const CurNoteNameTag = styled.div({
-    height: "32px",
-    lineHeight: "32px",
-    color: "#939395",
-    overflow: "hidden !important",
-    textOverflow: "ellipsis",
-    wordBreak: "break-all",
+    height: '32px',
+    lineHeight: '32px',
+    color: '#939395',
+    overflow: 'hidden !important',
+    textOverflow: 'ellipsis',
+    wordBreak: 'break-all',
 });
 
 const NoteNameLabel = styled.div({
     flex: 1,
-    fontSize: "14px",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
+    fontSize: '14px',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
 });
 
 const GreaterTag = styled.div({
-    color: "#939395",
-    padding: "0 15px",
+    color: '#939395',
+    padding: '0 15px',
 });
 
 const AllRepo = styled.div({
-    width: "calc(100% - 100px)",
-    position: "absolute",
-    left: "0",
-    bottom: "40px",
-    padding: "10px",
-    boxSizing: "border-box",
-    border: "1px solid rgba(58, 64, 76)",
-    borderRadius: "8px",
-    backgroundColor: "#2C3033",
-    zIndex: "9999",
+    width: 'calc(100% - 100px)',
+    position: 'absolute',
+    left: '0',
+    bottom: '40px',
+    padding: '10px',
+    boxSizing: 'border-box',
+    border: '1px solid rgba(58, 64, 76)',
+    borderRadius: '8px',
+    backgroundColor: '#2C3033',
+    zIndex: '9999',
 });
 
 const SwitchMode = styled.div({
-    position: "relative",
-    height: "40px",
-    display: "flex",
-    flexDirection: "row-reverse",
-    cursor: "pointer",
+    position: 'relative',
+    height: '40px',
+    display: 'flex',
+    flexDirection: 'row-reverse',
+    cursor: 'pointer',
 });
 
 const SwitchModeBtn = styled.div({
-    display: "flex",
-    justifyContent: "center",
-    width: "100px",
-    boxSizing: "border-box",
-    height: "28px",
-    margin: "7px 5px",
-    padding: "0 14px",
-    backgroundColor: "rgb(58, 64, 76)",
-    borderRadius: "14px",
+    display: 'flex',
+    justifyContent: 'center',
+    width: '100px',
+    boxSizing: 'border-box',
+    height: '28px',
+    margin: '7px 5px',
+    padding: '0 14px',
+    backgroundColor: 'rgb(58, 64, 76)',
+    borderRadius: '14px',
 });
 
 const ModeName = styled.div({
-    fontSize: "14px",
-    lineHeight: "28px",
-    color: "#939395",
+    fontSize: '14px',
+    lineHeight: '28px',
+    color: '#939395',
 });
 
 const Triangle = styled.div({
-    display: "block",
-    height: "0",
-    width: "0",
-    marginLeft: "4px",
-    borderBottom: "9px solid #939395",
-    borderTop: "9px solid transparent",
-    borderLeft: "6px solid transparent",
-    borderRight: "6px solid transparent",
+    display: 'block',
+    height: '0',
+    width: '0',
+    marginLeft: '4px',
+    borderBottom: '9px solid #939395',
+    borderTop: '9px solid transparent',
+    borderLeft: '6px solid transparent',
+    borderRight: '6px solid transparent',
 });
 
 const SwitchModePanel = styled.div({
-    position: "absolute",
-    bottom: "34px",
-    left: "calc(50% - 50px)",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    padding: "5px 0",
-    color: "#939395",
-    backgroundColor: "#2C3033",
-    border: "1px solid rgba(58, 64, 76)",
-    borderRadius: "4px",
+    position: 'absolute',
+    bottom: '34px',
+    left: 'calc(50% - 50px)',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: '5px 0',
+    color: '#939395',
+    backgroundColor: '#2C3033',
+    border: '1px solid rgba(58, 64, 76)',
+    borderRadius: '4px',
 });
 
 const ModeOption = styled.div({
-    display: "flex",
-    justifyContent: "center",
-    width: "100%",
-    padding: "5px",
+    display: 'flex',
+    justifyContent: 'center',
+    width: '100%',
+    padding: '5px',
 });
 
 const AssistantActive = styled.div({
-    width: "50px",
-    height: "40px",
-    display: "flex",
-    flexDirection: "row-reverse",
+    width: '50px',
+    height: '40px',
+    display: 'flex',
+    flexDirection: 'row-reverse',
 });
 
 const AssistantActiveBtn = styled.div({
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "36px",
-    height: "36px",
-    lintHeight: "36px",
-    boxSizing: "border-box",
-    margin: "2px 5px",
-    border: "1px solid rgba(58, 64, 76)",
-    borderRadius: "18px",
-    fontSize: "18px",
-    color: "#939395",
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '36px',
+    height: '36px',
+    lintHeight: '36px',
+    boxSizing: 'border-box',
+    margin: '2px 5px',
+    border: '1px solid rgba(58, 64, 76)',
+    borderRadius: '18px',
+    fontSize: '18px',
+    color: '#939395',
 });
 
 type CenterAreaProps = {

@@ -1,13 +1,13 @@
-import React from "react";
-import { createRoot } from "react-dom/client";
-import "./index.css";
-import "./resources/css/theme/common.css";
-import "./resources/css/theme/dark.css";
-import "./resources/css/animation.css";
-import App from "./App";
-import reportWebVitals from "./reportWebVitals";
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import './index.css';
+import './resources/css/theme/common.css';
+import './resources/css/theme/dark.css';
+import './resources/css/animation.css';
+import App from './App';
+import reportWebVitals from './reportWebVitals';
 
-const container = document.getElementById("root");
+const container = document.getElementById('root');
 const root = createRoot(container!);
 root.render(<App />);
 

@@ -1,27 +1,27 @@
-import produce from "immer";
+import produce from 'immer';
 
-import { useReducer, useState, useCallback, useRef } from "react";
-import { forEachChild } from "typescript";
-const { ipcRenderer } = window.require("electron");
+import { useReducer, useState, useCallback, useRef } from 'react';
+import { forEachChild } from 'typescript';
+const { ipcRenderer } = window.require('electron');
 
 const notesReducer = produce((state: notesTypes, action: any) => {
     switch (action.type) {
-        case "fetchNotesInAllRepos": {
-            let repos_key = action.dxnote.repos_key;
+        case 'fetchNotesInAllRepos': {
+            const repos_key = action.dxnote.repos_key;
             repos_key.forEach((repo_key: string) => {
                 if (!state[repo_key]) {
                     state[repo_key] = {};
                 }
-                let folders_key = action.repos[repo_key].folders_key;
+                const folders_key = action.repos[repo_key].folders_key;
                 folders_key.forEach((folder_key: string) => {
                     if (!state[repo_key][folder_key]) {
-                        let folder_info = ipcRenderer.sendSync("readJson", {
+                        const folder_info = ipcRenderer.sendSync('readJson', {
                             file_path: `${action.data_path}/${repo_key}/${folder_key}/folder_info.json`,
                         });
                         if (folder_info && folder_info.notes_obj) {
                             state[repo_key][folder_key] = {};
                             Object.keys(folder_info.notes_obj).forEach((note_key) => {
-                                let note_info = ipcRenderer.sendSync("readCson", {
+                                const note_info = ipcRenderer.sendSync('readCson', {
                                     file_path: `${action.data_path}/${repo_key}/${folder_key}/${note_key}.cson`,
                                 });
                                 if (note_info) {
@@ -34,22 +34,22 @@ const notesReducer = produce((state: notesTypes, action: any) => {
             });
             return state;
         }
-        case "fetchNotesInOneRepo": {
+        case 'fetchNotesInOneRepo': {
             if (!state[action.repo_key]) {
                 state[action.repo_key] = {};
-                let folders_key = action.repos[action.repo_key].folders_key;
+                const folders_key = action.repos[action.repo_key].folders_key;
                 folders_key.forEach((folder_key: string, index: number) => {
                     if (
                         index === 0 ||
-                        folder_key === action.dxnote["repos"][action.repo_key]["cur_folder_key"]
+                        folder_key === action.dxnote.repos[action.repo_key].cur_folder_key
                     ) {
-                        let folder_info = ipcRenderer.sendSync("readJson", {
+                        const folder_info = ipcRenderer.sendSync('readJson', {
                             file_path: `${action.data_path}/${action.repo_key}/${folder_key}/folder_info.json`,
                         });
                         if (folder_info && folder_info.notes_obj) {
                             state[action.repo_key][folder_key] = {};
                             Object.keys(folder_info.notes_obj).forEach((note_key) => {
-                                let note_info = ipcRenderer.sendSync("readCson", {
+                                const note_info = ipcRenderer.sendSync('readCson', {
                                     file_path: `${action.data_path}/${action.repo_key}/${folder_key}/${note_key}.cson`,
                                 });
                                 if (note_info) {
@@ -63,15 +63,15 @@ const notesReducer = produce((state: notesTypes, action: any) => {
             }
             return state;
         }
-        case "fetchNotesInOneFolder": {
+        case 'fetchNotesInOneFolder': {
             if (!state[action.repo_key][action.folder_key]) {
-                let folder_info = ipcRenderer.sendSync("readJson", {
+                const folder_info = ipcRenderer.sendSync('readJson', {
                     file_path: `${action.data_path}/${action.repo_key}/${action.folder_key}/folder_info.json`,
                 });
                 if (folder_info && folder_info.notes_obj) {
                     state[action.repo_key][action.folder_key] = {};
                     Object.keys(folder_info.notes_obj).forEach((note_key) => {
-                        let note_info = ipcRenderer.sendSync("readCson", {
+                        const note_info = ipcRenderer.sendSync('readCson', {
                             file_path: `${action.data_path}/${action.repo_key}/${action.folder_key}/${note_key}.cson`,
                         });
                         if (note_info) {
@@ -82,27 +82,30 @@ const notesReducer = produce((state: notesTypes, action: any) => {
             }
             return state;
         }
-        case "addRepo": {
-            !state[action.repo_key] && (state[action.repo_key] = {});
+        case 'addRepo': {
+            if (!state[action.repo_key]) {
+                state[action.repo_key] = {};
+            }
             return state;
         }
-        case "addFolder": {
-            !state[action.repo_key][action.folder_key] &&
-                (state[action.repo_key][action.folder_key] = {});
+        case 'addFolder': {
+            if (!state[action.repo_key][action.folder_key]) {
+                state[action.repo_key][action.folder_key] = {};
+            }
             return state;
         }
-        case "addNote": {
-            let note_info = ipcRenderer.sendSync("readCson", {
+        case 'addNote': {
+            const note_info = ipcRenderer.sendSync('readCson', {
                 file_path: `${action.data_path}/${action.repo_key}/${action.folder_key}/${action.note_key}.cson`,
             });
             state[action.repo_key][action.folder_key][action.note_key] = note_info.content;
             return state;
         }
-        case "init": {
+        case 'init': {
             state = action.new_state;
             return state;
         }
-        case "update": {
+        case 'update': {
             state[action.repo_key][action.folder_key][action.note_key] = action.note_content;
             return state;
         }
@@ -112,11 +115,11 @@ const notesReducer = produce((state: notesTypes, action: any) => {
 export const useNotes = () => {
     const [state, dispatch] = useReducer(notesReducer, {});
 
-    let saveTimerObj = useRef<Map<string, NodeJS.Timeout>>(new Map());
+    const saveTimerObj = useRef<Map<string, NodeJS.Timeout>>(new Map());
 
     const allRepoNotesFetch = (data_path: string | null, dxnote: any, repos: any) => {
         dispatch({
-            type: "fetchNotesInAllRepos",
+            type: 'fetchNotesInAllRepos',
             data_path,
             dxnote,
             repos,
@@ -127,7 +130,7 @@ export const useNotes = () => {
         (data_path: string | null, dxnote: any, repos: any, repo_key: string | undefined) => {
             if (!repo_key) return;
             dispatch({
-                type: "fetchNotesInOneRepo",
+                type: 'fetchNotesInOneRepo',
                 data_path,
                 dxnote,
                 repos,
@@ -144,7 +147,7 @@ export const useNotes = () => {
             folder_key: string | undefined
         ) => {
             dispatch({
-                type: "fetchNotesInOneFolder",
+                type: 'fetchNotesInOneFolder',
                 data_path,
                 repo_key,
                 folder_key,
@@ -155,29 +158,29 @@ export const useNotes = () => {
 
     const changeNotesAfterNew = useCallback((action_name: string, obj: any) => {
         switch (action_name) {
-            case "repo": {
-                let { data_path, repo_key } = obj;
+            case 'repo': {
+                const { data_path, repo_key } = obj;
                 dispatch({
-                    type: "addRepo",
+                    type: 'addRepo',
                     data_path,
                     repo_key,
                 });
                 break;
             }
-            case "folder": {
-                let { data_path, repo_key, folder_key } = obj;
+            case 'folder': {
+                const { data_path, repo_key, folder_key } = obj;
                 dispatch({
-                    type: "addFolder",
+                    type: 'addFolder',
                     data_path,
                     repo_key,
                     folder_key,
                 });
                 break;
             }
-            case "note": {
-                let { data_path, repo_key, folder_key, note_key } = obj;
+            case 'note': {
+                const { data_path, repo_key, folder_key, note_key } = obj;
                 dispatch({
-                    type: "addNote",
+                    type: 'addNote',
                     data_path,
                     repo_key,
                     folder_key,
@@ -189,7 +192,7 @@ export const useNotes = () => {
     }, []);
 
     const initNotes = useCallback(
-        (folder: any) => dispatch({ type: "init", new_state: folder }),
+        (folder: any) => dispatch({ type: 'init', new_state: folder }),
         []
     );
 
@@ -201,32 +204,32 @@ export const useNotes = () => {
             note_key: string,
             note_content: string
         ) => {
-            let action = {
+            const action = {
                 data_path,
                 repo_key,
                 folder_key,
                 note_key,
                 note_content,
             };
-            let note_info = ipcRenderer.sendSync("readCson", {
+            const note_info = ipcRenderer.sendSync('readCson', {
                 file_path: `${action.data_path}/${action.repo_key}/${action.folder_key}/${action.note_key}.cson`,
             });
 
             if (note_info) {
                 note_info.content = note_content;
                 note_info.updatedAt = new Date();
-                ipcRenderer.sendSync("writeCson", {
+                ipcRenderer.sendSync('writeCson', {
                     file_path: `${action.data_path}/${action.repo_key}/${action.folder_key}/${action.note_key}.cson`,
                     obj: note_info,
                 });
             } else {
-                let new_note_info = {
+                const new_note_info = {
                     createAt: new Date(),
                     updatedAt: new Date(),
-                    type: "markdown",
+                    type: 'markdown',
                     content: note_content,
                 };
-                ipcRenderer.sendSync("writeCson", {
+                ipcRenderer.sendSync('writeCson', {
                     file_path: `${action.data_path}/${action.repo_key}/${action.folder_key}/${action.note_key}.cson`,
                     obj: new_note_info,
                 });
@@ -256,7 +259,7 @@ export const useNotes = () => {
             );
 
             dispatch({
-                type: "update",
+                type: 'update',
                 repo_key,
                 folder_key,
                 note_key,

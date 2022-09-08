@@ -1,18 +1,18 @@
-import { useContext, useCallback, useRef, useEffect, useState, useMemo } from "react";
-import styled from "@emotion/styled";
-import { GlobalContext } from "../../GlobalProvider";
-import { basicSetup } from "codemirror";
-import { EditorState, StateEffect, SelectionRange } from "@codemirror/state";
-import { EditorView, keymap, ViewUpdate } from "@codemirror/view";
-import { indentWithTab, history } from "@codemirror/commands";
-import { oneDark } from "@codemirror/theme-one-dark";
-import { indentUnit } from "@codemirror/language";
-import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
-import { languages } from "@codemirror/language-data";
-import { autocompletion } from "@codemirror/autocomplete";
+import { useContext, useCallback, useRef, useEffect, useState, useMemo } from 'react';
+import styled from '@emotion/styled';
+import { GlobalContext } from '../../GlobalProvider';
+import { basicSetup } from 'codemirror';
+import { EditorState, StateEffect, SelectionRange } from '@codemirror/state';
+import { EditorView, keymap, ViewUpdate } from '@codemirror/view';
+import { indentWithTab, history } from '@codemirror/commands';
+import { oneDark } from '@codemirror/theme-one-dark';
+import { indentUnit } from '@codemirror/language';
+import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
+import { languages } from '@codemirror/language-data';
+import { autocompletion } from '@codemirror/autocomplete';
 
 export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({ theme, focus, blur }) => {
-    console.log("MarkdownEditor render");
+    console.log('MarkdownEditor render');
     const {
         dataPath,
         currentRepoKey,
@@ -42,8 +42,8 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({ theme, focus, bl
                 updateNote(dataPath, currentRepoKey, currentFolderKey, currentNoteKey, new_value);
                 const doc = view.current?.state.doc;
                 if (doc) {
-                    let first_line_content = doc.lineAt(0).text.replace(/^[#\-\_*>\s]+/g, "");
-                    let new_name: string = first_line_content || "新建文档";
+                    const first_line_content = doc.lineAt(0).text.replace(/^[#\-\_*>\s]+/g, '');
+                    const new_name: string = first_line_content || '新建文档';
                     renameNote(
                         dataPath,
                         currentRepoKey,
@@ -60,7 +60,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({ theme, focus, bl
     const selectionSetHandler = useCallback(
         (vu: ViewUpdate) => {
             if (view.current) {
-                let cursorHead = view.current.state.selection.main.head;
+                const cursorHead = view.current.state.selection.main.head;
                 updateCursorHead(currentRepoKey, currentFolderKey, currentNoteKey, cursorHead);
             }
         },
@@ -68,7 +68,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({ theme, focus, bl
     );
 
     const handleScrollEvent = useCallback(() => {
-        console.log("handleScrollEvent");
+        console.log('handleScrollEvent');
         if (autoScroll.current) {
             autoScroll.current = false;
             return;
@@ -80,7 +80,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({ theme, focus, bl
         scrollSaveTimerRef.current = setTimeout(() => {
             if (view.current) {
                 //add the margin 10px and 15px to the top value
-                let fromPos = view.current.elementAtHeight(
+                const fromPos = view.current.elementAtHeight(
                     Math.abs(view.current.contentDOM.getBoundingClientRect().top) + 10 + 15
                 ).from;
 
@@ -91,14 +91,14 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({ theme, focus, bl
     }, [currentRepoKey, currentFolderKey, currentNoteKey]);
 
     const autoScrollToLine = useCallback(() => {
-        console.log("autoScrollToLine");
+        console.log('autoScrollToLine');
         if (view.current) {
-            let max_height = view.current.contentDOM.getBoundingClientRect().height;
-            let start_line = fromPos <= max_height && fromPos > 0 ? fromPos : max_height;
+            const max_height = view.current.contentDOM.getBoundingClientRect().height;
+            const start_line = fromPos <= max_height && fromPos > 0 ? fromPos : max_height;
 
             view.current?.dispatch({
                 effects: EditorView.scrollIntoView(start_line, {
-                    y: "start",
+                    y: 'start',
                 }),
             });
 
@@ -113,14 +113,14 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({ theme, focus, bl
     }, [cursorHead, fromPos]);
 
     const defaultThemeOption = EditorView.theme({
-        "&": {
-            height: "100%",
+        '&': {
+            height: '100%',
         },
     });
 
     const updateListener = EditorView.updateListener.of((vu: ViewUpdate) => {
-        if (vu.docChanged && typeof docChangeHandler === "function") {
-            console.log("docChanged");
+        if (vu.docChanged && typeof docChangeHandler === 'function') {
+            console.log('docChanged');
             const doc = vu.state.doc;
             const value = doc.toString();
             docChangeHandler(value, vu);
@@ -134,33 +134,33 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({ theme, focus, bl
     });
 
     const cursorActiveListener = EditorView.updateListener.of((vu: ViewUpdate) => {
-        if (vu.selectionSet && typeof selectionSetHandler === "function") {
-            console.log("selectionSet");
+        if (vu.selectionSet && typeof selectionSetHandler === 'function') {
+            console.log('selectionSet');
             //selectionSetHandler(vu);
         }
     });
 
     const myCompletions = useCallback((CompletionContext: any) => {
-        let word = CompletionContext.matchBefore(/\s*```[a-z]*/);
-        let assistant_word = CompletionContext.matchBefore(/```[a-z]*/);
+        const word = CompletionContext.matchBefore(/\s*```[a-z]*/);
+        const assistant_word = CompletionContext.matchBefore(/```[a-z]*/);
 
         if (!word || (word.from == word.to && !CompletionContext.explicit)) return null;
 
-        let space_count = word.to - word.from - (assistant_word.to - assistant_word.from);
+        const space_count = word.to - word.from - (assistant_word.to - assistant_word.from);
 
-        let langs = ["bash", "js", "go"];
-        let options = [];
+        const langs = ['bash', 'js', 'go'];
+        const options = [];
 
-        for (let lang of langs) {
-            let label = "```" + lang + "\n";
+        for (const lang of langs) {
+            let label = '```' + lang + '\n';
             for (let i = 0; i < space_count; ++i) {
-                label += " ";
+                label += ' ';
             }
-            label += "\n";
+            label += '\n';
             for (let i = 0; i < space_count; ++i) {
-                label += " ";
+                label += ' ';
             }
-            label += "```";
+            label += '```';
             options.push({ label });
         }
 
@@ -171,14 +171,14 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({ theme, focus, bl
         };
     }, []);
 
-    let getExtensions = [
+    const getExtensions = [
         basicSetup,
         updateListener,
         defaultThemeOption,
         keymap.of([indentWithTab]),
         EditorView.lineWrapping,
         markdown({ base: markdownLanguage, codeLanguages: languages }),
-        indentUnit.of("    "),
+        indentUnit.of('    '),
         autocompletion({
             activateOnTyping: true,
             override: [myCompletions],
@@ -231,7 +231,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({ theme, focus, bl
         setTimeout(() => {
             view.current?.dispatch({
                 effects: EditorView.scrollIntoView(0, {
-                    y: "start",
+                    y: 'start',
                 }),
             });
         }, 0);
@@ -251,23 +251,23 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({ theme, focus, bl
     }, [dataPath, currentRepoKey, currentFolderKey, currentNoteKey]);
 
     useEffect(() => {
-        console.log("focus");
-        if (focus === "") return;
+        console.log('focus');
+        if (focus === '') return;
         view.current?.focus();
     }, [focus]);
 
     useEffect(() => {
-        console.log("blur");
-        if (blur === "") return;
+        console.log('blur');
+        if (blur === '') return;
         view.current?.contentDOM.blur();
     }, [blur]);
 
-    const wrappedClassNames = typeof theme === "string" ? `cm-theme-${theme}` : "cm-theme";
+    const wrappedClassNames = typeof theme === 'string' ? `cm-theme-${theme}` : 'cm-theme';
 
     return (
         <MarkdownEditorContainer>
             {showScrollPos ? (
-                <div className='lastScrollPos' onClick={autoScrollToLine}>
+                <div className="lastScrollPos" onClick={autoScrollToLine}>
                     上次在
                 </div>
             ) : (
@@ -279,9 +279,9 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({ theme, focus, bl
 };
 
 const MarkdownEditorContainer = styled.div({
-    position: "relative",
-    width: "100%",
-    height: "100%",
+    position: 'relative',
+    width: '100%',
+    height: '100%',
 });
 
 type MarkdownEditorProps = {

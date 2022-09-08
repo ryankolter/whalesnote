@@ -1,10 +1,10 @@
-import produce from "immer";
+import produce from 'immer';
 
-import { useReducer } from "react";
+import { useReducer } from 'react';
 
 const editLineReducer = produce((state: editLinesTypes, action: any) => {
     switch (action.type) {
-        case "update": {
+        case 'update': {
             state[action.repo_key] || (state[action.repo_key] = {});
             state[action.repo_key][action.folder_key] ||
                 (state[action.repo_key][action.folder_key] = {});
@@ -25,7 +25,7 @@ export const useEditLine = () => {
     ) => {
         if (repo_key && folder_key && note_key) {
             dispatch({
-                type: "update",
+                type: 'update',
                 repo_key,
                 folder_key,
                 note_key,

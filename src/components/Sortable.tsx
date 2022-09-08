@@ -1,4 +1,4 @@
-import { useSortable } from "@dnd-kit/sortable";
+import { useSortable } from '@dnd-kit/sortable';
 
 export const Sortable = (props: any) => {
     const { attributes, listeners, setNodeRef } = useSortable({
@@ -11,7 +11,7 @@ export const Sortable = (props: any) => {
             {...listeners}
             {...attributes}
             className={props.className}
-            style={{ outline: "none", border: "none" }}
+            style={{ outline: 'none', border: 'none' }}
         >
             {props.children}
         </div>

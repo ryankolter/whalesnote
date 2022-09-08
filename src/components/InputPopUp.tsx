@@ -1,5 +1,6 @@
-import styled from "@emotion/styled";
-import { InputPopUpBox } from "./InputPopUpBox";
+import { KeyboardEvent } from 'react';
+import styled from '@emotion/styled';
+import { InputPopUpBox } from './InputPopUpBox';
 
 interface InputPopUpProps {
     popupState: boolean;
@@ -8,7 +9,7 @@ interface InputPopUpProps {
     setValue: (val: string) => void;
     onCancel: () => void;
     onConfirm: () => void;
-    onKeyDown: (e: any) => void;
+    onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void;
 }
 
 export const InputPopUp: React.FC<InputPopUpProps> = (props) => {
@@ -17,8 +18,8 @@ export const InputPopUp: React.FC<InputPopUpProps> = (props) => {
     return (
         <InputPopUpContainer>
             <div
-                className={popupState ? "show-alert-mask" : "hide-alert-mask"}
-                style={maskState ? { display: "block" } : { display: "none" }}
+                className={popupState ? 'show-alert-mask' : 'hide-alert-mask'}
+                style={maskState ? { display: 'block' } : { display: 'none' }}
             ></div>
             {popupState ? (
                 <InputPopUpBox
