@@ -1,7 +1,5 @@
 import styled from '@emotion/styled';
-import cryptoRandomString from 'crypto-random-string';
-import { useCallback, useRef } from 'react';
-import { useEffect } from 'react';
+import { useRef } from 'react';
 import useContextMenu from '../../lib/useContextMenu';
 const { ipcRenderer } = window.require('electron');
 
@@ -79,13 +77,6 @@ const NoteListContainer = styled.div(
     })
 );
 
-const ColumnHeader = styled.div({
-    display: 'flex',
-    alignItems: 'center',
-    flexDirection: 'row-reverse',
-    margin: '10px 16px',
-});
-
 const iconBtnStyle = {
     width: '16px',
     height: '16px; ',
@@ -95,8 +86,6 @@ const iconBtnStyle = {
     color: '#939395',
     cursor: 'pointer',
 };
-
-const NoteAddBtn = styled.div(iconBtnStyle);
 
 const Notes = styled.div(
     {
@@ -152,16 +141,6 @@ const MenuLi = styled.li(
 background-color: #EBEBEB; 
 }`
 );
-
-const MoreNote = styled.div(iconBtnStyle);
-
-const NoteBottomBar = styled.div({
-    display: 'flex',
-    alignItems: 'center',
-    flexDirection: 'row-reverse',
-    margin: '10px 16px',
-    fontSize: '18px',
-});
 
 type TrashListProps = {
     repos: any;

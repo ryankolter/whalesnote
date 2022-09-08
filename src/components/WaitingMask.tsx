@@ -1,4 +1,3 @@
-import { NONAME } from 'dns';
 import { Transition } from 'react-transition-group';
 
 const duration = 3000;

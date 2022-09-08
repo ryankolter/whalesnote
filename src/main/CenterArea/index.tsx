@@ -44,7 +44,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
     const [allowHiddenAllRepoViaEnter, setAllowHiddenAllRepoViaEnter] = useState(true);
 
     const repoNameClickHandler = useCallback(() => {
-        setShowAllRepo((showAllRepo) => !showAllRepo);
+        setShowAllRepo((_showAllRepo) => !_showAllRepo);
     }, [showAllRepo, keySelect]);
 
     useEffect(() => {
@@ -100,7 +100,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                 }
 
                 if (e.keyCode === 90 && !e.metaKey && keySelect) {
-                    setShowAllRepo((showAllRepo) => !showAllRepo);
+                    setShowAllRepo((_showAllRepo) => !_showAllRepo);
                 }
 
                 //nromal enter and extra enter
@@ -183,7 +183,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                 }
 
                 if (e.keyCode === 90 && !e.ctrlKey && keySelect) {
-                    setShowAllRepo((showAllRepo) => !showAllRepo);
+                    setShowAllRepo((_showAllRepo) => !_showAllRepo);
                 }
 
                 //nromal enter and extra enter
@@ -314,7 +314,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                 <SwitchMode>
                     <SwitchModeBtn
                         onClick={() => {
-                            setShowSwitchModePanel((showSwitchModePanel) => !showSwitchModePanel);
+                            setShowSwitchModePanel((_showSwitchModePanel) => !_showSwitchModePanel);
                         }}
                     >
                         {renderPanelState === 'hidden' ? <ModeName>编辑</ModeName> : <></>}
@@ -357,7 +357,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                     <AssistantActiveBtn
                         onClick={() => {
                             setShowAssistantPanel(
-                                (showAssistantPanel: boolean) => !showAssistantPanel
+                                (_showAssistantPanel: boolean) => !_showAssistantPanel
                             );
                         }}
                     >

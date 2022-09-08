@@ -1,4 +1,3 @@
-import initGuide from './initGuide';
 import { initExistRepo, initEmptyRepo } from './initRepo';
 const { ipcRenderer } = window.require('electron');
 

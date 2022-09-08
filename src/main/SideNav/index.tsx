@@ -8,7 +8,6 @@ import NoteList from './NoteList';
 import initData from '../../lib/init';
 
 import MiniSearch from 'minisearch';
-import nodejieba from 'nodejieba';
 
 import { GlobalContext } from '../../GlobalProvider';
 
