@@ -111,7 +111,7 @@ const reposReducer = produce((state: object, action: any) => {
 
 export const useRepos = () => {
     const [state, dispatch] = useReducer(reposReducer, {});
-    let renameSaveTimer = useRef<NodeJS.Timeout | null>(null);
+    let renameSaveTimerObj = useRef<Map<string, NodeJS.Timeout>>(new Map());
 
     const updateRepos = useCallback((action_name: string, obj: any) => {
         switch (action_name) {
@@ -147,43 +147,6 @@ export const useRepos = () => {
         }
     }, []);
 
-    // const updateRepos = useCallback((action_name, obj) => {
-    //     switch(action_name) {
-    //         case 'delete_repo':
-    //             {
-    //                 let {data_path, repo_key} = obj;
-    //                 dispatch({
-    //                     type: "fetchRepo",
-    //                     data_path,
-    //                     repo_key
-    //                 })
-    //                 break;
-    //             }
-    //         case 'delete_folder':
-    //             {
-    //                 let {data_path, repo_key, folder_key} = obj;
-    //                 dispatch({
-    //                     type: "fetchFolder",
-    //                     data_path,
-    //                     repo_key,
-    //                     folder_key
-    //                 })
-    //                 break;
-    //             }
-    //         case 'delete_note':
-    //             {
-    //                 let {data_path, repo_key, folder_key} = obj;
-    //                 dispatch({
-    //                     type: "fetchNote",
-    //                     data_path,
-    //                     repo_key,
-    //                     folder_key
-    //                 })
-    //                 break;
-    //             }
-    //     }
-    // },[])
-
     const initRepo = useCallback(
         (newRepo: any) => dispatch({ type: "init", new_state: newRepo }),
         []
@@ -217,13 +180,17 @@ export const useRepos = () => {
         new_title: string
     ) => {
         if (repo_key && folder_key && note_key) {
-            if (renameSaveTimer.current) {
-                clearTimeout(renameSaveTimer.current);
+            if (renameSaveTimerObj.current.has(note_key)) {
+                clearTimeout(renameSaveTimerObj.current.get(note_key) as NodeJS.Timeout);
             }
 
-            renameSaveTimer.current = setTimeout(() => {
-                renameSaveNow(data_path, repo_key, folder_key, note_key, new_title);
-            }, 500);
+            renameSaveTimerObj.current.set(
+                note_key,
+                setTimeout(() => {
+                    renameSaveNow(data_path, repo_key, folder_key, note_key, new_title);
+                    renameSaveTimerObj.current.delete(note_key);
+                }, 500)
+            );
         }
     };
 

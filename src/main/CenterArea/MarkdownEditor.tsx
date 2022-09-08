@@ -136,7 +136,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({ theme, focus, bl
     const cursorActiveListener = EditorView.updateListener.of((vu: ViewUpdate) => {
         if (vu.selectionSet && typeof selectionSetHandler === "function") {
             console.log("selectionSet");
-            selectionSetHandler(vu);
+            //selectionSetHandler(vu);
         }
     });
 

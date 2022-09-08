@@ -111,7 +111,8 @@ const notesReducer = produce((state: notesTypes, action: any) => {
 
 export const useNotes = () => {
     const [state, dispatch] = useReducer(notesReducer, {});
-    let saveTimer = useRef<NodeJS.Timeout | null>(null);
+
+    let saveTimerObj = useRef<Map<string, NodeJS.Timeout>>(new Map());
 
     const allRepoNotesFetch = (data_path: string | null, dxnote: any, repos: any) => {
         dispatch({
@@ -242,13 +243,17 @@ export const useNotes = () => {
         note_content: string
     ) => {
         if (repo_key && folder_key && note_key) {
-            if (saveTimer.current) {
-                clearTimeout(saveTimer.current);
+            if (saveTimerObj.current.has(note_key)) {
+                clearTimeout(saveTimerObj.current.get(note_key) as NodeJS.Timeout);
             }
 
-            saveTimer.current = setTimeout(() => {
-                saveNow(data_path, repo_key, folder_key, note_key, note_content);
-            }, 800);
+            saveTimerObj.current.set(
+                note_key,
+                setTimeout(() => {
+                    saveNow(data_path, repo_key, folder_key, note_key, note_content);
+                    saveTimerObj.current.delete(note_key);
+                }, 800)
+            );
 
             dispatch({
                 type: "update",
