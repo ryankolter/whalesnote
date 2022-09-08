@@ -1,45 +1,193 @@
-import { useState, useCallback, useEffect, useRef, useMemo } from "react";
+import { useState, useCallback, useEffect, useRef, useMemo, useContext } from "react";
+import cryptoRandomString from "crypto-random-string";
 import styled from "@emotion/styled";
 import DirectoryBtn from "./DirectoryBtn";
 import FolderList from "./FolderList";
 import NoteList from "./NoteList";
 
+import initData from "../../lib/init";
+
+import MiniSearch from "minisearch";
+import nodejieba from "nodejieba";
+
+import { GlobalContext } from "../../GlobalProvider";
+
 const { ipcRenderer } = window.require("electron");
 
 const SideNav: React.FC<SideNavProps> = ({
-    data_path,
-    repos_key,
-    repos_obj,
-    folders_key,
-    folders_obj,
-    notes_key,
-    notes_obj,
-    currentRepoKey,
-    currentFolderKey,
-    currentNoteKey,
     keySelect,
-    showUpdateIndexTips,
-    repoSwitch,
-    folderSwitch,
-    noteSwitch,
-    updateDxnote,
-    updateRepos,
-    changeNotesAfterNew,
-    setDataPath,
-    reorderRepo,
-    reorderFolder,
-    reorderNote,
     setFocus,
     setBlur,
     setKeySelect,
-    updateMiniSearch,
-    searchNote,
+    setShowWaitingMask,
 }) => {
+    const {
+        dataPath,
+        setDataPath,
+        dxnote,
+        initDxnote,
+        repoSwitch,
+        folderSwitch,
+        noteSwitch,
+        currentNoteKey,
+        repos_obj,
+        initRepo,
+        repoNotesFetch,
+        folderNotesFetch,
+        initNotes,
+    } = useContext(GlobalContext);
+
+    const miniSearch = useRef<any>();
+
     let [folderWidth, setFolderWidth] = useState(130);
     let [noteWidth, setNoteWidth] = useState(200);
     let [word, setWord] = useState("");
     let [searchResults, setSearchResults] = useState([]);
     let [showSearchPanel, setShowSearchPanel] = useState(false);
+    const [showAddPathTips, setShowAddPathTips] = useState(false);
+    const [showUpdateIndexTips, setShowUpdateIndexTips] = useState(true);
+
+    useEffect(() => {
+        let new_data = initData(dataPath);
+        if (new_data) {
+            initDxnote(new_data.dxnote);
+            initRepo(new_data.repos);
+            initNotes(new_data.notes);
+            let search = ipcRenderer.sendSync("readJson", {
+                file_path: `${dataPath}/search.json`,
+            });
+            if (search) {
+                setShowUpdateIndexTips(false);
+                miniSearch.current = MiniSearch.loadJS(search, {
+                    fields: ["title", "content"],
+                    storeFields: ["id", "type", "title", "folder_name"],
+                    tokenize: (string, _fieldName) => {
+                        let result = ipcRenderer.sendSync("nodejieba", {
+                            word: string,
+                        });
+                        return result;
+                    },
+                    searchOptions: {
+                        boost: { title: 2 },
+                        fuzzy: 0.2,
+                        tokenize: (string: string) => {
+                            let result = ipcRenderer.sendSync("nodejieba", {
+                                word: string,
+                            });
+                            result = result.filter((w: string) => w !== " ");
+                            return result;
+                        },
+                    },
+                });
+            } else {
+                miniSearch.current = null;
+            }
+            setTimeout(() => {
+                setFocus(
+                    cryptoRandomString({
+                        length: 24,
+                        type: "alphanumeric",
+                    })
+                );
+            }, 0);
+        } else {
+            setShowAddPathTips(true);
+        }
+    }, []);
+
+    const updateMiniSearch = useCallback(() => {
+        console.log("updateMiniSearch begin");
+        setShowWaitingMask(true);
+
+        let all_notes = {};
+        let repos_key = dxnote.repos_key;
+        repos_key.forEach((repo_key: string) => {
+            if (!all_notes[repo_key]) {
+                all_notes[repo_key] = {};
+            }
+            let folders_key = repos_obj[repo_key].folders_key;
+            folders_key.forEach((folder_key: string) => {
+                if (!all_notes[repo_key][folder_key]) {
+                    let folder_info = ipcRenderer.sendSync("readJson", {
+                        file_path: `${dataPath}/${repo_key}/${folder_key}/folder_info.json`,
+                    });
+                    if (folder_info && folder_info.notes_obj) {
+                        all_notes[repo_key][folder_key] = {};
+                        Object.keys(folder_info.notes_obj).forEach((note_key) => {
+                            let note_info = ipcRenderer.sendSync("readCson", {
+                                file_path: `${dataPath}/${repo_key}/${folder_key}/${note_key}.cson`,
+                            });
+                            if (note_info) {
+                                all_notes[repo_key][folder_key][note_key] = note_info.content;
+                            }
+                        });
+                    }
+                }
+            });
+        });
+
+        let documents: any = [];
+        Object.keys(all_notes).forEach((repo_key: string) => {
+            let folders_obj = repos_obj[repo_key].folders_obj;
+            Object.keys(all_notes[repo_key]).forEach((folder_key: string) => {
+                let folder_name = folders_obj[folder_key]["folder_name"];
+                Object.keys(all_notes[repo_key][folder_key]).forEach((note_key: string) => {
+                    let id = `${repo_key}-${folder_key}-${note_key}`;
+                    let title =
+                        repos_obj[repo_key].folders_obj[folder_key].notes_obj[note_key].title;
+                    if (title === "新建文档") title = "";
+                    let content = all_notes[repo_key][folder_key][note_key];
+                    documents.push({
+                        id,
+                        type: "note",
+                        title,
+                        folder_name,
+                        content,
+                    });
+                });
+            });
+        });
+
+        miniSearch.current = new MiniSearch({
+            fields: ["title", "content"],
+            storeFields: ["id", "type", "title", "folder_name"],
+            tokenize: (string, _fieldName) => {
+                let result = ipcRenderer.sendSync("nodejieba", {
+                    word: string,
+                });
+                return result;
+            },
+            searchOptions: {
+                boost: { title: 2 },
+                fuzzy: 0.2,
+                tokenize: (string: string) => {
+                    let result = ipcRenderer.sendSync("nodejieba", {
+                        word: string,
+                    });
+                    result = result.filter((w: string) => w !== " ");
+                    return result;
+                },
+            },
+        });
+        miniSearch.current.addAll(documents);
+
+        ipcRenderer.sendSync("writeJsonStr", {
+            file_path: `${dataPath}/search.json`,
+            str: JSON.stringify(miniSearch.current),
+        });
+
+        setShowUpdateIndexTips(false);
+        setShowWaitingMask(false);
+
+        console.log("updateMiniSearch success");
+    }, [dataPath, dxnote, repos_obj, setShowUpdateIndexTips, setShowWaitingMask]);
+
+    const searchNote = (word: string) => {
+        if (!miniSearch.current) return [];
+        return miniSearch.current.search(word, {
+            filter: (result: any) => result.type === "note",
+        });
+    };
 
     useMemo(() => {
         ipcRenderer.on("selectedFolder", (event: any, path: string) => {
@@ -91,7 +239,7 @@ const SideNav: React.FC<SideNavProps> = ({
             folderSwitch(arr[0], arr[1]);
             noteSwitch(arr[2]);
         },
-        [data_path, repoSwitch, folderSwitch, noteSwitch]
+        [repoSwitch, folderSwitch, noteSwitch]
     );
 
     useEffect(() => {
@@ -108,17 +256,23 @@ const SideNav: React.FC<SideNavProps> = ({
         <LeftPanel>
             <ToolBar>
                 <DirectoryBtnArea>
-                    {data_path ? (
+                    {dataPath ? (
                         <DirectoryBtn
-                            data_path={data_path}
+                            data_path={dataPath}
                             addDataPath={addDataPath}
                             panelWidth={folderWidth + noteWidth}
                         />
                     ) : (
-                        <PathAddBtn onClick={addDataPath}>设置数据目录</PathAddBtn>
+                        <PathAddBtn
+                            onClick={() => {
+                                addDataPath();
+                            }}
+                        >
+                            设置数据目录
+                        </PathAddBtn>
                     )}
                 </DirectoryBtnArea>
-                {data_path ? (
+                {dataPath ? (
                     <Search>
                         <SearchInput
                             onChange={handleSearchInputChange}
@@ -197,36 +351,9 @@ const SideNav: React.FC<SideNavProps> = ({
             </ToolBar>
             <SelectArea>
                 <List>
-                    <FolderList
-                        data_path={data_path}
-                        folders_key={folders_key}
-                        folders_obj={folders_obj}
-                        currentRepoKey={currentRepoKey}
-                        currentFolderKey={currentFolderKey}
-                        keySelect={keySelect}
-                        repoSwitch={repoSwitch}
-                        folderSwitch={folderSwitch}
-                        noteSwitch={noteSwitch}
-                        updateRepos={updateRepos}
-                        changeNotesAfterNew={changeNotesAfterNew}
-                        reorderFolder={reorderFolder}
-                        setFocus={setFocus}
-                        width={folderWidth}
-                    />
+                    <FolderList keySelect={keySelect} setFocus={setFocus} width={folderWidth} />
                     <NoteList
-                        data_path={data_path}
-                        notes_key={notes_key}
-                        notes_obj={notes_obj}
-                        currentRepoKey={currentRepoKey}
-                        currentFolderKey={currentFolderKey}
-                        currentNoteKey={currentNoteKey}
                         keySelect={keySelect}
-                        repoSwitch={repoSwitch}
-                        folderSwitch={folderSwitch}
-                        noteSwitch={noteSwitch}
-                        updateRepos={updateRepos}
-                        changeNotesAfterNew={changeNotesAfterNew}
-                        reorderNote={reorderNote}
                         setFocus={setFocus}
                         setKeySelect={setKeySelect}
                         width={noteWidth}
@@ -413,38 +540,11 @@ const List = styled.div({
 });
 
 type SideNavProps = {
-    data_path: string;
-    repos_key: string[] | undefined;
-    repos_obj: object | undefined;
-    folders_key: string[] | undefined;
-    folders_obj: object | undefined;
-    notes_key: string[] | undefined;
-    notes_obj: object | undefined;
-    currentRepoKey: string | undefined;
-    currentFolderKey: string | undefined;
-    currentNoteKey: string;
     keySelect: boolean;
-    showUpdateIndexTips: boolean;
-    repoSwitch: (repo_key: string | undefined) => void;
-    folderSwitch: (repo_key: string | undefined, folderKey: string | undefined) => void;
-    noteSwitch: (note_key: string | undefined) => void;
-    updateDxnote: (data_path: string) => void;
-    updateRepos: (action_name: string, obj: object) => void;
-    changeNotesAfterNew: (action_name: string, obj: object) => void;
-    setDataPath: (path: string) => void;
-    reorderRepo: (data_path: string, repo_key: string, new_repos_key: string[]) => void;
-    reorderFolder: (data_path: string, repo_key: string, new_folders_key: string[]) => void;
-    reorderNote: (
-        data_path: string,
-        repo_key: string,
-        folder_key: string,
-        new_notes_key: string[]
-    ) => void;
     setFocus: (focus: string) => void;
     setBlur: (focus: string) => void;
     setKeySelect: (keySelect: boolean) => void;
-    updateMiniSearch: () => void;
-    searchNote: (word: string) => any;
+    setShowWaitingMask: (showWaitingMask: boolean) => void;
 };
 
 export default SideNav;

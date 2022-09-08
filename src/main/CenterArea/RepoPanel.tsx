@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useContext, useState, useRef, useEffect, useCallback } from "react";
 import cryptoRandomString from "crypto-random-string";
 import { DndContext, MouseSensor, useSensor, useSensors, DragOverlay } from "@dnd-kit/core";
 import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
@@ -10,30 +10,35 @@ import { AlertPopUp } from "../../components/AlertPopUp";
 import { InputPopUp } from "../../components/InputPopUp";
 import { usePopUp } from "../../lib/usePopUp";
 import useContextMenu from "../../lib/useContextMenu";
+import { GlobalContext } from "../../GlobalProvider";
 const { ipcRenderer } = window.require("electron");
 
 const RepoPanel: React.FC<RepoListProps> = ({
-    data_path,
     repos_key,
-    repos_obj,
-    currentRepoKey,
-    currentFolderKey,
     keySelect,
     showAllRepo,
-    repoSwitch,
-    folderSwitch,
-    noteSwitch,
-    updateDxnote,
-    updateRepos,
-    changeNotesAfterNew,
-    setDataPath,
-    reorderRepo,
     setFocus,
     setBlur,
     setKeySelect,
     setShowAllRepo,
     setAllowHiddenAllRepoViaEnter,
 }) => {
+    const {
+        dataPath,
+        dxnote,
+        updateDxnote,
+        reorderRepo,
+        repoSwitch,
+        folderSwitch,
+        noteSwitch,
+        currentRepoKey,
+        currentFolderKey,
+        repos_obj,
+        updateRepos,
+        repoNotesFetch,
+        changeNotesAfterNew,
+    } = useContext(GlobalContext);
+
     const [activeId, setActiveId] = useState(null);
     let [newRepoKey, setNewRepoKey] = useState("");
     let [newRepoName, setNewRepoName] = useState("");
@@ -111,7 +116,7 @@ const RepoPanel: React.FC<RepoListProps> = ({
                     if (key === repo_key) setRepoScrollPage(Math.floor(index / 9.0));
                 });
         },
-        [repos_key, repoSwitch, repos_obj]
+        [dataPath, repos_key, repoSwitch]
     );
 
     // part2 : new repo
@@ -159,7 +164,7 @@ const RepoPanel: React.FC<RepoListProps> = ({
             });
 
             let dxnote_info = ipcRenderer.sendSync("readJson", {
-                file_path: `${data_path}/dxnote_info.json`,
+                file_path: `${dataPath}/dxnote_info.json`,
             });
             dxnote_info.repos_key.push(repo_key);
             dxnote_info.cur_repo_key = repo_key;
@@ -168,7 +173,7 @@ const RepoPanel: React.FC<RepoListProps> = ({
                 folders: {},
             };
             ipcRenderer.sendSync("writeJson", {
-                file_path: `${data_path}/dxnote_info.json`,
+                file_path: `${dataPath}/dxnote_info.json`,
                 obj: dxnote_info,
             });
 
@@ -177,7 +182,7 @@ const RepoPanel: React.FC<RepoListProps> = ({
                 folders_key: [default_folder_key],
             };
             ipcRenderer.sendSync("writeJson", {
-                file_path: `${data_path}/${repo_key}/repo_info.json`,
+                file_path: `${dataPath}/${repo_key}/repo_info.json`,
                 obj: repo_info,
             });
 
@@ -193,20 +198,20 @@ const RepoPanel: React.FC<RepoListProps> = ({
             };
 
             ipcRenderer.sendSync("writeJson", {
-                file_path: `${data_path}/${repo_key}/${default_folder_key}/folder_info.json`,
+                file_path: `${dataPath}/${repo_key}/${default_folder_key}/folder_info.json`,
                 obj: folder_info,
             });
 
-            updateDxnote(data_path);
-            updateRepos("repo", { data_path, repo_key });
+            updateDxnote(dataPath);
+            updateRepos("repo", { dataPath, repo_key });
             updateRepos("folder", {
-                data_path,
+                dataPath,
                 repo_key,
                 folder_key: default_folder_key,
             });
-            changeNotesAfterNew("repo", { data_path, repo_key });
+            changeNotesAfterNew("repo", { dataPath, repo_key });
             changeNotesAfterNew("folder", {
-                data_path,
+                dataPath,
                 repo_key,
                 folder_key: default_folder_key,
             });
@@ -230,7 +235,7 @@ const RepoPanel: React.FC<RepoListProps> = ({
             }, 0);
         },
         [
-            data_path,
+            dataPath,
             changeNotesAfterNew,
             folderSwitch,
             repoSwitchInPanel,
@@ -259,19 +264,19 @@ const RepoPanel: React.FC<RepoListProps> = ({
     const renameRepoConfirm = useCallback(() => {
         if (currentRepoKey) {
             let repo_info = ipcRenderer.sendSync("readJson", {
-                file_path: `${data_path}/${currentRepoKey}/repo_info.json`,
+                file_path: `${dataPath}/${currentRepoKey}/repo_info.json`,
             });
             repo_info.repo_name = curRepoName;
             ipcRenderer.sendSync("writeJson", {
-                file_path: `${data_path}/${currentRepoKey}/repo_info.json`,
+                file_path: `${dataPath}/${currentRepoKey}/repo_info.json`,
                 obj: repo_info,
             });
-            updateRepos("repo", { data_path, repo_key: currentRepoKey });
+            updateRepos("repo", { dataPath, repo_key: currentRepoKey });
             hideRenamePopup();
             setAllowHiddenAllRepoViaEnter(true);
         }
     }, [
-        data_path,
+        dataPath,
         currentRepoKey,
         curRepoName,
         hideRenamePopup,
@@ -304,23 +309,23 @@ const RepoPanel: React.FC<RepoListProps> = ({
     const deleteRepoConfirm = useCallback(() => {
         if (currentRepoKey) {
             let repo_info = ipcRenderer.sendSync("readJson", {
-                file_path: `${data_path}/${currentRepoKey}/repo_info.json`,
+                file_path: `${dataPath}/${currentRepoKey}/repo_info.json`,
             });
 
             let trash = ipcRenderer.sendSync("readCson", {
-                file_path: `${data_path}/trash.cson`,
+                file_path: `${dataPath}/trash.cson`,
             });
 
             trash = trash ? trash : {};
 
             repo_info.folders_key.forEach((folder_key: string) => {
                 let folder_info = ipcRenderer.sendSync("readJson", {
-                    file_path: `${data_path}/${currentRepoKey}/${folder_key}/folder_info.json`,
+                    file_path: `${dataPath}/${currentRepoKey}/${folder_key}/folder_info.json`,
                 });
 
                 folder_info.notes_key.forEach((note_key: string) => {
                     let note_info = ipcRenderer.sendSync("readCson", {
-                        file_path: `${data_path}/${currentRepoKey}/${folder_key}/${note_key}.cson`,
+                        file_path: `${dataPath}/${currentRepoKey}/${folder_key}/${note_key}.cson`,
                     });
 
                     trash[
@@ -330,12 +335,12 @@ const RepoPanel: React.FC<RepoListProps> = ({
             });
 
             ipcRenderer.sendSync("writeCson", {
-                file_path: `${data_path}/trash.cson`,
+                file_path: `${dataPath}/trash.cson`,
                 obj: trash,
             });
 
             let dxnote_info = ipcRenderer.sendSync("readJson", {
-                file_path: `${data_path}/dxnote_info.json`,
+                file_path: `${dataPath}/dxnote_info.json`,
             });
 
             let new_repos_key: string[] = [];
@@ -361,15 +366,15 @@ const RepoPanel: React.FC<RepoListProps> = ({
             }
 
             ipcRenderer.sendSync("writeJson", {
-                file_path: `${data_path}/dxnote_info.json`,
+                file_path: `${dataPath}/dxnote_info.json`,
                 obj: dxnote_info,
             });
 
             ipcRenderer.sendSync("remove", {
-                file_path: `${data_path}/${currentRepoKey}`,
+                file_path: `${dataPath}/${currentRepoKey}`,
             });
 
-            updateRepos("repo", { data_path, repo_key: currentRepoKey });
+            updateRepos("repo", { dataPath, repo_key: currentRepoKey });
             if (other_repo_key) {
                 repoSwitchInPanel(other_repo_key);
             }
@@ -378,7 +383,7 @@ const RepoPanel: React.FC<RepoListProps> = ({
             setAllowHiddenAllRepoViaEnter(true);
         }
     }, [
-        data_path,
+        dataPath,
         currentRepoKey,
         hideDeletePopup,
         repoSwitchInPanel,
@@ -552,10 +557,10 @@ const RepoPanel: React.FC<RepoListProps> = ({
                 const oldIndex = repos_key.indexOf(active.id);
                 const newIndex = repos_key.indexOf(over.id);
                 let new_repos_key = arrayMove(repos_key, oldIndex, newIndex);
-                reorderRepo(data_path, currentRepoKey, new_repos_key);
+                reorderRepo(dataPath, currentRepoKey, new_repos_key);
             }
         },
-        [data_path, currentRepoKey, currentFolderKey, repos_key, reorderRepo]
+        [dataPath, currentRepoKey, currentFolderKey, repos_key, reorderRepo]
     );
 
     return (
@@ -737,7 +742,7 @@ const RepoPanel: React.FC<RepoListProps> = ({
                     ) : (
                         <></>
                     )}
-                    {data_path && !newRepoKey ? (
+                    {dataPath && !newRepoKey ? (
                         <RepoAdd>
                             <RepoAddBtn onClick={newRepo}>
                                 +
@@ -959,21 +964,9 @@ const AddReposTips = styled.div({
 });
 
 type RepoListProps = {
-    data_path: string;
     repos_key: string[] | undefined;
-    repos_obj: object | undefined;
-    currentRepoKey: string | undefined;
-    currentFolderKey: string | undefined;
     keySelect: boolean;
     showAllRepo: boolean;
-    repoSwitch: (repo_key: string | undefined) => void;
-    folderSwitch: (repo_key: string | undefined, folderKey: string | undefined) => void;
-    noteSwitch: (note_key: string | undefined) => void;
-    updateDxnote: (data_path: string) => void;
-    updateRepos: (action_name: string, obj: object) => void;
-    changeNotesAfterNew: (action_name: string, obj: object) => void;
-    setDataPath: (path: string) => void;
-    reorderRepo: (data_path: string, repo_key: string, new_repos_key: string[]) => void;
     setFocus: (focus: string) => void;
     setBlur: (focus: string) => void;
     setKeySelect: (state: boolean) => void;

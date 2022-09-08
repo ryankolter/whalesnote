@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useContext, useState, useRef, useCallback, useEffect } from "react";
 import cryptoRandomString from "crypto-random-string";
 import { DndContext, MouseSensor, useSensor, useSensors, DragOverlay } from "@dnd-kit/core";
 import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
@@ -12,24 +12,29 @@ import folderIcon from "../../resources/icon/folderIcon.svg";
 import newFolderIcon from "../../resources/icon/newFolderIcon.svg";
 import { usePopUp } from "../../lib/usePopUp";
 import useContextMenu from "../../lib/useContextMenu";
+import { GlobalContext } from "../../GlobalProvider";
 const { ipcRenderer } = window.require("electron");
 
-const FolderList: React.FC<FolderListProps> = ({
-    data_path,
-    folders_key,
-    folders_obj,
-    currentRepoKey,
-    currentFolderKey,
-    keySelect,
-    repoSwitch,
-    folderSwitch,
-    noteSwitch,
-    updateRepos,
-    changeNotesAfterNew,
-    reorderFolder,
-    setFocus,
-    width,
-}) => {
+const FolderList: React.FC<FolderListProps> = ({ keySelect, setFocus, width }) => {
+    const {
+        dataPath,
+        dxnote,
+        repoSwitch,
+        folderSwitch,
+        noteSwitch,
+        repos_obj,
+        currentRepoKey,
+        currentFolderKey,
+        updateRepos,
+        reorderFolder,
+        repoNotesFetch,
+        folderNotesFetch,
+        changeNotesAfterNew,
+    } = useContext(GlobalContext);
+
+    let folders_key = repos_obj[currentRepoKey]?.folders_key;
+    let folders_obj = repos_obj[currentRepoKey]?.folders_obj;
+
     const [activeId, setActiveId] = useState(null);
     let [newFolderKey, setNewFolderKey] = useState("");
     let [newFolderName, setNewFolderName] = useState("");
@@ -97,11 +102,11 @@ const FolderList: React.FC<FolderListProps> = ({
             });
 
             let repo_info = ipcRenderer.sendSync("readJson", {
-                file_path: `${data_path}/${currentRepoKey}/repo_info.json`,
+                file_path: `${dataPath}/${currentRepoKey}/repo_info.json`,
             });
             repo_info.folders_key.push(folder_key);
             ipcRenderer.sendSync("writeJson", {
-                file_path: `${data_path}/${currentRepoKey}/repo_info.json`,
+                file_path: `${dataPath}/${currentRepoKey}/repo_info.json`,
                 obj: repo_info,
             });
 
@@ -116,17 +121,17 @@ const FolderList: React.FC<FolderListProps> = ({
             };
 
             ipcRenderer.sendSync("writeJson", {
-                file_path: `${data_path}/${currentRepoKey}/${folder_key}/folder_info.json`,
+                file_path: `${dataPath}/${currentRepoKey}/${folder_key}/folder_info.json`,
                 obj: folder_info,
             });
 
             updateRepos("folder", {
-                data_path,
+                dataPath,
                 repo_key: currentRepoKey,
                 folder_key,
             });
             changeNotesAfterNew("folder", {
-                data_path,
+                dataPath,
                 repo_key: currentRepoKey,
                 folder_key,
             });
@@ -141,17 +146,17 @@ const FolderList: React.FC<FolderListProps> = ({
             };
 
             ipcRenderer.sendSync("writeCson", {
-                file_path: `${data_path}/${currentRepoKey}/${folder_key}/${note_key}.cson`,
+                file_path: `${dataPath}/${currentRepoKey}/${folder_key}/${note_key}.cson`,
                 obj: note_info,
             });
 
             updateRepos("note", {
-                data_path,
+                dataPath,
                 repo_key: currentRepoKey,
                 folder_key: folder_key,
             });
             changeNotesAfterNew("note", {
-                data_path,
+                dataPath,
                 repo_key: currentRepoKey,
                 folder_key: folder_key,
                 note_key,
@@ -170,7 +175,7 @@ const FolderList: React.FC<FolderListProps> = ({
             }, 0);
         },
         [
-            data_path,
+            dataPath,
             currentRepoKey,
             changeNotesAfterNew,
             folderSwitch,
@@ -204,21 +209,21 @@ const FolderList: React.FC<FolderListProps> = ({
     const renameFolderConfirm = useCallback(() => {
         if (currentRepoKey && currentFolderKey) {
             let folder_info = ipcRenderer.sendSync("readJson", {
-                file_path: `${data_path}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
+                file_path: `${dataPath}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
             });
             folder_info.folder_name = curFolderName;
             ipcRenderer.sendSync("writeJson", {
-                file_path: `${data_path}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
+                file_path: `${dataPath}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
                 obj: folder_info,
             });
             updateRepos("folder", {
-                data_path,
+                dataPath,
                 repo_key: currentRepoKey,
                 folder_key: currentFolderKey,
             });
             hideRenamePopup();
         }
-    }, [data_path, currentRepoKey, currentFolderKey, curFolderName, hideRenamePopup, updateRepos]);
+    }, [dataPath, currentRepoKey, currentFolderKey, curFolderName, hideRenamePopup, updateRepos]);
 
     // part3 : delete folder
     const deleteFolder = () => {
@@ -236,18 +241,18 @@ const FolderList: React.FC<FolderListProps> = ({
     const deleteFolderConfirm = useCallback(() => {
         if (currentRepoKey && currentFolderKey) {
             let folder_info = ipcRenderer.sendSync("readJson", {
-                file_path: `${data_path}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
+                file_path: `${dataPath}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
             });
 
             let trash = ipcRenderer.sendSync("readCson", {
-                file_path: `${data_path}/trash.cson`,
+                file_path: `${dataPath}/trash.cson`,
             });
 
             trash = trash ? trash : {};
 
             folder_info.notes_key.forEach((note_key: string) => {
                 let note_info = ipcRenderer.sendSync("readCson", {
-                    file_path: `${data_path}/${currentRepoKey}/${currentFolderKey}/${note_key}.cson`,
+                    file_path: `${dataPath}/${currentRepoKey}/${currentFolderKey}/${note_key}.cson`,
                 });
 
                 trash[
@@ -256,12 +261,12 @@ const FolderList: React.FC<FolderListProps> = ({
             });
 
             ipcRenderer.sendSync("writeCson", {
-                file_path: `${data_path}/trash.cson`,
+                file_path: `${dataPath}/trash.cson`,
                 obj: trash,
             });
 
             let repo_info = ipcRenderer.sendSync("readJson", {
-                file_path: `${data_path}/${currentRepoKey}/repo_info.json`,
+                file_path: `${dataPath}/${currentRepoKey}/repo_info.json`,
             });
 
             let new_folders_key: string[] = [];
@@ -284,17 +289,17 @@ const FolderList: React.FC<FolderListProps> = ({
             repo_info.folders_key = new_folders_key;
 
             ipcRenderer.sendSync("writeJson", {
-                file_path: `${data_path}/${currentRepoKey}/repo_info.json`,
+                file_path: `${dataPath}/${currentRepoKey}/repo_info.json`,
                 obj: repo_info,
             });
 
             ipcRenderer.sendSync("remove", {
-                file_path: `${data_path}/${currentRepoKey}/${currentFolderKey}`,
+                file_path: `${dataPath}/${currentRepoKey}/${currentFolderKey}`,
             });
 
-            updateRepos("repo", { data_path, repo_key: currentRepoKey });
+            updateRepos("repo", { dataPath, repo_key: currentRepoKey });
             updateRepos("folder", {
-                data_path,
+                dataPath,
                 repo_key: currentRepoKey,
                 folder_key: currentFolderKey,
             });
@@ -303,7 +308,9 @@ const FolderList: React.FC<FolderListProps> = ({
             hideDeletePopup();
         }
     }, [
-        data_path,
+        dataPath,
+        dxnote,
+        repos_obj,
         currentRepoKey,
         currentFolderKey,
         updateRepos,
@@ -335,13 +342,13 @@ const FolderList: React.FC<FolderListProps> = ({
 
     const folderSwitchByIndex = useCallback(
         (index: number) => {
-            folders_key?.forEach((key, i) => {
+            folders_key?.forEach((key: string, i: number) => {
                 if (index === i) {
                     folderSwitch(currentRepoKey, key);
                 }
             });
         },
-        [data_path, folders_key, folderSwitch]
+        [dataPath, folders_key, folderSwitch]
     );
 
     useEffect(() => {
@@ -443,11 +450,11 @@ const FolderList: React.FC<FolderListProps> = ({
             if (active.id !== over.id && folders_key && currentRepoKey) {
                 const oldIndex = folders_key.indexOf(active.id);
                 const newIndex = folders_key.indexOf(over.id);
-                let new_folders_key = arrayMove(folders_key, oldIndex, newIndex);
-                reorderFolder(data_path, currentRepoKey, new_folders_key);
+                let new_folders_key: string[] = arrayMove(folders_key, oldIndex, newIndex);
+                reorderFolder(dataPath, currentRepoKey, new_folders_key);
             }
         },
-        [data_path, currentRepoKey, folders_key, reorderFolder]
+        [dataPath, currentRepoKey, folders_key, reorderFolder]
     );
 
     const genNumberCode1 = (order: number): number => {
@@ -460,7 +467,7 @@ const FolderList: React.FC<FolderListProps> = ({
 
     return (
         <FolderListContainer width={width}>
-            <FolderTopBar>{data_path ? <FolderTopTitle>分类</FolderTopTitle> : <></>}</FolderTopBar>
+            <FolderTopBar>{dataPath ? <FolderTopTitle>分类</FolderTopTitle> : <></>}</FolderTopBar>
             {folders_key && folders_obj ? (
                 <DndContext
                     sensors={sensors}
@@ -471,8 +478,8 @@ const FolderList: React.FC<FolderListProps> = ({
                     <SortableContext items={folders_key} strategy={verticalListSortingStrategy}>
                         <Folders ref={innerRef} key={currentRepoKey}>
                             {folders_key
-                                .filter((key) => folders_obj && folders_obj[key])
-                                .map((key, index) => {
+                                .filter((key: string) => folders_obj && folders_obj[key])
+                                .map((key: string, index: number) => {
                                     return (
                                         <Sortable key={key} id={key}>
                                             <FolderItem
@@ -551,7 +558,7 @@ const FolderList: React.FC<FolderListProps> = ({
                             ) : (
                                 <></>
                             )}
-                            {data_path && !newFolderKey ? (
+                            {dataPath && !newFolderKey ? (
                                 <FolderAddBtn onClick={() => newFolder()}>
                                     <img src={newFolderIcon} alt='' />
                                 </FolderAddBtn>
@@ -775,18 +782,7 @@ const FolderAddBtn = styled.div({
 });
 
 type FolderListProps = {
-    data_path: string;
-    folders_key: string[] | undefined;
-    folders_obj: object | undefined;
-    currentRepoKey: string | undefined;
-    currentFolderKey: string | undefined;
     keySelect: boolean;
-    repoSwitch: (repo_key: string | undefined) => void;
-    folderSwitch: (repo_key: string | undefined, folderKey: string | undefined) => void;
-    noteSwitch: (note_key: string | undefined) => void;
-    updateRepos: (action_name: string, obj: object) => void;
-    changeNotesAfterNew: (action_name: string, obj: object) => void;
-    reorderFolder: (data_path: string, repo_key: string, new_folders_key: string[]) => void;
     setFocus: (focus: string) => void;
     width: number;
 };

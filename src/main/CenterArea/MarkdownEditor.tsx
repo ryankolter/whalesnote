@@ -1,5 +1,6 @@
-import { useCallback, useRef, useEffect, useState, useMemo } from "react";
+import { useContext, useCallback, useRef, useEffect, useState, useMemo } from "react";
 import styled from "@emotion/styled";
+import { GlobalContext } from "../../GlobalProvider";
 import { basicSetup } from "codemirror";
 import { EditorState, StateEffect, SelectionRange } from "@codemirror/state";
 import { EditorView, keymap, ViewUpdate } from "@codemirror/view";
@@ -10,22 +11,21 @@ import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { languages } from "@codemirror/language-data";
 import { autocompletion } from "@codemirror/autocomplete";
 
-export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
-    data_path,
-    currentRepoKey,
-    currentFolderKey,
-    currentNoteKey,
-    content,
-    cursorHead,
-    fromPos,
-    theme,
-    focus,
-    blur,
-    updateNote,
-    renameNote,
-    updateCursorHead,
-    updateFromPos,
-}) => {
+export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({ theme, focus, blur }) => {
+    const {
+        dataPath,
+        currentRepoKey,
+        currentFolderKey,
+        currentNoteKey,
+        renameNote,
+        updateNote,
+        content,
+        cursorHead,
+        fromPos,
+        updateCursorHead,
+        updateFromPos,
+    } = useContext(GlobalContext);
+
     const editor = useRef<HTMLDivElement>(null);
     const view = useRef<EditorView>();
 
@@ -38,13 +38,13 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     const docChangeHandler = useCallback(
         (new_value: string, viewUpdate: any) => {
             if (!noteSwitchRef.current) {
-                updateNote(data_path, currentRepoKey, currentFolderKey, currentNoteKey, new_value);
+                updateNote(dataPath, currentRepoKey, currentFolderKey, currentNoteKey, new_value);
                 const doc = view.current?.state.doc;
                 if (doc) {
                     let first_line_content = doc.lineAt(0).text.replace(/^[#\-\_*>\s]+/g, "");
                     let new_name: string = first_line_content || "新建文档";
                     renameNote(
-                        data_path,
+                        dataPath,
                         currentRepoKey,
                         currentFolderKey,
                         currentNoteKey,
@@ -53,7 +53,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
                 }
             }
         },
-        [data_path, currentRepoKey, currentFolderKey, currentNoteKey, renameNote, updateNote]
+        [dataPath, currentRepoKey, currentFolderKey, currentNoteKey, renameNote, updateNote]
     );
 
     const selectionSetHandler = useCallback(
@@ -63,7 +63,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
                 updateCursorHead(currentRepoKey, currentFolderKey, currentNoteKey, cursorHead);
             }
         },
-        [data_path, currentRepoKey, currentFolderKey, currentNoteKey]
+        [dataPath, currentRepoKey, currentFolderKey, currentNoteKey]
     );
 
     const handleScrollEvent = useCallback(() => {
@@ -247,7 +247,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
         }, 250);
 
         fromPos && fromPos > 10 ? setShowScrollPos(true) : setShowScrollPos(false);
-    }, [data_path, currentRepoKey, currentFolderKey, currentNoteKey]);
+    }, [dataPath, currentRepoKey, currentFolderKey, currentNoteKey]);
 
     useEffect(() => {
         console.log("focus");
@@ -284,40 +284,7 @@ const MarkdownEditorContainer = styled.div({
 });
 
 type MarkdownEditorProps = {
-    data_path: string;
-    currentRepoKey: string;
-    currentFolderKey: string;
-    currentNoteKey: string;
-    content: string;
-    cursorHead: number;
-    fromPos: number;
     focus: string;
     blur: string;
     theme: string;
-    updateNote: (
-        data_path: string,
-        repo_key: string,
-        folder_key: string,
-        note_key: string,
-        content: string
-    ) => void;
-    renameNote: (
-        data_path: string,
-        repo_key: string,
-        folder_key: string,
-        note_key: string,
-        new_title: string
-    ) => void;
-    updateCursorHead: (
-        repo_key: string,
-        folder_key: string,
-        note_key: string,
-        cursor_head: number
-    ) => void;
-    updateFromPos: (
-        repo_key: string,
-        folder_key: string,
-        note_key: string,
-        from_pos: number
-    ) => void;
 };

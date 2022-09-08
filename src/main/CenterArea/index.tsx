@@ -1,49 +1,37 @@
-import { useCallback, useEffect, useState } from "react";
+import { useContext, useCallback, useEffect, useState } from "react";
 import cryptoRandomString from "crypto-random-string";
 import styled from "@emotion/styled";
 import RepoPanel from "./RepoPanel";
 import { MarkdownEditor } from "./MarkdownEditor";
 import { MarkdownRender } from "./MarkdownRender";
-import { relative } from "node:path/win32";
+
+import { GlobalContext } from "../../GlobalProvider";
 
 const CenterArea: React.FC<CenterAreaProps> = ({
-    data_path,
-    repos_key,
-    repos_obj,
-    folders_key,
-    folders_obj,
-    notes_key,
-    notes_obj,
-    currentRepoKey,
-    currentFolderKey,
-    currentNoteKey,
-    content,
     keySelect,
-    repoSwitch,
-    folderSwitch,
-    noteSwitch,
-    updateDxnote,
-    updateRepos,
-    changeNotesAfterNew,
-    setDataPath,
-    reorderRepo,
-    reorderFolder,
-    reorderNote,
     setFocus,
     setBlur,
     setKeySelect,
     showAssistantPanel,
     setShowAssistantPanel,
-    cursorHead,
-    fromPos,
     focus,
     blur,
     theme,
-    updateNote,
-    renameNote,
-    updateCursorHead,
-    updateFromPos,
 }) => {
+    const {
+        dataPath,
+        dxnote,
+        currentRepoKey,
+        currentFolderKey,
+        currentNoteKey,
+        repos_obj,
+        content,
+    } = useContext(GlobalContext);
+
+    let repos_key = dxnote.repos_key;
+    let folders_obj = repos_obj[currentRepoKey]?.folders_obj;
+    let notes_obj = repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj;
+
     const [editorHeight, setEditorHeight] = useState("calc(100vh - 40px - 20px)");
     const [renderHeight, setRenderHeight] = useState("0");
     const [renderTop, setRenderTop] = useState("calc(100vh - 20px)");
@@ -264,36 +252,14 @@ const CenterArea: React.FC<CenterAreaProps> = ({
         };
     }, [handleKeyDown]);
 
-    return (
+    return dataPath ? (
         <CenterAreaContainer>
             <EditorPanel heightValue={editorHeight}>
-                <MarkdownEditor
-                    data_path={data_path}
-                    updateNote={updateNote}
-                    renameNote={renameNote}
-                    updateCursorHead={updateCursorHead}
-                    updateFromPos={updateFromPos}
-                    currentRepoKey={currentRepoKey}
-                    currentFolderKey={currentFolderKey}
-                    currentNoteKey={currentNoteKey}
-                    content={content}
-                    theme={theme}
-                    cursorHead={cursorHead}
-                    fromPos={fromPos}
-                    focus={focus}
-                    blur={blur}
-                />
+                <MarkdownEditor theme={theme} focus={focus} blur={blur} />
             </EditorPanel>
             <RenderPanel topValue={renderTop} heightValue={renderHeight}>
                 {renderPanelState !== "hidden" ? (
-                    <MarkdownRender
-                        data_path={data_path}
-                        currentRepoKey={currentRepoKey}
-                        currentFolderKey={currentFolderKey}
-                        currentNoteKey={currentNoteKey}
-                        content={content}
-                        theme={theme}
-                    />
+                    <MarkdownRender content={content} theme={theme} />
                 ) : (
                     <></>
                 )}
@@ -330,21 +296,9 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                     {showAllRepo ? (
                         <AllRepo>
                             <RepoPanel
-                                data_path={data_path}
                                 repos_key={repos_key}
-                                repos_obj={repos_obj}
-                                currentRepoKey={currentRepoKey}
-                                currentFolderKey={currentFolderKey}
                                 keySelect={keySelect}
                                 showAllRepo={showAllRepo}
-                                repoSwitch={repoSwitch}
-                                folderSwitch={folderSwitch}
-                                noteSwitch={noteSwitch}
-                                updateDxnote={updateDxnote}
-                                updateRepos={updateRepos}
-                                changeNotesAfterNew={changeNotesAfterNew}
-                                setDataPath={setDataPath}
-                                reorderRepo={reorderRepo}
                                 setFocus={setFocus}
                                 setBlur={setBlur}
                                 setKeySelect={setKeySelect}
@@ -411,6 +365,8 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                 </AssistantActive>
             </BottomRow>
         </CenterAreaContainer>
+    ) : (
+        <></>
     );
 };
 
@@ -617,69 +573,15 @@ const AssistantActiveBtn = styled.div({
 });
 
 type CenterAreaProps = {
-    data_path: string;
-    repos_key: string[] | undefined;
-    repos_obj: object | undefined;
-    folders_key: string[] | undefined;
-    folders_obj: object | undefined;
-    notes_key: string[] | undefined;
-    notes_obj: object | undefined;
-    currentRepoKey: string;
-    currentFolderKey: string;
-    currentNoteKey: string;
     keySelect: boolean;
     showAssistantPanel: boolean;
-    repoSwitch: (repoKey: string | undefined) => void;
-    folderSwitch: (repo_key: string | undefined, folderKey: string | undefined) => void;
-    noteSwitch: (note_key: string | undefined) => void;
-    updateDxnote: (data_path: string) => void;
-    updateRepos: (action_name: string, obj: object) => void;
-    changeNotesAfterNew: (action_name: string, obj: object) => void;
-    setDataPath: (path: string) => void;
-    reorderRepo: (data_path: string, repo_key: string, new_repos_key: string[]) => void;
-    reorderFolder: (data_path: string, repo_key: string, new_folders_key: string[]) => void;
-    reorderNote: (
-        data_path: string,
-        repo_key: string,
-        folder_key: string,
-        new_notes_key: string[]
-    ) => void;
     setFocus: (focus: string) => void;
     setBlur: (focus: string) => void;
     setKeySelect: (keySelect: boolean) => void;
     setShowAssistantPanel: any;
-    content: string;
-    cursorHead: number;
-    fromPos: number;
     focus: string;
     blur: string;
     theme: string;
-    updateNote: (
-        data_path: string,
-        repo_key: string,
-        folder_key: string,
-        note_key: string,
-        content: string
-    ) => void;
-    renameNote: (
-        data_path: string,
-        repo_key: string,
-        folder_key: string,
-        note_key: string,
-        new_title: string
-    ) => void;
-    updateCursorHead: (
-        repo_key: string,
-        folder_key: string,
-        note_key: string,
-        cursor_head: number
-    ) => void;
-    updateFromPos: (
-        repo_key: string,
-        folder_key: string,
-        note_key: string,
-        from_pos: number
-    ) => void;
 };
 
 export default CenterArea;

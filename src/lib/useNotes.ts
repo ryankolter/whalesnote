@@ -166,16 +166,12 @@ export const useNotes = () => {
     const folderNotesFetch = useCallback(
         (
             data_path: string | null,
-            dxnote: any,
-            repos: any,
             repo_key: string | undefined,
             folder_key: string | undefined
         ) => {
             dispatch({
                 type: "fetchNotesInOneFolder",
                 data_path,
-                dxnote,
-                repos,
                 repo_key,
                 folder_key,
             });

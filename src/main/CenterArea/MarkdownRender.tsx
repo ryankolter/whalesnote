@@ -1,22 +1,19 @@
+import { useContext, useEffect, useRef, useState } from "react";
+import styled from "@emotion/styled";
+import { GlobalContext } from "../../GlobalProvider";
 import markdownIt from "markdown-it";
 import highlightjs from "markdown-it-highlightjs";
-import { useEffect, useRef, useState } from "react";
-import styled from "@emotion/styled";
 
-export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
-    data_path,
-    currentRepoKey,
-    currentFolderKey,
-    currentNoteKey,
-    content,
-    theme,
-}) => {
+export const MarkdownRender: React.FC<MarkdownRenderProps> = ({ content, theme }) => {
+    const { dataPath, currentRepoKey, currentFolderKey, currentNoteKey } =
+        useContext(GlobalContext);
+
     const md = useRef(markdownIt().use(highlightjs));
     const [result, setResult] = useState("");
 
     useEffect(() => {
         setResult(md.current.render(content));
-    }, [data_path, currentRepoKey, currentFolderKey, currentNoteKey, content]);
+    }, [dataPath, currentRepoKey, currentFolderKey, currentNoteKey, content]);
 
     const wrappedClassNames = typeof theme === "string" ? `rd-theme-${theme}` : "rd-theme";
 
@@ -39,10 +36,6 @@ const MarkdownRenderContainer = styled.div({
 });
 
 type MarkdownRenderProps = {
-    data_path: string;
-    currentRepoKey: string;
-    currentFolderKey: string;
-    currentNoteKey: string;
     content: string;
     theme: string;
 };

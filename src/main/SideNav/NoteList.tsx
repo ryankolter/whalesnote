@@ -1,32 +1,31 @@
+import { useContext, useCallback, useRef, useState, useEffect } from "react";
 import styled from "@emotion/styled";
 import cryptoRandomString from "crypto-random-string";
-import { useCallback, useRef, useState, useEffect } from "react";
 import { DndContext, MouseSensor, useSensor, useSensors, DragOverlay } from "@dnd-kit/core";
 import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { restrictToFirstScrollableAncestor, restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import { Sortable } from "../../components/Sortable";
 import useContextMenu from "../../lib/useContextMenu";
 import newNoteIcon from "../../resources/icon/newNoteIcon.svg";
+import { GlobalContext } from "../../GlobalProvider";
 const { ipcRenderer } = window.require("electron");
 
-const NoteList: React.FC<NoteListProps> = ({
-    data_path,
-    notes_key,
-    notes_obj,
-    currentRepoKey,
-    currentFolderKey,
-    currentNoteKey,
-    keySelect,
-    repoSwitch,
-    folderSwitch,
-    noteSwitch,
-    updateRepos,
-    changeNotesAfterNew,
-    reorderNote,
-    setFocus,
-    setKeySelect,
-    width,
-}) => {
+const NoteList: React.FC<NoteListProps> = ({ keySelect, setFocus, setKeySelect, width }) => {
+    const {
+        dataPath,
+        noteSwitch,
+        currentRepoKey,
+        currentFolderKey,
+        currentNoteKey,
+        repos_obj,
+        updateRepos,
+        reorderNote,
+        changeNotesAfterNew,
+    } = useContext(GlobalContext);
+
+    let notes_key = repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_key;
+    let notes_obj = repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj;
+
     const [activeId, setActiveId] = useState(null);
 
     const [noteScrollTop, setNoteScrollTop] = useState(0);
@@ -52,7 +51,7 @@ const NoteList: React.FC<NoteListProps> = ({
         });
 
         let folder_info = ipcRenderer.sendSync("readJson", {
-            file_path: `${data_path}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
+            file_path: `${dataPath}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
         });
 
         folder_info.notes_key.push(note_key);
@@ -61,7 +60,7 @@ const NoteList: React.FC<NoteListProps> = ({
         };
 
         ipcRenderer.sendSync("writeJson", {
-            file_path: `${data_path}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
+            file_path: `${dataPath}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
             obj: folder_info,
         });
 
@@ -73,17 +72,17 @@ const NoteList: React.FC<NoteListProps> = ({
         };
 
         ipcRenderer.sendSync("writeCson", {
-            file_path: `${data_path}/${currentRepoKey}/${currentFolderKey}/${note_key}.cson`,
+            file_path: `${dataPath}/${currentRepoKey}/${currentFolderKey}/${note_key}.cson`,
             obj: note_info,
         });
 
         updateRepos("note", {
-            data_path,
+            dataPath,
             repo_key: currentRepoKey,
             folder_key: currentFolderKey,
         });
         changeNotesAfterNew("note", {
-            data_path,
+            dataPath,
             repo_key: currentRepoKey,
             folder_key: currentFolderKey,
             note_key,
@@ -102,6 +101,7 @@ const NoteList: React.FC<NoteListProps> = ({
         }, 0);
         setKeySelect(false);
     }, [
+        dataPath,
         currentRepoKey,
         currentFolderKey,
         changeNotesAfterNew,
@@ -115,15 +115,15 @@ const NoteList: React.FC<NoteListProps> = ({
     const deleteNote = useCallback(
         (note_key: string) => {
             let folder_info = ipcRenderer.sendSync("readJson", {
-                file_path: `${data_path}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
+                file_path: `${dataPath}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
             });
 
             let note_info = ipcRenderer.sendSync("readCson", {
-                file_path: `${data_path}/${currentRepoKey}/${currentFolderKey}/${note_key}.cson`,
+                file_path: `${dataPath}/${currentRepoKey}/${currentFolderKey}/${note_key}.cson`,
             });
 
             let trash = ipcRenderer.sendSync("readCson", {
-                file_path: `${data_path}/trash.cson`,
+                file_path: `${dataPath}/trash.cson`,
             });
 
             trash = trash ? trash : {};
@@ -133,7 +133,7 @@ const NoteList: React.FC<NoteListProps> = ({
             ] = note_info.content;
 
             ipcRenderer.sendSync("writeCson", {
-                file_path: `${data_path}/trash.cson`,
+                file_path: `${dataPath}/trash.cson`,
                 obj: trash,
             });
 
@@ -158,23 +158,23 @@ const NoteList: React.FC<NoteListProps> = ({
             delete folder_info.notes_obj[note_key];
 
             ipcRenderer.sendSync("writeJson", {
-                file_path: `${data_path}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
+                file_path: `${dataPath}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
                 obj: folder_info,
             });
 
             ipcRenderer.sendSync("remove", {
-                file_path: `${data_path}/${currentRepoKey}/${currentFolderKey}/${note_key}.cson`,
+                file_path: `${dataPath}/${currentRepoKey}/${currentFolderKey}/${note_key}.cson`,
             });
 
             updateRepos("note", {
-                data_path,
+                dataPath,
                 repo_key: currentRepoKey,
                 folder_key: currentFolderKey,
             });
 
             noteSwitch(other_note_key);
         },
-        [data_path, currentRepoKey, currentFolderKey, noteSwitch, updateRepos]
+        [dataPath, currentRepoKey, currentFolderKey, noteSwitch, updateRepos]
     );
 
     const preNotePage = useCallback(() => {
@@ -199,13 +199,13 @@ const NoteList: React.FC<NoteListProps> = ({
 
     const noteSwitchByIndex = useCallback(
         (index: number) => {
-            notes_key?.forEach((key, i) => {
+            notes_key?.forEach((key: string, i: number) => {
                 if (index === i) {
                     noteSwitch(key);
                 }
             });
         },
-        [notes_key, noteSwitch]
+        [dataPath, notes_key, noteSwitch]
     );
 
     useEffect(() => {
@@ -346,11 +346,11 @@ const NoteList: React.FC<NoteListProps> = ({
             ) {
                 const oldIndex = notes_key.indexOf(active.id);
                 const newIndex = notes_key.indexOf(over.id);
-                let new_notes_key = arrayMove(notes_key, oldIndex, newIndex);
-                reorderNote(data_path, currentRepoKey, currentFolderKey, new_notes_key);
+                let new_notes_key: string[] = arrayMove(notes_key, oldIndex, newIndex);
+                reorderNote(dataPath, currentRepoKey, currentFolderKey, new_notes_key);
             }
         },
-        [data_path, currentRepoKey, currentFolderKey, currentNoteKey, notes_key, reorderNote]
+        [dataPath, currentRepoKey, currentFolderKey, currentNoteKey, notes_key, reorderNote]
     );
 
     const genAlphaCode1 = (order: number): number => {
@@ -372,7 +372,7 @@ const NoteList: React.FC<NoteListProps> = ({
     return (
         <NoteListContainer width={width}>
             <NoteAddFloat>
-                {data_path ? (
+                {dataPath ? (
                     <NoteAddBtn onKeyDown={(e) => handleKeyDown(e)} onClick={() => newNote()}>
                         <img src={newNoteIcon} alt='' />
                     </NoteAddBtn>
@@ -390,8 +390,8 @@ const NoteList: React.FC<NoteListProps> = ({
                     <SortableContext items={notes_key} strategy={verticalListSortingStrategy}>
                         <Notes ref={outerRef}>
                             {notes_key
-                                .filter((key) => notes_obj && notes_obj[key])
-                                .map((key, index) => {
+                                .filter((key: string) => notes_obj && notes_obj[key])
+                                .map((key: string, index: number) => {
                                     return (
                                         <Sortable key={key} id={key}>
                                             <NoteItem
@@ -452,7 +452,8 @@ const NoteList: React.FC<NoteListProps> = ({
                                         </Sortable>
                                     );
                                 })}
-                            {notes_key.filter((key) => notes_obj && notes_obj[key]).length <= 1 ? (
+                            {notes_key.filter((key: string) => notes_obj && notes_obj[key])
+                                .length <= 1 ? (
                                 <AddNotesTips>
                                     <div>点击按钮</div>
                                     <div>添加新文档</div>
@@ -499,7 +500,7 @@ const NoteList: React.FC<NoteListProps> = ({
                         </div>
                     </DragOverlay>
                 </DndContext>
-            ) : data_path ? (
+            ) : dataPath ? (
                 <div>空空如也</div>
             ) : (
                 <></>
@@ -646,24 +647,7 @@ const MenuLi = styled.li(
 );
 
 type NoteListProps = {
-    data_path: string;
-    notes_key: string[] | undefined;
-    notes_obj: object | undefined;
-    currentRepoKey: string | undefined;
-    currentFolderKey: string | undefined;
-    currentNoteKey: string | undefined;
     keySelect: boolean;
-    repoSwitch: (repo_key: string) => void;
-    folderSwitch: (repo_key: string | undefined, folder_key: string) => void;
-    noteSwitch: (note_key: string | undefined) => void;
-    updateRepos: (action_name: string, obj: object) => void;
-    changeNotesAfterNew: (action_name: string, obj: object) => void;
-    reorderNote: (
-        data_path: string,
-        repo_key: string,
-        folder_key: string,
-        new_notes_key: string[]
-    ) => void;
     setFocus: (focus: string) => void;
     setKeySelect: (keySelect: boolean) => void;
     width: number;
