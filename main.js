@@ -30,23 +30,29 @@ const createWindow = async () => {
         },
     });
 
-    //win?.loadFile(path.join(__dirname, "/build/index.html"));
-    win?.loadURL("http://localhost:3000");
-
-    win?.webContents.openDevTools();
-
-    win?.webContents.on("select-bluetooth-device", (event, deviceList, callback) => {
-        event.preventDefault();
-        if (deviceList && deviceList.length > 0) {
-            callback(deviceList[0].deviceId);
-        }
-    });
+    if (app.isPackaged) {
+        win?.loadFile(path.join(__dirname, "/build/index.html"));
+    } else {
+        win?.loadURL("http://localhost:3000");
+        win?.webContents.openDevTools();
+        await installExtensions();
+    }
 
     win.on("ready-to-show", () => {
         if (!win?.isVisible()) {
             win?.show();
         }
     });
+};
+
+const installExtensions = async () => {
+    const installer = require("electron-devtools-installer");
+    const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
+    const extensions = ["REACT_DEVELOPER_TOOLS", "REDUX_DEVTOOLS", "DEVTRON"];
+
+    return Promise.all(
+        extensions.map((name) => installer.default(installer[name], forceDownload))
+    ).catch(console.log);
 };
 
 const createMenu = async () => {
