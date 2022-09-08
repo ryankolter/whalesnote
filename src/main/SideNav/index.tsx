@@ -21,6 +21,7 @@ const SideNav: React.FC<SideNavProps> = ({
     setKeySelect,
     setShowWaitingMask,
 }) => {
+    console.log("SideNav render");
     const {
         dataPath,
         setDataPath,

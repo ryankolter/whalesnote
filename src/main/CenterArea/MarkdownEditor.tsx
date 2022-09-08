@@ -12,6 +12,7 @@ import { languages } from "@codemirror/language-data";
 import { autocompletion } from "@codemirror/autocomplete";
 
 export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({ theme, focus, blur }) => {
+    console.log("MarkdownEditor render");
     const {
         dataPath,
         currentRepoKey,

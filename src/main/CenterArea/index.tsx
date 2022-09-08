@@ -18,6 +18,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
     blur,
     theme,
 }) => {
+    console.log("CenterArea render");
     const {
         dataPath,
         dxnote,

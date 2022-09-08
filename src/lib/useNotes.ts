@@ -1,6 +1,6 @@
 import produce from "immer";
 
-import { useReducer, useCallback, useRef } from "react";
+import { useReducer, useState, useCallback, useRef } from "react";
 import { forEachChild } from "typescript";
 const { ipcRenderer } = window.require("electron");
 
@@ -106,33 +106,6 @@ const notesReducer = produce((state: notesTypes, action: any) => {
             state[action.repo_key][action.folder_key][action.note_key] = action.note_content;
             return state;
         }
-        case "save": {
-            let note_info = ipcRenderer.sendSync("readCson", {
-                file_path: `${action.data_path}/${action.repo_key}/${action.folder_key}/${action.note_key}.cson`,
-            });
-
-            if (note_info) {
-                note_info.content = state[action.repo_key][action.folder_key][action.note_key];
-                note_info.updatedAt = new Date();
-                ipcRenderer.sendSync("writeCson", {
-                    file_path: `${action.data_path}/${action.repo_key}/${action.folder_key}/${action.note_key}.cson`,
-                    obj: note_info,
-                });
-            } else {
-                let new_note_info = {
-                    createAt: new Date(),
-                    updatedAt: new Date(),
-                    type: "markdown",
-                    content: state[action.repo_key][action.folder_key][action.note_key],
-                };
-                ipcRenderer.sendSync("writeCson", {
-                    file_path: `${action.data_path}/${action.repo_key}/${action.folder_key}/${action.note_key}.cson`,
-                    obj: new_note_info,
-                });
-            }
-
-            return state;
-        }
     }
 });
 
@@ -220,14 +193,43 @@ export const useNotes = () => {
     );
 
     const saveNow = useCallback(
-        (data_path: string, repo_key: string, folder_key: string, note_key: string) => {
-            dispatch({
-                type: "save",
+        (
+            data_path: string,
+            repo_key: string,
+            folder_key: string,
+            note_key: string,
+            note_content: string
+        ) => {
+            let action = {
                 data_path,
                 repo_key,
                 folder_key,
                 note_key,
+                note_content,
+            };
+            let note_info = ipcRenderer.sendSync("readCson", {
+                file_path: `${action.data_path}/${action.repo_key}/${action.folder_key}/${action.note_key}.cson`,
             });
+
+            if (note_info) {
+                note_info.content = note_content;
+                note_info.updatedAt = new Date();
+                ipcRenderer.sendSync("writeCson", {
+                    file_path: `${action.data_path}/${action.repo_key}/${action.folder_key}/${action.note_key}.cson`,
+                    obj: note_info,
+                });
+            } else {
+                let new_note_info = {
+                    createAt: new Date(),
+                    updatedAt: new Date(),
+                    type: "markdown",
+                    content: note_content,
+                };
+                ipcRenderer.sendSync("writeCson", {
+                    file_path: `${action.data_path}/${action.repo_key}/${action.folder_key}/${action.note_key}.cson`,
+                    obj: new_note_info,
+                });
+            }
         },
         []
     );
@@ -245,7 +247,7 @@ export const useNotes = () => {
             }
 
             saveTimer.current = setTimeout(() => {
-                saveNow(data_path, repo_key, folder_key, note_key);
+                saveNow(data_path, repo_key, folder_key, note_key, note_content);
             }, 800);
 
             dispatch({
