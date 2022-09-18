@@ -10,8 +10,14 @@ import { indentUnit } from '@codemirror/language';
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
 import { languages } from '@codemirror/language-data';
 import { autocompletion } from '@codemirror/autocomplete';
+import { KeyboardSensor } from '@dnd-kit/core';
 
-export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({ theme, focus, blur }) => {
+export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
+    theme,
+    focus,
+    blur,
+    setKeySelect,
+}) => {
     console.log('MarkdownEditor render');
     const {
         dataPath,
@@ -68,7 +74,6 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({ theme, focus, bl
     );
 
     const handleScrollEvent = useCallback(() => {
-        console.log('handleScrollEvent');
         if (autoScroll.current) {
             autoScroll.current = false;
             return;
@@ -136,7 +141,8 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({ theme, focus, bl
     const cursorActiveListener = EditorView.updateListener.of((vu: ViewUpdate) => {
         if (vu.selectionSet && typeof selectionSetHandler === 'function') {
             console.log('selectionSet');
-            //selectionSetHandler(vu);
+            setKeySelect(false);
+            selectionSetHandler(vu);
         }
     });
 
@@ -288,4 +294,5 @@ type MarkdownEditorProps = {
     focus: string;
     blur: string;
     theme: string;
+    setKeySelect: (keySelect: boolean) => void;
 };

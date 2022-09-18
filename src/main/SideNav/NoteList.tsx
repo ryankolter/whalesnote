@@ -486,8 +486,6 @@ const NoteList: React.FC<NoteListProps> = ({ keySelect, setFocus, setKeySelect, 
                         </div>
                     </DragOverlay>
                 </DndContext>
-            ) : dataPath ? (
-                <div>空空如也</div>
             ) : (
                 <></>
             )}

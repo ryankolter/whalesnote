@@ -265,7 +265,12 @@ const CenterArea: React.FC<CenterAreaProps> = ({
     return dataPath ? (
         <CenterAreaContainer>
             <EditorPanel heightValue={editorHeight}>
-                <MarkdownEditor theme={theme} focus={focus} blur={blur} />
+                <MarkdownEditor
+                    theme={theme}
+                    focus={focus}
+                    blur={blur}
+                    setKeySelect={setKeySelect}
+                />
             </EditorPanel>
             <RenderPanel topValue={renderTop} heightValue={renderHeight}>
                 {renderPanelState !== 'hidden' ? (
@@ -327,9 +332,11 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                             setShowSwitchModePanel((_showSwitchModePanel) => !_showSwitchModePanel);
                         }}
                     >
-                        {renderPanelState === 'hidden' ? <ModeName>编辑</ModeName> : <></>}
-                        {renderPanelState === 'half' ? <ModeName>编辑+预览</ModeName> : <></>}
-                        {renderPanelState === 'all' ? <ModeName>预览</ModeName> : <></>}
+                        <ModeNameTag>
+                            {renderPanelState === 'hidden' ? <ModeName>编辑</ModeName> : <></>}
+                            {renderPanelState === 'half' ? <ModeName>编辑+预览</ModeName> : <></>}
+                            {renderPanelState === 'all' ? <ModeName>预览</ModeName> : <></>}
+                        </ModeNameTag>
                         <Triangle></Triangle>
                     </SwitchModeBtn>
                     {showSwitchModePanel ? (
@@ -525,14 +532,20 @@ const SwitchMode = styled.div({
 
 const SwitchModeBtn = styled.div({
     display: 'flex',
-    justifyContent: 'center',
-    width: '100px',
+    width: '110px',
     boxSizing: 'border-box',
     height: '28px',
     margin: '7px 5px',
     padding: '0 14px',
     backgroundColor: 'rgb(58, 64, 76)',
     borderRadius: '14px',
+});
+
+const ModeNameTag = styled.div({
+    flex: '1',
+    minWidth: '0',
+    display: 'flex',
+    justifyContent: 'center',
 });
 
 const ModeName = styled.div({
@@ -593,6 +606,7 @@ const AssistantActiveBtn = styled.div({
     borderRadius: '18px',
     fontSize: '18px',
     color: '#939395',
+    cursor: 'pointer',
 });
 
 type CenterAreaProps = {

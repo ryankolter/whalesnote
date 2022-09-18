@@ -95,7 +95,7 @@ const SideNav: React.FC<SideNavProps> = ({
         } else {
             setShowAddPathTips(true);
         }
-    }, []);
+    }, [dataPath]);
 
     const updateMiniSearch = useCallback(() => {
         console.log('updateMiniSearch begin');
