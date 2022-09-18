@@ -17,6 +17,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     focus,
     blur,
     setKeySelect,
+    setEditorScrollRatio,
 }) => {
     console.log('MarkdownEditor render');
     const {
@@ -73,27 +74,41 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
         [dataPath, currentRepoKey, currentFolderKey, currentNoteKey]
     );
 
-    const handleScrollEvent = useCallback(() => {
-        if (autoScroll.current) {
-            autoScroll.current = false;
-            return;
-        }
-
-        if (scrollSaveTimerRef.current) {
-            clearTimeout(scrollSaveTimerRef.current);
-        }
-        scrollSaveTimerRef.current = setTimeout(() => {
-            if (view.current) {
-                //add the margin 10px and 15px to the top value
-                const fromPos = view.current.elementAtHeight(
-                    Math.abs(view.current.contentDOM.getBoundingClientRect().top) + 10 + 15
-                ).from;
-
-                setShowScrollPos(false);
-                updateFromPos(currentRepoKey, currentFolderKey, currentNoteKey, fromPos);
+    const handleScrollEvent = useCallback(
+        (e: any) => {
+            if (autoScroll.current) {
+                autoScroll.current = false;
+                return;
             }
-        }, 100);
-    }, [currentRepoKey, currentFolderKey, currentNoteKey]);
+
+            if (scrollSaveTimerRef.current) {
+                clearTimeout(scrollSaveTimerRef.current);
+            }
+            scrollSaveTimerRef.current = setTimeout(() => {
+                if (e.target) {
+                    const offsetHeight = (e.target as HTMLDivElement).offsetHeight;
+                    const scrollTop = (e.target as HTMLDivElement).scrollTop;
+                    const scrollHeight = (e.target as HTMLDivElement).scrollHeight;
+                    if ((scrollTop + offsetHeight) / scrollHeight > 0.99) {
+                        setEditorScrollRatio((scrollTop + offsetHeight) / scrollHeight);
+                    } else {
+                        setEditorScrollRatio(scrollTop / scrollHeight);
+                    }
+                }
+
+                if (view.current) {
+                    //add the margin 10px and 15px to the top value
+                    const fromPos = view.current.elementAtHeight(
+                        Math.abs(view.current.contentDOM.getBoundingClientRect().top) + 10 + 15
+                    ).from;
+
+                    setShowScrollPos(false);
+                    updateFromPos(currentRepoKey, currentFolderKey, currentNoteKey, fromPos);
+                }
+            }, 100);
+        },
+        [currentRepoKey, currentFolderKey, currentNoteKey, setEditorScrollRatio]
+    );
 
     const autoScrollToLine = useCallback(() => {
         console.log('autoScrollToLine');
@@ -134,7 +149,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
 
     const scrollListener = EditorView.domEventHandlers({
         scroll(event, view) {
-            handleScrollEvent();
+            handleScrollEvent(event);
         },
     });
 
@@ -295,4 +310,5 @@ type MarkdownEditorProps = {
     blur: string;
     theme: string;
     setKeySelect: (keySelect: boolean) => void;
+    setEditorScrollRatio: (editorScrollRatio: number) => void;
 };

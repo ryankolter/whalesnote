@@ -1,4 +1,4 @@
-import { useContext, useCallback, useEffect, useState } from 'react';
+import { useContext, useCallback, useEffect, useState, useRef, createRef } from 'react';
 import cryptoRandomString from 'crypto-random-string';
 import styled from '@emotion/styled';
 import RepoPanel from './RepoPanel';
@@ -43,6 +43,12 @@ const CenterArea: React.FC<CenterAreaProps> = ({
 
     const [showAllRepo, setShowAllRepo] = useState(false);
     const [allowHiddenAllRepoViaEnter, setAllowHiddenAllRepoViaEnter] = useState(true);
+
+    const [editorScrollRatio, setEditorScrollRatio] = useState(0);
+
+    const markdownRef = useRef<HTMLDivElement>(null);
+    const markdownEditorRef = useRef<HTMLDivElement>(null);
+    const markdownRenderRef = useRef<HTMLDivElement>(null);
 
     const repoNameClickHandler = useCallback(() => {
         setShowAllRepo((_showAllRepo) => !_showAllRepo);
@@ -264,21 +270,28 @@ const CenterArea: React.FC<CenterAreaProps> = ({
 
     return dataPath ? (
         <CenterAreaContainer>
-            <EditorPanel heightValue={editorHeight}>
-                <MarkdownEditor
-                    theme={theme}
-                    focus={focus}
-                    blur={blur}
-                    setKeySelect={setKeySelect}
-                />
-            </EditorPanel>
-            <RenderPanel topValue={renderTop} heightValue={renderHeight}>
-                {renderPanelState !== 'hidden' ? (
-                    <MarkdownRender content={content} theme={theme} />
-                ) : (
-                    <></>
-                )}
-            </RenderPanel>
+            <MarkdownArea ref={markdownRef}>
+                <EditorPanel heightValue={editorHeight}>
+                    <MarkdownEditor
+                        theme={theme}
+                        focus={focus}
+                        blur={blur}
+                        setKeySelect={setKeySelect}
+                        setEditorScrollRatio={setEditorScrollRatio}
+                    />
+                </EditorPanel>
+                <RenderPanel topValue={renderTop} heightValue={renderHeight}>
+                    {renderPanelState !== 'hidden' ? (
+                        <MarkdownRender
+                            editorScrollRatio={editorScrollRatio}
+                            content={content}
+                            theme={theme}
+                        />
+                    ) : (
+                        <></>
+                    )}
+                </RenderPanel>
+            </MarkdownArea>
             <BottomRow>
                 <BreakCrumb>
                     <CurRepoNameTag
@@ -394,6 +407,8 @@ const CenterAreaContainer = styled.div({
     minWidth: '0',
     margin: '10px 10px 0 0',
 });
+
+const MarkdownArea = styled.div({});
 
 const EditorPanel = styled.div(
     {
