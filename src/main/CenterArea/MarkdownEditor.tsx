@@ -16,6 +16,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     theme,
     focus,
     blur,
+    renderPanelState,
     setKeySelect,
     setEditorScrollRatio,
 }) => {
@@ -37,10 +38,11 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     const editor = useRef<HTMLDivElement>(null);
     const view = useRef<EditorView>();
 
-    const [showScrollPos, setShowScrollPos] = useState(false);
+    const [showEditorScrollPos, setShowEditorScrollPos] = useState(false);
 
     const autoScroll = useRef<boolean>(false);
     const scrollSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
+    const scrollRatioSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
     const noteSwitchRef = useRef<boolean>(false);
 
     const docChangeHandler = useCallback(
@@ -76,15 +78,11 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
 
     const handleScrollEvent = useCallback(
         (e: any) => {
-            if (autoScroll.current) {
-                autoScroll.current = false;
-                return;
+            if (scrollRatioSaveTimerRef.current) {
+                clearTimeout(scrollRatioSaveTimerRef.current);
             }
 
-            if (scrollSaveTimerRef.current) {
-                clearTimeout(scrollSaveTimerRef.current);
-            }
-            scrollSaveTimerRef.current = setTimeout(() => {
+            scrollRatioSaveTimerRef.current = setTimeout(() => {
                 if (e.target) {
                     const offsetHeight = (e.target as HTMLDivElement).offsetHeight;
                     const scrollTop = (e.target as HTMLDivElement).scrollTop;
@@ -95,23 +93,39 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
                         setEditorScrollRatio(scrollTop / scrollHeight);
                     }
                 }
+            }, 100);
 
+            if (autoScroll.current) {
+                autoScroll.current = false;
+                return;
+            }
+
+            if (scrollSaveTimerRef.current) {
+                clearTimeout(scrollSaveTimerRef.current);
+            }
+            scrollSaveTimerRef.current = setTimeout(() => {
                 if (view.current) {
                     //add the margin 10px and 15px to the top value
                     const fromPos = view.current.elementAtHeight(
                         Math.abs(view.current.contentDOM.getBoundingClientRect().top) + 10 + 15
                     ).from;
 
-                    setShowScrollPos(false);
+                    setShowEditorScrollPos(false);
                     updateFromPos(currentRepoKey, currentFolderKey, currentNoteKey, fromPos);
                 }
             }, 100);
         },
-        [currentRepoKey, currentFolderKey, currentNoteKey, setEditorScrollRatio]
+        [
+            currentRepoKey,
+            currentFolderKey,
+            currentNoteKey,
+            setEditorScrollRatio,
+            setShowEditorScrollPos,
+        ]
     );
 
     const autoScrollToLine = useCallback(() => {
-        console.log('autoScrollToLine');
+        console.log('editor autoScrollToLine');
         if (view.current) {
             const max_height = view.current.contentDOM.getBoundingClientRect().height;
             const start_line = fromPos <= max_height && fromPos > 0 ? fromPos : max_height;
@@ -128,8 +142,9 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
                     selection: { anchor: cursorHead },
                 });
             }
-            setShowScrollPos(false);
         }
+
+        setShowEditorScrollPos(false);
     }, [cursorHead, fromPos]);
 
     const defaultThemeOption = EditorView.theme({
@@ -268,7 +283,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
             });
         }, 250);
 
-        fromPos && fromPos > 10 ? setShowScrollPos(true) : setShowScrollPos(false);
+        fromPos && fromPos > 10 ? setShowEditorScrollPos(true) : setShowEditorScrollPos(false);
     }, [dataPath, currentRepoKey, currentFolderKey, currentNoteKey]);
 
     useEffect(() => {
@@ -283,14 +298,35 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
         view.current?.contentDOM.blur();
     }, [blur]);
 
+    const handleKeyDown = useCallback(
+        (e: any) => {
+            if (process.platform === 'darwin') {
+                if (e.keyCode === 74 && e.metaKey && !e.shiftKey && renderPanelState !== 'all') {
+                    autoScrollToLine();
+                }
+            }
+            if (process.platform === 'win32' || process.platform === 'linux') {
+                if (e.keyCode === 74 && e.crtlKey && !e.shiftKey && renderPanelState !== 'all') {
+                    autoScrollToLine();
+                }
+            }
+        },
+        [renderPanelState, autoScrollToLine]
+    );
+
+    useEffect(() => {
+        document.addEventListener('keydown', handleKeyDown);
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [handleKeyDown]);
+
     const wrappedClassNames = typeof theme === 'string' ? `cm-theme-${theme}` : 'cm-theme';
 
     return (
         <MarkdownEditorContainer>
-            {showScrollPos ? (
-                <div className="lastScrollPos" onClick={autoScrollToLine}>
-                    上次在
-                </div>
+            {showEditorScrollPos && renderPanelState !== 'all' ? (
+                <LastScrollPos onClick={autoScrollToLine}>上次在</LastScrollPos>
             ) : (
                 <></>
             )}
@@ -305,10 +341,42 @@ const MarkdownEditorContainer = styled.div({
     height: '100%',
 });
 
+const LastScrollPos = styled.div(
+    {
+        position: 'absolute',
+        left: '15px',
+        bottom: '100px',
+        height: '30px',
+        lineHeight: '30px',
+        fontSize: '16px',
+        padding: '0 12px 0 6px',
+        zIndex: 9,
+        color: '#939395',
+        backgroundColor: '#3a404c',
+        cursor: 'pointer',
+    },
+    `
+    &:before {
+        border: 15px dashed transparent;
+        border-right: 15px solid #3a404c;
+        content: "";
+        font-size: 0;
+        height: 0;
+        left: -15px;
+        transform: translateX(-50%);
+        overflow: hidden;
+        position: absolute;
+        top: 0;
+        width: 0;
+    }
+`
+);
+
 type MarkdownEditorProps = {
     focus: string;
     blur: string;
     theme: string;
+    renderPanelState: string;
     setKeySelect: (keySelect: boolean) => void;
     setEditorScrollRatio: (editorScrollRatio: number) => void;
 };

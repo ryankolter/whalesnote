@@ -40,15 +40,10 @@ const CenterArea: React.FC<CenterAreaProps> = ({
 
     const [renderPanelState, setRenderPanelState] = useState('hidden');
     const [showSwitchModePanel, setShowSwitchModePanel] = useState(false);
-
     const [showAllRepo, setShowAllRepo] = useState(false);
     const [allowHiddenAllRepoViaEnter, setAllowHiddenAllRepoViaEnter] = useState(true);
 
     const [editorScrollRatio, setEditorScrollRatio] = useState(0);
-
-    const markdownRef = useRef<HTMLDivElement>(null);
-    const markdownEditorRef = useRef<HTMLDivElement>(null);
-    const markdownRenderRef = useRef<HTMLDivElement>(null);
 
     const repoNameClickHandler = useCallback(() => {
         setShowAllRepo((_showAllRepo) => !_showAllRepo);
@@ -270,12 +265,13 @@ const CenterArea: React.FC<CenterAreaProps> = ({
 
     return dataPath ? (
         <CenterAreaContainer>
-            <MarkdownArea ref={markdownRef}>
+            <MarkdownArea>
                 <EditorPanel heightValue={editorHeight}>
                     <MarkdownEditor
                         theme={theme}
                         focus={focus}
                         blur={blur}
+                        renderPanelState={renderPanelState}
                         setKeySelect={setKeySelect}
                         setEditorScrollRatio={setEditorScrollRatio}
                     />
@@ -283,9 +279,10 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                 <RenderPanel topValue={renderTop} heightValue={renderHeight}>
                     {renderPanelState !== 'hidden' ? (
                         <MarkdownRender
-                            editorScrollRatio={editorScrollRatio}
                             content={content}
+                            editorScrollRatio={editorScrollRatio}
                             theme={theme}
+                            renderPanelState={renderPanelState}
                         />
                     ) : (
                         <></>

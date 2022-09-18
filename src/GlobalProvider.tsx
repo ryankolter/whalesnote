@@ -5,6 +5,7 @@ import { useNotes } from './lib/useNotes';
 import { useDxnote } from './lib/useDxnote';
 import { useEditPos } from './lib/useEditPos';
 import { useEditLine } from './lib/useEditLine';
+import { useRecordValue } from './lib/useRecordValue';
 
 const initContext: {
     dataPath: string;
@@ -52,6 +53,7 @@ const initContext: {
     content: string;
     cursorHead: number;
     fromPos: number;
+    renderTop: number;
     updateCursorHead: (
         repo_key: string,
         folder_key: string,
@@ -63,6 +65,12 @@ const initContext: {
         folder_key: string,
         note_key: string,
         from_pos: number
+    ) => void;
+    updateRenderTop: (
+        repo_key: string,
+        folder_key: string,
+        note_key: string,
+        render_scroll_value: number
     ) => void;
     numArray: number[];
     setNumArray: any;
@@ -95,8 +103,10 @@ const initContext: {
     content: '',
     cursorHead: 0,
     fromPos: 0,
+    renderTop: 0,
     updateCursorHead: () => {},
     updateFromPos: () => {},
+    updateRenderTop: () => {},
     numArray: [],
     setNumArray: () => {},
 };
@@ -135,6 +145,7 @@ export const GlobalProvider = ({ children }: { children: any }) => {
     ] = useNotes();
     const [cursorHeads, { updateCursorHead }] = useEditPos();
     const [fromPoses, { updateFromPos }] = useEditLine();
+    const [renderTops, { updateRecordValue: updateRenderTop }] = useRecordValue();
 
     const [numArray, setNumArray] = useState<number[]>([]);
 
@@ -201,6 +212,19 @@ export const GlobalProvider = ({ children }: { children: any }) => {
         [currentRepoKey, currentFolderKey, currentNoteKey, fromPoses]
     );
 
+    const renderTop = useMemo(
+        () =>
+            currentRepoKey &&
+            currentFolderKey &&
+            currentNoteKey &&
+            renderTops[currentRepoKey] &&
+            renderTops[currentRepoKey][currentFolderKey] &&
+            renderTops[currentRepoKey][currentFolderKey][currentNoteKey]
+                ? renderTops[currentRepoKey][currentFolderKey][currentNoteKey]
+                : 0,
+        [currentRepoKey, currentFolderKey, currentNoteKey, renderTops]
+    );
+
     return (
         <GlobalContext.Provider
             value={{
@@ -232,8 +256,10 @@ export const GlobalProvider = ({ children }: { children: any }) => {
                 content,
                 cursorHead,
                 fromPos,
+                renderTop,
                 updateCursorHead,
                 updateFromPos,
+                updateRenderTop,
                 numArray,
                 setNumArray,
             }}
