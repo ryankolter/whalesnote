@@ -364,6 +364,12 @@ const FolderList: React.FC<FolderListProps> = ({ keySelect, setFocus, width }) =
         }
     }, [numArray, folderSwitchByIndex]);
 
+    useEffect(() => {
+        if (numArray.length === 1) {
+            setNumArray([]);
+        }
+    }, [currentRepoKey, currentFolderKey]);
+
     // part5 : key event
     const handleKeyDown = useCallback(
         (e: any) => {
@@ -378,12 +384,13 @@ const FolderList: React.FC<FolderListProps> = ({ keySelect, setFocus, width }) =
                     newFolder();
                 }
 
-                // arrow right 39 or L 76
-                if ((e.keyCode === 76 || e.keyCode === 39) && !e.metaKey && keySelect) {
+                // arrow bottom 40 or K 75
+                if ((e.keyCode === 40 || e.keyCode === 75) && e.metaKey && keySelect) {
                     nextFolderPage();
                 }
-                // arrow left 37 or J 74
-                if ((e.keyCode === 74 || e.keyCode === 37) && !e.metaKey && keySelect) {
+
+                // arrow bottom 38 or I 73
+                if ((e.keyCode === 38 || e.keyCode === 73) && e.metaKey && keySelect) {
                     preFolderPage();
                 }
 
@@ -404,15 +411,16 @@ const FolderList: React.FC<FolderListProps> = ({ keySelect, setFocus, width }) =
                     newFolder();
                 }
 
-                // arrow right 39 or L 76
-                if ((e.keyCode === 76 || e.keyCode === 39) && !e.ctrlKey && keySelect) {
+                // arrow bottom 40 or K 75
+                if ((e.keyCode === 40 || e.keyCode === 75) && e.ctrlKey && keySelect) {
                     nextFolderPage();
                 }
 
-                // arrow left 37 or J 74
-                if ((e.keyCode === 74 || e.keyCode === 37) && !e.ctrlKey && keySelect) {
+                // arrow bottom 38 or I 73
+                if ((e.keyCode === 38 || e.keyCode === 73) && e.ctrlKey && keySelect) {
                     preFolderPage();
                 }
+
                 if (e.keyCode >= 48 && e.keyCode <= 57 && !e.ctrlKey && keySelect) {
                     const num = parseInt(e.keyCode) - 48;
                     if (numArray.length === 0) {

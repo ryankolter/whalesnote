@@ -463,12 +463,12 @@ const RepoPanel: React.FC<RepoListProps> = ({
                 }
 
                 // arrow right 39 change to L 76
-                if (e.keyCode === 76 && e.metaKey) {
+                if ((e.keyCode === 39 || e.keyCode === 76) && !e.metaKey) {
                     nextRepoPage();
                 }
 
                 // arrow left 37 change to J 74
-                if (e.keyCode === 74 && e.metaKey) {
+                if ((e.keyCode === 37 || e.keyCode === 74) && !e.metaKey) {
                     preRepoPage();
                 }
             }
@@ -498,12 +498,12 @@ const RepoPanel: React.FC<RepoListProps> = ({
                 }
 
                 // arrow right 39 change to L 76
-                if (e.keyCode === 76 && e.ctrlKey) {
+                if ((e.keyCode === 39 || e.keyCode === 76) && !e.ctrlKey) {
                     nextRepoPage();
                 }
 
                 // arrow left 37 change to J 74
-                if (e.keyCode === 74 && e.ctrlKey) {
+                if ((e.keyCode === 37 || e.keyCode === 74) && !e.ctrlKey) {
                     preRepoPage();
                 }
             }
@@ -528,8 +528,9 @@ const RepoPanel: React.FC<RepoListProps> = ({
 
     const handleWhell = useCallback((e: any) => {
         e.preventDefault();
+        const delta = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
         if (repoScrollRef && repoScrollRef.current) {
-            repoScrollRef.current.scrollLeft += e.deltaY;
+            repoScrollRef.current.scrollLeft += delta;
         }
     }, []);
 

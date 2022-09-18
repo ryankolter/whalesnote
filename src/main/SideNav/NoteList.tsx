@@ -241,6 +241,12 @@ const NoteList: React.FC<NoteListProps> = ({ keySelect, setFocus, setKeySelect, 
         }
     }, [numArray, noteSwitchByIndex]);
 
+    useEffect(() => {
+        if (numArray.length === 1) {
+            setNumArray([]);
+        }
+    }, [currentRepoKey, currentFolderKey, currentNoteKey]);
+
     const handleKeyDown = useCallback(
         (e: any) => {
             // console.log(e.ctrlKey)
