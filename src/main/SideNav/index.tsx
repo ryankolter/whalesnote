@@ -40,6 +40,7 @@ const SideNav: React.FC<SideNavProps> = ({
     } = useContext(GlobalContext);
 
     const miniSearch = useRef<any>();
+    const searchInputRef = useRef<HTMLInputElement>(null);
 
     const [folderWidth, setFolderWidth] = useState(130);
     const [noteWidth, setNoteWidth] = useState(200);
@@ -101,87 +102,89 @@ const SideNav: React.FC<SideNavProps> = ({
         console.log('updateMiniSearch begin');
         setShowWaitingMask(true);
 
-        const all_notes = {};
-        const repos_key = dxnote.repos_key;
-        repos_key.forEach((repo_key: string) => {
-            if (!all_notes[repo_key]) {
-                all_notes[repo_key] = {};
-            }
-            const folders_key = repos_obj[repo_key].folders_key;
-            folders_key.forEach((folder_key: string) => {
-                if (!all_notes[repo_key][folder_key]) {
-                    const folder_info = ipcRenderer.sendSync('readJson', {
-                        file_path: `${dataPath}/${repo_key}/${folder_key}/folder_info.json`,
-                    });
-                    if (folder_info && folder_info.notes_obj) {
-                        all_notes[repo_key][folder_key] = {};
-                        Object.keys(folder_info.notes_obj).forEach((note_key) => {
-                            const note_info = ipcRenderer.sendSync('readCson', {
-                                file_path: `${dataPath}/${repo_key}/${folder_key}/${note_key}.cson`,
-                            });
-                            if (note_info) {
-                                all_notes[repo_key][folder_key][note_key] = note_info.content;
-                            }
-                        });
-                    }
+        setTimeout(() => {
+            const all_notes = {};
+            const repos_key = dxnote.repos_key;
+            repos_key.forEach((repo_key: string) => {
+                if (!all_notes[repo_key]) {
+                    all_notes[repo_key] = {};
                 }
+                const folders_key = repos_obj[repo_key].folders_key;
+                folders_key.forEach((folder_key: string) => {
+                    if (!all_notes[repo_key][folder_key]) {
+                        const folder_info = ipcRenderer.sendSync('readJson', {
+                            file_path: `${dataPath}/${repo_key}/${folder_key}/folder_info.json`,
+                        });
+                        if (folder_info && folder_info.notes_obj) {
+                            all_notes[repo_key][folder_key] = {};
+                            Object.keys(folder_info.notes_obj).forEach((note_key) => {
+                                const note_info = ipcRenderer.sendSync('readCson', {
+                                    file_path: `${dataPath}/${repo_key}/${folder_key}/${note_key}.cson`,
+                                });
+                                if (note_info) {
+                                    all_notes[repo_key][folder_key][note_key] = note_info.content;
+                                }
+                            });
+                        }
+                    }
+                });
             });
-        });
 
-        const documents: any = [];
-        Object.keys(all_notes).forEach((repo_key: string) => {
-            const folders_obj = repos_obj[repo_key].folders_obj;
-            Object.keys(all_notes[repo_key]).forEach((folder_key: string) => {
-                const folder_name = folders_obj[folder_key].folder_name;
-                Object.keys(all_notes[repo_key][folder_key]).forEach((note_key: string) => {
-                    const id = `${repo_key}-${folder_key}-${note_key}`;
-                    let title =
-                        repos_obj[repo_key].folders_obj[folder_key].notes_obj[note_key].title;
-                    if (title === '新建文档') title = '';
-                    const content = all_notes[repo_key][folder_key][note_key];
-                    documents.push({
-                        id,
-                        type: 'note',
-                        title,
-                        folder_name,
-                        content,
+            const documents: any = [];
+            Object.keys(all_notes).forEach((repo_key: string) => {
+                const folders_obj = repos_obj[repo_key].folders_obj;
+                Object.keys(all_notes[repo_key]).forEach((folder_key: string) => {
+                    const folder_name = folders_obj[folder_key].folder_name;
+                    Object.keys(all_notes[repo_key][folder_key]).forEach((note_key: string) => {
+                        const id = `${repo_key}-${folder_key}-${note_key}`;
+                        let title =
+                            repos_obj[repo_key].folders_obj[folder_key].notes_obj[note_key].title;
+                        if (title === '新建文档') title = '';
+                        const content = all_notes[repo_key][folder_key][note_key];
+                        documents.push({
+                            id,
+                            type: 'note',
+                            title,
+                            folder_name,
+                            content,
+                        });
                     });
                 });
             });
-        });
 
-        miniSearch.current = new MiniSearch({
-            fields: ['title', 'content'],
-            storeFields: ['id', 'type', 'title', 'folder_name'],
-            tokenize: (string, _fieldName) => {
-                const result = ipcRenderer.sendSync('nodejieba', {
-                    word: string,
-                });
-                return result;
-            },
-            searchOptions: {
-                boost: { title: 2 },
-                fuzzy: 0.2,
-                tokenize: (string: string) => {
-                    let result = ipcRenderer.sendSync('nodejieba', {
+            miniSearch.current = new MiniSearch({
+                fields: ['title', 'content'],
+                storeFields: ['id', 'type', 'title', 'folder_name'],
+                tokenize: (string, _fieldName) => {
+                    const result: any = ipcRenderer.sendSync('nodejieba', {
                         word: string,
                     });
-                    result = result.filter((w: string) => w !== ' ');
                     return result;
                 },
-            },
-        });
-        miniSearch.current.addAll(documents);
+                searchOptions: {
+                    boost: { title: 2 },
+                    fuzzy: 0.2,
+                    tokenize: (string: string) => {
+                        let result = ipcRenderer.sendSync('nodejieba', {
+                            word: string,
+                        });
+                        result = result.filter((w: string) => w !== ' ');
+                        return result;
+                    },
+                },
+            });
+            miniSearch.current.addAll(documents);
 
-        ipcRenderer.sendSync('writeJsonStr', {
-            file_path: `${dataPath}/search.json`,
-            str: JSON.stringify(miniSearch.current),
-        });
+            ipcRenderer.sendSync('writeJsonStr', {
+                file_path: `${dataPath}/search.json`,
+                str: JSON.stringify(miniSearch.current),
+            });
 
-        setShowUpdateIndexTips(false);
-        setShowWaitingMask(false);
+            setShowUpdateIndexTips(false);
+            setShowWaitingMask(false);
 
-        console.log('updateMiniSearch success');
+            console.log('updateMiniSearch success');
+        }, 0);
     }, [dataPath, dxnote, repos_obj, setShowUpdateIndexTips, setShowWaitingMask]);
 
     const searchNote = (word: string) => {
@@ -277,6 +280,19 @@ const SideNav: React.FC<SideNavProps> = ({
                         setNumArray((state: any) => state.concat([num]));
                     }
                 }
+
+                if (e.keyCode === 70 && e.metaKey && e.shiftKey) {
+                    searchInputRef.current?.focus();
+                    if (keySelect) setKeySelect(false);
+                }
+
+                //esc
+                if (e.keyCode === 27) {
+                    if (showSearchPanel) {
+                        setShowSearchPanel(false);
+                    }
+                    searchInputRef.current?.blur();
+                }
             }
             if (process.platform === 'win32' || process.platform === 'linux') {
                 if (
@@ -299,9 +315,22 @@ const SideNav: React.FC<SideNavProps> = ({
                         setNumArray((state: any) => state.concat([num]));
                     }
                 }
+
+                if (e.keyCode === 70 && e.ctrlKey && e.shiftKey) {
+                    searchInputRef.current?.focus();
+                    if (keySelect) setKeySelect(false);
+                }
+
+                //esc
+                if (e.keyCode === 27) {
+                    if (showSearchPanel) {
+                        setShowSearchPanel(false);
+                    }
+                    searchInputRef.current?.blur();
+                }
             }
         },
-        [numArray, keySelect]
+        [numArray, keySelect, setKeySelect, showSearchPanel]
     );
 
     useEffect(() => {
@@ -334,6 +363,7 @@ const SideNav: React.FC<SideNavProps> = ({
                 {dataPath ? (
                     <Search>
                         <SearchInput
+                            ref={searchInputRef}
                             onChange={handleSearchInputChange}
                             onKeyDown={handleSearchInputEnter}
                             onFocus={handleSearchInputFocus}

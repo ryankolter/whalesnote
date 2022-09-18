@@ -1,10 +1,11 @@
-import { useState, useMemo, useCallback, useRef } from 'react';
+import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { GlobalProvider } from './GlobalProvider';
 
 import SideNav from './main/SideNav';
 import CenterArea from './main/CenterArea/index';
 import WaitingMask from './components/WaitingMask';
+import WaitingMaskStatic from './components/WaitingMaskStatic';
 
 import SocketServerBtn from './components/socketServerBtn';
 import SocketClientBtn from './socketClientBtn';
@@ -22,10 +23,14 @@ const App = () => {
 
     const [showWaitingMask, setShowWaitingMask] = useState(false);
 
+    useEffect(() => {
+        console.log(showWaitingMask);
+    }, [showWaitingMask]);
+
     return (
         <GlobalProvider>
             <AppContainer>
-                <WaitingMask in={showWaitingMask} timeout={300}></WaitingMask>
+                <WaitingMaskStatic show={showWaitingMask} word={'请等待......'}></WaitingMaskStatic>
                 <RepoContent>
                     <SideNav
                         keySelect={keySelect}

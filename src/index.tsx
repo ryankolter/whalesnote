@@ -3,7 +3,6 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 import './resources/css/theme/common.css';
 import './resources/css/theme/dark.css';
-import './resources/css/animation.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 

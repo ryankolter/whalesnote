@@ -1,3 +1,4 @@
+import { keyframes, ClassNames } from '@emotion/react';
 import { Transition } from 'react-transition-group';
 
 const duration = 3000;
@@ -36,11 +37,40 @@ const WaitingMask: React.FC<WaitingMaskProps> = ({ in: inProp, timeout: timeout 
                         ...transitionStyles[state],
                     }}
                 >
-                    <div className="donut"></div>
+                    <ClassNames>
+                        {({ css, cx }) => (
+                            <div
+                                className={cx(
+                                    css`
+                                        position: fixed;
+                                        top: 50%;
+                                        left: 50%;
+                                        display: inline-block;
+                                        border: 4px solid #2c3033;
+                                        border-left-color: #939395;
+                                        border-radius: 50%;
+                                        width: 30px;
+                                        height: 30px;
+                                        animation: ${donut_spin} 1.2s linear infinite;
+                                    `
+                                )}
+                            />
+                        )}
+                    </ClassNames>
                 </div>
             )}
         </Transition>
     );
 };
+
+const donut_spin = keyframes`
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+`;
 
 export default WaitingMask;
