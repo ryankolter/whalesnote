@@ -27,6 +27,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
         currentNoteKey,
         repos_obj,
         content,
+        setNumArray,
     } = useContext(GlobalContext);
 
     const repos_key = dxnote.repos_key;
@@ -77,6 +78,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                 if ((e.keyCode === 48 || e.keyCode === 96) && e.metaKey) {
                     if (keySelect) {
                         setKeySelect(false);
+                        setNumArray([]);
                         if (currentNoteKey) {
                             setTimeout(() => {
                                 setFocus(
@@ -89,6 +91,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                         }
                     } else {
                         setKeySelect(true);
+                        setNumArray([]);
                         // 只有这里才会让它初始化为显示框框
                         setBlur(
                             cryptoRandomString({
@@ -110,6 +113,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                     allowHiddenAllRepoViaEnter
                 ) {
                     setKeySelect(false);
+                    setNumArray([]);
                     if (currentNoteKey) {
                         setTimeout(() => {
                             setFocus(
@@ -130,6 +134,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                 if (e.keyCode === 27) {
                     if (keySelect) {
                         setKeySelect(false);
+                        setNumArray([]);
                     } else {
                         setTimeout(() => {
                             setBlur(
@@ -161,6 +166,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                 if ((e.keyCode === 48 || e.keyCode === 96) && e.ctrlKey) {
                     if (keySelect) {
                         setKeySelect(false);
+                        setNumArray([]);
                         if (currentNoteKey) {
                             setTimeout(() => {
                                 setFocus(
@@ -173,6 +179,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                         }
                     } else {
                         setKeySelect(true);
+                        setNumArray([]);
                         setBlur(
                             cryptoRandomString({
                                 length: 24,
@@ -189,6 +196,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                 //nromal enter and extra enter
                 if ((e.keyCode === 13 || e.keyCode === 108) && keySelect) {
                     setKeySelect(false);
+                    setNumArray([]);
                     if (currentNoteKey) {
                         setTimeout(() => {
                             setFocus(
@@ -209,6 +217,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                 if (e.keyCode === 27) {
                     if (keySelect) {
                         setKeySelect(false);
+                        setNumArray([]);
                     } else {
                         setTimeout(() => {
                             setBlur(
@@ -277,6 +286,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                                 ? repos_obj[currentRepoKey].repo_name
                                 : ''}
                         </RepoNameLabel>
+                        {keySelect ? <RepoPanelKeyTab>Z</RepoPanelKeyTab> : <></>}
                     </CurRepoNameTag>
                     <GreaterTag>&gt;</GreaterTag>
                     <CurFolderNameTag>
@@ -420,6 +430,7 @@ const BreakCrumb = styled.div({
 });
 
 const CurRepoNameTag = styled.div({
+    position: 'relative',
     height: '32px',
     minWidth: '60px',
     lineHeight: '32px',
@@ -430,6 +441,17 @@ const CurRepoNameTag = styled.div({
     overflow: 'hidden !important',
     textOverflow: 'ellipsis',
     wordBreak: 'break-all',
+});
+
+const RepoPanelKeyTab = styled.div({
+    position: 'absolute',
+    top: '4px',
+    right: '4px',
+    width: '12px',
+    height: '14px',
+    lineHeight: '14px',
+    fontSize: '14px',
+    letterSpacing: '1px',
 });
 
 const RepoNameLabel = styled.div({

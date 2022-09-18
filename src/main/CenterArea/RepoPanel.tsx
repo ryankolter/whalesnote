@@ -37,6 +37,7 @@ const RepoPanel: React.FC<RepoListProps> = ({
         updateRepos,
         repoNotesFetch,
         changeNotesAfterNew,
+        numArray,
     } = useContext(GlobalContext);
 
     const [activeId, setActiveId] = useState(null);
@@ -441,7 +442,7 @@ const RepoPanel: React.FC<RepoListProps> = ({
                 //console.log('这是mac系统');
 
                 // normal number 1-9
-                if (e.keyCode >= 49 && e.keyCode <= 57 && e.metaKey) {
+                if (e.keyCode >= 49 && e.keyCode <= 57 && !e.metaKey && numArray.length === 0) {
                     const num = parseInt(e.keyCode) - 48;
                     const index = num + 9 * repoScrollPage - 1;
                     if (repos_key && index < repos_key.length) {
@@ -452,7 +453,7 @@ const RepoPanel: React.FC<RepoListProps> = ({
                 }
 
                 // extra number 1-9
-                if (e.keyCode >= 97 && e.keyCode <= 105 && e.metaKey) {
+                if (e.keyCode >= 97 && e.keyCode <= 105 && !e.metaKey && numArray.length === 0) {
                     const num = parseInt(e.keyCode) - 96;
                     const index = num + 9 * repoScrollPage - 1;
                     if (repos_key && index < repos_key.length) {
@@ -476,7 +477,7 @@ const RepoPanel: React.FC<RepoListProps> = ({
                 //console.log('这是windows系统');
 
                 // normal number 1-9
-                if (e.keyCode >= 49 && e.keyCode <= 57 && e.ctrlKey) {
+                if (e.keyCode >= 49 && e.keyCode <= 57 && !e.ctrlKey && numArray.length === 0) {
                     const num = parseInt(e.keyCode) - 48;
                     const index = num + 9 * repoScrollPage - 1;
                     if (repos_key && index < repos_key.length) {
@@ -487,7 +488,7 @@ const RepoPanel: React.FC<RepoListProps> = ({
                 }
 
                 // extra number 1-9
-                if (e.keyCode >= 97 && e.keyCode <= 105 && e.ctrlKey) {
+                if (e.keyCode >= 97 && e.keyCode <= 105 && !e.ctrlKey && numArray.length === 0) {
                     const num = parseInt(e.keyCode) - 96;
                     const index = num + 9 * repoScrollPage - 1;
                     if (repos_key && index < repos_key.length) {
@@ -516,6 +517,7 @@ const RepoPanel: React.FC<RepoListProps> = ({
             preRepoPage,
             setBlur,
             setKeySelect,
+            numArray,
         ]
     );
 
