@@ -23,7 +23,6 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
     const [result, setResult] = useState('');
 
     const [showRenderScrollPos, setShowRenderScrollPos] = useState(false);
-    const [scrollLock, setScrollLock] = useState(false);
 
     const renderRef = useRef<HTMLDivElement>(null);
     const scrollSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -38,6 +37,8 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
             autoScroll.current = true;
             renderRef.current.scrollTop = 0;
             setShowRenderScrollPos(false);
+            console.log(renderTop);
+            console.log(renderRef.current.offsetHeight);
             if (renderTop > renderRef.current.offsetHeight) setShowRenderScrollPos(true);
         }
     }, [dataPath, currentRepoKey, currentFolderKey, currentNoteKey]);
@@ -48,7 +49,6 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
                 if (renderRef && renderRef.current) {
                     const scrollHeight = renderRef.current.scrollHeight;
                     renderRef.current.scrollTop = Math.ceil(scrollHeight * editorScrollRatio);
-                    setScrollLock(true);
                 }
             }, 0);
         }
@@ -82,39 +82,28 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
 
     const handleScroll = useCallback(
         (event: any) => {
-            if (renderRef.current && renderRef.current.contains(event.target)) {
-                if (
-                    Math.ceil(renderRef.current.scrollHeight * editorScrollRatio) ===
-                    renderRef.current.scrollTop
-                ) {
-                    setScrollLock(false);
-                }
-
-                if (!scrollLock) {
-                    if (autoScroll.current) {
-                        autoScroll.current = false;
-                        return;
-                    }
-                    if (scrollSaveTimerRef.current) {
-                        clearTimeout(scrollSaveTimerRef.current);
-                    }
-                    scrollSaveTimerRef.current = setTimeout(() => {
-                        setShowRenderScrollPos(false);
-                        if (renderRef.current) {
-                            const renderScrollValue = renderRef.current.scrollTop;
-                            console.log(renderScrollValue);
-                            updateRenderTop(
-                                currentRepoKey,
-                                currentFolderKey,
-                                currentNoteKey,
-                                renderScrollValue
-                            );
-                        }
-                    }, 100);
-                }
+            if (autoScroll.current) {
+                autoScroll.current = false;
+                return;
             }
+            if (scrollSaveTimerRef.current) {
+                clearTimeout(scrollSaveTimerRef.current);
+            }
+            scrollSaveTimerRef.current = setTimeout(() => {
+                setShowRenderScrollPos(false);
+                if (renderRef.current) {
+                    const renderScrollValue = renderRef.current.scrollTop;
+                    console.log(renderScrollValue);
+                    updateRenderTop(
+                        currentRepoKey,
+                        currentFolderKey,
+                        currentNoteKey,
+                        renderScrollValue
+                    );
+                }
+            }, 100);
         },
-        [renderRef, editorScrollRatio, scrollLock, setShowRenderScrollPos, updateRenderTop]
+        [renderRef, editorScrollRatio, setShowRenderScrollPos, updateRenderTop]
     );
 
     useEffect(() => {
