@@ -203,15 +203,15 @@ const RepoPanel: React.FC<RepoListProps> = ({
             });
 
             updateDxnote(dataPath);
-            updateRepos('repo', { dataPath, repo_key });
+            updateRepos('repo', { data_path: dataPath, repo_key });
             updateRepos('folder', {
-                dataPath,
+                data_path: dataPath,
                 repo_key,
                 folder_key: default_folder_key,
             });
-            changeNotesAfterNew('repo', { dataPath, repo_key });
+            changeNotesAfterNew('repo', { data_path: dataPath, repo_key });
             changeNotesAfterNew('folder', {
-                dataPath,
+                data_path: dataPath,
                 repo_key,
                 folder_key: default_folder_key,
             });
@@ -271,7 +271,7 @@ const RepoPanel: React.FC<RepoListProps> = ({
                 file_path: `${dataPath}/${currentRepoKey}/repo_info.json`,
                 obj: repo_info,
             });
-            updateRepos('repo', { dataPath, repo_key: currentRepoKey });
+            updateRepos('repo', { data_path: dataPath, repo_key: currentRepoKey });
             hideRenamePopup();
             setAllowHiddenAllRepoViaEnter(true);
         }
@@ -374,7 +374,7 @@ const RepoPanel: React.FC<RepoListProps> = ({
                 file_path: `${dataPath}/${currentRepoKey}`,
             });
 
-            updateRepos('repo', { dataPath, repo_key: currentRepoKey });
+            updateRepos('repo', { data_path: dataPath, repo_key: currentRepoKey });
             if (other_repo_key) {
                 repoSwitchInPanel(other_repo_key);
             }

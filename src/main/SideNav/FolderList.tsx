@@ -30,6 +30,8 @@ const FolderList: React.FC<FolderListProps> = ({ keySelect, setFocus, width }) =
         repoNotesFetch,
         folderNotesFetch,
         changeNotesAfterNew,
+        numArray,
+        setNumArray,
     } = useContext(GlobalContext);
 
     const folders_key = repos_obj[currentRepoKey]?.folders_key;
@@ -65,7 +67,6 @@ const FolderList: React.FC<FolderListProps> = ({ keySelect, setFocus, width }) =
     const { xPos, yPos, menu } = useContextMenu(innerRef);
 
     const [folderScrollTop, setFolderScrollTop] = useState(0);
-    const [numArray, setNumArray] = useState<number[]>([]);
 
     // part1 : new folder
     const newFolder = () => {
@@ -126,12 +127,12 @@ const FolderList: React.FC<FolderListProps> = ({ keySelect, setFocus, width }) =
             });
 
             updateRepos('folder', {
-                dataPath,
+                data_path: dataPath,
                 repo_key: currentRepoKey,
                 folder_key,
             });
             changeNotesAfterNew('folder', {
-                dataPath,
+                data_path: dataPath,
                 repo_key: currentRepoKey,
                 folder_key,
             });
@@ -151,12 +152,12 @@ const FolderList: React.FC<FolderListProps> = ({ keySelect, setFocus, width }) =
             });
 
             updateRepos('note', {
-                dataPath,
+                data_path: dataPath,
                 repo_key: currentRepoKey,
                 folder_key: folder_key,
             });
             changeNotesAfterNew('note', {
-                dataPath,
+                data_path: dataPath,
                 repo_key: currentRepoKey,
                 folder_key: folder_key,
                 note_key,
@@ -217,7 +218,7 @@ const FolderList: React.FC<FolderListProps> = ({ keySelect, setFocus, width }) =
                 obj: folder_info,
             });
             updateRepos('folder', {
-                dataPath,
+                data_path: dataPath,
                 repo_key: currentRepoKey,
                 folder_key: currentFolderKey,
             });
@@ -297,9 +298,9 @@ const FolderList: React.FC<FolderListProps> = ({ keySelect, setFocus, width }) =
                 file_path: `${dataPath}/${currentRepoKey}/${currentFolderKey}`,
             });
 
-            updateRepos('repo', { dataPath, repo_key: currentRepoKey });
+            updateRepos('repo', { data_path: dataPath, repo_key: currentRepoKey });
             updateRepos('folder', {
-                dataPath,
+                data_path: dataPath,
                 repo_key: currentRepoKey,
                 folder_key: currentFolderKey,
             });
@@ -358,8 +359,29 @@ const FolderList: React.FC<FolderListProps> = ({ keySelect, setFocus, width }) =
     }, [folderScrollTop]);
 
     useEffect(() => {
+        console.log(numArray);
         if (numArray.length === 2) {
-            folderSwitchByIndex(numArray[0] * 10 + numArray[1]);
+            let new_index = -1;
+
+            if (numArray[0] >= 65 && numArray[0] <= 72) {
+                if (numArray[1] >= 48 && numArray[1] <= 57) {
+                    new_index = (numArray[0] - 65) * 10 + (numArray[1] - 48);
+                }
+            } else if (numArray[0] >= 75 && numArray[0] <= 89) {
+                if (numArray[1] >= 48 && numArray[1] <= 57) {
+                    new_index = (numArray[0] - 65 - 4) * 10 + (numArray[1] - 48);
+                }
+            }
+
+            if (new_index !== -1) {
+                folderSwitchByIndex(new_index);
+                if (innerRef && innerRef.current) {
+                    const height = innerRef.current.offsetHeight;
+                    let offset = new_index * 32 - height / 4;
+                    if (offset < 0) offset = 0;
+                    setFolderScrollTop(offset);
+                }
+            }
             setNumArray([]);
         }
     }, [numArray, folderSwitchByIndex]);
@@ -393,17 +415,6 @@ const FolderList: React.FC<FolderListProps> = ({ keySelect, setFocus, width }) =
                 if ((e.keyCode === 38 || e.keyCode === 73) && e.metaKey && keySelect) {
                     preFolderPage();
                 }
-
-                if (e.keyCode >= 48 && e.keyCode <= 57 && !e.metaKey && keySelect) {
-                    const num = parseInt(e.keyCode) - 48;
-                    if (numArray.length === 0) {
-                        if (folders_key && num < Math.ceil(folders_key.length / 10)) {
-                            setNumArray((state) => state.concat([num]));
-                        }
-                    } else {
-                        setNumArray((state) => state.concat([num]));
-                    }
-                }
             }
             if (process.platform === 'win32' || process.platform === 'linux') {
                 //console.log('这是windows/linux系统');
@@ -419,17 +430,6 @@ const FolderList: React.FC<FolderListProps> = ({ keySelect, setFocus, width }) =
                 // arrow bottom 38 or I 73
                 if ((e.keyCode === 38 || e.keyCode === 73) && e.ctrlKey && keySelect) {
                     preFolderPage();
-                }
-
-                if (e.keyCode >= 48 && e.keyCode <= 57 && !e.ctrlKey && keySelect) {
-                    const num = parseInt(e.keyCode) - 48;
-                    if (numArray.length === 0) {
-                        if (folders_key && num < Math.ceil(folders_key.length / 10)) {
-                            setNumArray((state) => state.concat([num]));
-                        }
-                    } else {
-                        setNumArray((state) => state.concat([num]));
-                    }
                 }
             }
         },
@@ -465,8 +465,12 @@ const FolderList: React.FC<FolderListProps> = ({ keySelect, setFocus, width }) =
         [dataPath, currentRepoKey, folders_key, reorderFolder]
     );
 
-    const genNumberCode1 = (order: number): number => {
-        return Math.ceil(order / 10) + 47;
+    const genAlphaCode1 = (order: number): number => {
+        if (order <= 8 * 10) {
+            return Math.ceil(order / 10) + 64;
+        } else {
+            return 4 + Math.ceil(order / 10) + 64;
+        }
     };
 
     const genNumberCode2 = (order: number): number => {
@@ -520,27 +524,27 @@ const FolderList: React.FC<FolderListProps> = ({ keySelect, setFocus, width }) =
                                                 </FolderName>
                                                 {keySelect &&
                                                 currentFolderKey !== key &&
-                                                index < 10 * 10 ? (
+                                                index < 21 * 10 ? (
                                                     <FolderKeyTab>
                                                         <span
                                                             style={{
                                                                 color:
                                                                     numArray.length >= 1 &&
-                                                                    numArray[0] + 48 ===
-                                                                        genNumberCode1(index + 1)
+                                                                    numArray[0] ===
+                                                                        genAlphaCode1(index + 1)
                                                                         ? '#E9E9E9'
                                                                         : '',
                                                             }}
                                                         >
                                                             {String.fromCharCode(
-                                                                genNumberCode1(index + 1)
+                                                                genAlphaCode1(index + 1)
                                                             )}
                                                         </span>
                                                         <span
                                                             style={{
                                                                 color:
                                                                     numArray.length === 2 &&
-                                                                    numArray[1] + 48 ===
+                                                                    numArray[1] ===
                                                                         genNumberCode2(index + 1)
                                                                         ? '#E9E9E9'
                                                                         : '',

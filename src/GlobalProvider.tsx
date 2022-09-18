@@ -64,6 +64,8 @@ const initContext: {
         note_key: string,
         from_pos: number
     ) => void;
+    numArray: number[];
+    setNumArray: any;
 } = {
     dataPath: '',
     setDataPath: () => {},
@@ -95,6 +97,8 @@ const initContext: {
     fromPos: 0,
     updateCursorHead: () => {},
     updateFromPos: () => {},
+    numArray: [],
+    setNumArray: () => {},
 };
 export const GlobalContext = createContext(initContext);
 
@@ -131,6 +135,8 @@ export const GlobalProvider = ({ children }: { children: any }) => {
     ] = useNotes();
     const [cursorHeads, { updateCursorHead }] = useEditPos();
     const [fromPoses, { updateFromPos }] = useEditLine();
+
+    const [numArray, setNumArray] = useState<number[]>([]);
 
     const repoSwitch = useCallback(
         (repo_key: string | undefined) => {
@@ -228,6 +234,8 @@ export const GlobalProvider = ({ children }: { children: any }) => {
                 fromPos,
                 updateCursorHead,
                 updateFromPos,
+                numArray,
+                setNumArray,
             }}
         >
             {children}

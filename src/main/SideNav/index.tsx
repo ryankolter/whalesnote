@@ -35,6 +35,8 @@ const SideNav: React.FC<SideNavProps> = ({
         repoNotesFetch,
         folderNotesFetch,
         initNotes,
+        numArray,
+        setNumArray,
     } = useContext(GlobalContext);
 
     const miniSearch = useRef<any>();
@@ -251,6 +253,63 @@ const SideNav: React.FC<SideNavProps> = ({
         search();
         console.log(word);
     }, [word]);
+
+    const handleKeyDown = useCallback(
+        (e: any) => {
+            if (process.platform === 'darwin') {
+                if (
+                    ((e.keyCode >= 65 && e.keyCode <= 72) ||
+                        (e.keyCode >= 77 && e.keyCode <= 89)) &&
+                    !e.metaKey &&
+                    keySelect
+                ) {
+                    const num = parseInt(e.keyCode);
+                    if (numArray.length === 0) {
+                        setNumArray((state: any) => state.concat([num]));
+                    } else {
+                        setNumArray((state: any) => state.concat([num]));
+                    }
+                }
+
+                if (e.keyCode >= 48 && e.keyCode <= 57 && !e.metaKey && keySelect) {
+                    const num = parseInt(e.keyCode);
+                    if (numArray.length === 1) {
+                        setNumArray((state: any) => state.concat([num]));
+                    }
+                }
+            }
+            if (process.platform === 'win32' || process.platform === 'linux') {
+                if (
+                    ((e.keyCode >= 65 && e.keyCode <= 72) ||
+                        (e.keyCode >= 77 && e.keyCode <= 89)) &&
+                    !e.ctrlKey &&
+                    keySelect
+                ) {
+                    const num = parseInt(e.keyCode);
+                    if (numArray.length === 0) {
+                        setNumArray((state: any) => state.concat([num]));
+                    } else {
+                        setNumArray((state: any) => state.concat([num]));
+                    }
+                }
+
+                if (e.keyCode >= 48 && e.keyCode <= 57 && !e.ctrlKey && keySelect) {
+                    const num = parseInt(e.keyCode);
+                    if (numArray.length === 1) {
+                        setNumArray((state: any) => state.concat([num]));
+                    }
+                }
+            }
+        },
+        [numArray, keySelect]
+    );
+
+    useEffect(() => {
+        document.addEventListener('keydown', handleKeyDown);
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [handleKeyDown]);
 
     return (
         <LeftPanel>

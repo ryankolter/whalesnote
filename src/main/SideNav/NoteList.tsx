@@ -8,6 +8,7 @@ import { Sortable } from '../../components/Sortable';
 import useContextMenu from '../../lib/useContextMenu';
 import newNoteIcon from '../../resources/icon/newNoteIcon.svg';
 import { GlobalContext } from '../../GlobalProvider';
+import { updateFor } from 'typescript';
 const { ipcRenderer } = window.require('electron');
 
 const NoteList: React.FC<NoteListProps> = ({ keySelect, setFocus, setKeySelect, width }) => {
@@ -21,6 +22,8 @@ const NoteList: React.FC<NoteListProps> = ({ keySelect, setFocus, setKeySelect, 
         updateRepos,
         reorderNote,
         changeNotesAfterNew,
+        numArray,
+        setNumArray,
     } = useContext(GlobalContext);
 
     const notes_key = repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_key;
@@ -29,7 +32,6 @@ const NoteList: React.FC<NoteListProps> = ({ keySelect, setFocus, setKeySelect, 
     const [activeId, setActiveId] = useState(null);
 
     const [noteScrollTop, setNoteScrollTop] = useState(0);
-    const [numArray, setNumArray] = useState<number[]>([]);
 
     const outerRef = useRef<HTMLDivElement>(null);
     const { xPos, yPos, menu } = useContextMenu(outerRef);
@@ -77,12 +79,12 @@ const NoteList: React.FC<NoteListProps> = ({ keySelect, setFocus, setKeySelect, 
         });
 
         updateRepos('note', {
-            dataPath,
+            data_path: dataPath,
             repo_key: currentRepoKey,
             folder_key: currentFolderKey,
         });
         changeNotesAfterNew('note', {
-            dataPath,
+            data_path: dataPath,
             repo_key: currentRepoKey,
             folder_key: currentFolderKey,
             note_key,
@@ -216,26 +218,39 @@ const NoteList: React.FC<NoteListProps> = ({ keySelect, setFocus, setKeySelect, 
 
     useEffect(() => {
         if (numArray.length === 2) {
-            let new_index = 0;
-            if (numArray[0] < 8) {
-                if (numArray[1] < 8) {
-                    new_index = numArray[0] * 22 + numArray[1];
-                } else if (numArray[1] > 11) {
-                    new_index = numArray[0] * 22 + numArray[1] - 4;
-                }
-            } else if (numArray[0] > 11) {
-                if (numArray[1] < 8) {
-                    new_index = (numArray[0] - 4) * 22 + numArray[1];
-                } else if (numArray[1] > 11) {
-                    new_index = (numArray[0] - 4) * 22 + numArray[1] - 4;
+            let new_index = -1;
+            if (notes_key) {
+                if (
+                    numArray[0] >= 65 &&
+                    numArray[0] <= 72 &&
+                    numArray[0] < Math.ceil(notes_key.length / 22) + 65
+                ) {
+                    if (numArray[1] <= 72 && numArray[0] >= 65) {
+                        new_index = (numArray[0] - 65) * 22 + (numArray[1] - 65);
+                    } else if (numArray[1] >= 75 && numArray[1] <= 89) {
+                        new_index = (numArray[0] - 65) * 22 + (numArray[1] - 65) - 4;
+                    }
+                } else if (
+                    numArray[0] >= 75 &&
+                    numArray[0] <= 89 &&
+                    numArray[0] < Math.ceil(notes_key.length / 22) + 65 + 4
+                ) {
+                    if (numArray[1] <= 72 && numArray[1] >= 65) {
+                        new_index = (numArray[0] - 65 - 4) * 22 + (numArray[1] - 65);
+                    } else if (numArray[1] >= 75 && numArray[1] <= 89) {
+                        new_index = (numArray[0] - 65 - 4) * 22 + (numArray[1] - 65) - 4;
+                    }
                 }
             }
-            noteSwitchByIndex(new_index);
-            if (outerRef && outerRef.current) {
-                const height = outerRef.current.offsetHeight;
-                let offset = new_index * 36 - height / 4;
-                if (offset < 0) offset = 0;
-                setNoteScrollTop(offset);
+
+            if (new_index !== -1) {
+                noteSwitchByIndex(new_index);
+                if (outerRef && outerRef.current) {
+                    const height = outerRef.current.offsetHeight;
+                    let offset = new_index * 36 - height / 4;
+                    if (offset < 0) offset = 0;
+                    setNoteScrollTop(offset);
+                }
             }
             setNumArray([]);
         }
@@ -269,25 +284,6 @@ const NoteList: React.FC<NoteListProps> = ({ keySelect, setFocus, setKeySelect, 
                 if ((e.keyCode === 38 || e.keyCode === 73) && !e.metaKey && keySelect) {
                     preNotePage();
                 }
-                if (
-                    ((e.keyCode >= 65 && e.keyCode <= 72) ||
-                        (e.keyCode >= 77 && e.keyCode <= 89)) &&
-                    !e.metaKey &&
-                    keySelect
-                ) {
-                    const num = parseInt(e.keyCode) - 65;
-                    if (numArray.length === 0) {
-                        if (
-                            notes_key &&
-                            ((num < 8 && num < Math.ceil(notes_key.length / 22)) ||
-                                (num > 11 && num < Math.ceil(notes_key.length / 22) + 4))
-                        ) {
-                            setNumArray((state) => state.concat([num]));
-                        }
-                    } else {
-                        setNumArray((state) => state.concat([num]));
-                    }
-                }
             }
             if (process.platform === 'win32' || process.platform === 'linux') {
                 //console.log('这是windows/linux系统');
@@ -304,25 +300,9 @@ const NoteList: React.FC<NoteListProps> = ({ keySelect, setFocus, setKeySelect, 
                 if ((e.keyCode === 38 || e.keyCode === 73) && !e.ctrlKey && keySelect) {
                     preNotePage();
                 }
-
-                if (
-                    ((e.keyCode >= 65 && e.keyCode <= 72) ||
-                        (e.keyCode >= 77 && e.keyCode <= 89)) &&
-                    !e.ctrlKey &&
-                    keySelect
-                ) {
-                    const num = parseInt(e.keyCode) - 65;
-                    if (numArray.length === 0) {
-                        if (notes_key && num < Math.ceil(notes_key.length / 26)) {
-                            setNumArray((state) => state.concat([num]));
-                        }
-                    } else {
-                        setNumArray((state) => state.concat([num]));
-                    }
-                }
             }
         },
-        [numArray, keySelect, notes_key, newNote, nextNotePage, preNotePage]
+        [keySelect, newNote, nextNotePage, preNotePage]
     );
 
     useEffect(() => {
@@ -420,7 +400,7 @@ const NoteList: React.FC<NoteListProps> = ({ keySelect, setFocus, setKeySelect, 
                                                             style={{
                                                                 color:
                                                                     numArray.length >= 1 &&
-                                                                    numArray[0] + 65 ===
+                                                                    numArray[0] ===
                                                                         genAlphaCode1(index + 1)
                                                                         ? '#E9E9E9'
                                                                         : '',
@@ -437,7 +417,7 @@ const NoteList: React.FC<NoteListProps> = ({ keySelect, setFocus, setKeySelect, 
                                                             style={{
                                                                 color:
                                                                     numArray.length === 2 &&
-                                                                    numArray[1] + 65 ===
+                                                                    numArray[1] ===
                                                                         genAlphaCode2(index + 1)
                                                                         ? '#E9E9E9'
                                                                         : '',
