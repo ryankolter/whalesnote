@@ -43,7 +43,7 @@ const SideNav: React.FC<SideNavProps> = ({
     const searchInputRef = useRef<HTMLInputElement>(null);
 
     const [folderWidth, setFolderWidth] = useState(130);
-    const [noteWidth, setNoteWidth] = useState(200);
+    const [noteWidth, setNoteWidth] = useState(220);
     const [word, setWord] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [showSearchPanel, setShowSearchPanel] = useState(false);
@@ -457,13 +457,12 @@ const LeftPanel = styled.div({
     display: 'flex',
     flexDirection: 'column',
     height: '100%',
-    padding: '10px',
+    padding: '12px 0 12px 15px',
     boxSizing: 'border-box',
 });
 
 const ToolBar = styled.div({
     display: 'flex',
-    margin: '0 0 0 5px',
 });
 
 const Search = styled.div({
@@ -493,7 +492,7 @@ const SearchPanel = styled.div({
     height: 'calc(90vh)',
     padding: '10px',
     boxSizing: 'border-box',
-    border: '1px solid rgba(58, 64, 76, 0.8)',
+    border: '1px solid rgb(58, 64, 76)',
     backgroundColor: '#2C3033',
     zIndex: '999999',
 });
@@ -599,7 +598,7 @@ const SelectArea = styled.div({
     flexDirection: 'column',
     flex: '1',
     minHeight: '0',
-    margin: '10px 0',
+    margin: '10px 0 0 0',
 });
 
 const DirectoryBtnArea = styled.div();
@@ -625,7 +624,6 @@ const List = styled.div({
     flex: '1',
     minHeight: '0',
     borderBottomLeftRadius: '4px',
-    padding: '0 0 0 5px',
 });
 
 type SideNavProps = {

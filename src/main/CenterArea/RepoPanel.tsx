@@ -831,7 +831,7 @@ const ReposScroll = styled.div(
     },
     `
     &::-webkit-scrollbar {
-        height: 10px;
+        height: 9px;
     }
     &::-webkit-scrollbar-track {
         background-color: #2C3033;

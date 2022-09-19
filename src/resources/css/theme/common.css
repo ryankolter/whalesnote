@@ -9,6 +9,7 @@
 
 .cm-gutter {
     line-height: 24px;
+    background-color: rgb(62, 62, 62);
 }
 
 .cm-gutters {
@@ -18,6 +19,7 @@
 .cm-foldGutter {
     width: 14px;
     padding: 0 4px 0 0;
+    border-right: 1px solid rgb(110, 110, 110);
 }
 
 .cm-foldGutter .cm-gutterElement {
@@ -25,8 +27,21 @@
     transform: translateY(-4px);
 }
 
+.cm-lineNumbers .cm-gutterElement {
+    min-width: 24px !important;
+}
+
+.cm-activeLineGutter {
+    background-color: rgb(62, 62, 62) !important;
+}
+
 .cm-focused {
     outline: none !important;
+}
+
+.cm-content {
+    padding: 0 !important;
+    margin-left: 4px !important;
 }
 
 .cm-line {
@@ -36,7 +51,7 @@
 }
 
 .cm-scroller::-webkit-scrollbar {
-    width: 9px;
+    width: 8px;
 }
 
 .cm-scroller::-webkit-scrollbar-track {
@@ -72,7 +87,7 @@
 }
 
 .rd-theme-common::-webkit-scrollbar {
-    width: 9px;
+    width: 8px;
 }
 
 .rd-theme-common::-webkit-scrollbar-track {

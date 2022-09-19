@@ -34,9 +34,9 @@ const CenterArea: React.FC<CenterAreaProps> = ({
     const folders_obj = repos_obj[currentRepoKey]?.folders_obj;
     const notes_obj = repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj;
 
-    const [editorHeight, setEditorHeight] = useState('calc(100vh - 40px - 20px)');
-    const [renderHeight, setRenderHeight] = useState('0');
-    const [renderTop, setRenderTop] = useState('calc(100vh - 20px)');
+    const [editorWidth, setEditorWidth] = useState('100%');
+    const [renderWidth, setRenderWidth] = useState('0');
+    const [renderLeft, setRenderLeft] = useState('100%');
 
     const [renderPanelState, setRenderPanelState] = useState('hidden');
     const [showSwitchModePanel, setShowSwitchModePanel] = useState(false);
@@ -51,19 +51,25 @@ const CenterArea: React.FC<CenterAreaProps> = ({
 
     useEffect(() => {
         if (renderPanelState === 'hidden') {
-            setEditorHeight('calc(100vh - 40px - 12px)');
-            setRenderHeight('0');
-            setRenderTop('calc(100vh - 20px)');
+            setEditorWidth('100%');
+            setRenderWidth('0');
+            setRenderLeft('100%');
         } else if (renderPanelState === 'half') {
-            setEditorHeight('calc(50vh - 30px)');
-            setRenderHeight('calc(50vh - 30px)');
-            setRenderTop('calc(50vh - 20px)');
+            setEditorWidth('calc(50% - 6px)');
+            setRenderWidth('calc(50% - 6px)');
+            setRenderLeft('calc(50%)');
         } else if (renderPanelState === 'all') {
-            setEditorHeight('calc(100vh - 40px - 12px)');
-            setRenderHeight('calc(100vh - 40px - 10px)');
-            setRenderTop('0');
+            setEditorWidth('100%');
+            setRenderWidth('100%');
+            setRenderLeft('0');
         }
     }, [renderPanelState]);
+
+    useEffect(() => {
+        if (showAssistantPanel) {
+            setRenderPanelState('hidden');
+        }
+    }, [showAssistantPanel]);
 
     const handleKeyDown = useCallback(
         (e: any) => {
@@ -266,7 +272,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
     return dataPath ? (
         <CenterAreaContainer>
             <MarkdownArea>
-                <EditorPanel heightValue={editorHeight}>
+                <EditorPanel widthValue={editorWidth}>
                     <MarkdownEditor
                         theme={theme}
                         focus={focus}
@@ -276,7 +282,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                         setEditorScrollRatio={setEditorScrollRatio}
                     />
                 </EditorPanel>
-                <RenderPanel topValue={renderTop} heightValue={renderHeight}>
+                <RenderPanel topValue={renderLeft} widthValue={renderWidth}>
                     {renderPanelState !== 'hidden' ? (
                         <MarkdownRender
                             content={content}
@@ -399,52 +405,58 @@ const CenterArea: React.FC<CenterAreaProps> = ({
 };
 
 const CenterAreaContainer = styled.div({
+    display: 'flex',
+    flexDirection: 'column',
     position: 'relative',
     flex: '1',
     minWidth: '0',
-    margin: '10px 10px 0 0',
+    height: '100%',
+    boxSizing: 'border-box',
+    padding: '12px 15px 8px 12px',
 });
 
-const MarkdownArea = styled.div({});
+const MarkdownArea = styled.div({
+    position: 'relative',
+    flex: '1',
+    minHeight: '0',
+    width: '100%',
+});
 
 const EditorPanel = styled.div(
     {
-        width: '100%',
+        height: '100%',
     },
-    (props: { heightValue: string }) => ({
-        height: props.heightValue,
+    (props: { widthValue: string }) => ({
+        width: props.widthValue,
     })
 );
 
 const RenderPanel = styled.div(
     {
         position: 'absolute',
-        width: '100%',
+        top: '0',
+        height: 'calc(100% + 2px)',
+        boxSizing: 'border-box',
     },
-    (props: { topValue: string; heightValue: string }) => ({
-        top: props.topValue,
-        height: props.heightValue,
+    (props: { topValue: string; widthValue: string }) => ({
+        left: props.topValue,
+        width: props.widthValue,
     })
 );
 
 const BottomRow = styled.div({
     width: '100%',
-    position: 'absolute',
-    left: '0',
-    bottom: '0',
     display: 'flex',
     alignItems: 'center',
-    zIndex: '9999',
+    padding: '10px 10px 0 0',
 });
 
 const BreakCrumb = styled.div({
     width: '100%',
-    height: '32px',
     flex: '1',
     minWidth: '0',
     display: 'flex',
     alignItems: 'center',
-    padding: '4px 4px 4px 0',
     zIndex: '9999',
 });
 
@@ -522,13 +534,13 @@ const GreaterTag = styled.div({
 });
 
 const AllRepo = styled.div({
-    width: 'calc(100% - 100px)',
+    width: 'calc(100% - 20px)',
     position: 'absolute',
-    left: '0',
-    bottom: '40px',
+    left: '10px',
+    bottom: '48px',
     padding: '10px',
     boxSizing: 'border-box',
-    border: '1px solid rgba(58, 64, 76)',
+    border: '1px solid rgb(58, 64, 76)',
     borderRadius: '8px',
     backgroundColor: '#2C3033',
     zIndex: '9999',
@@ -536,7 +548,6 @@ const AllRepo = styled.div({
 
 const SwitchMode = styled.div({
     position: 'relative',
-    height: '40px',
     display: 'flex',
     flexDirection: 'row-reverse',
     cursor: 'pointer',
@@ -546,8 +557,8 @@ const SwitchModeBtn = styled.div({
     display: 'flex',
     width: '110px',
     boxSizing: 'border-box',
-    height: '28px',
-    margin: '7px 5px',
+    height: '30px',
+    margin: '1px 5px',
     padding: '0 14px',
     backgroundColor: 'rgb(58, 64, 76)',
     borderRadius: '14px',
@@ -562,7 +573,7 @@ const ModeNameTag = styled.div({
 
 const ModeName = styled.div({
     fontSize: '14px',
-    lineHeight: '28px',
+    lineHeight: '30px',
     color: '#939395',
 });
 
@@ -572,7 +583,7 @@ const Triangle = styled.div({
     width: '0',
     marginLeft: '4px',
     borderBottom: '9px solid #939395',
-    borderTop: '9px solid transparent',
+    borderTop: '10px solid transparent',
     borderLeft: '6px solid transparent',
     borderRight: '6px solid transparent',
 });
@@ -589,6 +600,7 @@ const SwitchModePanel = styled.div({
     backgroundColor: '#2C3033',
     border: '1px solid rgba(58, 64, 76)',
     borderRadius: '4px',
+    zIndex: '99999',
 });
 
 const ModeOption = styled.div({

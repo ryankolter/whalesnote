@@ -692,17 +692,6 @@ const Folders = styled.div(
 `
 );
 
-// &::-webkit-scrollbar {
-//     width: 8px;
-// }
-// &::-webkit-scrollbar-track {
-//     background-color: #2C3033;
-// }
-// &::-webkit-scrollbar-thumb {
-//     background-color: hsla(0,0%,78%,.2);
-//     border-radius: 3px;
-// }
-
 const FolderItem = styled.div(
     {
         display: 'flex',
