@@ -24,18 +24,20 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
         markdownIt({
             breaks: true,
             linkify: true,
-            // highlight: function (str, lang) {
-            //     if (lang && hljs.getLanguage(lang)) {
-            //       try {
-            //         return '<pre class="hljs"><code>' +
-            //                hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
-            //                '</code></pre>';
-            //       } catch (__) {}
-            //     }
+            highlight: function (str, lang) {
+                if (lang && hljs.getLanguage(lang)) {
+                    try {
+                        return (
+                            '<pre><code class="hljs">' +
+                            hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
+                            '</code></pre>'
+                        );
+                    } catch (__) {}
+                }
 
-            //     return '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>';
-            //   }
-        }).use(highlightjs)
+                return '<pre><code class="hljs">' + md.utils.escapeHtml(str) + '</code></pre>';
+            },
+        })
     );
     const [result, setResult] = useState('');
 

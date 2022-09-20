@@ -261,10 +261,3 @@ body {
 .common-theme-rd ul > li > ul > li > ul > li {
     margin: 0 0 0.5em -0.7em !important;
 }
-
-.common-theme-rd pre code.hljs {
-    display: block;
-    overflow-x: auto;
-    padding: 1em;
-	tab-size: 4;
-}
