@@ -2,14 +2,16 @@
 
 .grey-theme-global {
     --main-text-color: #939395;
-    --input-text-color: #A9B7C6;
-    --main-bg-color: #2C3033;
     --title-text-color: #939395;
+    --input-text-color: #A9B7C6;
+    --hover-text-color: #DDDDDD;
+
+    --main-bg-color: #2C3033;
     --btn-1-bg-color: #3A404C;
-    --tips-1-bg-color: rgba(47, 51, 56);
-    --hover-text-color: #ddd;
+    --tips-1-bg-color: #2F3338;
     --selected-bg-color: #3A404C;
-    --scroller-color: hsla(0, 0%, 78%, 0.2);
+    
+    --scroller-color: #C7C7C733;
     --border-1-color: #3A404C;
 }
 
