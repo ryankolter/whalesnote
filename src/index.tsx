@@ -2,7 +2,8 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 import './resources/css/theme/common.css';
-import './resources/css/theme/dark.css';
+import './resources/css/theme/grey.css';
+import './resources/css/theme/color.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 

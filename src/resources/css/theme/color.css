@@ -1,0 +1,81 @@
+/* ---------- global color class---------- */
+
+.body-color {
+    color: var(--main-text-color);
+    background-color: var(--main-bg-color);
+}
+
+.float-panel-color {
+    border: 1px solid var(--btn-1-bg-color);
+    background-color: var(--main-bg-color);
+}
+
+.left-panel-color {
+    color: var(--main-text-color);
+}
+
+.search-input {
+    color: var(--input-text-color) !important;
+    background-color: var(--main-bg-color) !important;
+}
+
+.title-1-color {
+    color: var(--title-text-color);
+}
+
+.btn-1-bg-color {
+    background-color: var(--btn-1-bg-color);
+}
+
+.tips-1-bg-color {
+    background-color: var(--tips-1-bg-color);
+}
+
+.tips-1-border-color {
+    border: 1px dotted var(--btn-1-bg-color);
+}
+
+.key-tab-color {
+    background-color: var(--btn-1-bg-color);
+}
+
+.item-hover-color:hover {
+    color: var(--hover-text-color);
+}
+
+.item-selected-color {
+    background-color: var(--selected-bg-color);
+}
+
+.item-selected-color:before {
+    border-color: transparent transparent transparent var(--selected-bg-color);
+}
+
+.menu-ui-color {
+    border: 1px solid #BABABA;
+    background-color: #FFFFFF;
+}
+
+.menu-li-color:hover {
+    background-color: #EBEBEB; 
+}
+
+.notes-border {
+    border: 1.5px solid var(--border-1-color);
+}
+
+.notes-scroller::-webkit-scrollbar-thumb {
+    background-color: var(--scroller-color);
+}
+
+.notes-scroller::-webkit-scrollbar-track {
+    background-color: inherit !important;
+}
+
+.repos-scroller::-webkit-scrollbar-thumb {
+    background-color: var(--scroller-color);
+}
+
+.repos-scroller::-webkit-scrollbar-track {
+    background-color: inherit !important;
+}

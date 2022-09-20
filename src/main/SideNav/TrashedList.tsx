@@ -55,8 +55,13 @@ const TrashList: React.FC<TrashListProps> = ({
                     );
                 })}
                 {menu && currentNoteKey ? (
-                    <MenuUl top={yPos} left={xPos}>
-                        <MenuLi onClick={() => deleteNote(currentNoteKey)}>彻底删除</MenuLi>
+                    <MenuUl top={yPos} left={xPos} className="menu-ui-color">
+                        <MenuLi
+                            className="menu-li-color"
+                            onClick={() => deleteNote(currentNoteKey)}
+                        >
+                            彻底删除
+                        </MenuLi>
                     </MenuUl>
                 ) : (
                     <></>

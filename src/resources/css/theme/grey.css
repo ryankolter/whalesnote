@@ -1,0 +1,139 @@
+/* ---------- grey theme for global ---------- */
+
+.grey-theme-global {
+    --main-text-color: #939395;
+    --input-text-color: #A9B7C6;
+    --main-bg-color: #2C3033;
+    --title-text-color: #939395;
+    --btn-1-bg-color: #3A404C;
+    --tips-1-bg-color: rgba(47, 51, 56);
+    --hover-text-color: #ddd;
+    --selected-bg-color: #3A404C;
+    --scroller-color: hsla(0, 0%, 78%, 0.2);
+    --border-1-color: #3A404C;
+}
+
+/* ---------- grey theme for codemirror ---------- */
+
+.grey-theme-cm {
+    background-color: var(--main-bg-color);
+}
+
+/* editor */
+
+.grey-theme-cm .cm-editor {
+    color: #a9b7c6;
+    background-color: inherit !important;
+}
+
+/* ͼ */
+
+.grey-theme-cm .ͼ11 {
+    color: #a9b7c6;
+}
+
+.grey-theme-cm .ͼ13 {
+    color: #999999;
+}
+
+/* gutter */
+
+.grey-theme-cm .cm-gutter {
+    background-color: rgb(62, 62, 62);
+}
+
+.grey-theme-cm .cm-foldGutter {
+    border-right: 1px solid rgb(110, 110, 110);
+}
+
+.grey-theme-cm .cm-activeLineGutter {
+    background-color: rgb(62, 62, 62) !important;
+}
+
+/* scroller */
+
+.grey-theme-cm .cm-scroller::-webkit-scrollbar-thumb {
+    background-color: var(--scroller-color);
+}
+
+.grey-theme-cm .cm-scroller::-webkit-scrollbar-track {
+    background-color: inherit !important;
+}
+
+
+/* #a9b7c6    #999183*/
+
+/* ---------- grey theme for render ---------- */
+
+.grey-theme-rd {
+    color: #999183 !important;
+    background: #2c3033 !important;
+}
+
+
+/* render */
+
+.grey-theme-rd code {
+    color: #999183;
+    border-color: #3d4450;
+    /* background-color: #363a3e; */
+}
+
+.grey-theme-rd pre {
+    background: #212121 !important;
+}
+
+.grey-theme-rd pre code.hljs::-webkit-scrollbar-thumb {
+    background-color: var(--scroller-color);
+}
+
+.grey-theme-rd h2 {
+    border-bottom: solid 1.5px #999183;
+}
+
+.grey-theme-rd blockquote::before {
+    color: #7f8c8d;
+}
+
+.grey-theme-rd blockquote p {
+    color: #7f8c8d;
+}
+
+.grey-theme-rd hr {
+    border-bottom: solid 1px #999183;
+}
+
+.grey-theme-rd a {
+    color: #2bac8f;
+}
+
+.grey-theme-rd a:hover {
+    background-color: rgba(90, 214, 186, 0.2) !important;
+}
+
+.grey-theme-rd ul > li > ul {
+    border-left: 5px solid #3d4450;
+}
+
+.grey-theme-rd ul > li > ul > li > ul {
+    border-left: 4px solid #3d4450;
+}
+
+.grey-theme-rd ul > li > ul > li > ul > li > ul {
+    border-left: 3px solid #3d4450;
+}
+
+
+/* scroller */
+
+.grey-theme-rd::-webkit-scrollbar-thumb {
+    background-color: var(--scroller-color);
+}
+
+.grey-theme-rd::-webkit-scrollbar-track {
+    background-color: inherit !important;
+}
+
+.grey-theme-rd pre code.hljs::-webkit-scrollbar-track {
+    background-color: inherit !important;
+}

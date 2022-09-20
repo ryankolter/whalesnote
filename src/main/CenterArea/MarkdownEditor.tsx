@@ -4,13 +4,14 @@ import { GlobalContext } from '../../GlobalProvider';
 import { basicSetup } from 'codemirror';
 import { EditorState, StateEffect, SelectionRange } from '@codemirror/state';
 import { EditorView, keymap, ViewUpdate } from '@codemirror/view';
-import { indentWithTab, history } from '@codemirror/commands';
+import { indentWithTab, history, insertBlankLine } from '@codemirror/commands';
 import { oneDark } from '@codemirror/theme-one-dark';
 import { indentUnit } from '@codemirror/language';
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
 import { languages } from '@codemirror/language-data';
-import { autocompletion } from '@codemirror/autocomplete';
+import { Completion, autocompletion, completionStatus } from '@codemirror/autocomplete';
 import { KeyboardSensor } from '@dnd-kit/core';
+import { CompletionEntry } from 'typescript';
 
 export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     theme,
@@ -44,6 +45,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     const scrollSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
     const scrollRatioSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
     const noteSwitchRef = useRef<boolean>(false);
+    const newPosAfterComplete = useRef<number>(0);
 
     const docChangeHandler = useCallback(
         (new_value: string, viewUpdate: any) => {
@@ -184,8 +186,23 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
 
         const space_count = word.to - word.from - (assistant_word.to - assistant_word.from);
 
-        const langs = ['bash', 'js', 'go'];
+        const langs = [
+            '',
+            'bash',
+            'cpp',
+            'css',
+            'go',
+            'html',
+            'java',
+            'js',
+            'php',
+            'py',
+            'ruby',
+            'sql',
+            'swift',
+        ];
         const options = [];
+        const newPosAfterCompletion = assistant_word.to + space_count + 1;
 
         for (const lang of langs) {
             let label = '```' + lang + '\n';
@@ -197,7 +214,28 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
                 label += ' ';
             }
             label += '```';
-            options.push({ label });
+            label += '\n';
+            for (let i = 0; i < space_count; ++i) {
+                label += ' ';
+            }
+            options.push({
+                label,
+                apply: (view: EditorView, completion: Completion, from: number, to: number) => {
+                    view.dispatch({
+                        changes: {
+                            from: word.from + space_count,
+                            to: word.to,
+                            insert: label,
+                        },
+                    });
+                    view.dispatch({
+                        selection: {
+                            anchor: newPosAfterCompletion,
+                            head: newPosAfterCompletion,
+                        },
+                    });
+                },
+            });
         }
 
         return {
@@ -213,10 +251,11 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
         defaultThemeOption,
         keymap.of([indentWithTab]),
         EditorView.lineWrapping,
-        markdown({ base: markdownLanguage, codeLanguages: languages }),
+        markdown({ base: markdownLanguage, addKeymap: false, codeLanguages: languages }),
         indentUnit.of('    '),
         autocompletion({
             activateOnTyping: true,
+            aboveCursor: true,
             override: [myCompletions],
         }),
     ];
@@ -321,16 +360,21 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
         };
     }, [handleKeyDown]);
 
-    const wrappedClassNames = typeof theme === 'string' ? `cm-theme-${theme}` : 'cm-theme';
+    const themeClassNames =
+        typeof theme === 'string'
+            ? `${theme}-theme-cm common-theme-cm`
+            : 'grey-theme-cm common-theme-cm';
 
     return (
         <MarkdownEditorContainer>
             {showEditorScrollPos && renderPanelState !== 'all' ? (
-                <LastScrollPos onClick={autoScrollToLine}>上次在</LastScrollPos>
+                <LastScrollPos className="btn-1-bg-color" onClick={autoScrollToLine}>
+                    上次在
+                </LastScrollPos>
             ) : (
                 <></>
             )}
-            <div ref={editor} className={wrappedClassNames} />
+            <div ref={editor} className={themeClassNames} />
         </MarkdownEditorContainer>
     );
 };
@@ -350,9 +394,7 @@ const LastScrollPos = styled.div(
         lineHeight: '30px',
         fontSize: '16px',
         padding: '0 12px 0 6px',
-        zIndex: 9,
-        color: '#939395',
-        backgroundColor: '#3a404c',
+        zIndex: 99,
         cursor: 'pointer',
     },
     `

@@ -357,7 +357,7 @@ const NoteList: React.FC<NoteListProps> = ({ keySelect, setFocus, setKeySelect, 
 
     return (
         <NoteListContainer width={width}>
-            <NoteAddFloat>
+            <NoteAddFloat className="btn-1-bg-color">
                 {dataPath ? (
                     <NoteAddBtn onKeyDown={(e) => handleKeyDown(e)} onClick={() => newNote()}>
                         <img src={newNoteIcon} alt="" />
@@ -374,7 +374,7 @@ const NoteList: React.FC<NoteListProps> = ({ keySelect, setFocus, setKeySelect, 
                     onDragEnd={handleDragEnd}
                 >
                     <SortableContext items={notes_key} strategy={verticalListSortingStrategy}>
-                        <Notes ref={outerRef}>
+                        <Notes ref={outerRef} className="notes-scroller notes-border">
                             {notes_key
                                 .filter((key: string) => notes_obj && notes_obj[key])
                                 .map((key: string, index: number) => {
@@ -382,10 +382,11 @@ const NoteList: React.FC<NoteListProps> = ({ keySelect, setFocus, setKeySelect, 
                                         <Sortable key={key} id={key}>
                                             <NoteItem
                                                 key={`item-${key}`}
-                                                style={{
-                                                    backgroundColor:
-                                                        currentNoteKey === key ? '#3a404c' : '',
-                                                }}
+                                                className={
+                                                    currentNoteKey === key
+                                                        ? 'item-selected-color item-hover-color'
+                                                        : 'item-hover-color'
+                                                }
                                                 onClick={() => noteSwitch(key)}
                                                 onContextMenu={() => {
                                                     if (currentNoteKey !== key) noteSwitch(key);
@@ -395,7 +396,7 @@ const NoteList: React.FC<NoteListProps> = ({ keySelect, setFocus, setKeySelect, 
                                                 {keySelect &&
                                                 currentNoteKey !== key &&
                                                 index < 22 * 21 ? (
-                                                    <NoteKeyTab>
+                                                    <NoteKeyTab className="key-tab-color">
                                                         <span
                                                             style={{
                                                                 color:
@@ -440,7 +441,7 @@ const NoteList: React.FC<NoteListProps> = ({ keySelect, setFocus, setKeySelect, 
                                 })}
                             {notes_key.filter((key: string) => notes_obj && notes_obj[key])
                                 .length <= 1 ? (
-                                <AddNotesTips>
+                                <AddNotesTips className="tips-1-bg-color tips-1-border-color">
                                     <div>点击按钮</div>
                                     <div>添加新文档</div>
                                 </AddNotesTips>
@@ -456,8 +457,11 @@ const NoteList: React.FC<NoteListProps> = ({ keySelect, setFocus, setKeySelect, 
                                 ref={notesEnd}
                             ></div>
                             {menu && currentNoteKey ? (
-                                <MenuUl top={yPos} left={xPos}>
-                                    <MenuLi onClick={() => deleteNote(currentNoteKey)}>
+                                <MenuUl top={yPos} left={xPos} className="menu-ui-color">
+                                    <MenuLi
+                                        className="menu-li-color"
+                                        onClick={() => deleteNote(currentNoteKey)}
+                                    >
                                         扔到废纸篓
                                     </MenuLi>
                                 </MenuUl>
@@ -471,10 +475,11 @@ const NoteList: React.FC<NoteListProps> = ({ keySelect, setFocus, setKeySelect, 
                             {activeId && notes_obj ? (
                                 <NoteItem
                                     key={activeId}
-                                    style={{
-                                        backgroundColor:
-                                            currentNoteKey === activeId ? '#3a404c' : '',
-                                    }}
+                                    className={
+                                        currentNoteKey === activeId
+                                            ? 'item-selected-color item-hover-color'
+                                            : 'item-hover-color'
+                                    }
                                     onClick={() => noteSwitch(activeId)}
                                     onContextMenu={() => {
                                         if (currentNoteKey !== activeId) noteSwitch(activeId);
@@ -516,7 +521,6 @@ const NoteAddFloat = styled.div({
     alignItems: 'center',
     flexDirection: 'row',
     borderRadius: '30px',
-    background: '#3A404C',
     zIndex: '9999',
 });
 
@@ -527,47 +531,30 @@ const NoteAddBtn = styled.div({
     display: 'flex',
     alignItem: 'center',
     justifyContent: 'center',
-    color: '#939395',
     cursor: 'pointer',
 });
 
-const Notes = styled.div(
-    {
-        overflowY: 'scroll',
-        flex: '1',
-        minHeight: '0',
-        padding: '10px 0 70px 0',
-        border: '1.5px solid rgb(58, 64, 76)',
-        borderRadius: '8px',
-        scrollBehavior: 'smooth',
-    },
-    `
-    &::-webkit-scrollbar {
-        display: none;
-    }
-`
-);
+const Notes = styled.div({
+    overflowY: 'auto',
+    flex: '1',
+    minHeight: '0',
+    padding: '10px 0 70px 0',
+    borderRadius: '8px',
+    scrollBehavior: 'smooth',
+});
 
-const NoteItem = styled.div(
-    {
-        position: 'relative',
-        height: '36px',
-        lineHeight: '36px',
-        padding: '0 10px',
-        margin: '0 10px',
-        fontSize: '14px',
-        color: '#939395',
-        cursor: 'pointer',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap',
-    },
-    `&:hover {
-    color: #ddd;
-    background-color: rgba(47, 51, 56, 0.2);
-  }
-`
-);
+const NoteItem = styled.div({
+    position: 'relative',
+    height: '36px',
+    lineHeight: '36px',
+    padding: '0 10px',
+    margin: '0 10px',
+    fontSize: '14px',
+    cursor: 'pointer',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+});
 
 const NoteKeyTab = styled.div({
     display: 'flex',
@@ -582,11 +569,9 @@ const NoteKeyTab = styled.div({
     letterSpacing: '1px',
     padding: '2px 4px',
     borderRadius: '4px',
-    backgroundColor: 'rgb(58, 64, 76)',
 });
 
 const AddNotesTips = styled.div({
-    color: '#939395',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -595,10 +580,8 @@ const AddNotesTips = styled.div({
     position: 'absolute',
     bottom: '80px',
     right: '20px',
-    border: '1px dotted rgba(58, 64, 76)',
     padding: '5px 10px',
     borderRadius: '5px',
-    background: 'rgba(47, 51, 56)',
 });
 
 const MenuUl = styled.ul(
@@ -606,9 +589,6 @@ const MenuUl = styled.ul(
         listStyleType: 'none',
         position: 'fixed',
         padding: '4px 0',
-        border: '1px solid #BABABA',
-        color: '#000000',
-        backgroundColor: '#FFFFFF',
         zIndex: '99999',
     },
     (props: { top: string; left: string }) => ({
@@ -617,18 +597,12 @@ const MenuUl = styled.ul(
     })
 );
 
-const MenuLi = styled.li(
-    {
-        padding: '0 22px',
-        fontSize: '12px',
-        lineHeight: '22px',
-        cursor: 'pointer',
-    },
-    `&:hover {
-    background-color: #EBEBEB; 
-  }
-`
-);
+const MenuLi = styled.li({
+    padding: '0 22px',
+    fontSize: '12px',
+    lineHeight: '22px',
+    cursor: 'pointer',
+});
 
 type NoteListProps = {
     keySelect: boolean;

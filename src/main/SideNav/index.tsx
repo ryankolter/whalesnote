@@ -341,7 +341,7 @@ const SideNav: React.FC<SideNavProps> = ({
     }, [handleKeyDown]);
 
     return (
-        <LeftPanel>
+        <LeftPanel className={'left-panel-color'}>
             <ToolBar>
                 <DirectoryBtnArea>
                     {dataPath ? (
@@ -352,6 +352,7 @@ const SideNav: React.FC<SideNavProps> = ({
                         />
                     ) : (
                         <PathAddBtn
+                            className="btn-1-bg-color"
                             onClick={() => {
                                 addDataPath();
                             }}
@@ -363,6 +364,7 @@ const SideNav: React.FC<SideNavProps> = ({
                 {dataPath ? (
                     <Search>
                         <SearchInput
+                            className="search-input"
                             ref={searchInputRef}
                             onChange={handleSearchInputChange}
                             onKeyDown={handleSearchInputEnter}
@@ -370,10 +372,11 @@ const SideNav: React.FC<SideNavProps> = ({
                             placeholder="搜索"
                         />
                         {showSearchPanel ? (
-                            <SearchPanel>
+                            <SearchPanel className="float-panel-color ">
                                 <SearchTool>
                                     <UpdateIndex>
                                         <UpdateIndexBtn
+                                            className="btn-1-bg-color"
                                             onClick={() => {
                                                 updateMiniSearch();
                                                 search();
@@ -395,7 +398,7 @@ const SideNav: React.FC<SideNavProps> = ({
                                     </CloseSearchPanelBtn>
                                 </SearchTool>
                                 {showUpdateIndexTips ? (
-                                    <UpdateIndexTips>
+                                    <UpdateIndexTips className="tips-1-bg-color tips-1-border-color">
                                         <div>搜索功能需要搜索树</div>
                                         <div>请点击上方生成</div>
                                     </UpdateIndexTips>
@@ -465,6 +468,21 @@ const ToolBar = styled.div({
     display: 'flex',
 });
 
+const DirectoryBtnArea = styled.div();
+
+const PathAddBtn = styled.div({
+    position: 'relative',
+    height: '32px',
+    lineHeight: '32px',
+    display: 'flex',
+    alignItem: 'center',
+    justifyContent: 'center',
+    padding: '0 10px',
+    marginTop: '8px',
+    borderRadius: '4px',
+    cursor: 'pointer',
+});
+
 const Search = styled.div({
     position: 'relative',
     flex: '1',
@@ -489,11 +507,9 @@ const SearchPanel = styled.div({
     display: 'flex',
     flexDirection: 'column',
     width: 'calc(100% + 62px)',
-    height: 'calc(90vh)',
+    height: 'calc(92vh)',
     padding: '10px',
     boxSizing: 'border-box',
-    border: '1px solid rgb(58, 64, 76)',
-    backgroundColor: '#2C3033',
     zIndex: '999999',
 });
 
@@ -507,7 +523,6 @@ const CloseSearchPanelBtn = styled.div({
     height: '20px',
     lineHeight: '18px',
     fontSize: '20px',
-    color: '#939395',
     padding: '5px 10px',
     margin: '0 0 2px 0',
     cursor: 'pointer',
@@ -530,8 +545,6 @@ const UpdateIndexBtn = styled.div({
     fontSize: '14px',
     padding: '0 8px',
     borderRadius: ' 4px',
-    color: '#939395',
-    backgroundColor: 'rgb(58, 64, 76)',
     cursor: 'pointer',
 });
 
@@ -539,23 +552,19 @@ const UpdateIndexTips = styled.div({
     position: 'absolute',
     left: '10px',
     top: '40px',
-    color: '#939395',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     width: '140px',
     marginTop: '20px',
     fontSize: '14px',
-    border: '1px dotted rgba(58, 64, 76)',
     padding: '5px 10px',
     borderRadius: '5px',
-    background: 'rgba(47, 51, 56)',
 });
 
 const SearchResultList = styled.div({
     flex: '1',
     minHeight: '0',
-    color: '#939395',
 });
 
 const SearchResult = styled.div({
@@ -564,7 +573,6 @@ const SearchResult = styled.div({
     lineHeight: '36px',
     padding: '0 10px',
     fontSize: '14px',
-    color: '#939395',
     cursor: 'pointer',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
@@ -599,23 +607,6 @@ const SelectArea = styled.div({
     flex: '1',
     minHeight: '0',
     margin: '10px 0 0 0',
-});
-
-const DirectoryBtnArea = styled.div();
-
-const PathAddBtn = styled.div({
-    position: 'relative',
-    height: '32px',
-    lineHeight: '32px',
-    display: 'flex',
-    alignItem: 'center',
-    justifyContent: 'center',
-    padding: '0 10px',
-    marginTop: '8px',
-    borderRadius: '4px',
-    color: '#939395',
-    backgroundColor: 'rgb(58, 64, 76)',
-    cursor: 'pointer',
 });
 
 const List = styled.div({

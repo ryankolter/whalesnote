@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { GlobalContext } from '../../GlobalProvider';
 import markdownIt from 'markdown-it';
 import highlightjs from 'markdown-it-highlightjs';
+import hljs from 'highlight.js';
 
 export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
     content,
@@ -19,7 +20,23 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
         updateRenderTop,
     } = useContext(GlobalContext);
 
-    const md = useRef(markdownIt().use(highlightjs));
+    const md: any = useRef<markdownIt>(
+        markdownIt({
+            breaks: true,
+            linkify: true,
+            // highlight: function (str, lang) {
+            //     if (lang && hljs.getLanguage(lang)) {
+            //       try {
+            //         return '<pre class="hljs"><code>' +
+            //                hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
+            //                '</code></pre>';
+            //       } catch (__) {}
+            //     }
+
+            //     return '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>';
+            //   }
+        }).use(highlightjs)
+    );
     const [result, setResult] = useState('');
 
     const [showRenderScrollPos, setShowRenderScrollPos] = useState(false);
@@ -115,20 +132,23 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
         };
     }, [handleKeyDown, handleScroll]);
 
-    const wrappedClassNames = typeof theme === 'string' ? `rd-theme-${theme}` : 'rd-theme';
-
-    const commonClassNames = 'rd-theme-common';
+    const themeClassNames =
+        typeof theme === 'string'
+            ? `${theme}-theme-rd common-theme-rd`
+            : 'grey-theme-rd common-theme-rd';
 
     return (
         <MarkdownRenderContainer>
             {showRenderScrollPos && renderPanelState === 'all' ? (
-                <LastScrollPos onClick={autoScrollToLine}>上次在</LastScrollPos>
+                <LastScrollPos className="btn-1-bg-color" onClick={autoScrollToLine}>
+                    上次在
+                </LastScrollPos>
             ) : (
                 <></>
             )}
             <div
                 ref={renderRef}
-                className={`${wrappedClassNames} ${commonClassNames}`}
+                className={themeClassNames}
                 style={{
                     overflowX: 'hidden',
                     scrollBehavior: renderPanelState === 'all' ? 'auto' : 'smooth',
@@ -154,9 +174,7 @@ const LastScrollPos = styled.div(
         lineHeight: '30px',
         fontSize: '16px',
         padding: '0 12px 0 6px',
-        zIndex: 9,
-        color: '#939395',
-        backgroundColor: '#3a404c',
+        zIndex: 99,
         cursor: 'pointer',
     },
     `

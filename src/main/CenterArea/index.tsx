@@ -298,6 +298,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
             <BottomRow>
                 <BreakCrumb>
                     <CurRepoNameTag
+                        className="btn-1-bg-color"
                         onClick={() => {
                             repoNameClickHandler();
                         }}
@@ -326,7 +327,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                         </NoteNameLabel>
                     </CurNoteNameTag>
                     {showAllRepo ? (
-                        <AllRepo>
+                        <AllRepo className="float-panel-color">
                             <RepoPanel
                                 repos_key={repos_key}
                                 keySelect={keySelect}
@@ -344,6 +345,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                 </BreakCrumb>
                 <SwitchMode>
                     <SwitchModeBtn
+                        className="btn-1-bg-color"
                         onClick={() => {
                             setShowSwitchModePanel((_showSwitchModePanel) => !_showSwitchModePanel);
                         }}
@@ -356,7 +358,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                         <Triangle></Triangle>
                     </SwitchModeBtn>
                     {showSwitchModePanel ? (
-                        <SwitchModePanel>
+                        <SwitchModePanel className="float-panel-color">
                             <ModeOption
                                 onClick={() => {
                                     setRenderPanelState('hidden');
@@ -466,8 +468,6 @@ const CurRepoNameTag = styled.div({
     minWidth: '60px',
     lineHeight: '32px',
     borderRadius: '4px',
-    backgroundColor: 'rgb(58, 64, 76)',
-    color: '#939395',
     cursor: 'pointer',
     overflow: 'hidden !important',
     textOverflow: 'ellipsis',
@@ -497,7 +497,6 @@ const RepoNameLabel = styled.div({
 const CurFolderNameTag = styled.div({
     height: '32px',
     lineHeight: '32px',
-    color: '#939395',
     overflow: 'hidden !important',
     textOverflow: 'ellipsis',
     wordBreak: 'break-all',
@@ -514,7 +513,6 @@ const FolderNameLabel = styled.div({
 const CurNoteNameTag = styled.div({
     height: '32px',
     lineHeight: '32px',
-    color: '#939395',
     overflow: 'hidden !important',
     textOverflow: 'ellipsis',
     wordBreak: 'break-all',
@@ -529,7 +527,6 @@ const NoteNameLabel = styled.div({
 });
 
 const GreaterTag = styled.div({
-    color: '#939395',
     padding: '0 15px',
 });
 
@@ -540,9 +537,7 @@ const AllRepo = styled.div({
     bottom: '48px',
     padding: '10px',
     boxSizing: 'border-box',
-    border: '1px solid rgb(58, 64, 76)',
     borderRadius: '8px',
-    backgroundColor: '#2C3033',
     zIndex: '9999',
 });
 
@@ -560,7 +555,6 @@ const SwitchModeBtn = styled.div({
     height: '30px',
     margin: '1px 5px',
     padding: '0 14px',
-    backgroundColor: 'rgb(58, 64, 76)',
     borderRadius: '14px',
 });
 
@@ -574,7 +568,6 @@ const ModeNameTag = styled.div({
 const ModeName = styled.div({
     fontSize: '14px',
     lineHeight: '30px',
-    color: '#939395',
 });
 
 const Triangle = styled.div({
@@ -596,9 +589,6 @@ const SwitchModePanel = styled.div({
     flexDirection: 'column',
     alignItems: 'center',
     padding: '5px 0',
-    color: '#939395',
-    backgroundColor: '#2C3033',
-    border: '1px solid rgba(58, 64, 76)',
     borderRadius: '4px',
     zIndex: '99999',
 });
@@ -629,7 +619,6 @@ const AssistantActiveBtn = styled.div({
     border: '1px solid rgba(58, 64, 76)',
     borderRadius: '18px',
     fontSize: '18px',
-    color: '#939395',
     cursor: 'pointer',
 });
 

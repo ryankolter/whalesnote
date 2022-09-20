@@ -7,9 +7,9 @@ const DirectoryBtn: React.FC<DirectoryBtnProps> = ({ data_path, addDataPath, pan
     };
 
     return (
-        <DirectoryBtnContainer>
+        <DirectoryBtnContainer className="btn-1-bg-color">
             目录
-            <PathPanel width={panelWidth} className="path_panel">
+            <PathPanel width={panelWidth} className="path_panel float-panel-color ">
                 <ShowPath>
                     <PathValue>{data_path}</PathValue>
                 </ShowPath>
@@ -35,8 +35,6 @@ const DirectoryBtnContainer = styled.div(
         padding: '0 10px',
         margin: '4px 10px 4px 0',
         borderRadius: ' 4px',
-        color: '#939395',
-        backgroundColor: 'rgb(58, 64, 76)',
     },
     `
   &:hover .path_panel{
@@ -54,9 +52,7 @@ const PathPanel = styled.div(
         fontSize: '14px',
         padding: '30px',
         boxSizing: 'border-box',
-        border: '1px solid rgb(58, 64, 76)',
         borderRadius: '16px',
-        backgroundColor: 'rgb(44, 48, 51)',
         zIndex: '99999',
     },
     (props: { width: number }) => ({

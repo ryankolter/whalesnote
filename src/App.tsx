@@ -10,14 +10,14 @@ import WaitingMaskStatic from './components/WaitingMaskStatic';
 import SocketServerBtn from './components/socketServerBtn';
 import SocketClientBtn from './socketClientBtn';
 
-import './resources/my_highlight_styles/editor/solarized-dark.min.css';
+// import './resources/my_highlight_styles/editor/solarized-dark.min.css';
 import './resources/my_highlight_styles/preview/solarized-dark.min.css';
 import AssistantPanel from './main/AssistantPanel';
 
 const App = () => {
     const [focus, setFocus] = useState('');
     const [blur, setBlur] = useState('');
-    const [theme, setTheme] = useState('dark');
+    const [theme, setTheme] = useState('grey');
     const [keySelect, setKeySelect] = useState(false);
     const [showAssistantPanel, setShowAssistantPanel] = useState(false);
 
@@ -29,7 +29,7 @@ const App = () => {
 
     return (
         <GlobalProvider>
-            <AppContainer>
+            <AppContainer className={`${theme}-theme-global body-color`}>
                 <WaitingMaskStatic show={showWaitingMask} word={'请等待......'}></WaitingMaskStatic>
                 <RepoContent>
                     <SideNav

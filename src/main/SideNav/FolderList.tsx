@@ -479,7 +479,9 @@ const FolderList: React.FC<FolderListProps> = ({ keySelect, setFocus, width }) =
 
     return (
         <FolderListContainer width={width}>
-            <FolderTopBar>{dataPath ? <FolderTopTitle>分类</FolderTopTitle> : <></>}</FolderTopBar>
+            <FolderTopBar>
+                {dataPath ? <FolderTopTitle className="title-1-color">分类</FolderTopTitle> : <></>}
+            </FolderTopBar>
             {folders_key && folders_obj ? (
                 <DndContext
                     sensors={sensors}
@@ -498,13 +500,9 @@ const FolderList: React.FC<FolderListProps> = ({ keySelect, setFocus, width }) =
                                                 key={`item-${key}`}
                                                 className={
                                                     currentFolderKey === key
-                                                        ? 'folderItemSelected'
-                                                        : ''
+                                                        ? 'item-selected item-selected-color item-hover-color'
+                                                        : 'item-hover-color'
                                                 }
-                                                style={{
-                                                    backgroundColor:
-                                                        currentFolderKey === key ? '#3a404c' : '',
-                                                }}
                                                 onClick={() => {
                                                     if (currentFolderKey !== key) {
                                                         folderSwitch(currentRepoKey, key);
@@ -525,7 +523,7 @@ const FolderList: React.FC<FolderListProps> = ({ keySelect, setFocus, width }) =
                                                 {keySelect &&
                                                 currentFolderKey !== key &&
                                                 index < 21 * 10 ? (
-                                                    <FolderKeyTab>
+                                                    <FolderKeyTab className="key-tab-color">
                                                         <span
                                                             style={{
                                                                 color:
@@ -563,9 +561,19 @@ const FolderList: React.FC<FolderListProps> = ({ keySelect, setFocus, width }) =
                                     );
                                 })}
                             {menu && currentFolderKey ? (
-                                <MenuUl top={yPos} left={xPos}>
-                                    <MenuLi onClick={() => renameFolder()}>重命名</MenuLi>
-                                    <MenuLi onClick={() => deleteFolder()}>删除文件夹</MenuLi>
+                                <MenuUl top={yPos} left={xPos} className="menu-ui-color">
+                                    <MenuLi
+                                        className="menu-li-color"
+                                        onClick={() => renameFolder()}
+                                    >
+                                        重命名
+                                    </MenuLi>
+                                    <MenuLi
+                                        className="menu-li-color"
+                                        onClick={() => deleteFolder()}
+                                    >
+                                        删除文件夹
+                                    </MenuLi>
                                 </MenuUl>
                             ) : (
                                 <></>
@@ -599,12 +607,10 @@ const FolderList: React.FC<FolderListProps> = ({ keySelect, setFocus, width }) =
                                 <FolderItem
                                     key={activeId}
                                     className={
-                                        currentFolderKey === activeId ? 'folderItemSelected' : ''
+                                        currentFolderKey === activeId
+                                            ? 'item-selected item-selected-color item-hover-color'
+                                            : 'item-hover-color'
                                     }
-                                    style={{
-                                        backgroundColor:
-                                            currentFolderKey === activeId ? '#3a404c' : '',
-                                    }}
                                 >
                                     <FolderIcon>
                                         <FolderIconImg src={folderIcon} alt="" />
@@ -663,15 +669,14 @@ const FolderListContainer = styled.div(
 
 const FolderTopBar = styled.div({
     display: 'flex',
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
-    flexDirection: 'row',
     margin: '10px 16px 10px 6px',
 });
 
 const FolderTopTitle = styled.div({
     height: '24px',
-    color: '#939395',
     cursor: 'pointer',
 });
 
@@ -692,24 +697,17 @@ const Folders = styled.div(
 `
 );
 
-const FolderItem = styled.div(
-    {
-        display: 'flex',
-        alignItems: 'center',
-        position: 'relative',
-        height: '28px',
-        lineHeight: '14px',
-        fontSize: '14px',
-        margin: '0 10px 4px 0',
-        padding: '0 0 0 8px',
-        color: '#939395',
-        cursor: 'pointer',
-    },
-    `&:hover {
-    color: #ddd;
-    background-color: rgba(47, 51, 56, 0.2);
-  }`
-);
+const FolderItem = styled.div({
+    display: 'flex',
+    alignItems: 'center',
+    position: 'relative',
+    height: '28px',
+    lineHeight: '14px',
+    fontSize: '14px',
+    margin: '0 10px 4px 0',
+    padding: '0 0 0 8px',
+    cursor: 'pointer',
+});
 
 const FolderIcon = styled.div({
     width: '14px',
@@ -739,7 +737,6 @@ const FolderKeyTab = styled.div({
     letterSpacing: '1px',
     padding: '2px 4px',
     borderRadius: '4px',
-    backgroundColor: 'rgb(58, 64, 76)',
 });
 
 const MenuUl = styled.ul(
@@ -747,9 +744,6 @@ const MenuUl = styled.ul(
         listStyleType: 'none',
         position: 'fixed',
         padding: '4px 0',
-        border: '1px solid #BABABA',
-        color: '#000000',
-        backgroundColor: '#FFFFFF',
         zIndex: '99999',
     },
     (props: { top: string; left: string }) => ({
@@ -758,18 +752,12 @@ const MenuUl = styled.ul(
     })
 );
 
-const MenuLi = styled.li(
-    {
-        padding: '0 22px',
-        fontSize: '12px',
-        lineHeight: '22px',
-        cursor: 'pointer',
-    },
-    `&:hover {
-    background-color: #EBEBEB; 
-  }
-`
-);
+const MenuLi = styled.li({
+    padding: '0 22px',
+    fontSize: '12px',
+    lineHeight: '22px',
+    cursor: 'pointer',
+});
 
 const FolderAddBtn = styled.div({
     width: '14px',

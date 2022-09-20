@@ -715,9 +715,19 @@ const RepoPanel: React.FC<RepoListProps> = ({
                                         // }
                                     })}
                                 {menu && currentRepoKey && !folderMenu ? (
-                                    <MenuUl top={yPos} left={xPos}>
-                                        <MenuLi onClick={() => renameRepo()}>重命名</MenuLi>
-                                        <MenuLi onClick={() => deleteRepo()}>删除仓库</MenuLi>
+                                    <MenuUl top={yPos} left={xPos} className="menu-ui-color">
+                                        <MenuLi
+                                            className="menu-li-color"
+                                            onClick={() => renameRepo()}
+                                        >
+                                            重命名
+                                        </MenuLi>
+                                        <MenuLi
+                                            className="menu-li-color"
+                                            onClick={() => deleteRepo()}
+                                        >
+                                            删除仓库
+                                        </MenuLi>
                                     </MenuUl>
                                 ) : (
                                     <></>
@@ -747,12 +757,12 @@ const RepoPanel: React.FC<RepoListProps> = ({
                     )}
                     {dataPath && !newRepoKey ? (
                         <RepoAdd>
-                            <RepoAddBtn onClick={newRepo}>
+                            <RepoAddBtn className="btn-1-bg-color" onClick={newRepo}>
                                 +
                                 {repos_key &&
                                 repos_key.filter((key) => repos_obj && repos_obj[key]).length ==
                                     1 ? (
-                                    <AddReposTips>
+                                    <AddReposTips className="tips-1-bg-color tips-1-border-color">
                                         <div>点击按钮</div>
                                         <div>添加新资料库</div>
                                     </AddReposTips>
@@ -819,7 +829,6 @@ const CloseRepoListBtn = styled.div({
     height: '20px',
     lineHeight: '18px',
     fontSize: '20px',
-    color: '#939395',
     padding: '5px 10px',
     margin: '0 0 2px 0',
     cursor: 'pointer',
@@ -858,7 +867,6 @@ const RepoItem = styled.div({
     height: '28px',
     lineHeight: '28px',
     margin: '0 10px 4px 10px',
-    color: '#939395',
     cursor: 'pointer',
 });
 
@@ -906,9 +914,6 @@ const MenuUl = styled.ul(
         listStyleType: 'none',
         position: 'fixed',
         padding: '4px 0',
-        border: '1px solid #BABABA',
-        color: '#000000',
-        backgroundColor: '#FFFFFF',
         zIndex: '99999',
     },
     (props: { top: string; left: string }) => ({
@@ -917,17 +922,12 @@ const MenuUl = styled.ul(
     })
 );
 
-const MenuLi = styled.li(
-    {
-        padding: '0 22px',
-        fontSize: '12px',
-        lineHeight: '22px',
-        cursor: 'pointer',
-    },
-    `&:hover {
-    background-color: #EBEBEB; 
-}`
-);
+const MenuLi = styled.li({
+    padding: '0 22px',
+    fontSize: '12px',
+    lineHeight: '22px',
+    cursor: 'pointer',
+});
 
 const RepoAdd = styled.div({
     width: 'calc(20% - 20px)',
@@ -944,13 +944,10 @@ const RepoAddBtn = styled.div({
     display: 'flex',
     alignItem: 'center',
     justifyContent: 'center',
-    color: '#939395',
-    backgroundColor: 'rgba(58, 64, 76, 0.3)',
     cursor: 'pointer',
 });
 
 const AddReposTips = styled.div({
-    color: '#939395',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -960,10 +957,8 @@ const AddReposTips = styled.div({
     position: 'absolute',
     bottom: '-80px',
     left: '10px',
-    border: '1px dotted rgba(58, 64, 76)',
     padding: '5px 10px',
     borderRadius: '5px',
-    background: 'rgba(47, 51, 56)',
 });
 
 type RepoListProps = {
