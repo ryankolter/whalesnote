@@ -150,6 +150,16 @@
     color: var(--editor-main-text-color) !important;
 }
 
+.toc-scroller::-webkit-scrollbar-thumb {
+    background-color: var(--scroller-color);
+}
+
+.toc-scroller::-webkit-scrollbar-track {
+    background-color: inherit !important;
+}
+
+
+
 .copy-btn-color {
     color: var(--main-text-color) !important;
     background-color: var(--btn-1-bg-color) !important;

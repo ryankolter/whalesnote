@@ -62,7 +62,9 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
                     } catch (__) {}
                 }
 
-                return '<pre><code class="hljs">' + md.utils.escapeHtml(str) + '</code></pre>';
+                return (
+                    '<pre><code class="hljs">' + md.current.utils.escapeHtml(str) + '</code></pre>'
+                );
             },
         })
             .use(markdownItEmoji)
@@ -234,7 +236,7 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
                 }}
                 dangerouslySetInnerHTML={{ __html: result }}
             ></div>
-            <TocDirectory ref={TocRef}></TocDirectory>
+            <TocDirectory ref={TocRef} className="toc-scroller"></TocDirectory>
         </MarkdownRenderContainer>
     );
 };
@@ -277,12 +279,12 @@ const LastScrollPos = styled.div(
 const TocDirectory = styled.div({
     position: 'absolute',
     top: '0',
-    right: '8px',
-    width: '25%',
-    borderRight: '3px solid #3A404C',
-    borderTopLeftRadius: '10px',
-    borderBottomLeftRadius: '10px',
+    right: '18px',
+    width: '30%',
+    maxHeight: '50%',
+    borderRadius: '10px',
     backgroundColor: '#2F3338',
+    overflowY: 'auto',
     zIndex: 999999,
 });
 

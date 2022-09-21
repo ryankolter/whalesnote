@@ -306,6 +306,14 @@ body {
     -webkit-box-orient: vertical;
 }
 
+.toc-scroller::-webkit-scrollbar {
+    width: 8px;
+}
+
+.toc-scroller::-webkit-scrollbar-thumb {
+    border-radius: 3px;
+}
+
 .copy-btn {
     position: absolute;
     top: 2px;

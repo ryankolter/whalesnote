@@ -65,12 +65,6 @@ const CenterArea: React.FC<CenterAreaProps> = ({
         }
     }, [renderPanelState]);
 
-    useEffect(() => {
-        if (showAssistantPanel) {
-            setRenderPanelState('hidden');
-        }
-    }, [showAssistantPanel]);
-
     const handleKeyDown = useCallback(
         (e: any) => {
             // console.log(e.ctrlKey)
