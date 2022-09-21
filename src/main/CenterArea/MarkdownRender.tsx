@@ -7,6 +7,10 @@ import hljs from 'highlight.js';
 /* eslint-disable */
 //@ts-ignore
 import markdownItLinkAttributes from 'markdown-it-link-attributes';
+//@ts-ignore
+import markdownItSub from 'markdown-it-sub';
+//@ts-ignore
+import markdownItSup from 'markdown-it-sup';
 /* eslint-enable */
 import mardownItTable from 'markdown-it-multimd-table';
 import markdownItAnchor from 'markdown-it-anchor';
@@ -55,6 +59,8 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
                 return '<pre><code class="hljs">' + md.utils.escapeHtml(str) + '</code></pre>';
             },
         })
+            .use(markdownItSub)
+            .use(markdownItSup)
             .use(markdownItLinkAttributes, {
                 attrs: {
                     target: '_blank',
