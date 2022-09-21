@@ -6,14 +6,20 @@ import markdownIt from 'markdown-it';
 import hljs from 'highlight.js';
 /* eslint-disable */
 //@ts-ignore
+import markdownItEmoji from 'markdown-it-emoji';
+//@ts-ignore
+import markdownItFootnote from 'markdown-it-footnote';
+//@ts-ignore
 import markdownItLinkAttributes from 'markdown-it-link-attributes';
 //@ts-ignore
 import markdownItSub from 'markdown-it-sub';
 //@ts-ignore
 import markdownItSup from 'markdown-it-sup';
+//@ts-ignore
+import markdownItTaskLists from 'markdown-it-task-lists';
 /* eslint-enable */
-import mardownItTable from 'markdown-it-multimd-table';
 import markdownItAnchor from 'markdown-it-anchor';
+import markdownItTable from 'markdown-it-multimd-table';
 import markdownItTocDoneRight from 'markdown-it-toc-done-right';
 import ClipboardJS from 'clipboard';
 
@@ -59,14 +65,17 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
                 return '<pre><code class="hljs">' + md.utils.escapeHtml(str) + '</code></pre>';
             },
         })
+            .use(markdownItEmoji)
+            .use(markdownItFootnote)
             .use(markdownItSub)
             .use(markdownItSup)
+            .use(markdownItTaskLists)
             .use(markdownItLinkAttributes, {
                 attrs: {
                     target: '_blank',
                 },
             })
-            .use(mardownItTable, {
+            .use(markdownItTable, {
                 multiline: false,
                 rowspan: true,
                 headerless: false,
