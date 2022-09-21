@@ -48,10 +48,11 @@ body {
 /* editor */
 
 .common-theme-cm .cm-editor {
-    word-spacing: 5px;
-    margin: 15px 0 0 0;
     height: calc(100% - 15px);
+    margin: 15px 0 0 0;
     border-radius: 8px;
+    font-size: 15px;
+    word-spacing: 5px;
 }
 
 .common-theme-cm .cm-content {
@@ -122,6 +123,7 @@ body {
     padding: 0 20px 5px 20px;
     font-family: Luca, Monaco, Menlo, "Ubuntu Mono", Consolas, source-code-pro,
         monospace !important;
+    font-size: 15px;
     user-select: text;
     overflow-y: auto;
 }
@@ -154,6 +156,10 @@ body {
 
 .common-theme-rd pre code {
     font-size: 15px;
+}
+
+.common-theme-rd pre code.hljs {
+    padding: 1.2em !important;
 }
 
 .common-theme-rd pre code.hljs::-webkit-scrollbar {
@@ -260,4 +266,54 @@ body {
 
 .common-theme-rd ul > li > ul > li > ul > li {
     margin: 0 0 0.5em -0.7em !important;
+}
+
+.common-theme-rd table {
+    border-collapse: collapse;
+}
+
+.common-theme-rd table, table tr th, table tr td { 
+    border:1px solid #444b59; 
+    padding: 8px;
+    text-align: center !important;
+}
+
+/* TOC */
+
+#renderTocId ul {
+    margin-block-start: 1.5em !important;
+    margin-block-end: 1.5em !important;
+    padding-inline-start: 25px !important;
+}
+
+#renderTocId ul > li > ul {
+    margin-block-start: 1em !important;
+    margin-block-end: 1em !important;
+}
+
+#renderTocId ul > li > ul > li {
+    margin-block-start: 0.5em !important;
+    margin-block-end: 0.5em !important;
+}
+
+#renderTocId ul a {
+    text-decoration: none;
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.copy-btn {
+    position: absolute;
+    top: 2px;
+    right: 4px;
+    z-index: 10;
+    color: #333;
+    cursor: pointer;
+    transition: .7s background-color;
+    border: 0;
+    border-radius: 2px;
 }

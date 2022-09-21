@@ -30,11 +30,17 @@ const createWindow = async () => {
         },
     });
 
+    win.webContents.setWindowOpenHandler(({ url }) => {
+        console.log(url);
+        shell.openExternal(url);
+        return { action: 'deny' };
+    });
+
     if (app.isPackaged) {
-        win?.loadFile(path.join(__dirname, '/build/index.html'));
+        win.loadFile(path.join(__dirname, '/build/index.html'));
     } else {
-        win?.loadURL('http://localhost:3000');
-        win?.webContents.openDevTools();
+        win.loadURL('http://localhost:3000');
+        win.webContents.openDevTools();
         await installExtensions();
     }
 
