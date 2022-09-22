@@ -38,7 +38,9 @@ const CenterArea: React.FC<CenterAreaProps> = ({
     const [renderWidth, setRenderWidth] = useState('0');
     const [renderLeft, setRenderLeft] = useState('100%');
 
-    const [renderPanelState, setRenderPanelState] = useState('hidden');
+    const [renderPanelState, setRenderPanelState] = useState(
+        window.localStorage.getItem('render_panel_state') || 'half'
+    );
     const [showSwitchModePanel, setShowSwitchModePanel] = useState(false);
     const [showAllRepo, setShowAllRepo] = useState(false);
     const [allowHiddenAllRepoViaEnter, setAllowHiddenAllRepoViaEnter] = useState(true);
@@ -55,14 +57,17 @@ const CenterArea: React.FC<CenterAreaProps> = ({
             setEditorWidth('100%');
             setRenderWidth('0');
             setRenderLeft('100%');
+            window.localStorage.setItem('render_panel_state', 'hidden');
         } else if (renderPanelState === 'half') {
             setEditorWidth('calc(50% - 6px)');
             setRenderWidth('calc(50% - 6px)');
             setRenderLeft('calc(50%)');
+            window.localStorage.setItem('render_panel_state', 'half');
         } else if (renderPanelState === 'all') {
             setEditorWidth('100%');
             setRenderWidth('100%');
             setRenderLeft('0');
+            window.localStorage.setItem('render_panel_state', 'all');
         }
     }, [renderPanelState]);
 
