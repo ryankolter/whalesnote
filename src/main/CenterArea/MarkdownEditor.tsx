@@ -18,6 +18,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     focus,
     blur,
     renderPanelState,
+    renderScrollRatio,
     setKeySelect,
     setEditorScrollRatio,
 }) => {
@@ -40,12 +41,13 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     const view = useRef<EditorView>();
 
     const [showEditorScrollPos, setShowEditorScrollPos] = useState(false);
+    const [cursorInEditor, setCursorInEditor] = useState(false);
 
     const autoScroll = useRef<boolean>(false);
     const scrollSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
     const scrollRatioSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
     const noteSwitchRef = useRef<boolean>(false);
-    const newPosAfterComplete = useRef<number>(0);
+    const editorContainerRef = useRef<HTMLDivElement>(null);
 
     const docChangeHandler = useCallback(
         (new_value: string, viewUpdate: any) => {
@@ -80,22 +82,24 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
 
     const handleScrollEvent = useCallback(
         (e: any) => {
-            if (scrollRatioSaveTimerRef.current) {
-                clearTimeout(scrollRatioSaveTimerRef.current);
-            }
-
-            scrollRatioSaveTimerRef.current = setTimeout(() => {
-                if (e.target) {
-                    const offsetHeight = (e.target as HTMLDivElement).offsetHeight;
-                    const scrollTop = (e.target as HTMLDivElement).scrollTop;
-                    const scrollHeight = (e.target as HTMLDivElement).scrollHeight;
-                    if ((scrollTop + offsetHeight) / scrollHeight > 0.99) {
-                        setEditorScrollRatio((scrollTop + offsetHeight) / scrollHeight);
-                    } else {
-                        setEditorScrollRatio(scrollTop / scrollHeight);
-                    }
+            if (cursorInEditor) {
+                if (scrollRatioSaveTimerRef.current) {
+                    clearTimeout(scrollRatioSaveTimerRef.current);
                 }
-            }, 100);
+
+                scrollRatioSaveTimerRef.current = setTimeout(() => {
+                    if (e.target) {
+                        const offsetHeight = (e.target as HTMLDivElement).offsetHeight;
+                        const scrollTop = (e.target as HTMLDivElement).scrollTop;
+                        const scrollHeight = (e.target as HTMLDivElement).scrollHeight;
+                        if ((scrollTop + offsetHeight) / scrollHeight > 0.99) {
+                            setEditorScrollRatio((scrollTop + offsetHeight) / scrollHeight);
+                        } else {
+                            setEditorScrollRatio(scrollTop / scrollHeight);
+                        }
+                    }
+                }, 100);
+            }
 
             if (autoScroll.current) {
                 autoScroll.current = false;
@@ -123,6 +127,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
             currentNoteKey,
             setEditorScrollRatio,
             setShowEditorScrollPos,
+            cursorInEditor,
         ]
     );
 
@@ -337,6 +342,22 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
         view.current?.contentDOM.blur();
     }, [blur]);
 
+    useEffect(() => {
+        if (view.current) {
+            const offsetHeight = view.current.contentDOM.getBoundingClientRect().height;
+            const scrollTop = offsetHeight * renderScrollRatio;
+            console.log(scrollTop);
+            const scrollPos = view.current.lineBlockAtHeight(scrollTop).from;
+            console.log(scrollPos);
+
+            view.current?.dispatch({
+                effects: EditorView.scrollIntoView(scrollPos, {
+                    y: 'start',
+                }),
+            });
+        }
+    }, [renderScrollRatio]);
+
     const handleKeyDown = useCallback(
         (e: any) => {
             if (process.platform === 'darwin') {
@@ -353,12 +374,26 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
         [renderPanelState, autoScrollToLine]
     );
 
+    const handleMouseEnter = useCallback(() => {
+        console.log('mouse enter editor');
+        setCursorInEditor(true);
+    }, [setCursorInEditor]);
+
+    const handleMouseLeave = useCallback(() => {
+        console.log('mouse leave editor');
+        setCursorInEditor(false);
+    }, [setCursorInEditor]);
+
     useEffect(() => {
         document.addEventListener('keydown', handleKeyDown);
+        editor.current?.addEventListener('mouseenter', handleMouseEnter);
+        editor.current?.addEventListener('mouseleave', handleMouseLeave);
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
+            editor.current?.removeEventListener('mouseenter', handleMouseEnter);
+            editor.current?.removeEventListener('mouseleave', handleMouseLeave);
         };
-    }, [handleKeyDown]);
+    }, [handleKeyDown, handleMouseEnter, handleMouseLeave]);
 
     const themeClassNames =
         typeof theme === 'string'
@@ -366,7 +401,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
             : 'grey-theme-cm common-theme-cm';
 
     return (
-        <MarkdownEditorContainer>
+        <MarkdownEditorContainer ref={editorContainerRef}>
             {showEditorScrollPos && renderPanelState !== 'all' ? (
                 <LastScrollPos className="btn-1-bg-color" onClick={autoScrollToLine}>
                     上次在
@@ -419,6 +454,7 @@ type MarkdownEditorProps = {
     blur: string;
     theme: string;
     renderPanelState: string;
+    renderScrollRatio: number;
     setKeySelect: (keySelect: boolean) => void;
     setEditorScrollRatio: (editorScrollRatio: number) => void;
 };

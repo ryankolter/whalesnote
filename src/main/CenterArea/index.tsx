@@ -44,6 +44,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
     const [allowHiddenAllRepoViaEnter, setAllowHiddenAllRepoViaEnter] = useState(true);
 
     const [editorScrollRatio, setEditorScrollRatio] = useState(0);
+    const [renderScrollRatio, setRenderScrollRatio] = useState(0);
 
     const repoNameClickHandler = useCallback(() => {
         setShowAllRepo((_showAllRepo) => !_showAllRepo);
@@ -271,6 +272,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                         theme={theme}
                         focus={focus}
                         blur={blur}
+                        renderScrollRatio={renderScrollRatio}
                         renderPanelState={renderPanelState}
                         setKeySelect={setKeySelect}
                         setEditorScrollRatio={setEditorScrollRatio}
@@ -283,6 +285,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                             editorScrollRatio={editorScrollRatio}
                             theme={theme}
                             renderPanelState={renderPanelState}
+                            setRenderScrollRatio={setRenderScrollRatio}
                         />
                     ) : (
                         <></>

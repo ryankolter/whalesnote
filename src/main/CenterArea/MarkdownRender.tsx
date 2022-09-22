@@ -28,6 +28,7 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
     editorScrollRatio,
     renderPanelState,
     theme,
+    setRenderScrollRatio,
 }) => {
     const {
         dataPath,
@@ -100,11 +101,14 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
     const [result, setResult] = useState('');
 
     const [showRenderScrollPos, setShowRenderScrollPos] = useState(false);
+    const [cursorInRender, setCursorInRender] = useState(false);
 
     const renderRef = useRef<HTMLDivElement>(null);
     const scrollSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
+    const scrollRatioSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
     const autoScroll = useRef<boolean>(false);
     const TocRef = useRef<HTMLDivElement>(null);
+    const renderContainerRef = useRef<HTMLDivElement>(null);
 
     const clipboard: any = useRef<ClipboardJS>(null);
 
@@ -179,11 +183,31 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
     );
 
     const handleScroll = useCallback(
-        (event: any) => {
+        (e: any) => {
+            if (cursorInRender) {
+                if (scrollRatioSaveTimerRef.current) {
+                    clearTimeout(scrollRatioSaveTimerRef.current);
+                }
+
+                scrollRatioSaveTimerRef.current = setTimeout(() => {
+                    if (e.target) {
+                        const offsetHeight = (e.target as HTMLDivElement).offsetHeight;
+                        const scrollTop = (e.target as HTMLDivElement).scrollTop;
+                        const scrollHeight = (e.target as HTMLDivElement).scrollHeight;
+                        if ((scrollTop + offsetHeight) / scrollHeight > 0.99) {
+                            setRenderScrollRatio(1.0);
+                        } else {
+                            setRenderScrollRatio(scrollTop / scrollHeight);
+                        }
+                    }
+                }, 100);
+            }
+
             if (autoScroll.current) {
                 autoScroll.current = false;
                 return;
             }
+
             if (scrollSaveTimerRef.current) {
                 clearTimeout(scrollSaveTimerRef.current);
             }
@@ -201,15 +225,29 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
                 }
             }, 100);
         },
-        [renderRef, editorScrollRatio, setShowRenderScrollPos, updateRenderTop]
+        [renderRef, editorScrollRatio, setShowRenderScrollPos, updateRenderTop, cursorInRender]
     );
+
+    const handleMouseEnter = useCallback(() => {
+        console.log('mouse enter render');
+        setCursorInRender(true);
+    }, [setCursorInRender]);
+
+    const handleMouseLeave = useCallback(() => {
+        console.log('mouse leave render');
+        setCursorInRender(false);
+    }, [setCursorInRender]);
 
     useEffect(() => {
         document.addEventListener('keydown', handleKeyDown);
-        document.addEventListener('scroll', handleScroll, true);
+        renderRef.current?.addEventListener('scroll', handleScroll, true);
+        renderContainerRef.current?.addEventListener('mouseenter', handleMouseEnter);
+        renderContainerRef.current?.addEventListener('mouseleave', handleMouseLeave);
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
-            document.removeEventListener('scroll', handleScroll, true);
+            renderRef.current?.removeEventListener('scroll', handleScroll, true);
+            renderContainerRef.current?.removeEventListener('mouseenter', handleMouseEnter);
+            renderContainerRef.current?.removeEventListener('mouseleave', handleMouseLeave);
         };
     }, [handleKeyDown, handleScroll]);
 
@@ -219,7 +257,7 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
             : 'grey-theme-rd common-theme-rd';
 
     return (
-        <MarkdownRenderContainer>
+        <MarkdownRenderContainer ref={renderContainerRef}>
             {showRenderScrollPos && renderPanelState === 'all' ? (
                 <LastScrollPos className="btn-1-bg-color" onClick={autoScrollToLine}>
                     上次在
@@ -283,6 +321,7 @@ const TocDirectory = styled.div({
     width: '30%',
     maxHeight: '50%',
     borderRadius: '10px',
+    paddingRight: '6px',
     backgroundColor: '#2F3338',
     overflowY: 'auto',
     zIndex: 999999,
@@ -293,4 +332,5 @@ type MarkdownRenderProps = {
     theme: string;
     editorScrollRatio: number;
     renderPanelState: string;
+    setRenderScrollRatio: (editorScrollRatio: number) => void;
 };
