@@ -8,12 +8,16 @@
     "main": "main.js",
     "homepage": ".",
     "build": {
-        "productName": "单向笔记",
+        "productName": "dxnote",
         "extends": null,
         "files": [
             "*.js",
             "build"
-        ]
+        ],
+        "extraResources":  {
+            "from": "./src/resources/dict/",
+            "to": "extraResources/dict"
+        }
     },
     "dependencies": {
         "@codemirror/autocomplete": "^6.2.0",
@@ -108,8 +112,8 @@
         "@types/socket.io-client": "^3.0.0",
         "@typescript-eslint/eslint-plugin": "^5.36.2",
         "@typescript-eslint/parser": "^5.36.2",
-        "electron": "^19.0.4",
-        "electron-builder": "^23.0.3",
+        "electron": "^20.2.0",
+        "electron-builder": "^23.3.3",
         "electron-devtools-installer": "^3.2.0",
         "eslint": "^8.23.0",
         "eslint-config-airbnb-typescript": "^17.0.0",
