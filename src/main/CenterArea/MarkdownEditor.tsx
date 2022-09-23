@@ -375,12 +375,10 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     );
 
     const handleMouseEnter = useCallback(() => {
-        console.log('mouse enter editor');
         setCursorInEditor(true);
     }, [setCursorInEditor]);
 
     const handleMouseLeave = useCallback(() => {
-        console.log('mouse leave editor');
         setCursorInEditor(false);
     }, [setCursorInEditor]);
 

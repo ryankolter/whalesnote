@@ -2,10 +2,6 @@ import { Data } from '../commonType';
 import cryptoRandomString from 'crypto-random-string';
 
 const initDefault = () => {
-    return updateDefaultData();
-};
-
-const updateDefaultData = () => {
     const repo_id = cryptoRandomString({ length: 12, type: 'alphanumeric' });
     const folder_id = cryptoRandomString({ length: 12, type: 'alphanumeric' });
     const note_id = cryptoRandomString({ length: 12, type: 'alphanumeric' });
@@ -35,7 +31,7 @@ const updateDefaultData = () => {
             },
         },
         dxnote: {
-            id: cryptoRandomString({ length: 10, type: 'alphanumeric' }),
+            id: cryptoRandomString({ length: 36, type: 'alphanumeric' }),
             repos_key: [repo_id],
             cur_repo_key: repo_id,
             repos: {

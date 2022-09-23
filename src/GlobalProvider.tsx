@@ -1,11 +1,20 @@
 import { createContext, useCallback, useState, useMemo } from 'react';
 
 import { useRepos } from './lib/useRepos';
-import { useNotes } from './lib/useNotes';
 import { useDxnote } from './lib/useDxnote';
 import { useEditPos } from './lib/useEditPos';
 import { useEditLine } from './lib/useEditLine';
 import { useRecordValue } from './lib/useRecordValue';
+
+import {
+    notes,
+    allRepoNotesFetch,
+    repoNotesFetch,
+    folderNotesFetch,
+    changeNotesAfterNew,
+    initNotes,
+    updateNote,
+} from './lib/notes';
 
 const initContext: {
     dataPath: string;
@@ -132,17 +141,6 @@ export const GlobalProvider = ({ children }: { children: any }) => {
     ] = useDxnote();
     const [repos_obj, { updateRepos, initRepo, renameNote, reorderFolder, reorderNote }] =
         useRepos();
-    const [
-        notes,
-        {
-            allRepoNotesFetch,
-            repoNotesFetch,
-            folderNotesFetch,
-            changeNotesAfterNew,
-            initNotes,
-            updateNote,
-        },
-    ] = useNotes();
     const [cursorHeads, { updateCursorHead }] = useEditPos();
     const [fromPoses, { updateFromPos }] = useEditLine();
     const [renderTops, { updateRecordValue: updateRenderTop }] = useRecordValue();

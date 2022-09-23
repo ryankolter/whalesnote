@@ -115,9 +115,7 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
     useEffect(() => {
         setResult(md.current.render(content));
         clipboard.current = new ClipboardJS('.copy-btn');
-        console.log(clipboard.current);
         clipboard.current.on('success', (e: any) => {
-            console.log(e);
             e.trigger.innerHTML = '成功';
             setTimeout(() => {
                 e.trigger.innerHTML = '复制';
@@ -139,8 +137,6 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
             autoScroll.current = true;
             renderRef.current.scrollTop = 0;
             setShowRenderScrollPos(false);
-            console.log(renderTop);
-            console.log(renderRef.current.offsetHeight);
             if (renderTop > renderRef.current.offsetHeight) setShowRenderScrollPos(true);
         }
     }, [dataPath, currentRepoKey, currentFolderKey, currentNoteKey]);
@@ -229,12 +225,10 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
     );
 
     const handleMouseEnter = useCallback(() => {
-        console.log('mouse enter render');
         setCursorInRender(true);
     }, [setCursorInRender]);
 
     const handleMouseLeave = useCallback(() => {
-        console.log('mouse leave render');
         setCursorInRender(false);
     }, [setCursorInRender]);
 

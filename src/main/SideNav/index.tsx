@@ -31,7 +31,9 @@ const SideNav: React.FC<SideNavProps> = ({
         noteSwitch,
         currentNoteKey,
         repos_obj,
+        notes,
         initRepo,
+        allRepoNotesFetch,
         repoNotesFetch,
         folderNotesFetch,
         initNotes,
@@ -103,44 +105,19 @@ const SideNav: React.FC<SideNavProps> = ({
         setShowWaitingMask(true);
 
         setTimeout(() => {
-            const all_notes = {};
-            const repos_key = dxnote.repos_key;
-            repos_key.forEach((repo_key: string) => {
-                if (!all_notes[repo_key]) {
-                    all_notes[repo_key] = {};
-                }
-                const folders_key = repos_obj[repo_key].folders_key;
-                folders_key.forEach((folder_key: string) => {
-                    if (!all_notes[repo_key][folder_key]) {
-                        const folder_info = ipcRenderer.sendSync('readJson', {
-                            file_path: `${dataPath}/${repo_key}/${folder_key}/folder_info.json`,
-                        });
-                        if (folder_info && folder_info.notes_obj) {
-                            all_notes[repo_key][folder_key] = {};
-                            Object.keys(folder_info.notes_obj).forEach((note_key) => {
-                                const note_info = ipcRenderer.sendSync('readCson', {
-                                    file_path: `${dataPath}/${repo_key}/${folder_key}/${note_key}.cson`,
-                                });
-                                if (note_info) {
-                                    all_notes[repo_key][folder_key][note_key] = note_info.content;
-                                }
-                            });
-                        }
-                    }
-                });
-            });
+            allRepoNotesFetch(dataPath, dxnote, repos_obj);
 
             const documents: any = [];
-            Object.keys(all_notes).forEach((repo_key: string) => {
+            Object.keys(notes).forEach((repo_key: string) => {
                 const folders_obj = repos_obj[repo_key].folders_obj;
-                Object.keys(all_notes[repo_key]).forEach((folder_key: string) => {
+                Object.keys(notes[repo_key]).forEach((folder_key: string) => {
                     const folder_name = folders_obj[folder_key].folder_name;
-                    Object.keys(all_notes[repo_key][folder_key]).forEach((note_key: string) => {
+                    Object.keys(notes[repo_key][folder_key]).forEach((note_key: string) => {
                         const id = `${repo_key}-${folder_key}-${note_key}`;
                         let title =
                             repos_obj[repo_key].folders_obj[folder_key].notes_obj[note_key].title;
                         if (title === '新建文档') title = '';
-                        const content = all_notes[repo_key][folder_key][note_key];
+                        const content = notes[repo_key][folder_key][note_key];
                         documents.push({
                             id,
                             type: 'note',
@@ -184,8 +161,16 @@ const SideNav: React.FC<SideNavProps> = ({
             setShowWaitingMask(false);
 
             console.log('updateMiniSearch success');
-        }, 0);
-    }, [dataPath, dxnote, repos_obj, setShowUpdateIndexTips, setShowWaitingMask]);
+        }, 200);
+    }, [
+        dataPath,
+        dxnote,
+        repos_obj,
+        notes,
+        setShowUpdateIndexTips,
+        setShowWaitingMask,
+        allRepoNotesFetch,
+    ]);
 
     const searchNote = (word: string) => {
         if (!miniSearch.current) return [];

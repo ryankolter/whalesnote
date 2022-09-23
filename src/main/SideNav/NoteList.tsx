@@ -169,7 +169,7 @@ const NoteList: React.FC<NoteListProps> = ({ keySelect, setFocus, setKeySelect, 
             });
 
             updateRepos('note', {
-                dataPath,
+                data_path: dataPath,
                 repo_key: currentRepoKey,
                 folder_key: currentFolderKey,
             });

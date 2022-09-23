@@ -2,10 +2,6 @@ import { Data } from '../commonType';
 import cryptoRandomString from 'crypto-random-string';
 
 const initGuide = () => {
-    return updateGuideData();
-};
-
-const updateGuideData = () => {
     const guide_data: Data = {
         repos: {
             DEFAULTREPO1: {
@@ -72,7 +68,7 @@ const updateGuideData = () => {
             },
         },
         dxnote: {
-            id: cryptoRandomString({ length: 10, type: 'alphanumeric' }),
+            id: cryptoRandomString({ length: 36, type: 'alphanumeric' }),
             repos_key: ['DEFAULTREPO1'],
             cur_repo_key: 'DEFAULTREPO1',
             repos: {
