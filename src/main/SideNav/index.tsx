@@ -47,10 +47,10 @@ const SideNav: React.FC<SideNavProps> = ({
     const resizeNoteOffsetX = useRef<number>(0);
 
     const [folderWidth, setFolderWidth] = useState(
-        Number(window.localStorage.getItem('folder_width')) || 130
+        Number(window.localStorage.getItem('folder_width')) || 140
     );
     const [noteWidth, setNoteWidth] = useState(
-        Number(window.localStorage.getItem('note_width')) || 220
+        Number(window.localStorage.getItem('note_width')) || 250
     );
     const [word, setWord] = useState('');
     const [searchResults, setSearchResults] = useState([]);
@@ -424,7 +424,7 @@ const SideNav: React.FC<SideNavProps> = ({
                         onDrag={(e) => {
                             if (e.pageX > 0) {
                                 const newFolderWidth = e.pageX - resizeFolderOffsetX.current;
-                                if (newFolderWidth > 60) {
+                                if (newFolderWidth >= 60 && newFolderWidth <= 400) {
                                     setFolderWidth(newFolderWidth);
                                 }
                             }
@@ -448,7 +448,7 @@ const SideNav: React.FC<SideNavProps> = ({
                         onDrag={(e) => {
                             if (e.pageX > 0) {
                                 const newNoteWidth = e.pageX - resizeNoteOffsetX.current;
-                                if (newNoteWidth > 100) {
+                                if (newNoteWidth > 100 && newNoteWidth <= 600) {
                                     setNoteWidth(newNoteWidth);
                                 }
                             }
