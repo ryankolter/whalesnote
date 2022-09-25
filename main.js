@@ -245,14 +245,7 @@ const processIPC = () => {
         event.returnValue = true;
     });
 
-    ipcMain.on('writeJsonStr', (event, { file_path, str }) => {
-        console.log('writeJsonStr: ' + file_path);
-        fse.ensureFileSync(file_path);
-        fse.writeFileSync(file_path, str);
-        event.returnValue = true;
-    });
-
-    ipcMain.on('writeHtmlStr', (event, { file_path, str }) => {
+    ipcMain.on('writeStr', (event, { file_path, str }) => {
         fse.ensureFileSync(file_path);
         fse.writeFileSync(file_path, str);
         event.returnValue = true;
@@ -362,6 +355,28 @@ const processIPC = () => {
                 console.log(files);
                 if (files && !files.canceled) {
                     event.sender.send('selectedSavePngFolder', files.filePath);
+                }
+            });
+    });
+
+    ipcMain.on('open-save-dialog', (event, { file_name, file_types, response_event_name }) => {
+        dialog
+            .showSaveDialog({
+                title: 'Select the File Path to save',
+                buttonLabel: 'Save',
+                defaultPath: '*/' + file_name,
+                filters: [
+                    {
+                        name: file_name,
+                        extensions: file_types,
+                    },
+                ],
+                properties: [],
+            })
+            .then((files) => {
+                console.log(files);
+                if (files && !files.canceled) {
+                    event.sender.send(response_event_name, files.filePath);
                 }
             });
     });

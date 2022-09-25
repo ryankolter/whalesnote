@@ -44,6 +44,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
     const [renderPanelState, setRenderPanelState] = useState(
         window.localStorage.getItem('render_panel_state') || 'half'
     );
+    const [showSwitchExportPanel, setShowSwitchExportPanel] = useState(false);
     const [showSwitchModePanel, setShowSwitchModePanel] = useState(false);
     const [showAllRepo, setShowAllRepo] = useState(false);
     const [allowHiddenAllRepoViaEnter, setAllowHiddenAllRepoViaEnter] = useState(true);
@@ -51,11 +52,36 @@ const CenterArea: React.FC<CenterAreaProps> = ({
     const [editorScrollRatio, setEditorScrollRatio] = useState(0);
     const [renderScrollRatio, setRenderScrollRatio] = useState(0);
 
-    const addSavePath = useCallback(() => {
-        ipcRenderer.send('open-save-png-dialog', {
-            file_name: title,
-        });
-    }, [title]);
+    const ExportNote = useCallback(
+        (type: string) => {
+            switch (type) {
+                case 'html':
+                    ipcRenderer.send('open-save-dialog', {
+                        file_name: title,
+                        file_types: ['html'],
+                        response_event_name: 'selectedSaveHtmlFolder',
+                    });
+                    break;
+                case 'png':
+                    ipcRenderer.send('open-save-dialog', {
+                        file_name: title,
+                        file_types: ['png'],
+                        response_event_name: 'selectedSavePngFolder',
+                    });
+                    break;
+                case 'md':
+                    ipcRenderer.send('open-save-dialog', {
+                        file_name: title,
+                        file_types: ['md'],
+                        response_event_name: 'selectedSaveMdFolder',
+                    });
+                    break;
+                case 'default':
+                    break;
+            }
+        },
+        [title]
+    );
 
     const repoNameClickHandler = useCallback(() => {
         setShowAllRepo((_showAllRepo) => !_showAllRepo);
@@ -282,7 +308,48 @@ const CenterArea: React.FC<CenterAreaProps> = ({
         <CenterAreaContainer>
             <TopRow>
                 <EditorTools></EditorTools>
-                <ExportBtn onClick={addSavePath}></ExportBtn>
+                <SwitchExport>
+                    <ExportBtn
+                        className="btn-1-bg-color"
+                        onClick={() => {
+                            setShowSwitchExportPanel(
+                                (_showSwitchExportPanel) => !_showSwitchExportPanel
+                            );
+                        }}
+                    >
+                        导出
+                    </ExportBtn>
+                    {showSwitchExportPanel ? (
+                        <SwitchExportPanel className="float-panel-color">
+                            <ModeOption
+                                onClick={() => {
+                                    setShowSwitchExportPanel(false);
+                                    ExportNote('html');
+                                }}
+                            >
+                                .html
+                            </ModeOption>
+                            <ModeOption
+                                onClick={() => {
+                                    setShowSwitchExportPanel(false);
+                                    ExportNote('png');
+                                }}
+                            >
+                                .png
+                            </ModeOption>
+                            <ModeOption
+                                onClick={() => {
+                                    setShowSwitchExportPanel(false);
+                                    ExportNote('md');
+                                }}
+                            >
+                                .md
+                            </ModeOption>
+                        </SwitchExportPanel>
+                    ) : (
+                        <></>
+                    )}
+                </SwitchExport>
             </TopRow>
             <MarkdownArea>
                 <EditorPanel widthValue={editorWidth}>
@@ -446,18 +513,36 @@ const EditorTools = styled.div({
     minWidth: '0',
 });
 
+const SwitchExport = styled.div({
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'row-reverse',
+    cursor: 'pointer',
+});
+
 const ExportBtn = styled.div({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    width: '32px',
     height: '32px',
     lintHeight: '32px',
     boxSizing: 'border-box',
-    margin: '2px 5px',
-    border: '1px solid rgba(58, 64, 76)',
+    padding: '0 10px',
+    borderRadius: '4px',
     fontSize: '16px',
     cursor: 'pointer',
+});
+
+const SwitchExportPanel = styled.div({
+    position: 'absolute',
+    top: '34px',
+    right: '0',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: '5px 0',
+    borderRadius: '4px',
+    zIndex: '999999999',
 });
 
 const MarkdownArea = styled.div({

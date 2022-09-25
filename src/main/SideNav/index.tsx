@@ -152,7 +152,7 @@ const SideNav: React.FC<SideNavProps> = ({
             });
             miniSearch.current.addAll(documents);
 
-            ipcRenderer.sendSync('writeJsonStr', {
+            ipcRenderer.sendSync('writeStr', {
                 file_path: `${dataPath}/search.json`,
                 str: JSON.stringify(miniSearch.current),
             });

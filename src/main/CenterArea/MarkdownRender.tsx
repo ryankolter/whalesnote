@@ -191,7 +191,7 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
                 ${bodyContent}
             </div>
             </body></html>`;
-            ipcRenderer.sendSync('writeHtmlStr', {
+            ipcRenderer.sendSync('writeStr', {
                 file_path: path,
                 str: outerHtml,
             });
@@ -214,6 +214,18 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
         });
         return () => {
             ipcRenderer.removeAllListeners('selectedSavePngFolder');
+        };
+    }, [content, theme]);
+
+    useEffect(() => {
+        ipcRenderer.on('selectedSaveMdFolder', (event: any, path: string) => {
+            ipcRenderer.sendSync('writeStr', {
+                file_path: path,
+                str: content,
+            });
+        });
+        return () => {
+            ipcRenderer.removeAllListeners('selectedSaveMdFolder');
         };
     }, [content, theme]);
 
