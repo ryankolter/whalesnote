@@ -43,9 +43,15 @@ const SideNav: React.FC<SideNavProps> = ({
 
     const miniSearch = useRef<any>();
     const searchInputRef = useRef<HTMLInputElement>(null);
+    const resizeFolderOffsetX = useRef<number>(0);
+    const resizeNoteOffsetX = useRef<number>(0);
 
-    const [folderWidth, setFolderWidth] = useState(130);
-    const [noteWidth, setNoteWidth] = useState(220);
+    const [folderWidth, setFolderWidth] = useState(
+        Number(window.localStorage.getItem('folder_width')) || 130
+    );
+    const [noteWidth, setNoteWidth] = useState(
+        Number(window.localStorage.getItem('note_width')) || 220
+    );
     const [word, setWord] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [showSearchPanel, setShowSearchPanel] = useState(false);
@@ -411,12 +417,48 @@ const SideNav: React.FC<SideNavProps> = ({
             <SelectArea>
                 <List>
                     <FolderList keySelect={keySelect} setFocus={setFocus} width={folderWidth} />
+                    <ResizeFolderWidth
+                        onDragStart={(e) => {
+                            resizeFolderOffsetX.current = e.pageX - folderWidth;
+                        }}
+                        onDrag={(e) => {
+                            if (e.pageX > 0) {
+                                const newFolderWidth = e.pageX - resizeFolderOffsetX.current;
+                                if (newFolderWidth > 60) {
+                                    setFolderWidth(newFolderWidth);
+                                }
+                            }
+                        }}
+                        onDragEnd={(e) => {
+                            window.localStorage.setItem('folder_width', folderWidth.toString());
+                        }}
+                        draggable="true"
+                        left={folderWidth}
+                    ></ResizeFolderWidth>
                     <NoteList
                         keySelect={keySelect}
                         setFocus={setFocus}
                         setKeySelect={setKeySelect}
                         width={noteWidth}
                     />
+                    <ResizeNoteWidth
+                        onDragStart={(e) => {
+                            resizeNoteOffsetX.current = e.pageX - noteWidth;
+                        }}
+                        onDrag={(e) => {
+                            if (e.pageX > 0) {
+                                const newNoteWidth = e.pageX - resizeNoteOffsetX.current;
+                                if (newNoteWidth > 100) {
+                                    setNoteWidth(newNoteWidth);
+                                }
+                            }
+                        }}
+                        onDragEnd={(e) => {
+                            window.localStorage.setItem('note_width', noteWidth.toString());
+                        }}
+                        draggable="true"
+                        left={folderWidth + noteWidth}
+                    ></ResizeNoteWidth>
                 </List>
             </SelectArea>
             <ActionBar>
@@ -589,6 +631,34 @@ const List = styled.div({
     minHeight: '0',
     borderBottomLeftRadius: '4px',
 });
+
+const ResizeFolderWidth = styled.div(
+    {
+        width: '8px',
+        cursor: 'col-resize',
+        position: 'absolute',
+        top: '0',
+        height: '100%',
+        zIndex: 99999,
+    },
+    (props: { left: number }) => ({
+        left: props.left - 4,
+    })
+);
+
+const ResizeNoteWidth = styled.div(
+    {
+        width: '8px',
+        cursor: 'col-resize',
+        position: 'absolute',
+        top: '0',
+        height: '100%',
+        zIndex: 99999,
+    },
+    (props: { left: number }) => ({
+        left: props.left - 4,
+    })
+);
 
 const ActionBar = styled.div({
     display: 'flex',

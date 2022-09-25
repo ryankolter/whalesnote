@@ -507,6 +507,7 @@ const NoteListContainer = styled.div(
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
+        minWidth: '100px',
     },
     (props: { width: number }) => ({
         width: props.width,

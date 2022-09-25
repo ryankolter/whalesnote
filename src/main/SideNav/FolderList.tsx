@@ -658,7 +658,7 @@ const FolderListContainer = styled.div(
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
-        minWidth: '100px',
+        minWidth: '60px',
         paddingBottom: '20px',
         boxSizing: 'border-box',
     },
