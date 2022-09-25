@@ -591,7 +591,7 @@ const SelectArea = styled.div({
     flexDirection: 'column',
     flex: '1',
     minHeight: '0',
-    margin: '10px 0 0 0',
+    margin: '5px 0 0 0',
 });
 
 const List = styled.div({

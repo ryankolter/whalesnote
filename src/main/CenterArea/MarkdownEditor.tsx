@@ -346,9 +346,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
         if (view.current) {
             const offsetHeight = view.current.contentDOM.getBoundingClientRect().height;
             const scrollTop = offsetHeight * renderScrollRatio;
-            console.log(scrollTop);
             const scrollPos = view.current.lineBlockAtHeight(scrollTop).from;
-            console.log(scrollPos);
 
             view.current?.dispatch({
                 effects: EditorView.scrollIntoView(scrollPos, {

@@ -10,9 +10,6 @@ import WaitingMaskStatic from './components/WaitingMaskStatic';
 import SocketServerBtn from './components/socketServerBtn';
 import SocketClientBtn from './socketClientBtn';
 
-// import './resources/my_highlight_styles/editor/solarized-dark.min.css';
-import './resources/my_highlight_styles/preview/solarized-dark.min.css';
-// import './resources/highlight_styles/base16/solarized-dark.min.css';
 import AssistantPanel from './main/AssistantPanel';
 
 const App = () => {

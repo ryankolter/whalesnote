@@ -252,6 +252,12 @@ const processIPC = () => {
         event.returnValue = true;
     });
 
+    ipcMain.on('writeHtmlStr', (event, { file_path, str }) => {
+        fse.ensureFileSync(file_path);
+        fse.writeFileSync(file_path, str);
+        event.returnValue = true;
+    });
+
     ipcMain.on('readCson', (event, { file_path }) => {
         console.log('readCson: ' + file_path);
         if (!fse.pathExistsSync(file_path)) {
@@ -269,6 +275,19 @@ const processIPC = () => {
         } else {
             let json_str = fse.readFileSync(file_path);
             event.returnValue = CSON.parseJSONString(json_str);
+        }
+    });
+
+    ipcMain.on('readCss', (event, { file_name }) => {
+        console.log('readCss: ' + file_name);
+        const file_path = path.join(__dirname, '/src/resources/css/' + file_name);
+        console.log(file_path);
+        if (!fse.pathExistsSync(file_path)) {
+            event.returnValue = false;
+        } else {
+            let css_str = fse.readFileSync(file_path, 'utf-8');
+            console.log(css_str);
+            event.returnValue = css_str;
         }
     });
 
@@ -293,6 +312,28 @@ const processIPC = () => {
                 console.log(files);
                 if (files && !files.canceled && files.filePaths.length > 0) {
                     event.sender.send('selectedFolder', files.filePaths[0]);
+                }
+            });
+    });
+
+    ipcMain.on('open-save-html-dialog', (event, { file_name }) => {
+        dialog
+            .showSaveDialog({
+                title: 'Select the File Path to save',
+                buttonLabel: 'Save',
+                defaultPath: '*/' + file_name,
+                filters: [
+                    {
+                        name: file_name,
+                        extensions: ['html'],
+                    },
+                ],
+                properties: [],
+            })
+            .then((files) => {
+                console.log(files);
+                if (files && !files.canceled) {
+                    event.sender.send('selectedSaveHtmlFolder', files.filePath);
                 }
             });
     });

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useCallback, useRef, useState } from 'react';
+import { useContext, useMemo, useEffect, useCallback, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import cryptoRandomString from 'crypto-random-string';
 import { GlobalContext } from '../../GlobalProvider';
@@ -22,6 +22,8 @@ import markdownItAnchor from 'markdown-it-anchor';
 import markdownItTable from 'markdown-it-multimd-table';
 import markdownItTocDoneRight from 'markdown-it-toc-done-right';
 import ClipboardJS from 'clipboard';
+
+const { ipcRenderer } = window.require('electron');
 
 export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
     content,
@@ -98,6 +100,46 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
             })
     );
 
+    const print_md: any = useRef<markdownIt>(
+        markdownIt({
+            breaks: true,
+            linkify: true,
+            typographer: true,
+            highlight: function (str, lang) {
+                if (lang && hljs.getLanguage(lang)) {
+                    try {
+                        return (
+                            '<pre><code class="hljs" style="position: relative;">' +
+                            hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
+                            '</code></pre>'
+                        );
+                    } catch (__) {}
+                }
+
+                return (
+                    '<pre><code class="hljs">' + md.current.utils.escapeHtml(str) + '</code></pre>'
+                );
+            },
+        })
+            .use(markdownItEmoji)
+            .use(markdownItFootnote)
+            .use(markdownItSub)
+            .use(markdownItSup)
+            .use(markdownItTaskLists)
+            .use(markdownItLinkAttributes, {
+                attrs: {
+                    target: '_blank',
+                },
+            })
+            .use(markdownItTable, {
+                multiline: false,
+                rowspan: true,
+                headerless: false,
+                multibody: true,
+                aotolabel: true,
+            })
+    );
+
     const [result, setResult] = useState('');
 
     const [showRenderScrollPos, setShowRenderScrollPos] = useState(false);
@@ -111,6 +153,52 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
     const renderContainerRef = useRef<HTMLDivElement>(null);
 
     const clipboard: any = useRef<ClipboardJS>(null);
+
+    const themeClassNames = useMemo(() => {
+        return typeof theme === 'string'
+            ? `${theme}-theme-rd common-theme-rd`
+            : 'grey-theme-rd common-theme-rd';
+    }, [theme]);
+
+    useEffect(() => {
+        ipcRenderer.on('selectedSaveHtmlFolder', (event: any, path: string) => {
+            const bodyContent = print_md.current.render(content);
+            const hljsStyle =
+                ipcRenderer.sendSync('readCss', {
+                    file_name: '/hljs_theme/grey_standard.css',
+                }) || '';
+            const commonStyle =
+                ipcRenderer.sendSync('readCss', {
+                    file_name: '/theme/common.css',
+                }) || '';
+            const themeStyle =
+                ipcRenderer.sendSync('readCss', {
+                    file_name: `/theme/${theme}.css`,
+                }) || '';
+            const outerHtml = `<!DOCTYPE html><html>
+            <head>
+            <meta charset="UTF-8">
+            <meta name = "viewport" content = "width = device-width, initial-scale = 1, maximum-scale = 1">
+            <style>
+            ${commonStyle}
+            ${themeStyle}
+            ${hljsStyle}
+            </style>
+            </head>
+            <body>
+            <div class='${theme}-theme-global ${theme}-theme-rd common-theme-rd'>
+                ${bodyContent}
+            </div>
+            </body></html>`;
+            ipcRenderer.sendSync('writeHtmlStr', {
+                file_path: path,
+                str: outerHtml,
+            });
+        });
+        return () => {
+            ipcRenderer.removeAllListeners('selectedSaveFolder');
+        };
+    }, [content, theme]);
 
     useEffect(() => {
         setResult(md.current.render(content));
@@ -244,11 +332,6 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
             renderContainerRef.current?.removeEventListener('mouseleave', handleMouseLeave);
         };
     }, [handleKeyDown, handleScroll]);
-
-    const themeClassNames =
-        typeof theme === 'string'
-            ? `${theme}-theme-rd common-theme-rd`
-            : 'grey-theme-rd common-theme-rd';
 
     return (
         <MarkdownRenderContainer ref={renderContainerRef}>

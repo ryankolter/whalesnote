@@ -1,9 +1,11 @@
-import { useContext, useCallback, useEffect, useState, useRef, createRef } from 'react';
+import { useContext, useMemo, useCallback, useEffect, useState, useRef, createRef } from 'react';
 import cryptoRandomString from 'crypto-random-string';
 import styled from '@emotion/styled';
 import RepoPanel from './RepoPanel';
 import { MarkdownEditor } from './MarkdownEditor';
 import { MarkdownRender } from './MarkdownRender';
+
+const { ipcRenderer } = window.require('electron');
 
 import { GlobalContext } from '../../GlobalProvider';
 
@@ -26,6 +28,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
         currentFolderKey,
         currentNoteKey,
         repos_obj,
+        title,
         content,
         setNumArray,
     } = useContext(GlobalContext);
@@ -47,6 +50,12 @@ const CenterArea: React.FC<CenterAreaProps> = ({
 
     const [editorScrollRatio, setEditorScrollRatio] = useState(0);
     const [renderScrollRatio, setRenderScrollRatio] = useState(0);
+
+    const addSavePath = useCallback(() => {
+        ipcRenderer.send('open-save-html-dialog', {
+            file_name: title,
+        });
+    }, [title]);
 
     const repoNameClickHandler = useCallback(() => {
         setShowAllRepo((_showAllRepo) => !_showAllRepo);
@@ -271,6 +280,10 @@ const CenterArea: React.FC<CenterAreaProps> = ({
 
     return dataPath ? (
         <CenterAreaContainer>
+            <TopRow>
+                <EditorTools></EditorTools>
+                <ExportBtn onClick={addSavePath}></ExportBtn>
+            </TopRow>
             <MarkdownArea>
                 <EditorPanel widthValue={editorWidth}>
                     <MarkdownEditor
@@ -417,6 +430,34 @@ const CenterAreaContainer = styled.div({
     height: '100%',
     boxSizing: 'border-box',
     padding: '12px 15px 8px 12px',
+});
+
+const TopRow = styled.div({
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    padding: '0 0 10px 0',
+});
+
+const EditorTools = styled.div({
+    display: 'flex',
+    alignItems: 'center',
+    flex: '1',
+    minWidth: '0',
+});
+
+const ExportBtn = styled.div({
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '32px',
+    height: '32px',
+    lintHeight: '32px',
+    boxSizing: 'border-box',
+    margin: '2px 5px',
+    border: '1px solid rgba(58, 64, 76)',
+    fontSize: '16px',
+    cursor: 'pointer',
 });
 
 const MarkdownArea = styled.div({

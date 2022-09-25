@@ -59,6 +59,7 @@ const initContext: {
     repoNotesFetch: any;
     folderNotesFetch: any;
     changeNotesAfterNew: (action_name: string, obj: object) => void;
+    title: string;
     content: string;
     cursorHead: number;
     fromPos: number;
@@ -109,6 +110,7 @@ const initContext: {
     repoNotesFetch: null,
     folderNotesFetch: null,
     changeNotesAfterNew: () => {},
+    title: '',
     content: '',
     cursorHead: 0,
     fromPos: 0,
@@ -170,6 +172,20 @@ export const GlobalProvider = ({ children }: { children: any }) => {
         [dataPath]
     );
     console.log('render');
+
+    const title = useMemo(
+        () =>
+            currentRepoKey &&
+            currentFolderKey &&
+            currentNoteKey &&
+            repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj[currentNoteKey]
+                ?.title
+                ? repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj[
+                      currentNoteKey
+                  ].title
+                : '新建文档',
+        [currentRepoKey, currentFolderKey, currentNoteKey, repos_obj]
+    );
 
     const content = useMemo(
         () =>
@@ -251,6 +267,7 @@ export const GlobalProvider = ({ children }: { children: any }) => {
                 repoNotesFetch,
                 folderNotesFetch,
                 changeNotesAfterNew,
+                title,
                 content,
                 cursorHead,
                 fromPos,
