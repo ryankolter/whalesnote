@@ -33,7 +33,7 @@ const DirectoryBtnContainer = styled.div(
         lineHeight: '32px',
         fontSize: '16px',
         padding: '0 10px',
-        margin: '4px 10px 4px 0',
+        margin: '0 10px 0 0',
         borderRadius: ' 4px',
     },
     `
@@ -46,7 +46,7 @@ const DirectoryBtnContainer = styled.div(
 const PathPanel = styled.div(
     {
         position: 'absolute',
-        top: '32px',
+        bottom: '32px',
         left: '0',
         display: 'none',
         fontSize: '14px',

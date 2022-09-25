@@ -578,7 +578,7 @@ const BottomRow = styled.div({
     width: '100%',
     display: 'flex',
     alignItems: 'center',
-    padding: '10px 10px 0 0',
+    padding: '6px 10px 0 0',
 });
 
 const BreakCrumb = styled.div({

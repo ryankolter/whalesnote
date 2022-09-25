@@ -328,24 +328,6 @@ const SideNav: React.FC<SideNavProps> = ({
     return (
         <LeftPanel className={'left-panel-color'}>
             <ToolBar>
-                <DirectoryBtnArea>
-                    {dataPath ? (
-                        <DirectoryBtn
-                            data_path={dataPath}
-                            addDataPath={addDataPath}
-                            panelWidth={folderWidth + noteWidth}
-                        />
-                    ) : (
-                        <PathAddBtn
-                            className="btn-1-bg-color"
-                            onClick={() => {
-                                addDataPath();
-                            }}
-                        >
-                            设置数据目录
-                        </PathAddBtn>
-                    )}
-                </DirectoryBtnArea>
                 {dataPath ? (
                     <Search>
                         <SearchInput
@@ -437,6 +419,26 @@ const SideNav: React.FC<SideNavProps> = ({
                     />
                 </List>
             </SelectArea>
+            <ActionBar>
+                <DirectoryBtnArea>
+                    {dataPath ? (
+                        <DirectoryBtn
+                            data_path={dataPath}
+                            addDataPath={addDataPath}
+                            panelWidth={folderWidth + noteWidth}
+                        />
+                    ) : (
+                        <PathAddBtn
+                            className="btn-1-bg-color"
+                            onClick={() => {
+                                addDataPath();
+                            }}
+                        >
+                            设置数据目录
+                        </PathAddBtn>
+                    )}
+                </DirectoryBtnArea>
+            </ActionBar>
         </LeftPanel>
     );
 };
@@ -451,21 +453,6 @@ const LeftPanel = styled.div({
 
 const ToolBar = styled.div({
     display: 'flex',
-});
-
-const DirectoryBtnArea = styled.div();
-
-const PathAddBtn = styled.div({
-    position: 'relative',
-    height: '32px',
-    lineHeight: '32px',
-    display: 'flex',
-    alignItem: 'center',
-    justifyContent: 'center',
-    padding: '0 10px',
-    marginTop: '8px',
-    borderRadius: '4px',
-    cursor: 'pointer',
 });
 
 const Search = styled.div({
@@ -488,11 +475,11 @@ const SearchInput = styled.input({
 const SearchPanel = styled.div({
     position: 'absolute',
     top: '40px',
-    left: '-62px',
+    left: '0',
     display: 'flex',
     flexDirection: 'column',
-    width: 'calc(100% + 62px)',
-    height: 'calc(92vh)',
+    width: 'calc(100%)',
+    height: 'calc(100vh - 64px)',
     padding: '10px',
     boxSizing: 'border-box',
     zIndex: '999999',
@@ -501,6 +488,7 @@ const SearchPanel = styled.div({
 const SearchTool = styled.div({
     display: 'flex',
     alignItem: 'center',
+    marginBottom: '5px',
 });
 
 const CloseSearchPanelBtn = styled.div({
@@ -591,7 +579,7 @@ const SelectArea = styled.div({
     flexDirection: 'column',
     flex: '1',
     minHeight: '0',
-    margin: '5px 0 0 0',
+    margin: '5px 0 10px 0',
 });
 
 const List = styled.div({
@@ -600,6 +588,25 @@ const List = styled.div({
     flex: '1',
     minHeight: '0',
     borderBottomLeftRadius: '4px',
+});
+
+const ActionBar = styled.div({
+    display: 'flex',
+});
+
+const DirectoryBtnArea = styled.div();
+
+const PathAddBtn = styled.div({
+    position: 'relative',
+    height: '32px',
+    lineHeight: '32px',
+    display: 'flex',
+    alignItem: 'center',
+    justifyContent: 'center',
+    padding: '0 10px',
+    marginTop: '8px',
+    borderRadius: '4px',
+    cursor: 'pointer',
 });
 
 type SideNavProps = {
