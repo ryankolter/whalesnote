@@ -52,7 +52,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
     const [renderScrollRatio, setRenderScrollRatio] = useState(0);
 
     const addSavePath = useCallback(() => {
-        ipcRenderer.send('open-save-html-dialog', {
+        ipcRenderer.send('open-save-png-dialog', {
             file_name: title,
         });
     }, [title]);

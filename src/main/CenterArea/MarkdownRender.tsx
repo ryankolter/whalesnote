@@ -22,6 +22,7 @@ import markdownItAnchor from 'markdown-it-anchor';
 import markdownItTable from 'markdown-it-multimd-table';
 import markdownItTocDoneRight from 'markdown-it-toc-done-right';
 import ClipboardJS from 'clipboard';
+import { toPng } from 'html-to-image';
 
 const { ipcRenderer } = window.require('electron');
 
@@ -196,7 +197,23 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
             });
         });
         return () => {
-            ipcRenderer.removeAllListeners('selectedSaveFolder');
+            ipcRenderer.removeAllListeners('selectedSaveHtmlFolder');
+        };
+    }, [content, theme]);
+
+    useEffect(() => {
+        ipcRenderer.on('selectedSavePngFolder', (event: any, path: string) => {
+            toPng(renderRef.current as HTMLElement, {
+                height: renderRef.current?.scrollHeight,
+            }).then((dataUrl) => {
+                ipcRenderer.sendSync('writePngBlob', {
+                    file_path: path,
+                    url: dataUrl,
+                });
+            });
+        });
+        return () => {
+            ipcRenderer.removeAllListeners('selectedSavePngFolder');
         };
     }, [content, theme]);
 

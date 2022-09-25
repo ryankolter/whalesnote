@@ -14,7 +14,7 @@
             "*.js",
             "build"
         ],
-        "extraResources":  {
+        "extraResources": {
             "from": "./src/resources/dict/",
             "to": "extraResources/dict"
         }
@@ -44,16 +44,17 @@
         "filelist": "^1.0.2",
         "fs-extra": "^10.1.0",
         "highlight.js": "^11.6.0",
+        "html-to-image": "^1.10.8",
         "immer": "^9.0.15",
         "markdown-it": "^13.0.1",
         "markdown-it-anchor": "^8.6.5",
         "markdown-it-emoji": "^2.0.2",
         "markdown-it-footnote": "^3.0.3",
-        "markdown-it-task-lists": "2.1.1",
         "markdown-it-link-attributes": "4.0.1",
         "markdown-it-multimd-table": "^4.2.0",
-        "markdown-it-sup": "^1.0.0",
         "markdown-it-sub": "^1.0.0",
+        "markdown-it-sup": "^1.0.0",
+        "markdown-it-task-lists": "2.1.1",
         "markdown-it-toc-done-right": "^4.2.0",
         "minisearch": "^5.0.0",
         "nodejieba": "^2.6.0",

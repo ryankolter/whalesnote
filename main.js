@@ -258,6 +258,12 @@ const processIPC = () => {
         event.returnValue = true;
     });
 
+    ipcMain.on('writePngBlob', (event, { file_path, url }) => {
+        fse.ensureFileSync(file_path);
+        fse.writeFileSync(file_path, url.replace(/^data:image\/png;base64,/, ''), 'base64');
+        event.returnValue = true;
+    });
+
     ipcMain.on('readCson', (event, { file_path }) => {
         console.log('readCson: ' + file_path);
         if (!fse.pathExistsSync(file_path)) {
@@ -334,6 +340,28 @@ const processIPC = () => {
                 console.log(files);
                 if (files && !files.canceled) {
                     event.sender.send('selectedSaveHtmlFolder', files.filePath);
+                }
+            });
+    });
+
+    ipcMain.on('open-save-png-dialog', (event, { file_name }) => {
+        dialog
+            .showSaveDialog({
+                title: 'Select the File Path to save',
+                buttonLabel: 'Save',
+                defaultPath: '*/' + file_name,
+                filters: [
+                    {
+                        name: file_name,
+                        extensions: ['png'],
+                    },
+                ],
+                properties: [],
+            })
+            .then((files) => {
+                console.log(files);
+                if (files && !files.canceled) {
+                    event.sender.send('selectedSavePngFolder', files.filePath);
                 }
             });
     });
