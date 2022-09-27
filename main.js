@@ -42,7 +42,6 @@ const createWindow = async () => {
     });
 
     win.webContents.setWindowOpenHandler(({ url }) => {
-        console.log(url);
         shell.openExternal(url);
         return { action: 'deny' };
     });
@@ -278,14 +277,15 @@ const processIPC = () => {
     });
 
     ipcMain.on('readCss', (event, { file_name }) => {
-        console.log('readCss: ' + file_name);
-        const file_path = path.join(__dirname, '/src/resources/css/' + file_name);
-        console.log(file_path);
+        let file_path = path.join(__dirname, '/src/resources/css/' + file_name);
+        if (app.isPackaged) {
+            let cssFilePath = path.join(__dirname, '../extraResources/css/');
+            file_path = path.join(cssFilePath, file_name);
+        }
         if (!fse.pathExistsSync(file_path)) {
             event.returnValue = false;
         } else {
             let css_str = fse.readFileSync(file_path, 'utf-8');
-            console.log(css_str);
             event.returnValue = css_str;
         }
     });
@@ -308,53 +308,8 @@ const processIPC = () => {
                 properties: ['openDirectory'],
             })
             .then((files) => {
-                console.log(files);
                 if (files && !files.canceled && files.filePaths.length > 0) {
                     event.sender.send('selectedFolder', files.filePaths[0]);
-                }
-            });
-    });
-
-    ipcMain.on('open-save-html-dialog', (event, { file_name }) => {
-        dialog
-            .showSaveDialog({
-                title: 'Select the File Path to save',
-                buttonLabel: 'Save',
-                defaultPath: '*/' + file_name,
-                filters: [
-                    {
-                        name: file_name,
-                        extensions: ['html'],
-                    },
-                ],
-                properties: [],
-            })
-            .then((files) => {
-                console.log(files);
-                if (files && !files.canceled) {
-                    event.sender.send('selectedSaveHtmlFolder', files.filePath);
-                }
-            });
-    });
-
-    ipcMain.on('open-save-png-dialog', (event, { file_name }) => {
-        dialog
-            .showSaveDialog({
-                title: 'Select the File Path to save',
-                buttonLabel: 'Save',
-                defaultPath: '*/' + file_name,
-                filters: [
-                    {
-                        name: file_name,
-                        extensions: ['png'],
-                    },
-                ],
-                properties: [],
-            })
-            .then((files) => {
-                console.log(files);
-                if (files && !files.canceled) {
-                    event.sender.send('selectedSavePngFolder', files.filePath);
                 }
             });
     });
@@ -364,7 +319,7 @@ const processIPC = () => {
             .showSaveDialog({
                 title: 'Select the File Path to save',
                 buttonLabel: 'Save',
-                defaultPath: '*/' + file_name,
+                defaultPath: '*/' + file_name.replace('/', ' '),
                 filters: [
                     {
                         name: file_name,
@@ -374,7 +329,6 @@ const processIPC = () => {
                 properties: [],
             })
             .then((files) => {
-                console.log(files);
                 if (files && !files.canceled) {
                     event.sender.send(response_event_name, files.filePath);
                 }
