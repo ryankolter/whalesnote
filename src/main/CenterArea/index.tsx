@@ -59,21 +59,21 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                     ipcRenderer.send('open-save-dialog', {
                         file_name: currentTitle,
                         file_types: ['html'],
-                        response_event_name: 'selectedSaveHtmlFolder',
-                    });
-                    break;
-                case 'png':
-                    ipcRenderer.send('open-save-dialog', {
-                        file_name: currentTitle,
-                        file_types: ['png'],
-                        response_event_name: 'selectedSavePngFolder',
+                        response_event_name: 'saveNoteToHtml',
                     });
                     break;
                 case 'md':
                     ipcRenderer.send('open-save-dialog', {
                         file_name: currentTitle,
                         file_types: ['md'],
-                        response_event_name: 'selectedSaveMdFolder',
+                        response_event_name: 'saveNoteToPng',
+                    });
+                    break;
+                case 'png':
+                    ipcRenderer.send('open-save-dialog', {
+                        file_name: currentTitle,
+                        file_types: ['png'],
+                        response_event_name: 'saveNoteToPng',
                     });
                     break;
                 case 'default':
@@ -82,6 +82,18 @@ const CenterArea: React.FC<CenterAreaProps> = ({
         },
         [currentTitle]
     );
+
+    const ExportFolder = useCallback((type: string) => {
+        switch (type) {
+            case 'html':
+                ipcRenderer.send('open-directory-dialog', {
+                    response_event_name: 'saveFolderToHtml',
+                });
+                break;
+            case 'default':
+                break;
+        }
+    }, []);
 
     const repoNameClickHandler = useCallback(() => {
         setShowAllRepo((_showAllRepo) => !_showAllRepo);
@@ -324,10 +336,18 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                             <ModeOption
                                 onClick={() => {
                                     setShowSwitchExportPanel(false);
+                                    ExportFolder('html');
+                                }}
+                            >
+                                Folder to .html
+                            </ModeOption>
+                            <ModeOption
+                                onClick={() => {
+                                    setShowSwitchExportPanel(false);
                                     ExportNote('html');
                                 }}
                             >
-                                .html
+                                Note to.html
                             </ModeOption>
                             <ModeOption
                                 onClick={() => {
@@ -335,7 +355,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                                     ExportNote('png');
                                 }}
                             >
-                                .png
+                                Note to .png
                             </ModeOption>
                             <ModeOption
                                 onClick={() => {
@@ -343,7 +363,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                                     ExportNote('md');
                                 }}
                             >
-                                .md
+                                Note to .md
                             </ModeOption>
                         </SwitchExportPanel>
                     ) : (

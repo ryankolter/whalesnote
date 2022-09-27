@@ -39,6 +39,8 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
         currentRepoKey,
         currentFolderKey,
         currentNoteKey,
+        repos_obj,
+        notes,
         currentNoteStr,
         renderTop,
         updateRenderTop,
@@ -163,7 +165,7 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
     }, [theme]);
 
     useEffect(() => {
-        ipcRenderer.on('selectedSaveHtmlFolder', (event: any, path: string) => {
+        ipcRenderer.on('saveNoteToHtml', (event: any, path: string) => {
             const bodyContent = print_md.current.render(currentNoteStr);
             const hljsStyle =
                 ipcRenderer.sendSync('readCss', {
@@ -198,12 +200,24 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
             });
         });
         return () => {
-            ipcRenderer.removeAllListeners('selectedSaveHtmlFolder');
+            ipcRenderer.removeAllListeners('saveNoteToHtml');
         };
     }, [currentNoteStr, theme]);
 
     useEffect(() => {
-        ipcRenderer.on('selectedSavePngFolder', (event: any, path: string) => {
+        ipcRenderer.on('saveNoteToMd', (event: any, path: string) => {
+            ipcRenderer.sendSync('writeStr', {
+                file_path: path,
+                str: currentNoteStr,
+            });
+        });
+        return () => {
+            ipcRenderer.removeAllListeners('saveNoteToPng');
+        };
+    }, [currentNoteStr, theme]);
+
+    useEffect(() => {
+        ipcRenderer.on('saveNoteToPng', (event: any, path: string) => {
             toPng(renderRef.current as HTMLElement, {
                 height: renderRef.current?.scrollHeight,
             }).then((dataUrl) => {
@@ -214,21 +228,63 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
             });
         });
         return () => {
-            ipcRenderer.removeAllListeners('selectedSavePngFolder');
+            ipcRenderer.removeAllListeners('saveNoteToPng');
         };
     }, []);
 
     useEffect(() => {
-        ipcRenderer.on('selectedSaveMdFolder', (event: any, path: string) => {
-            ipcRenderer.sendSync('writeStr', {
-                file_path: path,
-                str: currentNoteStr,
+        ipcRenderer.on('saveFolderToHtml', (event: any, path: string) => {
+            const hljsStyle =
+                ipcRenderer.sendSync('readCss', {
+                    file_name: '/hljs_theme/grey_standard.css',
+                }) || '';
+            const commonStyle =
+                ipcRenderer.sendSync('readCss', {
+                    file_name: '/theme/common.css',
+                }) || '';
+            const themeStyle =
+                ipcRenderer.sendSync('readCss', {
+                    file_name: `/theme/${theme}.css`,
+                }) || '';
+
+            Object.keys(notes[currentRepoKey][currentFolderKey]).forEach((note_key: string) => {
+                let title =
+                    repos_obj[currentRepoKey]?.folders_obj &&
+                    repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj
+                        ? repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj[
+                              note_key
+                          ]?.title || ''
+                        : '';
+                if (title === '' || title === '新建文档') title = note_key;
+                const content = notes[currentRepoKey][currentFolderKey][note_key];
+                const bodyContent = print_md.current.render(content);
+                const outerHtml = `<!DOCTYPE html><html>
+                <head>
+                <meta charset="UTF-8">
+                <meta name = "viewport" content = "width = device-width, initial-scale = 1, maximum-scale = 1">
+                <style>
+                ${commonStyle}
+                ${themeStyle}
+                ${hljsStyle}
+                </style>
+                </head>
+                <body>
+                <div class='${theme}-theme-global ${theme}-theme-rd common-theme-rd'>
+                    ${bodyContent}
+                </div>
+                </body></html>`;
+
+                ipcRenderer.sendSync('writeStrToFile', {
+                    folder_path: path,
+                    file_name: title + '.html',
+                    str: outerHtml,
+                });
             });
         });
         return () => {
-            ipcRenderer.removeAllListeners('selectedSaveMdFolder');
+            ipcRenderer.removeAllListeners('saveFolderToHtml');
         };
-    }, [currentNoteStr, theme]);
+    }, [repos_obj, notes, currentRepoKey, currentFolderKey, theme]);
 
     useEffect(() => {
         setResult(md.current.render(currentNoteStr));

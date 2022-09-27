@@ -250,6 +250,13 @@ const processIPC = () => {
         event.returnValue = true;
     });
 
+    ipcMain.on('writeStrToFile', (event, { folder_path, file_name, str }) => {
+        const file_path = path.join(folder_path, file_name);
+        fse.ensureFileSync(file_path);
+        fse.writeFileSync(file_path, str);
+        event.returnValue = true;
+    });
+
     ipcMain.on('writePngBlob', (event, { file_path, url }) => {
         fse.ensureFileSync(file_path);
         fse.writeFileSync(file_path, url.replace(/^data:image\/png;base64,/, ''), 'base64');
@@ -302,14 +309,14 @@ const processIPC = () => {
         event.returnValue = true;
     });
 
-    ipcMain.on('open-directory-dialog', (event, p) => {
+    ipcMain.on('open-directory-dialog', (event, { response_event_name }) => {
         dialog
             .showOpenDialog({
                 properties: ['openDirectory'],
             })
             .then((files) => {
                 if (files && !files.canceled && files.filePaths.length > 0) {
-                    event.sender.send('selectedFolder', files.filePaths[0]);
+                    event.sender.send(response_event_name, files.filePaths[0]);
                 }
             });
     });

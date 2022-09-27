@@ -190,14 +190,16 @@ const SideNav: React.FC<SideNavProps> = ({
     };
 
     useMemo(() => {
-        ipcRenderer.on('selectedFolder', (event: any, path: string) => {
+        ipcRenderer.on('checkoutDataPath', (event: any, path: string) => {
             window.localStorage.setItem('dxnote_data_path', path);
             setDataPath(path);
         });
     }, [setDataPath]);
 
     const addDataPath = () => {
-        ipcRenderer.send('open-directory-dialog');
+        ipcRenderer.send('open-directory-dialog', {
+            response_event_name: 'checkoutDataPath',
+        });
     };
 
     const handleSearchInputChange = useCallback(
