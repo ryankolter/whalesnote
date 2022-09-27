@@ -121,7 +121,8 @@ const SideNav: React.FC<SideNavProps> = ({
                     Object.keys(notes[repo_key][folder_key]).forEach((note_key: string) => {
                         const id = `${repo_key}-${folder_key}-${note_key}`;
                         let title =
-                            repos_obj[repo_key].folders_obj[folder_key].notes_obj[note_key].title;
+                            repos_obj[repo_key]?.folders_obj[folder_key]?.notes_obj[note_key]
+                                ?.title || '';
                         if (title === '新建文档') title = '';
                         const content = notes[repo_key][folder_key][note_key];
                         documents.push({

@@ -6,7 +6,6 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     user-select: none;
-    font-weight: 500;
 }
 
 .item-selected:before {
@@ -153,6 +152,7 @@ body {
 
 .common-theme-rd p {
     margin: 1.2em 0;
+    line-height: 1.6em;
 }
 
 .common-theme-rd pre code {
