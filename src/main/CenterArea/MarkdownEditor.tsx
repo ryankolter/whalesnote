@@ -30,7 +30,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
         currentNoteKey,
         renameNote,
         updateNote,
-        content,
+        currentContent,
         cursorHead,
         fromPos,
         updateCursorHead,
@@ -270,7 +270,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
     useEffect(() => {
         if (editor.current) {
             const defaultState = EditorState.create({
-                doc: content,
+                doc: currentContent,
                 extensions: [...getExtensions, scrollListener, cursorActiveListener],
             });
             view.current = new EditorView({
@@ -303,7 +303,7 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
         }, 500);
 
         const newState = EditorState.create({
-            doc: content,
+            doc: currentContent,
             extensions: [...getExtensions, EditorView.editable.of(false)],
         });
         view.current?.setState(newState);

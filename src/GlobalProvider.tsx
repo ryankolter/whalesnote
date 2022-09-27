@@ -1,4 +1,4 @@
-import { createContext, useCallback, useState, useMemo } from 'react';
+import { createContext, useCallback, useState, useMemo, useEffect } from 'react';
 
 import { useRepos } from './lib/useRepos';
 import { useDxnote } from './lib/useDxnote';
@@ -13,7 +13,7 @@ import {
     folderNotesFetch,
     changeNotesAfterNew,
     initNotes,
-    updateNote,
+    updateNoteHandler,
 } from './lib/notes';
 
 const initContext: {
@@ -53,14 +53,15 @@ const initContext: {
         repo_key: string,
         folder_key: string,
         note_key: string,
-        content: string
+        currentContent: string
     ) => void;
     allRepoNotesFetch: any;
     repoNotesFetch: any;
     folderNotesFetch: any;
     changeNotesAfterNew: (action_name: string, obj: object) => void;
-    title: string;
-    content: string;
+    currentTitle: string;
+    currentContent: string;
+    currentNoteStr: string;
     cursorHead: number;
     fromPos: number;
     renderTop: number;
@@ -110,8 +111,9 @@ const initContext: {
     repoNotesFetch: null,
     folderNotesFetch: null,
     changeNotesAfterNew: () => {},
-    title: '',
-    content: '',
+    currentTitle: '',
+    currentContent: '',
+    currentNoteStr: '',
     cursorHead: 0,
     fromPos: 0,
     renderTop: 0,
@@ -127,6 +129,7 @@ export const GlobalProvider = ({ children }: { children: any }) => {
     const [dataPath, setDataPath] = useState<string>(
         window.localStorage.getItem('dxnote_data_path') || ''
     );
+    const [currentNoteStr, setCurrentNoteStr] = useState<string>('');
     const [
         dxnote,
         {
@@ -167,13 +170,28 @@ export const GlobalProvider = ({ children }: { children: any }) => {
 
     const noteSwitch = useCallback(
         (note_key: string | undefined) => {
+            console.log('??????');
             switchNote(dataPath, note_key);
         },
         [dataPath]
     );
     console.log('render');
 
-    const title = useMemo(
+    const updateNote = useCallback(
+        (
+            data_path: string,
+            repo_key: string,
+            folder_key: string,
+            note_key: string,
+            note_content: string
+        ) => {
+            setCurrentNoteStr(note_content);
+            updateNoteHandler(data_path, repo_key, folder_key, note_key, note_content);
+        },
+        [updateNoteHandler]
+    );
+
+    const currentTitle = useMemo(
         () =>
             currentRepoKey &&
             currentFolderKey &&
@@ -187,7 +205,7 @@ export const GlobalProvider = ({ children }: { children: any }) => {
         [currentRepoKey, currentFolderKey, currentNoteKey, repos_obj]
     );
 
-    const content = useMemo(
+    const currentContent = useMemo(
         () =>
             currentRepoKey &&
             currentFolderKey &&
@@ -197,8 +215,12 @@ export const GlobalProvider = ({ children }: { children: any }) => {
             notes[currentRepoKey][currentFolderKey][currentNoteKey]
                 ? notes[currentRepoKey][currentFolderKey][currentNoteKey]
                 : '',
-        [currentRepoKey, currentFolderKey, currentNoteKey, notes]
+        [currentRepoKey, currentFolderKey, currentNoteKey]
     );
+
+    useEffect(() => {
+        setCurrentNoteStr(currentContent);
+    }, [currentContent]);
 
     const cursorHead = useMemo(
         () =>
@@ -267,8 +289,9 @@ export const GlobalProvider = ({ children }: { children: any }) => {
                 repoNotesFetch,
                 folderNotesFetch,
                 changeNotesAfterNew,
-                title,
-                content,
+                currentTitle,
+                currentContent,
+                currentNoteStr,
                 cursorHead,
                 fromPos,
                 renderTop,

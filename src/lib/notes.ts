@@ -150,7 +150,7 @@ export const saveNow = (
     }
 };
 
-export const updateNote = (
+export const updateNoteHandler = (
     data_path: string,
     repo_key: string,
     folder_key: string,

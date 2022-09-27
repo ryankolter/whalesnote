@@ -28,8 +28,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
         currentFolderKey,
         currentNoteKey,
         repos_obj,
-        title,
-        content,
+        currentTitle,
         setNumArray,
     } = useContext(GlobalContext);
 
@@ -57,21 +56,21 @@ const CenterArea: React.FC<CenterAreaProps> = ({
             switch (type) {
                 case 'html':
                     ipcRenderer.send('open-save-dialog', {
-                        file_name: title,
+                        file_name: currentTitle,
                         file_types: ['html'],
                         response_event_name: 'selectedSaveHtmlFolder',
                     });
                     break;
                 case 'png':
                     ipcRenderer.send('open-save-dialog', {
-                        file_name: title,
+                        file_name: currentTitle,
                         file_types: ['png'],
                         response_event_name: 'selectedSavePngFolder',
                     });
                     break;
                 case 'md':
                     ipcRenderer.send('open-save-dialog', {
-                        file_name: title,
+                        file_name: currentTitle,
                         file_types: ['md'],
                         response_event_name: 'selectedSaveMdFolder',
                     });
@@ -80,7 +79,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                     break;
             }
         },
-        [title]
+        [currentTitle]
     );
 
     const repoNameClickHandler = useCallback(() => {
@@ -366,7 +365,6 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                 <RenderPanel topValue={renderLeft} widthValue={renderWidth}>
                     {renderPanelState !== 'hidden' ? (
                         <MarkdownRender
-                            content={content}
                             editorScrollRatio={editorScrollRatio}
                             theme={theme}
                             renderPanelState={renderPanelState}

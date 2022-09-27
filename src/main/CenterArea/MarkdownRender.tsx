@@ -27,7 +27,6 @@ import { toPng } from 'html-to-image';
 const { ipcRenderer } = window.require('electron');
 
 export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
-    content,
     editorScrollRatio,
     renderPanelState,
     theme,
@@ -38,6 +37,7 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
         currentRepoKey,
         currentFolderKey,
         currentNoteKey,
+        currentNoteStr,
         renderTop,
         updateRenderTop,
     } = useContext(GlobalContext);
@@ -163,7 +163,7 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
 
     useEffect(() => {
         ipcRenderer.on('selectedSaveHtmlFolder', (event: any, path: string) => {
-            const bodyContent = print_md.current.render(content);
+            const bodyContent = print_md.current.render(currentNoteStr);
             const hljsStyle =
                 ipcRenderer.sendSync('readCss', {
                     file_name: '/hljs_theme/grey_standard.css',
@@ -199,7 +199,7 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
         return () => {
             ipcRenderer.removeAllListeners('selectedSaveHtmlFolder');
         };
-    }, [content, theme]);
+    }, [currentNoteStr, theme]);
 
     useEffect(() => {
         ipcRenderer.on('selectedSavePngFolder', (event: any, path: string) => {
@@ -215,22 +215,22 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
         return () => {
             ipcRenderer.removeAllListeners('selectedSavePngFolder');
         };
-    }, [content, theme]);
+    }, []);
 
     useEffect(() => {
         ipcRenderer.on('selectedSaveMdFolder', (event: any, path: string) => {
             ipcRenderer.sendSync('writeStr', {
                 file_path: path,
-                str: content,
+                str: currentNoteStr,
             });
         });
         return () => {
             ipcRenderer.removeAllListeners('selectedSaveMdFolder');
         };
-    }, [content, theme]);
+    }, [currentNoteStr, theme]);
 
     useEffect(() => {
-        setResult(md.current.render(content));
+        setResult(md.current.render(currentNoteStr));
         clipboard.current = new ClipboardJS('.copy-btn');
         clipboard.current.on('success', (e: any) => {
             e.trigger.innerHTML = '成功';
@@ -247,7 +247,7 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
 
             clipboard.current.off('error');
         };
-    }, [dataPath, currentRepoKey, currentFolderKey, currentNoteKey, content]);
+    }, [dataPath, currentRepoKey, currentFolderKey, currentNoteKey, currentNoteStr]);
 
     useEffect(() => {
         if (renderRef.current) {
@@ -434,7 +434,6 @@ const TocDirectory = styled.div({
 });
 
 type MarkdownRenderProps = {
-    content: string;
     theme: string;
     editorScrollRatio: number;
     renderPanelState: string;
