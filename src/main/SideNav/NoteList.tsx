@@ -20,6 +20,7 @@ const NoteList: React.FC<NoteListProps> = ({ keySelect, setFocus, setKeySelect, 
         currentNoteKey,
         repos_obj,
         updateRepos,
+        addSaveTask,
         reorderNote,
         changeNotesAfterNew,
         numArray,
@@ -97,7 +98,7 @@ const NoteList: React.FC<NoteListProps> = ({ keySelect, setFocus, setKeySelect, 
                     type: 'alphanumeric',
                 })
             );
-        }, 0);
+        }, 500);
         setTimeout(() => {
             scrollToBottom();
         }, 0);
@@ -108,6 +109,7 @@ const NoteList: React.FC<NoteListProps> = ({ keySelect, setFocus, setKeySelect, 
         currentFolderKey,
         changeNotesAfterNew,
         noteSwitch,
+        addSaveTask,
         setFocus,
         setKeySelect,
         scrollToBottom,

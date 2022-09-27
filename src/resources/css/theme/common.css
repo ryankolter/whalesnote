@@ -93,8 +93,12 @@ body {
 
 
 /* scroller */
-.common-theme-cm .cm-scroller {
+.editor-smooth .cm-scroller {
     scroll-behavior: smooth;
+}
+
+.editor-auto .cm-scroller {
+    scroll-behavior: auto;
 }
 
 .common-theme-cm .cm-scroller::-webkit-scrollbar {
@@ -194,7 +198,7 @@ body {
 .common-theme-rd h4 {
     font-size: 16px !important;
     line-height: 22px !important;
-    margin-block-start: 1em !important;
+    margin-block-start: 1.6em !important;
     margin-block-end: 1em !important;
 }
 

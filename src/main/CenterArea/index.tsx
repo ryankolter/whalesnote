@@ -48,6 +48,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
     const [showAllRepo, setShowAllRepo] = useState(false);
     const [allowHiddenAllRepoViaEnter, setAllowHiddenAllRepoViaEnter] = useState(true);
 
+    const [cursorInRender, setCursorInRender] = useState(false);
     const [editorScrollRatio, setEditorScrollRatio] = useState(0);
     const [renderScrollRatio, setRenderScrollRatio] = useState(0);
 
@@ -356,6 +357,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                         theme={theme}
                         focus={focus}
                         blur={blur}
+                        cursorInRender={cursorInRender}
                         renderScrollRatio={renderScrollRatio}
                         renderPanelState={renderPanelState}
                         setKeySelect={setKeySelect}
@@ -365,6 +367,8 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                 <RenderPanel topValue={renderLeft} widthValue={renderWidth}>
                     {renderPanelState !== 'hidden' ? (
                         <MarkdownRender
+                            cursorInRender={cursorInRender}
+                            setCursorInRender={setCursorInRender}
                             editorScrollRatio={editorScrollRatio}
                             theme={theme}
                             renderPanelState={renderPanelState}

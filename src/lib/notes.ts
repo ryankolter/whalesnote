@@ -118,19 +118,18 @@ export const initNotes = (_notes: notesTypes) => {
     notes = _notes;
 };
 
-export const saveNow = (
+export const saveTask = (
     data_path: string,
     repo_key: string,
     folder_key: string,
-    note_key: string,
-    note_content: string
+    note_key: string
 ) => {
     const note_info = ipcRenderer.sendSync('readCson', {
         file_path: `${data_path}/${repo_key}/${folder_key}/${note_key}.cson`,
     });
 
     if (note_info) {
-        note_info.content = note_content;
+        note_info.content = notes[repo_key][folder_key][note_key];
         note_info.updatedAt = new Date();
         ipcRenderer.sendSync('writeCson', {
             file_path: `${data_path}/${repo_key}/${folder_key}/${note_key}.cson`,
@@ -141,13 +140,33 @@ export const saveNow = (
             createAt: new Date(),
             updatedAt: new Date(),
             type: 'markdown',
-            content: note_content,
+            content: notes[repo_key][folder_key][note_key],
         };
         ipcRenderer.sendSync('writeCson', {
             file_path: `${data_path}/${repo_key}/${folder_key}/${note_key}.cson`,
             obj: new_note_info,
         });
     }
+};
+
+export const addSaveTask = (
+    data_path: string,
+    repo_key: string,
+    folder_key: string,
+    note_key: string,
+    delay: number
+) => {
+    if (saveTimerObj.has(note_key)) {
+        clearTimeout(saveTimerObj.get(note_key) as NodeJS.Timeout);
+    }
+
+    saveTimerObj.set(
+        note_key,
+        setTimeout(() => {
+            saveTask(data_path, repo_key, folder_key, note_key);
+            saveTimerObj.delete(note_key);
+        }, delay)
+    );
 };
 
 export const updateNoteHandler = (
@@ -158,19 +177,8 @@ export const updateNoteHandler = (
     note_content: string
 ) => {
     if (repo_key && folder_key && note_key) {
-        if (saveTimerObj.has(note_key)) {
-            clearTimeout(saveTimerObj.get(note_key) as NodeJS.Timeout);
-        }
-
-        saveTimerObj.set(
-            note_key,
-            setTimeout(() => {
-                saveNow(data_path, repo_key, folder_key, note_key, note_content);
-                saveTimerObj.delete(note_key);
-            }, 800)
-        );
-
         notes[repo_key][folder_key][note_key] = note_content;
+        addSaveTask(data_path, repo_key, folder_key, note_key, 800);
     }
 };
 

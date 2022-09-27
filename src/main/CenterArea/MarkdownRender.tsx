@@ -30,6 +30,8 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
     editorScrollRatio,
     renderPanelState,
     theme,
+    cursorInRender,
+    setCursorInRender,
     setRenderScrollRatio,
 }) => {
     const {
@@ -144,7 +146,6 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
     const [result, setResult] = useState('');
 
     const [showRenderScrollPos, setShowRenderScrollPos] = useState(false);
-    const [cursorInRender, setCursorInRender] = useState(false);
 
     const renderRef = useRef<HTMLDivElement>(null);
     const scrollSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -328,7 +329,6 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
                 setShowRenderScrollPos(false);
                 if (renderRef.current) {
                     const renderScrollValue = renderRef.current.scrollTop;
-                    console.log(renderScrollValue);
                     updateRenderTop(
                         currentRepoKey,
                         currentFolderKey,
@@ -437,5 +437,7 @@ type MarkdownRenderProps = {
     theme: string;
     editorScrollRatio: number;
     renderPanelState: string;
+    cursorInRender: boolean;
+    setCursorInRender: (cursorInRender: boolean) => void;
     setRenderScrollRatio: (editorScrollRatio: number) => void;
 };
