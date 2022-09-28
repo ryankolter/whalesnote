@@ -27,13 +27,9 @@ const reposReducer = produce((state: object, action: any) => {
         case 'fetchFolder': {
             if (!state[action.repo_key]) return state;
 
-            console.log(action.repo_key);
-            console.log(action.data_path);
-
             const repo_info = ipcRenderer.sendSync('readJson', {
                 file_path: `${action.data_path}/${action.repo_key}/repo_info.json`,
             });
-            console.log(repo_info);
             state[action.repo_key].folders_key = repo_info.folders_key;
 
             const folder_info = ipcRenderer.sendSync('readJson', {

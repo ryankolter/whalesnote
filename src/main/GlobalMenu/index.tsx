@@ -18,7 +18,6 @@ const GlobalMenu: React.FC<{
     }, []);
 
     useEffect(() => {
-        console.log(showGlobalMenu);
         setMenuPopUp(showGlobalMenu);
     }, [showGlobalMenu]);
 

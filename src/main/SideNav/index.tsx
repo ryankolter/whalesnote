@@ -252,7 +252,6 @@ const SideNav: React.FC<SideNavProps> = ({}) => {
             return;
         }
         search();
-        console.log(word);
     }, [word]);
 
     const handleKeyDown = useCallback(
@@ -337,10 +336,6 @@ const SideNav: React.FC<SideNavProps> = ({}) => {
             document.removeEventListener('keydown', handleKeyDown);
         };
     }, [handleKeyDown]);
-
-    useEffect(() => {
-        console.log(showGlobalMenu);
-    }, [showGlobalMenu]);
 
     return dataPath ? (
         <LeftPanel className={'left-panel-color'}>

@@ -327,8 +327,6 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
     }, [editorScrollRatio]);
 
     const autoScrollToLine = useCallback(() => {
-        console.log('render autoScrollToLine');
-
         if (renderRef.current) {
             renderRef.current.scrollTop = renderTop;
         }
