@@ -57,7 +57,7 @@
     line-height: 30px;
     font-size: 16px;
     padding: 0 12px 0 6px;
-    z-index: 9;
+    z-index: 1000;
     color: #939395;
     background-color: #3a404c;
     cursor: pointer;
@@ -87,7 +87,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    z-index: 9999;
+    z-index: 5000;
     animation: show-alert-mask-ani ease-out 0.8s forwards;
 }
 
@@ -107,7 +107,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    z-index: 9999;
+    z-index: 5000;
     animation: hide-alert-mask-ani ease-out 0.5s forwards;
 }
 

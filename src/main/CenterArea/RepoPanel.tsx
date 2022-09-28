@@ -58,23 +58,9 @@ const RepoPanel: React.FC<RepoListProps> = ({
         return page;
     });
 
-    const [
-        deletePopupState,
-        {
-            getMaskState: getDeleteMaskState,
-            showPopup: showDeletePopup,
-            hidePopup: hideDeletePopup,
-        },
-    ] = usePopUp(500);
+    const [deletePopup, setDeletePopUp, deleteMask] = usePopUp(500);
 
-    const [
-        renamePopupState,
-        {
-            getMaskState: getRenameMaskState,
-            showPopup: showRenamePopup,
-            hidePopup: hideRenamePopup,
-        },
-    ] = usePopUp(500);
+    const [renamePopup, setRenamePopUp, renameMask] = usePopUp(500);
 
     const outerRef = useRef(null);
     const { xPos, yPos, menu } = useContextMenu(outerRef);
@@ -258,7 +244,7 @@ const RepoPanel: React.FC<RepoListProps> = ({
     }, [repos_obj, currentRepoKey]);
 
     const renameRepo = () => {
-        showRenamePopup();
+        setRenamePopUp(true);
         setAllowHiddenAllRepoViaEnter(false);
     };
 
@@ -273,14 +259,14 @@ const RepoPanel: React.FC<RepoListProps> = ({
                 obj: repo_info,
             });
             updateRepos('repo', { data_path: dataPath, repo_key: currentRepoKey });
-            hideRenamePopup();
+            setRenamePopUp(false);
             setAllowHiddenAllRepoViaEnter(true);
         }
     }, [
         dataPath,
         currentRepoKey,
         curRepoName,
-        hideRenamePopup,
+        setRenamePopUp,
         setAllowHiddenAllRepoViaEnter,
         updateRepos,
     ]);
@@ -288,7 +274,7 @@ const RepoPanel: React.FC<RepoListProps> = ({
     const handleRenameRepoKeyDown = useCallback(
         (e: any) => {
             if (e.keyCode === 27) {
-                hideRenamePopup();
+                setRenamePopUp(false);
                 setCurRepoName(
                     repos_obj && currentRepoKey && repos_obj[currentRepoKey]
                         ? repos_obj[currentRepoKey].repo_name
@@ -298,12 +284,12 @@ const RepoPanel: React.FC<RepoListProps> = ({
                 renameRepoConfirm();
             }
         },
-        [hideRenamePopup, setCurRepoName, repos_obj, currentRepoKey, renameRepoConfirm]
+        [setRenamePopUp, setCurRepoName, repos_obj, currentRepoKey, renameRepoConfirm]
     );
 
     // part4 : delete repo
     const deleteRepo = () => {
-        showDeletePopup();
+        setDeletePopUp(true);
         setAllowHiddenAllRepoViaEnter(false);
     };
 
@@ -380,13 +366,13 @@ const RepoPanel: React.FC<RepoListProps> = ({
                 repoSwitchInPanel(other_repo_key);
             }
             setRepoScrollPage(Math.ceil(dxnote_info.repos_key.length / 9) - 1);
-            hideDeletePopup();
+            setDeletePopUp(false);
             setAllowHiddenAllRepoViaEnter(true);
         }
     }, [
         dataPath,
         currentRepoKey,
-        hideDeletePopup,
+        setDeletePopUp,
         repoSwitchInPanel,
         setAllowHiddenAllRepoViaEnter,
         updateRepos,
@@ -395,12 +381,12 @@ const RepoPanel: React.FC<RepoListProps> = ({
     const handleDeleteRepoKeyDown = useCallback(
         (e: any) => {
             if (e.keyCode === 27) {
-                hideDeletePopup();
+                setDeletePopUp(false);
             } else if (e.keyCode === 13) {
                 deleteRepoConfirm();
             }
         },
-        [hideDeletePopup, deleteRepoConfirm]
+        [setDeletePopUp, deleteRepoConfirm]
     );
 
     const preRepoPage = useCallback(() => {
@@ -783,7 +769,7 @@ const RepoPanel: React.FC<RepoListProps> = ({
                             autoFocus={true}
                             onBlur={(e) => newRepoSubmit(e, newRepoKey)}
                             onChange={(e) => newRepoInputChange(e)}
-                            onKeyUp={(e) => newRepoInputEnter(e, newRepoKey)}
+                            onKeyDown={(e) => newRepoInputEnter(e, newRepoKey)}
                         />
                     ) : (
                         <div></div>
@@ -792,24 +778,24 @@ const RepoPanel: React.FC<RepoListProps> = ({
                 </Repos>
             </ReposScroll>
             <AlertPopUp
-                popupState={deletePopupState}
-                maskState={getDeleteMaskState()}
+                popupState={deletePopup}
+                maskState={deleteMask}
                 title="提示"
                 content={`即将删除仓库「${
                     repos_obj && currentRepoKey && repos_obj[currentRepoKey]
                         ? repos_obj[currentRepoKey].repo_name
                         : ''
                 }」内所有笔记，不可撤销(但内容可在废纸篓找回)`}
-                onCancel={() => hideDeletePopup()}
+                onCancel={() => setDeletePopUp(false)}
                 onConfirm={deleteRepoConfirm}
                 onKeyDown={handleDeleteRepoKeyDown}
             ></AlertPopUp>
             <InputPopUp
-                popupState={renamePopupState}
-                maskState={getRenameMaskState()}
+                popupState={renamePopup}
+                maskState={renameMask}
                 initValue={curRepoName}
                 setValue={setCurRepoName}
-                onCancel={hideRenamePopup}
+                onCancel={() => setRenamePopUp(false)}
                 onConfirm={renameRepoConfirm}
                 onKeyDown={handleRenameRepoKeyDown}
             ></InputPopUp>
@@ -914,7 +900,7 @@ const MenuUl = styled.ul(
         listStyleType: 'none',
         position: 'fixed',
         padding: '4px 0',
-        zIndex: '99999',
+        zIndex: '4000',
     },
     (props: { top: string; left: string }) => ({
         top: props.top,

@@ -53,7 +53,7 @@ const PathPanel = styled.div(
         padding: '30px',
         boxSizing: 'border-box',
         borderRadius: '16px',
-        zIndex: '99999',
+        zIndex: '4000',
     },
     (props: { width: number }) => ({
         width: props.width,

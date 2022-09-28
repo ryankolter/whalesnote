@@ -12,7 +12,7 @@ const defaultStyle = {
     height: '100vh',
     transition: `background-color ${duration}ms ease-in-out`,
     backgroundColor: 'rgba(0, 0, 0, 0)',
-    zIndex: '9999999',
+    zIndex: '7000',
 };
 
 const transitionStyles = {

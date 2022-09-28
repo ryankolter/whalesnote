@@ -12,9 +12,15 @@ interface InputPopUpProps {
     onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void;
 }
 
-export const InputPopUp: React.FC<InputPopUpProps> = (props) => {
-    const { popupState, maskState, initValue, setValue, onCancel, onConfirm, onKeyDown } = props;
-
+export const InputPopUp: React.FC<InputPopUpProps> = ({
+    popupState,
+    maskState,
+    initValue,
+    setValue,
+    onCancel,
+    onConfirm,
+    onKeyDown,
+}) => {
     return (
         <InputPopUpContainer>
             <div

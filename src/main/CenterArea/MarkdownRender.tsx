@@ -456,7 +456,7 @@ const LastScrollPos = styled.div(
         lineHeight: '30px',
         fontSize: '16px',
         padding: '0 12px 0 6px',
-        zIndex: 99,
+        zIndex: 1000,
         cursor: 'pointer',
     },
     `
@@ -486,7 +486,7 @@ const TocDirectory = styled.div({
     paddingRight: '6px',
     backgroundColor: '#2F3338',
     overflowY: 'auto',
-    zIndex: 9999,
+    zIndex: 1000,
 });
 
 type MarkdownRenderProps = {

@@ -42,7 +42,7 @@ const AlertBox = styled.div({
     fontSize: '14px',
     color: '#C8C8C8',
     backgroundColor: '#2C3033',
-    zIndex: '999999',
+    zIndex: '8000',
 });
 
 const AlertContent = styled.div({

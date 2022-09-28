@@ -9,9 +9,13 @@ interface InputPopUpBoxProps {
     onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void;
 }
 
-export const InputPopUpBox: React.FC<InputPopUpBoxProps> = (props) => {
-    const { initValue, setValue, onCancel, onConfirm, onKeyDown } = props;
-
+export const InputPopUpBox: React.FC<InputPopUpBoxProps> = ({
+    initValue,
+    setValue,
+    onCancel,
+    onConfirm,
+    onKeyDown,
+}) => {
     const onChangeHandle = useCallback(
         (event: any) => {
             setValue(event.target.value);
@@ -50,7 +54,7 @@ const InputBox = styled.div({
     fontSize: '14px',
     color: '#C8C8C8',
     backgroundColor: '#2C3033',
-    zIndex: '999999',
+    zIndex: '6000',
 });
 
 const Input = styled.input({

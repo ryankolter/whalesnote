@@ -127,7 +127,7 @@ const MenuUl = styled.ul(
         border: '1px solid #BABABA',
         color: '#000000',
         backgroundColor: '#FFFFFF',
-        zIndex: '99999',
+        zIndex: '4000',
     },
     (props: { top: string; left: string }) => ({
         top: props.top,

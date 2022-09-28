@@ -556,7 +556,7 @@ const SwitchExportPanel = styled.div({
     alignItems: 'center',
     padding: '5px 0',
     borderRadius: '4px',
-    zIndex: '999999999',
+    zIndex: '4000',
 });
 
 const MarkdownArea = styled.div({
@@ -601,7 +601,7 @@ const BreakCrumb = styled.div({
     minWidth: '0',
     display: 'flex',
     alignItems: 'center',
-    zIndex: '9999',
+    zIndex: '1000',
 });
 
 const CurRepoNameTag = styled.div({
@@ -680,7 +680,7 @@ const AllRepo = styled.div({
     padding: '10px',
     boxSizing: 'border-box',
     borderRadius: '8px',
-    zIndex: '9999',
+    zIndex: '3000',
 });
 
 const SwitchMode = styled.div({
@@ -732,7 +732,7 @@ const SwitchModePanel = styled.div({
     alignItems: 'center',
     padding: '5px 0',
     borderRadius: '4px',
-    zIndex: '99999',
+    zIndex: '4000',
 });
 
 const ModeOption = styled.div({

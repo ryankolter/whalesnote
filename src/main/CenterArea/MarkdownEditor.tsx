@@ -420,7 +420,7 @@ const LastScrollPos = styled.div(
         lineHeight: '30px',
         fontSize: '16px',
         padding: '0 12px 0 6px',
-        zIndex: 99,
+        zIndex: 1000,
         cursor: 'pointer',
     },
     `

@@ -4,6 +4,8 @@ import styled from '@emotion/styled';
 import DirectoryBtn from './DirectoryBtn';
 import FolderList from './FolderList';
 import NoteList from './NoteList';
+import GlobalMenu from '../GlobalMenu';
+import menuBtnIcon from '../../resources/icon/menuBtnIcon.svg';
 
 import initData from '../../lib/init';
 
@@ -57,6 +59,7 @@ const SideNav: React.FC<SideNavProps> = ({
     const [showSearchPanel, setShowSearchPanel] = useState(false);
     const [showAddPathTips, setShowAddPathTips] = useState(false);
     const [showUpdateIndexTips, setShowUpdateIndexTips] = useState(true);
+    const [showGlobalMenu, setShowGlobalMenu] = useState(false);
 
     useEffect(() => {
         const new_data = initData(dataPath);
@@ -337,10 +340,24 @@ const SideNav: React.FC<SideNavProps> = ({
         };
     }, [handleKeyDown]);
 
+    useEffect(() => {
+        console.log(showGlobalMenu);
+    }, [showGlobalMenu]);
+
     return (
         <LeftPanel className={'left-panel-color'}>
+            <GlobalMenu
+                data_path={dataPath}
+                addDataPath={addDataPath}
+                showGlobalMenu={showGlobalMenu}
+                setShowGlobalMenu={setShowGlobalMenu}
+            />
             <ToolBar>
-                <DirectoryBtnArea>
+                <MenuIcon onClick={() => setShowGlobalMenu(true)}>
+                    <MenuIconImg src={menuBtnIcon} alt="" />
+                </MenuIcon>
+
+                {/* <DirectoryBtnArea>
                     {dataPath ? (
                         <DirectoryBtn
                             data_path={dataPath}
@@ -357,7 +374,7 @@ const SideNav: React.FC<SideNavProps> = ({
                             设置数据目录
                         </PathAddBtn>
                     )}
-                </DirectoryBtnArea>
+                </DirectoryBtnArea> */}
                 {dataPath ? (
                     <Search>
                         <SearchInput
@@ -406,7 +423,7 @@ const SideNav: React.FC<SideNavProps> = ({
                         ) : (
                             <></>
                         )}
-                        <SearchResultList className="search-scroller">
+                        <SearchResultList className="no-scroller">
                             {searchResults && searchResults.length > 0 ? (
                                 searchResults.map((result: any) => {
                                     return (
@@ -498,7 +515,20 @@ const LeftPanel = styled.div({
 const ToolBar = styled.div({
     position: 'relative',
     display: 'flex',
-    padding: '15px 15px 10px 15px',
+    padding: '5px 15px 0 10px',
+});
+
+const MenuIcon = styled.div({
+    width: '26px',
+    height: '32px',
+    padding: '10px',
+    cursor: 'pointer',
+});
+
+const MenuIconImg = styled.img({
+    width: '26px',
+    height: '32px',
+    filter: 'invert(65%) sepia(0%) saturate(593%) hue-rotate(346deg) brightness(93%) contrast(77%)',
 });
 
 const Search = styled.div({
@@ -514,7 +544,7 @@ const SearchInput = styled.input({
     lineHeight: '20px',
     letterSpacing: '1px',
     width: '100%',
-    padding: '6px 10px',
+    padding: '16px',
     boxSizing: 'border-box',
 });
 
@@ -528,7 +558,7 @@ const SearchPanel = styled.div({
     height: 'calc(100vh - 55px)',
     padding: '10px',
     boxSizing: 'border-box',
-    zIndex: '999999',
+    zIndex: '3000',
 });
 
 const SearchTool = styled.div({
@@ -643,7 +673,7 @@ const ResizeFolderWidth = styled.div(
         position: 'absolute',
         top: '0',
         height: '100%',
-        zIndex: 99999,
+        zIndex: 1000,
     },
     (props: { left: number }) => ({
         left: props.left - 4,
@@ -657,7 +687,7 @@ const ResizeNoteWidth = styled.div(
         position: 'absolute',
         top: '0',
         height: '100%',
-        zIndex: 99999,
+        zIndex: 1000,
     },
     (props: { left: number }) => ({
         left: props.left - 4,

@@ -45,23 +45,9 @@ const FolderList: React.FC<FolderListProps> = ({ keySelect, setFocus, width }) =
 
     const sensors = useSensors(useSensor(MouseSensor, { activationConstraint: { distance: 5 } }));
 
-    const [
-        deletePopupState,
-        {
-            getMaskState: getDeleteMaskState,
-            showPopup: showDeletePopup,
-            hidePopup: hideDeletePopup,
-        },
-    ] = usePopUp(500);
+    const [deletePopup, setDeletePopUp, deleteMask] = usePopUp(500);
 
-    const [
-        renamePopupState,
-        {
-            getMaskState: getRenameMaskState,
-            showPopup: showRenamePopup,
-            hidePopup: hideRenamePopup,
-        },
-    ] = usePopUp(500);
+    const [renamePopup, setRenamePopUp, renameMask] = usePopUp(500);
 
     const innerRef = useRef<HTMLDivElement>(null);
     const { xPos, yPos, menu } = useContextMenu(innerRef);
@@ -195,13 +181,13 @@ const FolderList: React.FC<FolderListProps> = ({ keySelect, setFocus, width }) =
         );
     }, [folders_obj, currentFolderKey]);
 
-    const renameFolder = () => {
-        showRenamePopup();
-    };
+    const renameFolder = useCallback(() => {
+        setRenamePopUp(true);
+    }, [setRenamePopUp]);
 
     const handleRenameFolderKeyDown = (e: any) => {
         if (e.keyCode === 27) {
-            hideRenamePopup();
+            setRenamePopUp(false);
         } else if (e.keyCode === 13) {
             renameFolderConfirm();
         }
@@ -222,21 +208,13 @@ const FolderList: React.FC<FolderListProps> = ({ keySelect, setFocus, width }) =
                 repo_key: currentRepoKey,
                 folder_key: currentFolderKey,
             });
-            hideRenamePopup();
+            setRenamePopUp(false);
         }
-    }, [dataPath, currentRepoKey, currentFolderKey, curFolderName, hideRenamePopup, updateRepos]);
+    }, [dataPath, currentRepoKey, currentFolderKey, curFolderName, setRenamePopUp, updateRepos]);
 
     // part3 : delete folder
     const deleteFolder = () => {
-        showDeletePopup();
-    };
-
-    const handleDeleteFolderKeyDown = (e: any) => {
-        if (e.keyCode === 13) {
-            deleteFolderConfirm();
-        } else if (e.keyCode === 27) {
-            hideDeletePopup();
-        }
+        setDeletePopUp(true);
     };
 
     const deleteFolderConfirm = useCallback(() => {
@@ -306,7 +284,7 @@ const FolderList: React.FC<FolderListProps> = ({ keySelect, setFocus, width }) =
             });
             repoSwitch(currentRepoKey);
             folderSwitch(currentRepoKey, other_folder_key);
-            hideDeletePopup();
+            setDeletePopUp(false);
         }
     }, [
         dataPath,
@@ -317,8 +295,19 @@ const FolderList: React.FC<FolderListProps> = ({ keySelect, setFocus, width }) =
         updateRepos,
         repoSwitch,
         folderSwitch,
-        hideDeletePopup,
+        setDeletePopUp,
     ]);
+
+    const handleDeleteFolderKeyDown = useCallback(
+        (e: any) => {
+            if (e.keyCode === 13) {
+                deleteFolderConfirm();
+            } else if (e.keyCode === 27) {
+                setDeletePopUp(false);
+            }
+        },
+        [deleteFolderConfirm, setDeletePopUp]
+    );
 
     // part4 : scroll folder
     const preFolderPage = useCallback(() => {
@@ -594,7 +583,7 @@ const FolderList: React.FC<FolderListProps> = ({ keySelect, setFocus, width }) =
                                     autoFocus={true}
                                     onBlur={(e) => newFolderConfirm(e, newFolderKey)}
                                     onChange={(e) => newFolderInputChange(e)}
-                                    onKeyUp={(e) => newFolderInputEnter(e, newFolderKey)}
+                                    onKeyDown={(e) => newFolderInputEnter(e, newFolderKey)}
                                 />
                             ) : (
                                 <div></div>
@@ -628,24 +617,24 @@ const FolderList: React.FC<FolderListProps> = ({ keySelect, setFocus, width }) =
                 <MoreFolder><img src={moreBtnIcon} alt='' /></MoreFolder>
             </FolderBottomBar> */}
             <AlertPopUp
-                popupState={deletePopupState}
-                maskState={getDeleteMaskState()}
+                popupState={deletePopup}
+                maskState={deleteMask}
                 title="提示"
                 content={`即将删除文件夹「${
                     folders_obj && currentFolderKey && folders_obj[currentFolderKey]
                         ? folders_obj[currentFolderKey].folder_name
                         : ''
                 }」内所有笔记，不可撤销(但内容可在废纸篓找回)`}
-                onCancel={() => hideDeletePopup()}
+                onCancel={() => setDeletePopUp(false)}
                 onConfirm={deleteFolderConfirm}
                 onKeyDown={handleDeleteFolderKeyDown}
             ></AlertPopUp>
             <InputPopUp
-                popupState={renamePopupState}
-                maskState={getRenameMaskState()}
+                popupState={renamePopup}
+                maskState={renameMask}
                 initValue={curFolderName}
                 setValue={setCurFolderName}
-                onCancel={hideRenamePopup}
+                onCancel={() => setRenamePopUp(false)}
                 onConfirm={renameFolderConfirm}
                 onKeyDown={handleRenameFolderKeyDown}
             ></InputPopUp>
@@ -744,7 +733,7 @@ const MenuUl = styled.ul(
         listStyleType: 'none',
         position: 'fixed',
         padding: '4px 0',
-        zIndex: '99999',
+        zIndex: '4000',
     },
     (props: { top: string; left: string }) => ({
         top: props.top,

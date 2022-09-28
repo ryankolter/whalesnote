@@ -20,7 +20,7 @@ body {
     cursor: pointer;
 }
 
-.search-scroller::-webkit-scrollbar {
+.no-scroller::-webkit-scrollbar {
     display: none;
 }
 
@@ -327,7 +327,7 @@ body {
     position: absolute;
     top: 2px;
     right: 4px;
-    z-index: 10;
+    z-index: 1000;
     color: #333;
     cursor: pointer;
     transition: .7s background-color;

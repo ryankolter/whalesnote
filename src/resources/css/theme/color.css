@@ -10,6 +10,10 @@
     background-color: var(--main-bg-color);
 }
 
+.child-border-color {
+    border-color: var(--btn-1-bg-color);
+}
+
 .left-panel-color {
     color: var(--main-text-color);
 }

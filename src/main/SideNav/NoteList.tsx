@@ -522,7 +522,7 @@ const NoteAddFloat = styled.div({
     alignItems: 'center',
     flexDirection: 'row',
     borderRadius: '30px',
-    zIndex: '9999',
+    zIndex: '2000',
 });
 
 const NoteAddBtn = styled.div({
@@ -589,7 +589,7 @@ const MenuUl = styled.ul(
         listStyleType: 'none',
         position: 'fixed',
         padding: '4px 0',
-        zIndex: '99999',
+        zIndex: '4000',
     },
     (props: { top: string; left: string }) => ({
         top: props.top,

@@ -1,24 +1,23 @@
 import { useState, useCallback } from 'react';
 
 export const usePopUp = (duration: number) => {
-    const [maskState, setMaskState] = useState(false);
-    const [popupState, setPopUpState] = useState(false);
+    const [mask, setMask] = useState(false);
+    const [popUp, setObject] = useState(false);
 
-    const getMaskState = useCallback(() => {
-        return maskState;
-    }, [maskState]);
+    const setPopUp = useCallback(
+        (state: boolean) => {
+            if (state) {
+                setObject(true);
+                setMask(true);
+            } else {
+                setObject(false);
+                setTimeout(() => {
+                    setMask(false);
+                }, duration);
+            }
+        },
+        [duration]
+    );
 
-    const showPopup = () => {
-        setMaskState(true);
-        setPopUpState(true);
-    };
-
-    const hidePopup = useCallback(() => {
-        setPopUpState(false);
-        setTimeout(() => {
-            setMaskState(false);
-        }, duration);
-    }, [duration]);
-
-    return [popupState, { getMaskState, showPopup, hidePopup }] as const;
+    return [popUp, setPopUp, mask] as const;
 };

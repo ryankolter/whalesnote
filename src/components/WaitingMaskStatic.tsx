@@ -23,7 +23,7 @@ const Mask = styled.div({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: '99999999',
+    zIndex: '7000',
 });
 
 const WordPiece = styled.div({
