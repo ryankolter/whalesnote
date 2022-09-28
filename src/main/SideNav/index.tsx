@@ -340,6 +340,24 @@ const SideNav: React.FC<SideNavProps> = ({
     return (
         <LeftPanel className={'left-panel-color'}>
             <ToolBar>
+                <DirectoryBtnArea>
+                    {dataPath ? (
+                        <DirectoryBtn
+                            data_path={dataPath}
+                            addDataPath={addDataPath}
+                            panelWidth={folderWidth + noteWidth}
+                        />
+                    ) : (
+                        <PathAddBtn
+                            className="btn-1-bg-color"
+                            onClick={() => {
+                                addDataPath();
+                            }}
+                        >
+                            设置数据目录
+                        </PathAddBtn>
+                    )}
+                </DirectoryBtnArea>
                 {dataPath ? (
                     <Search>
                         <SearchInput
@@ -350,77 +368,76 @@ const SideNav: React.FC<SideNavProps> = ({
                             onFocus={handleSearchInputFocus}
                             placeholder="搜索"
                         />
-                        {showSearchPanel ? (
-                            <SearchPanel className="float-panel-color ">
-                                <SearchTool>
-                                    <UpdateIndex>
-                                        <UpdateIndexBtn
-                                            className="btn-1-bg-color"
-                                            onClick={() => {
-                                                updateMiniSearch();
-                                                search();
-                                            }}
-                                        >
-                                            {showUpdateIndexTips ? (
-                                                <div>生成搜索树</div>
-                                            ) : (
-                                                <div>更新搜索树</div>
-                                            )}
-                                        </UpdateIndexBtn>
-                                    </UpdateIndex>
-                                    <CloseSearchPanelBtn
-                                        onClick={() => {
-                                            setShowSearchPanel(false);
-                                        }}
-                                    >
-                                        x
-                                    </CloseSearchPanelBtn>
-                                </SearchTool>
-                                {showUpdateIndexTips ? (
-                                    <UpdateIndexTips className="tips-1-bg-color tips-1-border-color">
-                                        <div>搜索功能需要搜索树</div>
-                                        <div>请点击上方生成</div>
-                                    </UpdateIndexTips>
-                                ) : (
-                                    <></>
-                                )}
-                                <SearchResultList>
-                                    {searchResults && searchResults.length > 0 ? (
-                                        searchResults.map((result: any) => {
-                                            return (
-                                                <SearchResult
-                                                    onClick={() => {
-                                                        resultSwitch(result.id);
-                                                    }}
-                                                    key={result.id}
-                                                    style={{
-                                                        backgroundColor:
-                                                            currentNoteKey ===
-                                                            result.id.split('-')[2]
-                                                                ? '#3a404c'
-                                                                : '',
-                                                    }}
-                                                >
-                                                    <FolderName>{result.folder_name}</FolderName>
-                                                    <Seperator>&gt;</Seperator>
-                                                    <TitleName>{result.title}</TitleName>
-                                                </SearchResult>
-                                            );
-                                        })
-                                    ) : (
-                                        <></>
-                                    )}
-                                </SearchResultList>
-                            </SearchPanel>
-                        ) : (
-                            <></>
-                        )}
                     </Search>
                 ) : (
                     <></>
                 )}
+                {dataPath && showSearchPanel ? (
+                    <SearchPanel className="float-panel-color ">
+                        <SearchTool>
+                            <UpdateIndex>
+                                <UpdateIndexBtn
+                                    className="btn-1-bg-color"
+                                    onClick={() => {
+                                        updateMiniSearch();
+                                        search();
+                                    }}
+                                >
+                                    {showUpdateIndexTips ? (
+                                        <div>生成搜索树</div>
+                                    ) : (
+                                        <div>更新搜索树</div>
+                                    )}
+                                </UpdateIndexBtn>
+                            </UpdateIndex>
+                            <CloseSearchPanelBtn
+                                onClick={() => {
+                                    setShowSearchPanel(false);
+                                }}
+                            >
+                                x
+                            </CloseSearchPanelBtn>
+                        </SearchTool>
+                        {showUpdateIndexTips ? (
+                            <UpdateIndexTips className="tips-1-bg-color tips-1-border-color">
+                                <div>搜索功能需要搜索树</div>
+                                <div>请点击上方生成</div>
+                            </UpdateIndexTips>
+                        ) : (
+                            <></>
+                        )}
+                        <SearchResultList className="search-scroller">
+                            {searchResults && searchResults.length > 0 ? (
+                                searchResults.map((result: any) => {
+                                    return (
+                                        <SearchResult
+                                            onClick={() => {
+                                                resultSwitch(result.id);
+                                            }}
+                                            key={result.id}
+                                            style={{
+                                                backgroundColor:
+                                                    currentNoteKey === result.id.split('-')[2]
+                                                        ? '#3a404c'
+                                                        : '',
+                                            }}
+                                        >
+                                            <FolderName>{result.folder_name}</FolderName>
+                                            <Seperator>&gt;</Seperator>
+                                            <TitleName>{result.title}</TitleName>
+                                        </SearchResult>
+                                    );
+                                })
+                            ) : (
+                                <></>
+                            )}
+                        </SearchResultList>
+                    </SearchPanel>
+                ) : (
+                    <></>
+                )}
             </ToolBar>
-            <SelectArea>
+            <SelectArea className={'select-area-border'}>
                 <List>
                     <FolderList keySelect={keySelect} setFocus={setFocus} width={folderWidth} />
                     <ResizeFolderWidth
@@ -467,26 +484,6 @@ const SideNav: React.FC<SideNavProps> = ({
                     ></ResizeNoteWidth>
                 </List>
             </SelectArea>
-            <ActionBar>
-                <DirectoryBtnArea>
-                    {dataPath ? (
-                        <DirectoryBtn
-                            data_path={dataPath}
-                            addDataPath={addDataPath}
-                            panelWidth={folderWidth + noteWidth}
-                        />
-                    ) : (
-                        <PathAddBtn
-                            className="btn-1-bg-color"
-                            onClick={() => {
-                                addDataPath();
-                            }}
-                        >
-                            设置数据目录
-                        </PathAddBtn>
-                    )}
-                </DirectoryBtnArea>
-            </ActionBar>
         </LeftPanel>
     );
 };
@@ -495,12 +492,13 @@ const LeftPanel = styled.div({
     display: 'flex',
     flexDirection: 'column',
     height: '100%',
-    padding: '12px 0 12px 15px',
     boxSizing: 'border-box',
 });
 
 const ToolBar = styled.div({
+    position: 'relative',
     display: 'flex',
+    padding: '15px 15px 10px 15px',
 });
 
 const Search = styled.div({
@@ -516,18 +514,18 @@ const SearchInput = styled.input({
     lineHeight: '20px',
     letterSpacing: '1px',
     width: '100%',
-    padding: '10px',
+    padding: '6px 10px',
     boxSizing: 'border-box',
 });
 
 const SearchPanel = styled.div({
     position: 'absolute',
-    top: '40px',
-    left: '0',
+    top: '55px',
+    left: '15px',
     display: 'flex',
     flexDirection: 'column',
-    width: 'calc(100%)',
-    height: 'calc(100vh - 64px)',
+    width: 'calc(100% - 15px)',
+    height: 'calc(100vh - 55px)',
     padding: '10px',
     boxSizing: 'border-box',
     zIndex: '999999',
@@ -586,6 +584,7 @@ const UpdateIndexTips = styled.div({
 const SearchResultList = styled.div({
     flex: '1',
     minHeight: '0',
+    overflowY: 'auto',
 });
 
 const SearchResult = styled.div({
@@ -627,7 +626,6 @@ const SelectArea = styled.div({
     flexDirection: 'column',
     flex: '1',
     minHeight: '0',
-    margin: '5px 0 10px 0',
 });
 
 const List = styled.div({
@@ -665,10 +663,6 @@ const ResizeNoteWidth = styled.div(
         left: props.left - 4,
     })
 );
-
-const ActionBar = styled.div({
-    display: 'flex',
-});
 
 const DirectoryBtnArea = styled.div();
 

@@ -20,6 +20,10 @@ body {
     cursor: pointer;
 }
 
+.search-scroller::-webkit-scrollbar {
+    display: none;
+}
+
 .notes-scroller::-webkit-scrollbar {
     display: none;
     /* width: 8px; */

@@ -46,7 +46,7 @@ const DirectoryBtnContainer = styled.div(
 const PathPanel = styled.div(
     {
         position: 'absolute',
-        bottom: '32px',
+        top: '32px',
         left: '0',
         display: 'none',
         fontSize: '14px',

@@ -31,7 +31,6 @@ export const allRepoNotesFetch = (data_path: string | null, dxnote: any, repos_o
             });
         }
     });
-    console.log(notes);
 };
 
 export const repoNotesFetch = (
@@ -118,12 +117,7 @@ export const initNotes = (_notes: notesTypes) => {
     notes = _notes;
 };
 
-export const saveTask = (
-    data_path: string,
-    repo_key: string,
-    folder_key: string,
-    note_key: string
-) => {
+const saveTask = (data_path: string, repo_key: string, folder_key: string, note_key: string) => {
     const note_info = ipcRenderer.sendSync('readCson', {
         file_path: `${data_path}/${repo_key}/${folder_key}/${note_key}.cson`,
     });
@@ -149,7 +143,7 @@ export const saveTask = (
     }
 };
 
-export const addSaveTask = (
+const addSaveTask = (
     data_path: string,
     repo_key: string,
     folder_key: string,

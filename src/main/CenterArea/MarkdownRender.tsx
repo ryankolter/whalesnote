@@ -486,7 +486,7 @@ const TocDirectory = styled.div({
     paddingRight: '6px',
     backgroundColor: '#2F3338',
     overflowY: 'auto',
-    zIndex: 999999,
+    zIndex: 9999,
 });
 
 type MarkdownRenderProps = {

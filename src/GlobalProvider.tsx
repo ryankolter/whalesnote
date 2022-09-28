@@ -13,7 +13,6 @@ import {
     folderNotesFetch,
     changeNotesAfterNew,
     initNotes,
-    addSaveTask,
     updateNoteHandler,
 } from './lib/notes';
 
@@ -55,13 +54,6 @@ const initContext: {
         folder_key: string,
         note_key: string,
         currentContent: string
-    ) => void;
-    addSaveTask: (
-        data_path: string,
-        repo_key: string,
-        folder_key: string,
-        note_key: string,
-        delay: number
     ) => void;
     allRepoNotesFetch: any;
     repoNotesFetch: any;
@@ -115,7 +107,6 @@ const initContext: {
     notes: null,
     initNotes: () => {},
     updateNote: () => {},
-    addSaveTask: () => {},
     allRepoNotesFetch: null,
     repoNotesFetch: null,
     folderNotesFetch: null,
@@ -293,7 +284,6 @@ export const GlobalProvider = ({ children }: { children: any }) => {
                 notes,
                 initNotes,
                 updateNote,
-                addSaveTask,
                 allRepoNotesFetch,
                 repoNotesFetch,
                 folderNotesFetch,

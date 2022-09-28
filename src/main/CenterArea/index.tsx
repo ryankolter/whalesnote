@@ -422,14 +422,6 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                                 : ''}
                         </FolderNameLabel>
                     </CurFolderNameTag>
-                    <GreaterTag>&gt;</GreaterTag>
-                    <CurNoteNameTag>
-                        <NoteNameLabel>
-                            {notes_obj && currentNoteKey && notes_obj[currentNoteKey]
-                                ? notes_obj[currentNoteKey].title
-                                : ''}
-                        </NoteNameLabel>
-                    </CurNoteNameTag>
                     {showAllRepo ? (
                         <AllRepo className="float-panel-color">
                             <RepoPanel
@@ -518,7 +510,7 @@ const CenterAreaContainer = styled.div({
     minWidth: '0',
     height: '100%',
     boxSizing: 'border-box',
-    padding: '12px 15px 8px 12px',
+    padding: '15px 15px 8px 12px',
 });
 
 const TopRow = styled.div({

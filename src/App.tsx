@@ -21,10 +21,6 @@ const App = () => {
 
     const [showWaitingMask, setShowWaitingMask] = useState(false);
 
-    useEffect(() => {
-        console.log(showWaitingMask);
-    }, [showWaitingMask]);
-
     return (
         <GlobalProvider>
             <AppContainer className={`${theme}-theme-global body-color`}>

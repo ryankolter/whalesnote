@@ -60,8 +60,14 @@
     background-color: #EBEBEB; 
 }
 
+/* .select-area-border {
+    border-top: 1.5px solid var(--border-1-color);
+} */
+
 .notes-border {
-    border: 1.5px solid var(--border-1-color);
+    border-top: 1.5px solid var(--border-1-color);
+    border-left: 1.5px solid var(--border-1-color);
+    border-right: 1.5px solid var(--border-1-color);
 }
 
 .notes-scroller::-webkit-scrollbar-thumb {
