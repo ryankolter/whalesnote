@@ -549,11 +549,11 @@ const Notes = styled.div({
 
 const NoteItem = styled.div({
     position: 'relative',
-    height: '36px',
-    lineHeight: '36px',
+    height: '40px',
+    lineHeight: '40px',
     padding: '0 10px',
     margin: '0 10px',
-    fontSize: '14px',
+    fontSize: '16px',
     cursor: 'pointer',
     overflow: 'hidden',
     textOverflow: 'ellipsis',

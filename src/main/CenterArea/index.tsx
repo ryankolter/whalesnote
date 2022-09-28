@@ -500,14 +500,13 @@ const CenterAreaContainer = styled.div({
     minWidth: '0',
     height: '100%',
     boxSizing: 'border-box',
-    padding: '15px 15px 8px 12px',
 });
 
 const TopRow = styled.div({
     width: '100%',
     display: 'flex',
     alignItems: 'center',
-    padding: '0 0 10px 0',
+    height: '58px',
 });
 
 const EditorTools = styled.div({
@@ -580,9 +579,10 @@ const RenderPanel = styled.div(
 
 const BottomRow = styled.div({
     width: '100%',
+    height: '69px',
     display: 'flex',
     alignItems: 'center',
-    padding: '6px 10px 0 0',
+    padding: '6px 10px 0 54px',
 });
 
 const BreakCrumb = styled.div({

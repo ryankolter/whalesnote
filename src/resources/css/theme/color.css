@@ -69,7 +69,6 @@
 } */
 
 .notes-border {
-    border-top: 1.5px solid var(--border-1-color);
     border-left: 1.5px solid var(--border-1-color);
     border-right: 1.5px solid var(--border-1-color);
 }

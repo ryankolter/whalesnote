@@ -46,7 +46,7 @@ const SideNav: React.FC<SideNavProps> = ({}) => {
     const resizeNoteOffsetX = useRef<number>(0);
 
     const [folderWidth, setFolderWidth] = useState(
-        Number(window.localStorage.getItem('folder_width')) || 140
+        Number(window.localStorage.getItem('folder_width')) || 186
     );
     const [noteWidth, setNoteWidth] = useState(
         Number(window.localStorage.getItem('note_width')) || 250
@@ -345,7 +345,7 @@ const SideNav: React.FC<SideNavProps> = ({}) => {
                 showGlobalMenu={showGlobalMenu}
                 setShowGlobalMenu={setShowGlobalMenu}
             />
-            <ToolBar>
+            <ToolBar className="child-border-color">
                 <MenuIcon onClick={() => setShowGlobalMenu(true)}>
                     <MenuIconImg src={menuBtnIcon} alt="" />
                 </MenuIcon>
@@ -490,19 +490,21 @@ const LeftPanel = styled.div({
 const ToolBar = styled.div({
     position: 'relative',
     display: 'flex',
-    padding: '5px 15px 0 10px',
+    padding: '10px 30px 10px 20px',
+    borderBottomWidth: '1px',
+    borderBottomStyle: 'solid',
 });
 
 const MenuIcon = styled.div({
     width: '26px',
-    height: '32px',
+    height: '18px',
     padding: '10px',
     cursor: 'pointer',
 });
 
 const MenuIconImg = styled.img({
     width: '26px',
-    height: '32px',
+    height: '18px',
     filter: 'invert(65%) sepia(0%) saturate(593%) hue-rotate(346deg) brightness(93%) contrast(77%)',
 });
 
@@ -519,7 +521,7 @@ const SearchInput = styled.input({
     lineHeight: '20px',
     letterSpacing: '1px',
     width: '100%',
-    padding: '16px',
+    padding: '9px 0 9px 50px',
     boxSizing: 'border-box',
 });
 
