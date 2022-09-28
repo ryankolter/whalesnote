@@ -1,7 +1,8 @@
+import { KeyboardEvent } from 'react';
 import styled from '@emotion/styled';
 import { AlertPopUpBox } from './AlertPopUpBox';
 
-interface AlertPopUpProps {
+export const AlertPopUp: React.FC<{
     popupState: boolean;
     maskState: boolean;
     title: string;
@@ -9,11 +10,7 @@ interface AlertPopUpProps {
     onCancel: () => void;
     onConfirm: () => void;
     onKeyDown: (e: Event) => void;
-}
-
-export const AlertPopUp: React.FC<AlertPopUpProps> = (props) => {
-    const { popupState, maskState, title, content, onCancel, onConfirm, onKeyDown } = props;
-
+}> = ({ popupState, maskState, title, content, onCancel, onConfirm, onKeyDown }) => {
     return (
         <AlertPopUpContainer>
             <div

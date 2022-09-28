@@ -1,7 +1,11 @@
-import { useContext, useMemo, useEffect, useCallback, useRef, useState } from 'react';
+const { ipcRenderer } = window.require('electron');
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 import cryptoRandomString from 'crypto-random-string';
-import { GlobalContext } from '../../GlobalProvider';
+import ClipboardJS from 'clipboard';
+import { toPng } from 'html-to-image';
+
 import markdownIt from 'markdown-it';
 import hljs from 'highlight.js';
 /* eslint-disable */
@@ -21,10 +25,6 @@ import markdownItTaskLists from 'markdown-it-task-lists';
 import markdownItAnchor from 'markdown-it-anchor';
 import markdownItTable from 'markdown-it-multimd-table';
 import markdownItTocDoneRight from 'markdown-it-toc-done-right';
-import ClipboardJS from 'clipboard';
-import { toPng } from 'html-to-image';
-
-const { ipcRenderer } = window.require('electron');
 
 export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
     editorScrollRatio,

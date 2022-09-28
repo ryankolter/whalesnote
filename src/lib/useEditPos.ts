@@ -1,6 +1,5 @@
-import produce from 'immer';
-
 import { useReducer } from 'react';
+import produce from 'immer';
 
 const editPosReducer = produce((state: cursorHeadTypes, action: any) => {
     switch (action.type) {

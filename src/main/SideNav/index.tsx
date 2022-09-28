@@ -1,27 +1,21 @@
-import { useState, useCallback, useEffect, useRef, useMemo, useContext } from 'react';
-import cryptoRandomString from 'crypto-random-string';
+const { ipcRenderer } = window.require('electron');
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
-import DirectoryBtn from './DirectoryBtn';
+import cryptoRandomString from 'crypto-random-string';
+import MiniSearch from 'minisearch';
+
 import FolderList from './FolderList';
 import NoteList from './NoteList';
 import GlobalMenu from '../GlobalMenu';
-import menuBtnIcon from '../../resources/icon/menuBtnIcon.svg';
+import WaitingMaskStatic from '../../components/WaitingMaskStatic';
 
 import initData from '../../lib/init';
+import menuBtnIcon from '../../resources/icon/menuBtnIcon.svg';
 
-import MiniSearch from 'minisearch';
+type SideNavProps = Record<string, unknown>;
 
-import { GlobalContext } from '../../GlobalProvider';
-
-const { ipcRenderer } = window.require('electron');
-
-const SideNav: React.FC<SideNavProps> = ({
-    keySelect,
-    setFocus,
-    setBlur,
-    setKeySelect,
-    setShowWaitingMask,
-}) => {
+const SideNav: React.FC<SideNavProps> = ({}) => {
     console.log('SideNav render');
     const {
         dataPath,
@@ -41,6 +35,9 @@ const SideNav: React.FC<SideNavProps> = ({
         initNotes,
         numArray,
         setNumArray,
+        setFocus,
+        keySelect,
+        setKeySelect,
     } = useContext(GlobalContext);
 
     const miniSearch = useRef<any>();
@@ -60,6 +57,7 @@ const SideNav: React.FC<SideNavProps> = ({
     const [showAddPathTips, setShowAddPathTips] = useState(false);
     const [showUpdateIndexTips, setShowUpdateIndexTips] = useState(true);
     const [showGlobalMenu, setShowGlobalMenu] = useState(false);
+    const [showWaitingMask, setShowWaitingMask] = useState(false);
 
     useEffect(() => {
         const new_data = initData(dataPath);
@@ -344,7 +342,7 @@ const SideNav: React.FC<SideNavProps> = ({
         console.log(showGlobalMenu);
     }, [showGlobalMenu]);
 
-    return (
+    return dataPath ? (
         <LeftPanel className={'left-panel-color'}>
             <GlobalMenu
                 data_path={dataPath}
@@ -356,40 +354,17 @@ const SideNav: React.FC<SideNavProps> = ({
                 <MenuIcon onClick={() => setShowGlobalMenu(true)}>
                     <MenuIconImg src={menuBtnIcon} alt="" />
                 </MenuIcon>
-
-                {/* <DirectoryBtnArea>
-                    {dataPath ? (
-                        <DirectoryBtn
-                            data_path={dataPath}
-                            addDataPath={addDataPath}
-                            panelWidth={folderWidth + noteWidth}
-                        />
-                    ) : (
-                        <PathAddBtn
-                            className="btn-1-bg-color"
-                            onClick={() => {
-                                addDataPath();
-                            }}
-                        >
-                            设置数据目录
-                        </PathAddBtn>
-                    )}
-                </DirectoryBtnArea> */}
-                {dataPath ? (
-                    <Search>
-                        <SearchInput
-                            className="search-input"
-                            ref={searchInputRef}
-                            onChange={handleSearchInputChange}
-                            onKeyDown={handleSearchInputEnter}
-                            onFocus={handleSearchInputFocus}
-                            placeholder="搜索"
-                        />
-                    </Search>
-                ) : (
-                    <></>
-                )}
-                {dataPath && showSearchPanel ? (
+                <Search>
+                    <SearchInput
+                        className="search-input"
+                        ref={searchInputRef}
+                        onChange={handleSearchInputChange}
+                        onKeyDown={handleSearchInputEnter}
+                        onFocus={handleSearchInputFocus}
+                        placeholder="搜索"
+                    />
+                </Search>
+                {showSearchPanel ? (
                     <SearchPanel className="float-panel-color ">
                         <SearchTool>
                             <UpdateIndex>
@@ -456,8 +431,9 @@ const SideNav: React.FC<SideNavProps> = ({
             </ToolBar>
             <SelectArea className={'select-area-border'}>
                 <List>
-                    <FolderList keySelect={keySelect} setFocus={setFocus} width={folderWidth} />
+                    <FolderList width={folderWidth} />
                     <ResizeFolderWidth
+                        left={folderWidth}
                         onDragStart={(e) => {
                             resizeFolderOffsetX.current = e.pageX - folderWidth;
                         }}
@@ -473,15 +449,10 @@ const SideNav: React.FC<SideNavProps> = ({
                             window.localStorage.setItem('folder_width', folderWidth.toString());
                         }}
                         draggable="true"
-                        left={folderWidth}
                     ></ResizeFolderWidth>
-                    <NoteList
-                        keySelect={keySelect}
-                        setFocus={setFocus}
-                        setKeySelect={setKeySelect}
-                        width={noteWidth}
-                    />
+                    <NoteList width={noteWidth} />
                     <ResizeNoteWidth
+                        left={folderWidth + noteWidth}
                         onDragStart={(e) => {
                             resizeNoteOffsetX.current = e.pageX - noteWidth;
                         }}
@@ -497,11 +468,20 @@ const SideNav: React.FC<SideNavProps> = ({
                             window.localStorage.setItem('note_width', noteWidth.toString());
                         }}
                         draggable="true"
-                        left={folderWidth + noteWidth}
                     ></ResizeNoteWidth>
                 </List>
             </SelectArea>
+            <WaitingMaskStatic show={showWaitingMask} word={'请等待......'}></WaitingMaskStatic>
         </LeftPanel>
+    ) : (
+        <PathAddBtn
+            className="btn-1-bg-color"
+            onClick={() => {
+                addDataPath();
+            }}
+        >
+            设置数据目录
+        </PathAddBtn>
     );
 };
 
@@ -708,13 +688,5 @@ const PathAddBtn = styled.div({
     borderRadius: '4px',
     cursor: 'pointer',
 });
-
-type SideNavProps = {
-    keySelect: boolean;
-    setFocus: (focus: string) => void;
-    setBlur: (focus: string) => void;
-    setKeySelect: (keySelect: boolean) => void;
-    setShowWaitingMask: (showWaitingMask: boolean) => void;
-};
 
 export default SideNav;

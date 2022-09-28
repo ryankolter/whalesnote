@@ -1,6 +1,5 @@
-import produce from 'immer';
-
 import { useReducer } from 'react';
+import produce from 'immer';
 
 const editLineReducer = produce((state: editLinesTypes, action: any) => {
     switch (action.type) {

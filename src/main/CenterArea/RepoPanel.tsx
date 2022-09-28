@@ -1,28 +1,24 @@
+const { ipcRenderer } = window.require('electron');
+import { KeyboardEvent, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
-import { useContext, useState, useRef, useEffect, useCallback } from 'react';
 import cryptoRandomString from 'crypto-random-string';
+
 import { DndContext, MouseSensor, useSensor, useSensors, DragOverlay } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { restrictToFirstScrollableAncestor, restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { Sortable } from '../../components/Sortable';
 import { TextInput } from '../../components/TextInput';
 import { AlertPopUp } from '../../components/AlertPopUp';
 import { InputPopUp } from '../../components/InputPopUp';
 import { usePopUp } from '../../lib/usePopUp';
 import useContextMenu from '../../lib/useContextMenu';
-import { GlobalContext } from '../../GlobalProvider';
-const { ipcRenderer } = window.require('electron');
 
-const RepoPanel: React.FC<RepoListProps> = ({
-    repos_key,
-    keySelect,
-    showAllRepo,
-    setFocus,
-    setBlur,
-    setKeySelect,
-    setShowAllRepo,
-    setAllowHiddenAllRepoViaEnter,
-}) => {
+const RepoPanel: React.FC<{
+    repos_key: string[] | undefined;
+    showAllRepo: boolean;
+    setShowAllRepo: (state: boolean) => void;
+    setAllowHiddenAllRepoViaEnter: (state: boolean) => void;
+}> = ({ repos_key, showAllRepo, setShowAllRepo, setAllowHiddenAllRepoViaEnter }) => {
     const {
         dataPath,
         dxnote,
@@ -38,6 +34,10 @@ const RepoPanel: React.FC<RepoListProps> = ({
         repoNotesFetch,
         changeNotesAfterNew,
         numArray,
+        setFocus,
+        setBlur,
+        keySelect,
+        setKeySelect,
     } = useContext(GlobalContext);
 
     const [activeId, setActiveId] = useState(null);
@@ -946,16 +946,5 @@ const AddReposTips = styled.div({
     padding: '5px 10px',
     borderRadius: '5px',
 });
-
-type RepoListProps = {
-    repos_key: string[] | undefined;
-    keySelect: boolean;
-    showAllRepo: boolean;
-    setFocus: (focus: string) => void;
-    setBlur: (focus: string) => void;
-    setKeySelect: (state: boolean) => void;
-    setShowAllRepo: (state: boolean) => void;
-    setAllowHiddenAllRepoViaEnter: (state: boolean) => void;
-};
 
 export default RepoPanel;

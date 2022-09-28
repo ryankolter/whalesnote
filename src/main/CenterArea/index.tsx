@@ -1,25 +1,18 @@
-import { useContext, useMemo, useCallback, useEffect, useState, useRef, createRef } from 'react';
-import cryptoRandomString from 'crypto-random-string';
+const { ipcRenderer } = window.require('electron');
+import { useCallback, useContext, useEffect, useState } from 'react';
+import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
-import RepoPanel from './RepoPanel';
+import cryptoRandomString from 'crypto-random-string';
+
 import { MarkdownEditor } from './MarkdownEditor';
 import { MarkdownRender } from './MarkdownRender';
+import RepoPanel from './RepoPanel';
 
-const { ipcRenderer } = window.require('electron');
-
-import { GlobalContext } from '../../GlobalProvider';
-
-const CenterArea: React.FC<CenterAreaProps> = ({
-    keySelect,
-    setFocus,
-    setBlur,
-    setKeySelect,
-    showAssistantPanel,
-    setShowAssistantPanel,
-    focus,
-    blur,
-    theme,
-}) => {
+const CenterArea: React.FC<{
+    showAssistantPanel: boolean;
+    setShowAssistantPanel: any;
+    theme: string;
+}> = ({ showAssistantPanel, setShowAssistantPanel, theme }) => {
     console.log('CenterArea render');
     const {
         dataPath,
@@ -30,6 +23,10 @@ const CenterArea: React.FC<CenterAreaProps> = ({
         repos_obj,
         currentTitle,
         setNumArray,
+        setFocus,
+        setBlur,
+        keySelect,
+        setKeySelect,
     } = useContext(GlobalContext);
 
     const repos_key = dxnote.repos_key;
@@ -375,12 +372,9 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                 <EditorPanel widthValue={editorWidth}>
                     <MarkdownEditor
                         theme={theme}
-                        focus={focus}
-                        blur={blur}
                         cursorInRender={cursorInRender}
                         renderScrollRatio={renderScrollRatio}
                         renderPanelState={renderPanelState}
-                        setKeySelect={setKeySelect}
                         setEditorScrollRatio={setEditorScrollRatio}
                     />
                 </EditorPanel>
@@ -426,11 +420,7 @@ const CenterArea: React.FC<CenterAreaProps> = ({
                         <AllRepo className="float-panel-color">
                             <RepoPanel
                                 repos_key={repos_key}
-                                keySelect={keySelect}
                                 showAllRepo={showAllRepo}
-                                setFocus={setFocus}
-                                setBlur={setBlur}
-                                setKeySelect={setKeySelect}
                                 setShowAllRepo={setShowAllRepo}
                                 setAllowHiddenAllRepoViaEnter={setAllowHiddenAllRepoViaEnter}
                             />
@@ -763,17 +753,5 @@ const AssistantActiveBtn = styled.div({
     fontSize: '18px',
     cursor: 'pointer',
 });
-
-type CenterAreaProps = {
-    keySelect: boolean;
-    showAssistantPanel: boolean;
-    setFocus: (focus: string) => void;
-    setBlur: (focus: string) => void;
-    setKeySelect: (keySelect: boolean) => void;
-    setShowAssistantPanel: any;
-    focus: string;
-    blur: string;
-    theme: string;
-};
 
 export default CenterArea;

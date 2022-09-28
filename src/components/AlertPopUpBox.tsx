@@ -1,21 +1,17 @@
-import styled from '@emotion/styled';
 import { useEffect } from 'react';
+import styled from '@emotion/styled';
 
-interface AlertPopUpBoxProps {
+export const AlertPopUpBox: React.FC<{
     title: string;
     content: string;
     onCancel: () => void;
     onConfirm: () => void;
-    onKeyDown: (e: any) => void;
-}
-
-export const AlertPopUpBox: React.FC<AlertPopUpBoxProps> = (props) => {
-    const { title, content, onCancel, onConfirm, onKeyDown } = props;
-
+    onKeyDown: (e: Event) => void;
+}> = ({ title, content, onCancel, onConfirm, onKeyDown }) => {
     useEffect(() => {
-        window.addEventListener('keydown', onKeyDown);
+        document.addEventListener('keydown', onKeyDown);
         return () => {
-            window.removeEventListener('keydown', onKeyDown);
+            document.removeEventListener('keydown', onKeyDown);
         };
     }, [onKeyDown]);
 

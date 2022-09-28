@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
 export const usePopUp = (duration: number) => {
     const [mask, setMask] = useState(false);

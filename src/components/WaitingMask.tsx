@@ -22,12 +22,10 @@ const transitionStyles = {
     exited: { backgroundColor: 'rgba(0,0,0,0)', display: 'none' },
 };
 
-interface WaitingMaskProps {
+const WaitingMask: React.FC<{
     in: boolean;
     timeout: number;
-}
-
-const WaitingMask: React.FC<WaitingMaskProps> = ({ in: inProp, timeout: timeout }) => {
+}> = ({ in: inProp, timeout: timeout }) => {
     return (
         <Transition in={inProp} timeout={timeout}>
             {(state) => (

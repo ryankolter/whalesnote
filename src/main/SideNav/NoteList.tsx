@@ -1,4 +1,6 @@
-import { useContext, useCallback, useRef, useState, useEffect } from 'react';
+const { ipcRenderer } = window.require('electron');
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 import cryptoRandomString from 'crypto-random-string';
 import { DndContext, MouseSensor, useSensor, useSensors, DragOverlay } from '@dnd-kit/core';
@@ -7,11 +9,10 @@ import { restrictToFirstScrollableAncestor, restrictToVerticalAxis } from '@dnd-
 import { Sortable } from '../../components/Sortable';
 import useContextMenu from '../../lib/useContextMenu';
 import newNoteIcon from '../../resources/icon/newNoteIcon.svg';
-import { GlobalContext } from '../../GlobalProvider';
-import { updateFor } from 'typescript';
-const { ipcRenderer } = window.require('electron');
 
-const NoteList: React.FC<NoteListProps> = ({ keySelect, setFocus, setKeySelect, width }) => {
+const NoteList: React.FC<{
+    width: number;
+}> = ({ width }) => {
     const {
         dataPath,
         noteSwitch,
@@ -24,6 +25,9 @@ const NoteList: React.FC<NoteListProps> = ({ keySelect, setFocus, setKeySelect, 
         changeNotesAfterNew,
         numArray,
         setNumArray,
+        setFocus,
+        keySelect,
+        setKeySelect,
     } = useContext(GlobalContext);
 
     const notes_key = repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_key;
@@ -603,12 +607,5 @@ const MenuLi = styled.li({
     lineHeight: '22px',
     cursor: 'pointer',
 });
-
-type NoteListProps = {
-    keySelect: boolean;
-    setFocus: (focus: string) => void;
-    setKeySelect: (keySelect: boolean) => void;
-    width: number;
-};
 
 export default NoteList;

@@ -1,6 +1,6 @@
-import produce from 'immer';
-import { useReducer, useCallback, useRef } from 'react';
 const { ipcRenderer } = window.require('electron');
+import { useCallback, useReducer, useRef } from 'react';
+import produce from 'immer';
 
 const reposReducer = produce((state: object, action: any) => {
     switch (action.type) {

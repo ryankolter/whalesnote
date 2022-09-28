@@ -1,5 +1,5 @@
-import { Data } from '../commonType';
 import cryptoRandomString from 'crypto-random-string';
+import { Data } from '../commonType';
 
 const initDefault = () => {
     const repo_id = cryptoRandomString({ length: 12, type: 'alphanumeric' });

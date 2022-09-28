@@ -1,28 +1,24 @@
-import { useContext, useCallback, useRef, useEffect, useState, useMemo } from 'react';
-import styled from '@emotion/styled';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
+import styled from '@emotion/styled';
+
 import { basicSetup } from 'codemirror';
-import { EditorState, StateEffect, SelectionRange } from '@codemirror/state';
+import { EditorState, StateEffect } from '@codemirror/state';
 import { EditorView, keymap, ViewUpdate } from '@codemirror/view';
-import { indentWithTab, history, insertBlankLine } from '@codemirror/commands';
+import { indentWithTab } from '@codemirror/commands';
 import { oneDark } from '@codemirror/theme-one-dark';
 import { indentUnit } from '@codemirror/language';
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
 import { languages } from '@codemirror/language-data';
-import { Completion, autocompletion, completionStatus } from '@codemirror/autocomplete';
-import { KeyboardSensor } from '@dnd-kit/core';
-import { CompletionEntry } from 'typescript';
+import { Completion, autocompletion } from '@codemirror/autocomplete';
 
-export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
-    theme,
-    focus,
-    blur,
-    cursorInRender,
-    renderPanelState,
-    renderScrollRatio,
-    setKeySelect,
-    setEditorScrollRatio,
-}) => {
+export const MarkdownEditor: React.FC<{
+    theme: string;
+    cursorInRender: boolean;
+    renderPanelState: string;
+    renderScrollRatio: number;
+    setEditorScrollRatio: (editorScrollRatio: number) => void;
+}> = ({ theme, cursorInRender, renderPanelState, renderScrollRatio, setEditorScrollRatio }) => {
     console.log('MarkdownEditor render');
     const {
         dataPath,
@@ -36,6 +32,9 @@ export const MarkdownEditor: React.FC<MarkdownEditorProps> = ({
         fromPos,
         updateCursorHead,
         updateFromPos,
+        focus,
+        blur,
+        setKeySelect,
     } = useContext(GlobalContext);
 
     const editor = useRef<HTMLDivElement>(null);
@@ -439,14 +438,3 @@ const LastScrollPos = styled.div(
     }
 `
 );
-
-type MarkdownEditorProps = {
-    focus: string;
-    blur: string;
-    theme: string;
-    cursorInRender: boolean;
-    renderPanelState: string;
-    renderScrollRatio: number;
-    setKeySelect: (keySelect: boolean) => void;
-    setEditorScrollRatio: (editorScrollRatio: number) => void;
-};

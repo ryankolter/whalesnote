@@ -1,5 +1,5 @@
-import initDefault from './initDefault';
 const { ipcRenderer } = window.require('electron');
+import initDefault from './initDefault';
 
 const initData = (data_path: string | null) => {
     if (!data_path || (data_path && !isDataPathExist(data_path))) {

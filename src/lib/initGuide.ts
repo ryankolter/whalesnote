@@ -1,5 +1,5 @@
-import { Data } from '../commonType';
 import cryptoRandomString from 'crypto-random-string';
+import { Data } from '../commonType';
 
 const initGuide = () => {
     const guide_data: Data = {

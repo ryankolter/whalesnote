@@ -1,32 +1,36 @@
-import styled from '@emotion/styled';
-import { useRef } from 'react';
-import useContextMenu from '../../lib/useContextMenu';
 const { ipcRenderer } = window.require('electron');
+import { useContext, useRef } from 'react';
+import { GlobalContext } from '../../GlobalProvider';
+import styled from '@emotion/styled';
+import useContextMenu from '../../lib/useContextMenu';
 
-const TrashList: React.FC<TrashListProps> = ({
-    repos,
-    data_path,
-    currentRepoKey,
-    currentFolderKey,
-    currentNoteKey,
-    repoSwitch,
-    folderSwitch,
-    noteSwitch,
-    folderNotesFetch,
-    width,
-}) => {
+const TrashList: React.FC<{
+    width: number;
+}> = ({ width }) => {
+    const {
+        repos_obj,
+        dataPath,
+        currentRepoKey,
+        currentFolderKey,
+        currentNoteKey,
+        repoSwitch,
+        folderSwitch,
+        noteSwitch,
+        folderNotesFetch,
+    } = useContext(GlobalContext);
+
     const outerRef = useRef(null);
     const { xPos, yPos, menu } = useContextMenu(outerRef);
 
     const deleteNote = (note_key: string) => {
         const folder_info = ipcRenderer.sendSync('readJson', {
-            file_path: `${data_path}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
+            file_path: `${dataPath}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
         });
 
         folder_info.notes_obj[note_key].isTrashed = true;
 
         ipcRenderer.sendSync('writeJson', {
-            file_path: `${data_path}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
+            file_path: `${dataPath}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
             obj: folder_info,
         });
     };
@@ -34,7 +38,7 @@ const TrashList: React.FC<TrashListProps> = ({
     return (
         <NoteListContainer width={width}>
             <Notes ref={outerRef}>
-                {Array.from(repos.TRASHED_LIST)?.map((str: any) => {
+                {Array.from(repos_obj.TRASHED_LIST)?.map((str: any) => {
                     const arr = str.split('-');
                     return (
                         <NoteItem
@@ -43,12 +47,12 @@ const TrashList: React.FC<TrashListProps> = ({
                                 backgroundColor: currentNoteKey === arr[2] ? '#3a404c' : '',
                             }}
                             onClick={() => {
-                                repoSwitch(data_path, arr[0]);
-                                folderNotesFetch(data_path, arr[0], arr[1]);
-                                folderSwitch(data_path, arr[0], arr[1]);
-                                noteSwitch(data_path, arr[2]);
+                                repoSwitch(arr[0]);
+                                folderNotesFetch(dataPath, arr[0], arr[1]);
+                                folderSwitch(arr[0], arr[1]);
+                                noteSwitch(arr[2]);
                             }}
-                            // onContextMenu={()=>noteSwitch(data_path, arr[2])}
+                            // onContextMenu={()=>noteSwitch(dataPath, arr[2])}
                         >
                             {arr[3]}
                         </NoteItem>
@@ -146,20 +150,5 @@ const MenuLi = styled.li(
 background-color: #EBEBEB; 
 }`
 );
-
-type TrashListProps = {
-    repos: any;
-    data_path: string;
-    notes_key: string[] | undefined;
-    notes_obj: object | undefined;
-    currentRepoKey: string | undefined;
-    currentFolderKey: string | undefined;
-    currentNoteKey: string | undefined;
-    repoSwitch: (data_path: string, repo_key: string) => void;
-    folderSwitch: (data_path: string, repo_key: string | undefined, folder_key: string) => void;
-    noteSwitch: (data_path: string, note_key: string | undefined) => void;
-    folderNotesFetch: (data_path: string, repo_key: string, folder_key: string) => void;
-    width: number;
-};
 
 export default TrashList;

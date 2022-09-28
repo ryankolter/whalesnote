@@ -1,7 +1,11 @@
-import styled from '@emotion/styled';
 const { ipcRenderer } = window.require('electron');
+import styled from '@emotion/styled';
 
-const DirectoryBtn: React.FC<DirectoryBtnProps> = ({ data_path, addDataPath, panelWidth }) => {
+const DirectoryBtn: React.FC<{
+    data_path: string;
+    addDataPath: () => void;
+    panelWidth: number;
+}> = ({ data_path, addDataPath, panelWidth }) => {
     const openDataPath = () => {
         ipcRenderer.send('open-folder', { folder_path: data_path });
     };
@@ -86,11 +90,5 @@ const OperationBtn = styled.div({
     backgroundColor: '#3a404c',
     cursor: 'pointer',
 });
-
-type DirectoryBtnProps = {
-    data_path: string;
-    addDataPath: () => void;
-    panelWidth: number;
-};
 
 export default DirectoryBtn;

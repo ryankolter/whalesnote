@@ -1,21 +1,13 @@
 import styled from '@emotion/styled';
 import { useCallback, KeyboardEvent } from 'react';
 
-interface InputPopUpBoxProps {
+export const InputPopUpBox: React.FC<{
     initValue: string;
     setValue: (val: string) => void;
     onCancel: () => void;
     onConfirm: () => void;
     onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void;
-}
-
-export const InputPopUpBox: React.FC<InputPopUpBoxProps> = ({
-    initValue,
-    setValue,
-    onCancel,
-    onConfirm,
-    onKeyDown,
-}) => {
+}> = ({ initValue, setValue, onCancel, onConfirm, onKeyDown }) => {
     const onChangeHandle = useCallback(
         (event: any) => {
             setValue(event.target.value);

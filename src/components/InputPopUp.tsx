@@ -2,7 +2,7 @@ import { KeyboardEvent } from 'react';
 import styled from '@emotion/styled';
 import { InputPopUpBox } from './InputPopUpBox';
 
-interface InputPopUpProps {
+export const InputPopUp: React.FC<{
     popupState: boolean;
     maskState: boolean;
     initValue: string;
@@ -10,17 +10,7 @@ interface InputPopUpProps {
     onCancel: () => void;
     onConfirm: () => void;
     onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void;
-}
-
-export const InputPopUp: React.FC<InputPopUpProps> = ({
-    popupState,
-    maskState,
-    initValue,
-    setValue,
-    onCancel,
-    onConfirm,
-    onKeyDown,
-}) => {
+}> = ({ popupState, maskState, initValue, setValue, onCancel, onConfirm, onKeyDown }) => {
     return (
         <InputPopUpContainer>
             <div

@@ -1,11 +1,9 @@
 import styled from '@emotion/styled';
 
-interface WaitingMaskStaticProps {
+const WaitingMaskStatic: React.FC<{
     show: boolean;
     word: string;
-}
-
-const WaitingMaskStatic: React.FC<WaitingMaskStaticProps> = ({ show, word }) => {
+}> = ({ show, word }) => {
     return (
         <Mask style={{ display: show ? 'flex' : 'none' }}>
             <WordPiece>{word}</WordPiece>

@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { useRef, useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 interface TextInputProps
     extends React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> {

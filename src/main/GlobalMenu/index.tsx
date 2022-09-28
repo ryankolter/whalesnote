@@ -1,15 +1,16 @@
 const { ipcRenderer } = window.require('electron');
-import { useCallback, useEffect, useLayoutEffect, useRef } from 'react';
+import { useCallback, useEffect } from 'react';
+
 import styled from '@emotion/styled';
 
 import { usePopUp } from '../../lib/usePopUp';
 
-const GlobalMenu: React.FC<GlobalMenuProps> = ({
-    data_path,
-    addDataPath,
-    showGlobalMenu,
-    setShowGlobalMenu,
-}) => {
+const GlobalMenu: React.FC<{
+    data_path: string;
+    addDataPath: () => void;
+    showGlobalMenu: boolean;
+    setShowGlobalMenu: any;
+}> = ({ data_path, addDataPath, showGlobalMenu, setShowGlobalMenu }) => {
     const [menuPopup, setMenuPopUp, mask] = usePopUp(500);
 
     const openDataPath = useCallback(() => {
@@ -126,12 +127,5 @@ const OperationBtn = styled.div({
     backgroundColor: '#3a404c',
     cursor: 'pointer',
 });
-
-type GlobalMenuProps = {
-    data_path: string;
-    addDataPath: () => void;
-    showGlobalMenu: boolean;
-    setShowGlobalMenu: any;
-};
 
 export default GlobalMenu;

@@ -57,7 +57,11 @@ const initContext: {
     ) => void;
     allRepoNotesFetch: any;
     repoNotesFetch: any;
-    folderNotesFetch: any;
+    folderNotesFetch: (
+        data_path: string | null,
+        repo_key: string | undefined,
+        folder_key: string | undefined
+    ) => void;
     changeNotesAfterNew: (action_name: string, obj: object) => void;
     currentTitle: string;
     currentContent: string;
@@ -85,6 +89,12 @@ const initContext: {
     ) => void;
     numArray: number[];
     setNumArray: any;
+    focus: string;
+    setFocus: (focus: string) => void;
+    blur: string;
+    setBlur: (blur: string) => void;
+    keySelect: boolean;
+    setKeySelect: (keySelect: boolean) => void;
 } = {
     dataPath: '',
     setDataPath: () => {},
@@ -109,7 +119,7 @@ const initContext: {
     updateNote: () => {},
     allRepoNotesFetch: null,
     repoNotesFetch: null,
-    folderNotesFetch: null,
+    folderNotesFetch: () => {},
     changeNotesAfterNew: () => {},
     currentTitle: '',
     currentContent: '',
@@ -122,6 +132,12 @@ const initContext: {
     updateRenderTop: () => {},
     numArray: [],
     setNumArray: () => {},
+    focus: '',
+    setFocus: () => {},
+    blur: '',
+    setBlur: () => {},
+    keySelect: false,
+    setKeySelect: () => {},
 };
 export const GlobalContext = createContext(initContext);
 
@@ -151,6 +167,9 @@ export const GlobalProvider = ({ children }: { children: any }) => {
     const [renderTops, { updateRecordValue: updateRenderTop }] = useRecordValue();
 
     const [numArray, setNumArray] = useState<number[]>([]);
+    const [focus, setFocus] = useState('');
+    const [blur, setBlur] = useState('');
+    const [keySelect, setKeySelect] = useState(false);
 
     const repoSwitch = useCallback(
         (repo_key: string | undefined) => {
@@ -299,6 +318,12 @@ export const GlobalProvider = ({ children }: { children: any }) => {
                 updateRenderTop,
                 numArray,
                 setNumArray,
+                focus,
+                setFocus,
+                blur,
+                setBlur,
+                keySelect,
+                setKeySelect,
             }}
         >
             {children}

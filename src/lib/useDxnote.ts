@@ -1,7 +1,7 @@
+const { ipcRenderer } = window.require('electron');
+import { useReducer, useMemo, useCallback } from 'react';
 import produce from 'immer';
 import { dxnoteTypes } from '../commonType';
-import { useReducer, useMemo, useCallback } from 'react';
-const { ipcRenderer } = window.require('electron');
 
 const dxnoteReducer = produce((state: dxnoteTypes, action: any) => {
     switch (action.type) {

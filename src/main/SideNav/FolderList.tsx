@@ -1,21 +1,26 @@
+const { ipcRenderer } = window.require('electron');
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
-import { useContext, useState, useRef, useCallback, useEffect } from 'react';
 import cryptoRandomString from 'crypto-random-string';
+
 import { DndContext, MouseSensor, useSensor, useSensors, DragOverlay } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { restrictToFirstScrollableAncestor, restrictToVerticalAxis } from '@dnd-kit/modifiers';
+
 import { Sortable } from '../../components/Sortable';
 import { TextInput } from '../../components/TextInput';
 import { AlertPopUp } from '../../components/AlertPopUp';
 import { InputPopUp } from '../../components/InputPopUp';
-import folderIcon from '../../resources/icon/folderIcon.svg';
-import newFolderIcon from '../../resources/icon/newFolderIcon.svg';
 import { usePopUp } from '../../lib/usePopUp';
 import useContextMenu from '../../lib/useContextMenu';
-import { GlobalContext } from '../../GlobalProvider';
-const { ipcRenderer } = window.require('electron');
 
-const FolderList: React.FC<FolderListProps> = ({ keySelect, setFocus, width }) => {
+import folderIcon from '../../resources/icon/folderIcon.svg';
+import newFolderIcon from '../../resources/icon/newFolderIcon.svg';
+
+const FolderList: React.FC<{
+    width: number;
+}> = ({ width }) => {
     const {
         dataPath,
         dxnote,
@@ -32,6 +37,8 @@ const FolderList: React.FC<FolderListProps> = ({ keySelect, setFocus, width }) =
         changeNotesAfterNew,
         numArray,
         setNumArray,
+        setFocus,
+        keySelect,
     } = useContext(GlobalContext);
 
     const folders_key = repos_obj[currentRepoKey]?.folders_key;
@@ -613,9 +620,6 @@ const FolderList: React.FC<FolderListProps> = ({ keySelect, setFocus, width }) =
             ) : (
                 <></>
             )}
-            {/* <FolderBottomBar>
-                <MoreFolder><img src={moreBtnIcon} alt='' /></MoreFolder>
-            </FolderBottomBar> */}
             <AlertPopUp
                 popupState={deletePopup}
                 maskState={deleteMask}
@@ -758,11 +762,5 @@ const FolderAddBtn = styled.div({
     color: '#939395',
     cursor: 'pointer',
 });
-
-type FolderListProps = {
-    keySelect: boolean;
-    setFocus: (focus: string) => void;
-    width: number;
-};
 
 export default FolderList;
