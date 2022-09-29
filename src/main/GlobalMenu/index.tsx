@@ -5,14 +5,18 @@ import styled from '@emotion/styled';
 import { usePopUp } from '../../lib/usePopUp';
 
 const GlobalMenu: React.FC<{
-    data_path: string;
-    addDataPath: () => void;
     showGlobalMenu: boolean;
     setShowGlobalMenu: any;
-}> = ({ data_path, addDataPath, showGlobalMenu, setShowGlobalMenu }) => {
+}> = ({ showGlobalMenu, setShowGlobalMenu }) => {
     const { curDataPath, setCurDataPath, dataPathList } = useContext(GlobalContext);
     const [menuPopup, setMenuPopUp, mask] = usePopUp(500);
     const [showPathUl, setShowPathUl] = useState(false);
+
+    const addDataPath = useCallback(() => {
+        ipcRenderer.send('open-directory-dialog', {
+            response_event_name: 'checkoutDataPath',
+        });
+    }, []);
 
     const openDataPath = useCallback((data_path: string) => {
         ipcRenderer.send('open-folder', { folder_path: data_path });

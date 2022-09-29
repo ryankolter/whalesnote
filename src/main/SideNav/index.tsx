@@ -58,12 +58,6 @@ const SideNav: React.FC<SideNavProps> = ({}) => {
 
     const [showUpdateIndexTips, showWaitingMask, updateMiniSearch, searchNote] = useSearch();
 
-    const addDataPath = () => {
-        ipcRenderer.send('open-directory-dialog', {
-            response_event_name: 'checkoutDataPath',
-        });
-    };
-
     const handleSearchInputChange = useCallback(
         (event: any) => {
             setWord(event.target.value);
@@ -200,12 +194,7 @@ const SideNav: React.FC<SideNavProps> = ({}) => {
 
     return (
         <LeftPanel className={'left-panel-color'}>
-            <GlobalMenu
-                data_path={curDataPath}
-                addDataPath={addDataPath}
-                showGlobalMenu={showGlobalMenu}
-                setShowGlobalMenu={setShowGlobalMenu}
-            />
+            <GlobalMenu showGlobalMenu={showGlobalMenu} setShowGlobalMenu={setShowGlobalMenu} />
             <ToolBar className="child-border-color">
                 <MenuIcon onClick={() => setShowGlobalMenu(true)}>
                     <MenuIconImg src={menuBtnIcon} alt="" />
