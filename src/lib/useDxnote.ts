@@ -188,16 +188,19 @@ export const useDxnote = () => {
         return cur_note_key;
     }, [state]);
 
-    const reorderRepo = (data_path: string, repo_key: string, new_repos_key: string[]) => {
-        if (repo_key) {
-            dispatch({
-                type: 'reorderRepo',
-                data_path,
-                repo_key,
-                new_repos_key,
-            });
-        }
-    };
+    const reorderRepo = useCallback(
+        (data_path: string, repo_key: string, new_repos_key: string[]) => {
+            if (repo_key) {
+                dispatch({
+                    type: 'reorderRepo',
+                    data_path,
+                    repo_key,
+                    new_repos_key,
+                });
+            }
+        },
+        []
+    );
 
     const initDxnote = useCallback((new_dxnote: any) => {
         dispatch({ type: 'init', new_state: new_dxnote });

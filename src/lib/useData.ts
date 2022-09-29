@@ -6,20 +6,8 @@ import initDefault from './initDefault';
 const useData = () => {
     const data = useRef<any>();
     const [curDataPath, setCurDataPath] = useState<string>('');
-    const [dataPathList, setDataPathList] = useState<string[]>([]);
 
-    const addDataPathToList = useCallback((data_path: string) => {
-        let repeted = false;
-        for (const dataPath of dataPathList) {
-            if (dataPath === data_path) repeted = true;
-        }
-        if (!repeted) {
-            setDataPathList((dataPathList) => [...dataPathList, data_path]);
-        }
-        window.localStorage.setItem('whalenote_current_data_path', data_path);
-    }, []);
-
-    const initExistRepo = (data_path: string) => {
+    const initExistRepo = useCallback((data_path: string) => {
         let dxnote = ipcRenderer.sendSync('readJson', {
             file_path: `${data_path}/dxnote_info.json`,
         });
@@ -119,9 +107,9 @@ const useData = () => {
             notes: notes,
             dxnote: dxnote,
         };
-    };
+    }, []);
 
-    const initEmptyRepo = (data_path: string) => {
+    const initEmptyRepo = useCallback((data_path: string) => {
         const data = initDefault();
         const repos = data.repos;
         const notes = data.notes;
@@ -175,7 +163,7 @@ const useData = () => {
         });
 
         return data;
-    };
+    }, []);
 
     useEffect(() => {
         let init_data_path = window.localStorage.getItem('whalenote_current_data_path') || '';

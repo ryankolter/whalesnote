@@ -174,7 +174,6 @@ export const GlobalProvider = ({ children }: { children: any }) => {
 
     useEffect(() => {
         if (curDataPath && data.current) {
-            console.log('12345');
             addDataPathToList(curDataPath);
             console.log(data.current);
             initDxnote(data.current.dxnote);

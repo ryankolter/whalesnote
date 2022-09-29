@@ -172,55 +172,59 @@ export const useRepos = () => {
         []
     );
 
-    const renameNote = (
-        data_path: string,
-        repo_key: string,
-        folder_key: string,
-        note_key: string,
-        new_title: string
-    ) => {
-        if (repo_key && folder_key && note_key) {
-            if (renameSaveTimerObj.current.has(note_key)) {
-                clearTimeout(renameSaveTimerObj.current.get(note_key) as NodeJS.Timeout);
+    const renameNote = useCallback(
+        (
+            data_path: string,
+            repo_key: string,
+            folder_key: string,
+            note_key: string,
+            new_title: string
+        ) => {
+            if (repo_key && folder_key && note_key) {
+                if (renameSaveTimerObj.current.has(note_key)) {
+                    clearTimeout(renameSaveTimerObj.current.get(note_key) as NodeJS.Timeout);
+                }
+
+                renameSaveTimerObj.current.set(
+                    note_key,
+                    setTimeout(() => {
+                        renameSaveNow(data_path, repo_key, folder_key, note_key, new_title);
+                        renameSaveTimerObj.current.delete(note_key);
+                    }, 500)
+                );
             }
+        },
+        []
+    );
 
-            renameSaveTimerObj.current.set(
-                note_key,
-                setTimeout(() => {
-                    renameSaveNow(data_path, repo_key, folder_key, note_key, new_title);
-                    renameSaveTimerObj.current.delete(note_key);
-                }, 500)
-            );
-        }
-    };
+    const reorderFolder = useCallback(
+        (data_path: string, repo_key: string, new_folders_key: string[]) => {
+            if (repo_key) {
+                dispatch({
+                    type: 'reorderFolder',
+                    data_path,
+                    repo_key,
+                    new_folders_key,
+                });
+            }
+        },
+        []
+    );
 
-    const reorderFolder = (data_path: string, repo_key: string, new_folders_key: string[]) => {
-        if (repo_key) {
-            dispatch({
-                type: 'reorderFolder',
-                data_path,
-                repo_key,
-                new_folders_key,
-            });
-        }
-    };
-
-    const reorderNote = (
-        data_path: string,
-        repo_key: string,
-        folder_key: string,
-        new_notes_key: string[]
-    ) => {
-        if (repo_key && folder_key) {
-            dispatch({
-                type: 'reorderNote',
-                data_path,
-                repo_key,
-                folder_key,
-                new_notes_key,
-            });
-        }
-    };
+    const reorderNote = useCallback(
+        (data_path: string, repo_key: string, folder_key: string, new_notes_key: string[]) => {
+            if (repo_key && folder_key) {
+                dispatch({
+                    type: 'reorderNote',
+                    data_path,
+                    repo_key,
+                    folder_key,
+                    new_notes_key,
+                });
+            }
+        },
+        []
+    );
 
     return [state, { updateRepos, initRepo, renameNote, reorderFolder, reorderNote }] as const;
 };
