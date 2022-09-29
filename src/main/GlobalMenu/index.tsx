@@ -14,7 +14,7 @@ const GlobalMenu: React.FC<{
     const [menuPopup, setMenuPopUp, mask] = usePopUp(500);
     const [showPathUl, setShowPathUl] = useState(false);
 
-    const openDataPath = useCallback(() => {
+    const openDataPath = useCallback((data_path: string) => {
         ipcRenderer.send('open-folder', { folder_path: data_path });
     }, []);
 
@@ -80,7 +80,9 @@ const GlobalMenu: React.FC<{
                             </Path>
                         </PathContainer>
                         <OpenDataPath>
-                            <OpenDataPathBtn onClick={openDataPath}>打开</OpenDataPathBtn>
+                            <OpenDataPathBtn onClick={(e) => openDataPath(curDataPath)}>
+                                打开
+                            </OpenDataPathBtn>
                         </OpenDataPath>
                     </ShowPath>
                 </ChildPart>
