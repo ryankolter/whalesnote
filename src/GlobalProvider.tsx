@@ -1,5 +1,8 @@
+const { ipcRenderer } = window.require('electron');
 import { createContext, useCallback, useState, useMemo, useEffect } from 'react';
 
+import useData from './lib/useData';
+import useDataList from './lib/useDataList';
 import { useRepos } from './lib/useRepos';
 import { useDxnote } from './lib/useDxnote';
 import { useEditPos } from './lib/useEditPos';
@@ -17,8 +20,9 @@ import {
 } from './lib/notes';
 
 const initContext: {
-    dataPath: string;
-    setDataPath: (path: string) => void;
+    curDataPath: string;
+    setCurDataPath: (path: string) => void;
+    dataPathList: string[];
     dxnote: any;
     initDxnote: (new_dxnote: any) => void;
     updateDxnote: (data_path: string) => void;
@@ -96,8 +100,9 @@ const initContext: {
     keySelect: boolean;
     setKeySelect: (keySelect: boolean) => void;
 } = {
-    dataPath: '',
-    setDataPath: () => {},
+    curDataPath: '',
+    setCurDataPath: () => {},
+    dataPathList: [],
     dxnote: null,
     initDxnote: () => {},
     updateDxnote: () => {},
@@ -142,10 +147,8 @@ const initContext: {
 export const GlobalContext = createContext(initContext);
 
 export const GlobalProvider = ({ children }: { children: any }) => {
-    const [dataPath, setDataPath] = useState<string>(
-        window.localStorage.getItem('dxnote_data_path') || ''
-    );
-    const [currentNoteStr, setCurrentNoteStr] = useState<string>('');
+    const [data, curDataPath, setCurDataPath] = useData();
+    const [dataPathList, addDataPathToList, removeDataPathFromList] = useDataList();
     const [
         dxnote,
         {
@@ -162,6 +165,25 @@ export const GlobalProvider = ({ children }: { children: any }) => {
     ] = useDxnote();
     const [repos_obj, { updateRepos, initRepo, renameNote, reorderFolder, reorderNote }] =
         useRepos();
+
+    useMemo(() => {
+        ipcRenderer.on('checkoutDataPath', (event: any, path: string) => {
+            setCurDataPath(path);
+        });
+    }, [setCurDataPath]);
+
+    useEffect(() => {
+        if (curDataPath && data.current) {
+            console.log('12345');
+            addDataPathToList(curDataPath);
+            console.log(data.current);
+            initDxnote(data.current.dxnote);
+            initRepo(data.current.repos);
+            initNotes(data.current.notes);
+        }
+    }, [curDataPath]);
+
+    const [currentNoteStr, setCurrentNoteStr] = useState<string>('');
     const [cursorHeads, { updateCursorHead }] = useEditPos();
     const [fromPoses, { updateFromPos }] = useEditLine();
     const [renderTops, { updateRecordValue: updateRenderTop }] = useRecordValue();
@@ -173,25 +195,25 @@ export const GlobalProvider = ({ children }: { children: any }) => {
 
     const repoSwitch = useCallback(
         (repo_key: string | undefined) => {
-            repoNotesFetch(dataPath, dxnote, repos_obj, repo_key);
-            switchRepo(dataPath, repo_key);
+            repoNotesFetch(curDataPath, dxnote, repos_obj, repo_key);
+            switchRepo(curDataPath, repo_key);
         },
-        [dataPath, dxnote, repos_obj]
+        [curDataPath, dxnote, repos_obj]
     );
 
     const folderSwitch = useCallback(
         (repo_key: string | undefined, folder_key: string | undefined) => {
-            folderNotesFetch(dataPath, repo_key, folder_key);
-            switchFolder(dataPath, folder_key);
+            folderNotesFetch(curDataPath, repo_key, folder_key);
+            switchFolder(curDataPath, folder_key);
         },
-        [dataPath]
+        [curDataPath]
     );
 
     const noteSwitch = useCallback(
         (note_key: string | undefined) => {
-            switchNote(dataPath, note_key);
+            switchNote(curDataPath, note_key);
         },
-        [dataPath]
+        [curDataPath]
     );
     console.log('render');
 
@@ -282,8 +304,9 @@ export const GlobalProvider = ({ children }: { children: any }) => {
     return (
         <GlobalContext.Provider
             value={{
-                dataPath,
-                setDataPath,
+                curDataPath,
+                setCurDataPath,
+                dataPathList,
                 dxnote,
                 initDxnote,
                 updateDxnote,

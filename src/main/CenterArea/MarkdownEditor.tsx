@@ -21,7 +21,7 @@ export const MarkdownEditor: React.FC<{
 }> = ({ theme, cursorInRender, renderPanelState, renderScrollRatio, setEditorScrollRatio }) => {
     console.log('MarkdownEditor render');
     const {
-        dataPath,
+        curDataPath,
         currentRepoKey,
         currentFolderKey,
         currentNoteKey,
@@ -52,13 +52,19 @@ export const MarkdownEditor: React.FC<{
     const docChangeHandler = useCallback(
         (new_value: string, viewUpdate: any) => {
             if (!noteSwitchRef.current) {
-                updateNote(dataPath, currentRepoKey, currentFolderKey, currentNoteKey, new_value);
+                updateNote(
+                    curDataPath,
+                    currentRepoKey,
+                    currentFolderKey,
+                    currentNoteKey,
+                    new_value
+                );
                 const doc = view.current?.state.doc;
                 if (doc) {
                     const first_line_content = doc.lineAt(0).text.replace(/^[#\-\_*>\s]+/g, '');
                     const new_name: string = first_line_content || '新建文档';
                     renameNote(
-                        dataPath,
+                        curDataPath,
                         currentRepoKey,
                         currentFolderKey,
                         currentNoteKey,
@@ -67,7 +73,7 @@ export const MarkdownEditor: React.FC<{
                 }
             }
         },
-        [dataPath, currentRepoKey, currentFolderKey, currentNoteKey, renameNote, updateNote]
+        [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, renameNote, updateNote]
     );
 
     const selectionSetHandler = useCallback(
@@ -77,7 +83,7 @@ export const MarkdownEditor: React.FC<{
                 updateCursorHead(currentRepoKey, currentFolderKey, currentNoteKey, cursorHead);
             }
         },
-        [dataPath, currentRepoKey, currentFolderKey, currentNoteKey]
+        [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey]
     );
 
     const autoScrollToLine = useCallback(() => {
@@ -266,7 +272,7 @@ export const MarkdownEditor: React.FC<{
         }, 250);
 
         fromPos && fromPos > 10 ? setShowEditorScrollPos(true) : setShowEditorScrollPos(false);
-    }, [dataPath, currentRepoKey, currentFolderKey, currentNoteKey]);
+    }, [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey]);
 
     useEffect(() => {
         console.log('focus');

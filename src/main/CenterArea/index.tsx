@@ -15,7 +15,7 @@ const CenterArea: React.FC<{
 }> = ({ showAssistantPanel, setShowAssistantPanel, theme }) => {
     console.log('CenterArea render');
     const {
-        dataPath,
+        curDataPath,
         dxnote,
         currentRepoKey,
         currentFolderKey,
@@ -103,14 +103,14 @@ const CenterArea: React.FC<{
             setRenderLeft('100%');
             window.localStorage.setItem('render_panel_state', 'hidden');
         } else if (renderPanelState === 'half') {
-            setEditorWidth('calc(50% - 6px)');
-            setRenderWidth('calc(50% - 6px)');
-            setRenderLeft('calc(50%)');
+            setEditorWidth('calc(50% - 15px)');
+            setRenderWidth('calc(50% - 15px)');
+            setRenderLeft('calc(50% + 15px)');
             window.localStorage.setItem('render_panel_state', 'half');
         } else if (renderPanelState === 'all') {
             setEditorWidth('100%');
-            setRenderWidth('100%');
-            setRenderLeft('0');
+            setRenderWidth('calc(100% - 24px)');
+            setRenderLeft('24px');
             window.localStorage.setItem('render_panel_state', 'all');
         }
     }, [renderPanelState]);
@@ -313,9 +313,9 @@ const CenterArea: React.FC<{
         };
     }, [handleKeyDown]);
 
-    return dataPath ? (
+    return (
         <CenterAreaContainer>
-            <TopRow>
+            <TopRow className="child-border-color">
                 <EditorTools></EditorTools>
                 <SwitchExport>
                     <ExportBtn
@@ -378,7 +378,7 @@ const CenterArea: React.FC<{
                         setEditorScrollRatio={setEditorScrollRatio}
                     />
                 </EditorPanel>
-                <RenderPanel topValue={renderLeft} widthValue={renderWidth}>
+                <RenderPanel leftValue={renderLeft} widthValue={renderWidth}>
                     {renderPanelState !== 'hidden' ? (
                         <MarkdownRender
                             cursorInRender={cursorInRender}
@@ -487,8 +487,6 @@ const CenterArea: React.FC<{
                 </AssistantActive>
             </BottomRow>
         </CenterAreaContainer>
-    ) : (
-        <></>
     );
 };
 
@@ -506,7 +504,11 @@ const TopRow = styled.div({
     width: '100%',
     display: 'flex',
     alignItems: 'center',
-    height: '58px',
+    height: '59.5px',
+    borderBottomWidth: '1.5px',
+    borderBottomStyle: 'solid',
+    paddingRight: '30px',
+    boxSizing: 'border-box',
 });
 
 const EditorTools = styled.div({
@@ -552,7 +554,9 @@ const MarkdownArea = styled.div({
     position: 'relative',
     flex: '1',
     minHeight: '0',
-    width: '100%',
+    width: 'calc(100% - 39px)',
+    paddingLeft: '24px',
+    boxSizing: 'border-box',
 });
 
 const EditorPanel = styled.div(
@@ -571,8 +575,8 @@ const RenderPanel = styled.div(
         height: 'calc(100% + 2px)',
         boxSizing: 'border-box',
     },
-    (props: { topValue: string; widthValue: string }) => ({
-        left: props.topValue,
+    (props: { leftValue: string; widthValue: string }) => ({
+        left: props.leftValue,
         width: props.widthValue,
     })
 );
@@ -582,7 +586,8 @@ const BottomRow = styled.div({
     height: '69px',
     display: 'flex',
     alignItems: 'center',
-    padding: '6px 10px 0 54px',
+    padding: '6px 30px 0 54px',
+    boxSizing: 'border-box',
 });
 
 const BreakCrumb = styled.div({

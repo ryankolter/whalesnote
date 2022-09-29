@@ -54,7 +54,7 @@ body {
 }
 
 .common-theme-cm .cm-content {
-    margin-left: 4px !important;
+    margin-top: 14px !important;
 }
 
 .common-theme-cm .cm-line {
@@ -74,6 +74,10 @@ body {
 }
 
 /* gutter */
+
+.common-theme-cm .cm-gutters {
+    display: none !important;
+}
 
 .common-theme-cm .cm-gutter {
     line-height: 24px;
@@ -126,7 +130,6 @@ body {
     height: 100%;
     top: 50px;
     box-sizing: border-box;
-    padding: 0 20px 5px 20px;
     font-family: PingFangSC-Regular, sans-serif;
     font-size: 15px;
     user-select: text;

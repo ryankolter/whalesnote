@@ -14,7 +14,7 @@ const NoteList: React.FC<{
     width: number;
 }> = ({ width }) => {
     const {
-        dataPath,
+        curDataPath,
         noteSwitch,
         currentRepoKey,
         currentFolderKey,
@@ -57,7 +57,7 @@ const NoteList: React.FC<{
         });
 
         const folder_info = ipcRenderer.sendSync('readJson', {
-            file_path: `${dataPath}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
+            file_path: `${curDataPath}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
         });
 
         folder_info.notes_key.push(note_key);
@@ -66,7 +66,7 @@ const NoteList: React.FC<{
         };
 
         ipcRenderer.sendSync('writeJson', {
-            file_path: `${dataPath}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
+            file_path: `${curDataPath}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
             obj: folder_info,
         });
 
@@ -78,17 +78,17 @@ const NoteList: React.FC<{
         };
 
         ipcRenderer.sendSync('writeCson', {
-            file_path: `${dataPath}/${currentRepoKey}/${currentFolderKey}/${note_key}.cson`,
+            file_path: `${curDataPath}/${currentRepoKey}/${currentFolderKey}/${note_key}.cson`,
             obj: note_info,
         });
 
         updateRepos('note', {
-            data_path: dataPath,
+            data_path: curDataPath,
             repo_key: currentRepoKey,
             folder_key: currentFolderKey,
         });
         changeNotesAfterNew('note', {
-            data_path: dataPath,
+            data_path: curDataPath,
             repo_key: currentRepoKey,
             folder_key: currentFolderKey,
             note_key,
@@ -107,7 +107,7 @@ const NoteList: React.FC<{
         }, 0);
         setKeySelect(false);
     }, [
-        dataPath,
+        curDataPath,
         currentRepoKey,
         currentFolderKey,
         changeNotesAfterNew,
@@ -121,15 +121,15 @@ const NoteList: React.FC<{
     const deleteNote = useCallback(
         (note_key: string) => {
             const folder_info = ipcRenderer.sendSync('readJson', {
-                file_path: `${dataPath}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
+                file_path: `${curDataPath}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
             });
 
             const note_info = ipcRenderer.sendSync('readCson', {
-                file_path: `${dataPath}/${currentRepoKey}/${currentFolderKey}/${note_key}.cson`,
+                file_path: `${curDataPath}/${currentRepoKey}/${currentFolderKey}/${note_key}.cson`,
             });
 
             let trash = ipcRenderer.sendSync('readCson', {
-                file_path: `${dataPath}/trash.cson`,
+                file_path: `${curDataPath}/trash.cson`,
             });
 
             trash = trash ? trash : {};
@@ -139,7 +139,7 @@ const NoteList: React.FC<{
             ] = note_info.content;
 
             ipcRenderer.sendSync('writeCson', {
-                file_path: `${dataPath}/trash.cson`,
+                file_path: `${curDataPath}/trash.cson`,
                 obj: trash,
             });
 
@@ -164,23 +164,23 @@ const NoteList: React.FC<{
             delete folder_info.notes_obj[note_key];
 
             ipcRenderer.sendSync('writeJson', {
-                file_path: `${dataPath}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
+                file_path: `${curDataPath}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
                 obj: folder_info,
             });
 
             ipcRenderer.sendSync('remove', {
-                file_path: `${dataPath}/${currentRepoKey}/${currentFolderKey}/${note_key}.cson`,
+                file_path: `${curDataPath}/${currentRepoKey}/${currentFolderKey}/${note_key}.cson`,
             });
 
             updateRepos('note', {
-                data_path: dataPath,
+                data_path: curDataPath,
                 repo_key: currentRepoKey,
                 folder_key: currentFolderKey,
             });
 
             noteSwitch(other_note_key);
         },
-        [dataPath, currentRepoKey, currentFolderKey, noteSwitch, updateRepos]
+        [curDataPath, currentRepoKey, currentFolderKey, noteSwitch, updateRepos]
     );
 
     const preNotePage = useCallback(() => {
@@ -211,7 +211,7 @@ const NoteList: React.FC<{
                 }
             });
         },
-        [dataPath, notes_key, noteSwitch]
+        [curDataPath, notes_key, noteSwitch]
     );
 
     useEffect(() => {
@@ -337,10 +337,10 @@ const NoteList: React.FC<{
                 const oldIndex = notes_key.indexOf(active.id);
                 const newIndex = notes_key.indexOf(over.id);
                 const new_notes_key: string[] = arrayMove(notes_key, oldIndex, newIndex);
-                reorderNote(dataPath, currentRepoKey, currentFolderKey, new_notes_key);
+                reorderNote(curDataPath, currentRepoKey, currentFolderKey, new_notes_key);
             }
         },
-        [dataPath, currentRepoKey, currentFolderKey, currentNoteKey, notes_key, reorderNote]
+        [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, notes_key, reorderNote]
     );
 
     const genAlphaCode1 = (order: number): number => {
@@ -362,13 +362,9 @@ const NoteList: React.FC<{
     return (
         <NoteListContainer width={width}>
             <NoteAddFloat className="btn-1-bg-color">
-                {dataPath ? (
-                    <NoteAddBtn onKeyDown={(e) => handleKeyDown(e)} onClick={() => newNote()}>
-                        <img src={newNoteIcon} alt="" />
-                    </NoteAddBtn>
-                ) : (
-                    <div></div>
-                )}
+                <NoteAddBtn onKeyDown={(e) => handleKeyDown(e)} onClick={() => newNote()}>
+                    <img src={newNoteIcon} alt="" />
+                </NoteAddBtn>
             </NoteAddFloat>
             {notes_key && notes_obj ? (
                 <DndContext
@@ -553,7 +549,7 @@ const NoteItem = styled.div({
     lineHeight: '40px',
     padding: '0 10px',
     margin: '0 10px',
-    fontSize: '16px',
+    fontSize: '15px',
     cursor: 'pointer',
     overflow: 'hidden',
     textOverflow: 'ellipsis',

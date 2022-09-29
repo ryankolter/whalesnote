@@ -20,7 +20,7 @@ const RepoPanel: React.FC<{
     setAllowHiddenAllRepoViaEnter: (state: boolean) => void;
 }> = ({ repos_key, showAllRepo, setShowAllRepo, setAllowHiddenAllRepoViaEnter }) => {
     const {
-        dataPath,
+        curDataPath,
         dxnote,
         updateDxnote,
         reorderRepo,
@@ -103,7 +103,7 @@ const RepoPanel: React.FC<{
                     if (key === repo_key) setRepoScrollPage(Math.floor(index / 9.0));
                 });
         },
-        [dataPath, repos_key, repoSwitch]
+        [curDataPath, repos_key, repoSwitch]
     );
 
     // part2 : new repo
@@ -151,7 +151,7 @@ const RepoPanel: React.FC<{
             });
 
             const dxnote_info = ipcRenderer.sendSync('readJson', {
-                file_path: `${dataPath}/dxnote_info.json`,
+                file_path: `${curDataPath}/dxnote_info.json`,
             });
             dxnote_info.repos_key.push(repo_key);
             dxnote_info.cur_repo_key = repo_key;
@@ -160,7 +160,7 @@ const RepoPanel: React.FC<{
                 folders: {},
             };
             ipcRenderer.sendSync('writeJson', {
-                file_path: `${dataPath}/dxnote_info.json`,
+                file_path: `${curDataPath}/dxnote_info.json`,
                 obj: dxnote_info,
             });
 
@@ -169,7 +169,7 @@ const RepoPanel: React.FC<{
                 folders_key: [default_folder_key],
             };
             ipcRenderer.sendSync('writeJson', {
-                file_path: `${dataPath}/${repo_key}/repo_info.json`,
+                file_path: `${curDataPath}/${repo_key}/repo_info.json`,
                 obj: repo_info,
             });
 
@@ -185,20 +185,20 @@ const RepoPanel: React.FC<{
             };
 
             ipcRenderer.sendSync('writeJson', {
-                file_path: `${dataPath}/${repo_key}/${default_folder_key}/folder_info.json`,
+                file_path: `${curDataPath}/${repo_key}/${default_folder_key}/folder_info.json`,
                 obj: folder_info,
             });
 
-            updateDxnote(dataPath);
-            updateRepos('repo', { data_path: dataPath, repo_key });
+            updateDxnote(curDataPath);
+            updateRepos('repo', { data_path: curDataPath, repo_key });
             updateRepos('folder', {
-                data_path: dataPath,
+                data_path: curDataPath,
                 repo_key,
                 folder_key: default_folder_key,
             });
-            changeNotesAfterNew('repo', { data_path: dataPath, repo_key });
+            changeNotesAfterNew('repo', { data_path: curDataPath, repo_key });
             changeNotesAfterNew('folder', {
-                data_path: dataPath,
+                data_path: curDataPath,
                 repo_key,
                 folder_key: default_folder_key,
             });
@@ -222,7 +222,7 @@ const RepoPanel: React.FC<{
             }, 0);
         },
         [
-            dataPath,
+            curDataPath,
             changeNotesAfterNew,
             folderSwitch,
             repoSwitchInPanel,
@@ -251,19 +251,19 @@ const RepoPanel: React.FC<{
     const renameRepoConfirm = useCallback(() => {
         if (currentRepoKey) {
             const repo_info = ipcRenderer.sendSync('readJson', {
-                file_path: `${dataPath}/${currentRepoKey}/repo_info.json`,
+                file_path: `${curDataPath}/${currentRepoKey}/repo_info.json`,
             });
             repo_info.repo_name = curRepoName;
             ipcRenderer.sendSync('writeJson', {
-                file_path: `${dataPath}/${currentRepoKey}/repo_info.json`,
+                file_path: `${curDataPath}/${currentRepoKey}/repo_info.json`,
                 obj: repo_info,
             });
-            updateRepos('repo', { data_path: dataPath, repo_key: currentRepoKey });
+            updateRepos('repo', { data_path: curDataPath, repo_key: currentRepoKey });
             setRenamePopUp(false);
             setAllowHiddenAllRepoViaEnter(true);
         }
     }, [
-        dataPath,
+        curDataPath,
         currentRepoKey,
         curRepoName,
         setRenamePopUp,
@@ -296,23 +296,23 @@ const RepoPanel: React.FC<{
     const deleteRepoConfirm = useCallback(() => {
         if (currentRepoKey) {
             const repo_info = ipcRenderer.sendSync('readJson', {
-                file_path: `${dataPath}/${currentRepoKey}/repo_info.json`,
+                file_path: `${curDataPath}/${currentRepoKey}/repo_info.json`,
             });
 
             let trash = ipcRenderer.sendSync('readCson', {
-                file_path: `${dataPath}/trash.cson`,
+                file_path: `${curDataPath}/trash.cson`,
             });
 
             trash = trash ? trash : {};
 
             repo_info.folders_key.forEach((folder_key: string) => {
                 const folder_info = ipcRenderer.sendSync('readJson', {
-                    file_path: `${dataPath}/${currentRepoKey}/${folder_key}/folder_info.json`,
+                    file_path: `${curDataPath}/${currentRepoKey}/${folder_key}/folder_info.json`,
                 });
 
                 folder_info.notes_key.forEach((note_key: string) => {
                     const note_info = ipcRenderer.sendSync('readCson', {
-                        file_path: `${dataPath}/${currentRepoKey}/${folder_key}/${note_key}.cson`,
+                        file_path: `${curDataPath}/${currentRepoKey}/${folder_key}/${note_key}.cson`,
                     });
 
                     trash[
@@ -322,12 +322,12 @@ const RepoPanel: React.FC<{
             });
 
             ipcRenderer.sendSync('writeCson', {
-                file_path: `${dataPath}/trash.cson`,
+                file_path: `${curDataPath}/trash.cson`,
                 obj: trash,
             });
 
             const dxnote_info = ipcRenderer.sendSync('readJson', {
-                file_path: `${dataPath}/dxnote_info.json`,
+                file_path: `${curDataPath}/dxnote_info.json`,
             });
 
             const new_repos_key: string[] = [];
@@ -353,15 +353,15 @@ const RepoPanel: React.FC<{
             }
 
             ipcRenderer.sendSync('writeJson', {
-                file_path: `${dataPath}/dxnote_info.json`,
+                file_path: `${curDataPath}/dxnote_info.json`,
                 obj: dxnote_info,
             });
 
             ipcRenderer.sendSync('remove', {
-                file_path: `${dataPath}/${currentRepoKey}`,
+                file_path: `${curDataPath}/${currentRepoKey}`,
             });
 
-            updateRepos('repo', { data_path: dataPath, repo_key: currentRepoKey });
+            updateRepos('repo', { data_path: curDataPath, repo_key: currentRepoKey });
             if (other_repo_key) {
                 repoSwitchInPanel(other_repo_key);
             }
@@ -370,7 +370,7 @@ const RepoPanel: React.FC<{
             setAllowHiddenAllRepoViaEnter(true);
         }
     }, [
-        dataPath,
+        curDataPath,
         currentRepoKey,
         setDeletePopUp,
         repoSwitchInPanel,
@@ -546,10 +546,10 @@ const RepoPanel: React.FC<{
                 const oldIndex = repos_key.indexOf(active.id);
                 const newIndex = repos_key.indexOf(over.id);
                 const new_repos_key = arrayMove(repos_key, oldIndex, newIndex);
-                reorderRepo(dataPath, currentRepoKey, new_repos_key);
+                reorderRepo(curDataPath, currentRepoKey, new_repos_key);
             }
         },
-        [dataPath, currentRepoKey, currentFolderKey, repos_key, reorderRepo]
+        [curDataPath, currentRepoKey, currentFolderKey, repos_key, reorderRepo]
     );
 
     return (
@@ -741,7 +741,7 @@ const RepoPanel: React.FC<{
                     ) : (
                         <></>
                     )}
-                    {dataPath && !newRepoKey ? (
+                    {curDataPath && !newRepoKey ? (
                         <RepoAdd>
                             <RepoAddBtn className="btn-1-bg-color" onClick={newRepo}>
                                 +

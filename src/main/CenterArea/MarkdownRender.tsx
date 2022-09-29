@@ -35,7 +35,7 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
     setRenderScrollRatio,
 }) => {
     const {
-        dataPath,
+        curDataPath,
         currentRepoKey,
         currentFolderKey,
         currentNoteKey,
@@ -304,7 +304,7 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
 
             clipboard.current.off('error');
         };
-    }, [dataPath, currentRepoKey, currentFolderKey, currentNoteKey, currentNoteStr]);
+    }, [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, currentNoteStr]);
 
     useEffect(() => {
         if (renderRef.current) {
@@ -313,7 +313,7 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
             setShowRenderScrollPos(false);
             if (renderTop > renderRef.current.offsetHeight) setShowRenderScrollPos(true);
         }
-    }, [dataPath, currentRepoKey, currentFolderKey, currentNoteKey]);
+    }, [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey]);
 
     useEffect(() => {
         if (renderRef && renderRef.current) {

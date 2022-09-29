@@ -128,29 +128,32 @@ export const useDxnote = () => {
         repos: {},
     });
 
-    const switchRepo = useCallback((dataPath: string, repoKey: string | undefined) => {
+    const switchRepo = useCallback((curDataPath: string, repoKey: string | undefined) => {
         repoKey = repoKey ? repoKey : undefined;
         dispatch({
             type: 'switch_repo',
-            data_path: dataPath,
+            data_path: curDataPath,
             repo_key: repoKey,
         });
     }, []);
 
-    const switchFolder = useCallback((dataPath: string | null, folderKey: string | undefined) => {
-        folderKey = folderKey ? folderKey : undefined;
-        dispatch({
-            type: 'switch_folder',
-            data_path: dataPath,
-            folder_key: folderKey,
-        });
-    }, []);
+    const switchFolder = useCallback(
+        (curDataPath: string | null, folderKey: string | undefined) => {
+            folderKey = folderKey ? folderKey : undefined;
+            dispatch({
+                type: 'switch_folder',
+                data_path: curDataPath,
+                folder_key: folderKey,
+            });
+        },
+        []
+    );
 
-    const switchNote = useCallback((dataPath: string | null, noteKey: string | undefined) => {
+    const switchNote = useCallback((curDataPath: string | null, noteKey: string | undefined) => {
         noteKey = noteKey ? noteKey : undefined;
         dispatch({
             type: 'switch_note',
-            data_path: dataPath,
+            data_path: curDataPath,
             note_key: noteKey,
         });
     }, []);

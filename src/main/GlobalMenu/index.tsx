@@ -1,8 +1,7 @@
 const { ipcRenderer } = window.require('electron');
-import { useCallback, useEffect } from 'react';
-
+import { useCallback, useContext, useEffect, useState } from 'react';
+import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
-
 import { usePopUp } from '../../lib/usePopUp';
 
 const GlobalMenu: React.FC<{
@@ -11,7 +10,9 @@ const GlobalMenu: React.FC<{
     showGlobalMenu: boolean;
     setShowGlobalMenu: any;
 }> = ({ data_path, addDataPath, showGlobalMenu, setShowGlobalMenu }) => {
+    const { curDataPath, setCurDataPath, dataPathList } = useContext(GlobalContext);
     const [menuPopup, setMenuPopUp, mask] = usePopUp(500);
+    const [showPathUl, setShowPathUl] = useState(false);
 
     const openDataPath = useCallback(() => {
         ipcRenderer.send('open-folder', { folder_path: data_path });
@@ -19,6 +20,9 @@ const GlobalMenu: React.FC<{
 
     useEffect(() => {
         setMenuPopUp(showGlobalMenu);
+        if (!showGlobalMenu) {
+            setShowPathUl(false);
+        }
     }, [showGlobalMenu]);
 
     return (
@@ -33,10 +37,51 @@ const GlobalMenu: React.FC<{
                 style={{ transform: showGlobalMenu ? 'translate(0, 0)' : 'translate(-400px, 0)' }}
             >
                 <ChildPart>
-                    <PartTitle className={'child-border-color'}>当前数据目录</PartTitle>
+                    <PartTitle className={'child-border-color'}>数据空间</PartTitle>
                     <ShowPath>
-                        <PathValue>{data_path}</PathValue>
-                        <OpenDataPathBtn onClick={openDataPath}>打开</OpenDataPathBtn>
+                        <PathContainer>
+                            <Path>
+                                <CurrentPath
+                                    className="menu-select-color"
+                                    onClick={() => setShowPathUl((showPathUl) => !showPathUl)}
+                                >
+                                    <PathValue>
+                                        {curDataPath.indexOf('/whale_note/noteData') !== -1
+                                            ? '默认 - '
+                                            : ''}
+                                        {curDataPath}
+                                    </PathValue>
+                                    <Triangle></Triangle>
+                                </CurrentPath>
+
+                                {showPathUl ? (
+                                    <PathUl className="menu-select-color">
+                                        {dataPathList.map((dataPath: string, index: number) => {
+                                            return (
+                                                <PathLi
+                                                    key={index}
+                                                    onClick={(e) => {
+                                                        setShowPathUl(false);
+                                                        setCurDataPath(dataPath);
+                                                    }}
+                                                >
+                                                    {dataPath.indexOf('/whale_note/noteData') !== -1
+                                                        ? '默认 - '
+                                                        : ''}
+                                                    {dataPath}
+                                                </PathLi>
+                                            );
+                                        })}
+                                        <PathAddBtn onClick={addDataPath}>添加</PathAddBtn>
+                                    </PathUl>
+                                ) : (
+                                    <></>
+                                )}
+                            </Path>
+                        </PathContainer>
+                        <OpenDataPath>
+                            <OpenDataPathBtn onClick={openDataPath}>打开</OpenDataPathBtn>
+                        </OpenDataPath>
                     </ShowPath>
                 </ChildPart>
                 <ChildPart>
@@ -44,7 +89,6 @@ const GlobalMenu: React.FC<{
                     <OperationList>
                         <OperationBtn style={{ marginBottom: '15px' }}>一键备份</OperationBtn>
                         <OperationBtn style={{ marginBottom: '15px' }}>加密备份</OperationBtn>
-                        <OperationBtn onClick={addDataPath}>切换新数据目录</OperationBtn>
                     </OperationList>
                 </ChildPart>
                 <ChildPart>
@@ -91,13 +135,82 @@ const ShowPath = styled.div({
     margin: '0 0 15px 0',
 });
 
-const PathValue = styled.div({
+const PathContainer = styled.div({
+    position: 'relative',
     flex: '1',
     minWidth: '0',
+});
+
+const Path = styled.div({
     wordBreak: 'break-all',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
+    cursor: 'pointer',
+});
+
+const CurrentPath = styled.div({
+    display: ' flex',
+    height: '40px',
+    lineHeight: '40px',
+    padding: '0 15px 0 10px',
+    boxSizing: 'border-box',
+});
+
+const PathValue = styled.div({
+    wordBreak: 'break-all',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    cursor: 'pointer',
+});
+
+const Triangle = styled.div({
+    display: 'block',
+    height: '0',
+    width: '0',
+    marginLeft: '4px',
+    transform: 'translateY(16px)',
+    borderBottom: '10px solid transparent',
+    borderTop: '10px solid #939395',
+    borderLeft: '6px solid transparent',
+    borderRight: '6px solid transparent',
+});
+
+const PathUl = styled.div({
+    width: '100%',
+    position: 'absolute',
+    padding: '5px 0',
+});
+
+const PathLi = styled.div({
+    width: '100%',
+    height: '40px',
+    lineHeight: '40px',
+    padding: '0 10px',
+    boxSizing: 'border-box',
+    wordBreak: 'break-all',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    cursor: 'pointer',
+});
+
+const PathAddBtn = styled.div({
+    display: 'flex',
+    justifyContent: 'center',
+    width: '100%',
+    height: '40px',
+    lineHeight: '40px',
+    boxSizing: 'border-box',
+});
+
+const OpenDataPath = styled.div({
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    height: '40px',
+    lineHeight: '40px',
 });
 
 const OpenDataPathBtn = styled.div({

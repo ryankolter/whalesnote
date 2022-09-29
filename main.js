@@ -32,8 +32,8 @@ const createWindow = async () => {
         visualEffectState: 'active',
         width: 1080,
         height: 720,
-        minWidth: 500,
-        minHeight: 320,
+        minWidth: 800,
+        minHeight: 520,
         maximizable: true,
         webPreferences: {
             nodeIntegration: true,
@@ -49,7 +49,7 @@ const createWindow = async () => {
     if (app.isPackaged) {
         win.loadFile(path.join(__dirname, '/build/index.html'));
     } else {
-        win.loadURL('http://localhost:3000');
+        win.loadURL('http://localhost:3005');
         win.webContents.openDevTools();
         await installExtensions();
     }
@@ -228,6 +228,12 @@ const processIPC = () => {
 
     ipcMain.on('fileExist', (event, { file_path }) => {
         event.returnValue = fse.existsSync(file_path);
+    });
+
+    ipcMain.on('defaultDataPath', (event) => {
+        let default_data_Path = path.join(app.getPath('userData'), 'noteData');
+        fse.ensureDirSync(default_data_Path);
+        event.returnValue = default_data_Path;
     });
 
     ipcMain.on('writeCson', (event, { file_path, obj }) => {

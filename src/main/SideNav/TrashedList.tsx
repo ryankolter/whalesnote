@@ -9,7 +9,7 @@ const TrashList: React.FC<{
 }> = ({ width }) => {
     const {
         repos_obj,
-        dataPath,
+        curDataPath,
         currentRepoKey,
         currentFolderKey,
         currentNoteKey,
@@ -24,13 +24,13 @@ const TrashList: React.FC<{
 
     const deleteNote = (note_key: string) => {
         const folder_info = ipcRenderer.sendSync('readJson', {
-            file_path: `${dataPath}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
+            file_path: `${curDataPath}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
         });
 
         folder_info.notes_obj[note_key].isTrashed = true;
 
         ipcRenderer.sendSync('writeJson', {
-            file_path: `${dataPath}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
+            file_path: `${curDataPath}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
             obj: folder_info,
         });
     };
@@ -48,11 +48,11 @@ const TrashList: React.FC<{
                             }}
                             onClick={() => {
                                 repoSwitch(arr[0]);
-                                folderNotesFetch(dataPath, arr[0], arr[1]);
+                                folderNotesFetch(curDataPath, arr[0], arr[1]);
                                 folderSwitch(arr[0], arr[1]);
                                 noteSwitch(arr[2]);
                             }}
-                            // onContextMenu={()=>noteSwitch(dataPath, arr[2])}
+                            // onContextMenu={()=>noteSwitch(curDataPath, arr[2])}
                         >
                             {arr[3]}
                         </NoteItem>

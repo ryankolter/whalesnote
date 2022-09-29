@@ -3,23 +3,24 @@ import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'r
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 import cryptoRandomString from 'crypto-random-string';
-import MiniSearch from 'minisearch';
 
 import FolderList from './FolderList';
 import NoteList from './NoteList';
 import GlobalMenu from '../GlobalMenu';
 import WaitingMaskStatic from '../../components/WaitingMaskStatic';
 
-import initData from '../../lib/init';
+import useSearch from '../../lib/useSearch';
+import useData from '../../lib/useData';
+
 import menuBtnIcon from '../../resources/icon/menuBtnIcon.svg';
+import { useDropAnimation } from '@dnd-kit/core/dist/components/DragOverlay/hooks';
 
 type SideNavProps = Record<string, unknown>;
 
 const SideNav: React.FC<SideNavProps> = ({}) => {
     console.log('SideNav render');
     const {
-        dataPath,
-        setDataPath,
+        curDataPath,
         dxnote,
         initDxnote,
         repoSwitch,
@@ -40,7 +41,6 @@ const SideNav: React.FC<SideNavProps> = ({}) => {
         setKeySelect,
     } = useContext(GlobalContext);
 
-    const miniSearch = useRef<any>();
     const searchInputRef = useRef<HTMLInputElement>(null);
     const resizeFolderOffsetX = useRef<number>(0);
     const resizeNoteOffsetX = useRef<number>(0);
@@ -54,148 +54,9 @@ const SideNav: React.FC<SideNavProps> = ({}) => {
     const [word, setWord] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [showSearchPanel, setShowSearchPanel] = useState(false);
-    const [showAddPathTips, setShowAddPathTips] = useState(false);
-    const [showUpdateIndexTips, setShowUpdateIndexTips] = useState(true);
     const [showGlobalMenu, setShowGlobalMenu] = useState(false);
-    const [showWaitingMask, setShowWaitingMask] = useState(false);
 
-    useEffect(() => {
-        const new_data = initData(dataPath);
-        if (new_data) {
-            initDxnote(new_data.dxnote);
-            initRepo(new_data.repos);
-            initNotes(new_data.notes);
-            const search = ipcRenderer.sendSync('readJson', {
-                file_path: `${dataPath}/search.json`,
-            });
-            if (search) {
-                setShowUpdateIndexTips(false);
-                miniSearch.current = MiniSearch.loadJS(search, {
-                    fields: ['title', 'content'],
-                    storeFields: ['id', 'type', 'title', 'folder_name'],
-                    tokenize: (string, _fieldName) => {
-                        const result = ipcRenderer.sendSync('nodejieba', {
-                            word: string,
-                        });
-                        return result;
-                    },
-                    searchOptions: {
-                        boost: { title: 2 },
-                        fuzzy: 0.2,
-                        tokenize: (string: string) => {
-                            let result = ipcRenderer.sendSync('nodejieba', {
-                                word: string,
-                            });
-                            result = result.filter((w: string) => w !== ' ');
-                            return result;
-                        },
-                    },
-                });
-            } else {
-                miniSearch.current = null;
-            }
-            setTimeout(() => {
-                setFocus(
-                    cryptoRandomString({
-                        length: 24,
-                        type: 'alphanumeric',
-                    })
-                );
-            }, 0);
-        } else {
-            setShowAddPathTips(true);
-        }
-    }, [dataPath]);
-
-    const updateMiniSearch = useCallback(() => {
-        console.log('updateMiniSearch begin');
-        setShowWaitingMask(true);
-
-        setTimeout(() => {
-            allRepoNotesFetch(dataPath, dxnote, repos_obj);
-
-            const documents: any = [];
-            Object.keys(notes).forEach((repo_key: string) => {
-                const folders_obj = repos_obj[repo_key].folders_obj;
-                Object.keys(notes[repo_key]).forEach((folder_key: string) => {
-                    const folder_name = folders_obj[folder_key].folder_name;
-                    Object.keys(notes[repo_key][folder_key]).forEach((note_key: string) => {
-                        const id = `${repo_key}-${folder_key}-${note_key}`;
-                        let title =
-                            repos_obj[repo_key]?.folders_obj &&
-                            repos_obj[repo_key]?.folders_obj[folder_key]?.notes_obj
-                                ? repos_obj[repo_key]?.folders_obj[folder_key]?.notes_obj[note_key]
-                                      ?.title || ''
-                                : '';
-                        if (title === '新建文档') title = '';
-                        const content = notes[repo_key][folder_key][note_key];
-                        documents.push({
-                            id,
-                            type: 'note',
-                            title,
-                            folder_name,
-                            content,
-                        });
-                    });
-                });
-            });
-
-            miniSearch.current = new MiniSearch({
-                fields: ['title', 'content'],
-                storeFields: ['id', 'type', 'title', 'folder_name'],
-                tokenize: (string, _fieldName) => {
-                    const result: any = ipcRenderer.sendSync('nodejieba', {
-                        word: string,
-                    });
-                    return result;
-                },
-                searchOptions: {
-                    boost: { title: 2 },
-                    fuzzy: 0.2,
-                    tokenize: (string: string) => {
-                        let result = ipcRenderer.sendSync('nodejieba', {
-                            word: string,
-                        });
-                        result = result.filter((w: string) => w !== ' ');
-                        return result;
-                    },
-                },
-            });
-            miniSearch.current.addAll(documents);
-
-            ipcRenderer.sendSync('writeStr', {
-                file_path: `${dataPath}/search.json`,
-                str: JSON.stringify(miniSearch.current),
-            });
-
-            setShowUpdateIndexTips(false);
-            setShowWaitingMask(false);
-
-            console.log('updateMiniSearch success');
-        }, 200);
-    }, [
-        dataPath,
-        dxnote,
-        repos_obj,
-        notes,
-        setShowUpdateIndexTips,
-        setShowWaitingMask,
-        allRepoNotesFetch,
-    ]);
-
-    const searchNote = (word: string) => {
-        if (!miniSearch.current) return [];
-        return miniSearch.current.search(word, {
-            filter: (result: any) => result.type === 'note',
-        });
-    };
-
-    useMemo(() => {
-        ipcRenderer.on('checkoutDataPath', (event: any, path: string) => {
-            window.localStorage.setItem('dxnote_data_path', path);
-            setDataPath(path);
-        });
-    }, [setDataPath]);
+    const [showUpdateIndexTips, showWaitingMask, updateMiniSearch, searchNote] = useSearch();
 
     const addDataPath = () => {
         ipcRenderer.send('open-directory-dialog', {
@@ -337,10 +198,10 @@ const SideNav: React.FC<SideNavProps> = ({}) => {
         };
     }, [handleKeyDown]);
 
-    return dataPath ? (
+    return (
         <LeftPanel className={'left-panel-color'}>
             <GlobalMenu
-                data_path={dataPath}
+                data_path={curDataPath}
                 addDataPath={addDataPath}
                 showGlobalMenu={showGlobalMenu}
                 setShowGlobalMenu={setShowGlobalMenu}
@@ -468,15 +329,6 @@ const SideNav: React.FC<SideNavProps> = ({}) => {
             </SelectArea>
             <WaitingMaskStatic show={showWaitingMask} word={'请等待......'}></WaitingMaskStatic>
         </LeftPanel>
-    ) : (
-        <PathAddBtn
-            className="btn-1-bg-color"
-            onClick={() => {
-                addDataPath();
-            }}
-        >
-            设置数据目录
-        </PathAddBtn>
     );
 };
 
@@ -491,7 +343,7 @@ const ToolBar = styled.div({
     position: 'relative',
     display: 'flex',
     padding: '10px 30px 10px 20px',
-    borderBottomWidth: '1px',
+    borderBottomWidth: '1.5px',
     borderBottomStyle: 'solid',
 });
 
