@@ -1,9 +1,40 @@
+/* ---------- common theme for global ---------- */
 body {
     margin: 0;
     font-family: PingFangSC-Regular, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     user-select: none;
+}
+
+.repo-name-input {
+    width: 100px;
+    height: 28px;
+    line-height: 28px;
+    border: none;
+    outline: none;
+    flex: 1;
+    font-size: 14px;
+    border-bottom: 1px solid #939395;
+    margin: 0 0 0 20px;
+}
+
+.folder-name-input {
+    width: 100%;
+    height: 32px;
+    line-height: 32px;
+    padding: 0 16px 0 8px;
+    border: none;
+    outline: none;
+    flex: 1;
+    font-size: 15px;
+    font-weight: 500;
+    border-bottom-width: 2px;
+    border-bottom-style: solid;
+}
+
+.folder-name-input::-webkit-input-placeholder {
+    font-size: 14px;
 }
 
 .item-selected:before {
@@ -127,7 +158,7 @@ body {
 
 .common-theme-rd {
     width: 100%;
-    height: 100%;
+    height: calc(100% - 2px);
     top: 50px;
     box-sizing: border-box;
     font-family: PingFangSC-Regular, sans-serif;

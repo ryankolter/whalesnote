@@ -1,13 +1,24 @@
 /* ---------- grey theme for global ---------- */
 
 .grey-theme-global {
-    --main-text-color: #939395;
-    --title-text-color: #939395;
-    --input-text-color: #A9B7C6;
+    
+    --title-text-color: #D5D5D5;
+    --input-text-color: rgba(255, 255, 255, 0.6);
+    --input-placeholder-text-color: rgba(255, 255, 255, 0.4);
     --hover-text-color: #DDDDDD;
+
+    --main-text-color: #B2B2B2;
+    --main-bg-color: #2D3033;
+
+    --codemirror-bg-color: #313437;
     --editor-main-text-color: #999183;
 
-    --main-bg-color: #2C3033;
+    --bottom-bg-color: #3C3F42;
+    --bottom-text-color: rgb(205, 205, 205);
+    --bottom-btn-bg-color: #585B62;
+
+    --sidebar-bg-color: #45474D;
+    
     --btn-1-bg-color: #3A404C;
     --tips-1-bg-color: #2F3338;
     --selected-bg-color: #3A404C;
@@ -20,7 +31,7 @@
 
 .grey-theme-cm {
     color: var(--editor-main-text-color) !important;
-    background-color: var(--main-bg-color) !important;
+    background-color: var(--codemirror-bg-color) !important;
 }
 
 /* editor */
@@ -28,7 +39,7 @@
 .grey-theme-cm .cm-editor {
     /* color: #a9b7c6; */
     color: var(--editor-main-text-color) !important;
-    background-color: var(--main-bg-color) !important;
+    background-color: var(--codemirror-bg-color) !important;
 }
 
 /* ͼ */
@@ -66,8 +77,6 @@
     background-color: inherit !important;
 }
 
-
-/* #a9b7c6    #999183*/
 
 /* ---------- grey theme for render ---------- */
 

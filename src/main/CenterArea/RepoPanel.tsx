@@ -764,7 +764,7 @@ const RepoPanel: React.FC<{
                         <TextInput
                             key={newRepoKey}
                             value={newRepoName}
-                            className="repoNameInput"
+                            className="repo-name-input"
                             placeholder="输入新的资料库名"
                             autoFocus={true}
                             onBlur={(e) => newRepoSubmit(e, newRepoKey)}

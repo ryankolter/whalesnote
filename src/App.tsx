@@ -5,6 +5,7 @@ import { GlobalProvider } from './GlobalProvider';
 import SideNav from './main/SideNav';
 import CenterArea from './main/CenterArea';
 import AssistantPanel from './main/AssistantPanel';
+import SideBar from './main/SideBar';
 
 import SocketServerBtn from './components/socketServerBtn';
 import SocketClientBtn from './socketClientBtn';
@@ -18,12 +19,12 @@ const App = () => {
             <AppContainer className={`${theme}-theme-global body-color`}>
                 <RepoContent>
                     <SideNav />
-                    <CenterArea
-                        theme={theme}
+                    <CenterArea theme={theme} />
+                    {showAssistantPanel ? <AssistantPanel /> : <></>}
+                    <SideBar
                         showAssistantPanel={showAssistantPanel}
                         setShowAssistantPanel={setShowAssistantPanel}
                     />
-                    {showAssistantPanel ? <AssistantPanel /> : <></>}
                 </RepoContent>
                 {/* <SocketClientBtn/>
                 <SocketServerBtn/> */}

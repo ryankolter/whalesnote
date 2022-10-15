@@ -28,6 +28,19 @@
     background-color: var(--main-bg-color) !important;
 }
 
+.search-input::-webkit-input-placeholder {
+    color: var(--input-placeholder-text-color) !important;
+}
+
+.folder-name-input {
+    color: var(--input-text-color) !important;
+    border-color: var(--border-1-color) !important;
+}
+
+.folder-name-input::-webkit-input-placeholder {
+    color: var(--input-placeholder-text-color) !important;
+}
+
 .title-1-color {
     color: var(--title-text-color);
 }
@@ -68,6 +81,39 @@
 .menu-li-color:hover {
     background-color: #EBEBEB; 
 }
+
+/* bottom bar */
+
+.bottom-bar-color {
+    background-color: var(--main-bg-color) !important;
+    border-top: 2px solid var(--border-1-color) !important;
+}
+
+.bottom-text-color {
+    color: var(--bottom-text-color) !important;
+}
+
+.switch-mode-btn-color {
+    color: var(--bottom-text-color) !important;
+    border: 0.5px solid var(--bottom-text-color) !important;
+    background-color: var(--bottom-btn-bg-color) !important;
+}
+
+.cur-repo-name-tag-color {
+    color: var(--bottom-text-color) !important;
+    border: 0.5px solid var(--bottom-text-color) !important;
+    background-color: var(--bottom-btn-bg-color) !important;
+}
+
+
+/* side bar*/
+
+.side-bar-color {
+    background-color: var(--bottom-bg-color) !important;
+}
+  
+  
+  
 
 /* .select-area-border {
     border-top: 1.5px solid var(--border-1-color);

@@ -363,7 +363,7 @@ const NoteList: React.FC<{
         <NoteListContainer width={width}>
             <NoteAddFloat className="btn-1-bg-color">
                 <NoteAddBtn onKeyDown={(e) => handleKeyDown(e)} onClick={() => newNote()}>
-                    <img src={newNoteIcon} alt="" />
+                    <NewNoteIconImg src={newNoteIcon} alt="" />
                 </NoteAddBtn>
             </NoteAddFloat>
             {notes_key && notes_obj ? (
@@ -516,8 +516,8 @@ const NoteListContainer = styled.div(
 
 const NoteAddFloat = styled.div({
     position: 'absolute',
-    bottom: '16px',
-    right: '16px',
+    bottom: '40px',
+    right: '20px',
     display: 'flex',
     alignItems: 'center',
     flexDirection: 'row',
@@ -526,13 +526,18 @@ const NoteAddFloat = styled.div({
 });
 
 const NoteAddBtn = styled.div({
-    width: '20px',
-    height: '20px',
-    padding: '16px',
+    width: '24px',
+    height: '26px',
+    padding: '13px 14px',
     display: 'flex',
     alignItem: 'center',
     justifyContent: 'center',
     cursor: 'pointer',
+});
+
+const NewNoteIconImg = styled.img({
+    width: '24px',
+    height: '26px',
 });
 
 const Notes = styled.div({
@@ -545,8 +550,8 @@ const Notes = styled.div({
 
 const NoteItem = styled.div({
     position: 'relative',
-    height: '40px',
-    lineHeight: '40px',
+    height: '36px',
+    lineHeight: '36px',
     padding: '0 10px',
     margin: '0 10px',
     fontSize: '15px',
@@ -578,8 +583,8 @@ const AddNotesTips = styled.div({
     marginTop: '20px',
     fontSize: '14px',
     position: 'absolute',
-    bottom: '80px',
-    right: '20px',
+    bottom: '100px',
+    right: '30px',
     padding: '5px 10px',
     borderRadius: '5px',
 });

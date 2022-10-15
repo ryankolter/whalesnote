@@ -15,6 +15,7 @@ import { InputPopUp } from '../../components/InputPopUp';
 import { usePopUp } from '../../lib/usePopUp';
 import useContextMenu from '../../lib/useContextMenu';
 
+import categoryIcon from '../../resources/icon/categoryIcon.svg';
 import folderIcon from '../../resources/icon/folderIcon.svg';
 import newFolderIcon from '../../resources/icon/newFolderIcon.svg';
 
@@ -475,6 +476,9 @@ const FolderList: React.FC<{
     return (
         <FolderListContainer width={width}>
             <FolderTopBar>
+                <CategoryIcon>
+                    <CategoryIconImg src={categoryIcon} alt="" />
+                </CategoryIcon>
                 <FolderTopTitle className="title-1-color">分类</FolderTopTitle>
             </FolderTopBar>
             {folders_key && folders_obj ? (
@@ -584,7 +588,7 @@ const FolderList: React.FC<{
                                 <TextInput
                                     key={newFolderKey}
                                     value={newFolderName}
-                                    className="folderNameInput"
+                                    className="folder-name-input"
                                     placeholder="输入新的分类名"
                                     autoFocus={true}
                                     onBlur={(e) => newFolderConfirm(e, newFolderKey)}
@@ -663,12 +667,24 @@ const FolderTopBar = styled.div({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-around',
-    margin: '32px 16px 16px 6px',
+    justifyContent: 'center',
+    margin: '36px 16px 24px 6px',
+});
+
+const CategoryIcon = styled.div({
+    width: '18px',
+    height: '18px',
+    marginRight: '12px',
+});
+
+const CategoryIconImg = styled.img({
+    width: '18px',
+    height: '18px',
 });
 
 const FolderTopTitle = styled.div({
-    height: '24px',
+    height: '18px',
+    lineHeight: '18px',
 });
 
 const Folders = styled.div(
@@ -695,7 +711,7 @@ const FolderItem = styled.div({
     height: '28px',
     lineHeight: '15px',
     fontSize: '15px',
-    margin: '0 10px 10px 0',
+    margin: '0 10px 4px 0',
     padding: '0 0 0 8px',
     cursor: 'pointer',
 });
@@ -751,9 +767,9 @@ const MenuLi = styled.li({
 });
 
 const FolderAddBtn = styled.div({
-    width: '14px',
+    width: '16px',
     height: '14px',
-    margin: '10px 0 0 0',
+    margin: '6px 0 0 0',
     padding: '8px 10px 10px 8px',
     display: 'flex',
     alignItem: 'center',

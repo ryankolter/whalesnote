@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg 
+ xmlns="http://www.w3.org/2000/svg"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ width="21px" height="21px">
+<path fill-rule="evenodd"  stroke="rgb(255, 255, 255)" stroke-width="1px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+ d="M1.121,9.634 C1.77,5.405 4.570,1.944 8.922,1.902 C13.274,1.861 16.838,5.255 16.882,9.484 C16.926,13.713 13.433,17.174 9.81,17.216 C4.729,17.257 1.165,13.863 1.121,9.634 Z"/>
+<path fill-rule="evenodd"  fill="rgb(255, 255, 255)"
+ d="M13.967,15.21 L14.519,14.474 L20.148,19.832 L19.596,20.379 L13.967,15.21 Z"/>
+</svg>

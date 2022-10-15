@@ -9,10 +9,8 @@ import { MarkdownRender } from './MarkdownRender';
 import RepoPanel from './RepoPanel';
 
 const CenterArea: React.FC<{
-    showAssistantPanel: boolean;
-    setShowAssistantPanel: any;
     theme: string;
-}> = ({ showAssistantPanel, setShowAssistantPanel, theme }) => {
+}> = ({ theme }) => {
     console.log('CenterArea render');
     const {
         curDataPath,
@@ -40,7 +38,6 @@ const CenterArea: React.FC<{
     const [renderPanelState, setRenderPanelState] = useState(
         window.localStorage.getItem('render_panel_state') || 'half'
     );
-    const [showSwitchExportPanel, setShowSwitchExportPanel] = useState(false);
     const [showSwitchModePanel, setShowSwitchModePanel] = useState(false);
     const [showAllRepo, setShowAllRepo] = useState(false);
     const [allowHiddenAllRepoViaEnter, setAllowHiddenAllRepoViaEnter] = useState(true);
@@ -48,49 +45,6 @@ const CenterArea: React.FC<{
     const [cursorInRender, setCursorInRender] = useState(false);
     const [editorScrollRatio, setEditorScrollRatio] = useState(0);
     const [renderScrollRatio, setRenderScrollRatio] = useState(0);
-
-    const ExportNote = useCallback(
-        (type: string) => {
-            switch (type) {
-                case 'html':
-                    ipcRenderer.send('open-save-dialog', {
-                        file_name: currentTitle,
-                        file_types: ['html'],
-                        response_event_name: 'saveNoteToHtml',
-                    });
-                    break;
-                case 'md':
-                    ipcRenderer.send('open-save-dialog', {
-                        file_name: currentTitle,
-                        file_types: ['md'],
-                        response_event_name: 'saveNoteToPng',
-                    });
-                    break;
-                case 'png':
-                    ipcRenderer.send('open-save-dialog', {
-                        file_name: currentTitle,
-                        file_types: ['png'],
-                        response_event_name: 'saveNoteToPng',
-                    });
-                    break;
-                case 'default':
-                    break;
-            }
-        },
-        [currentTitle]
-    );
-
-    const ExportFolder = useCallback((type: string) => {
-        switch (type) {
-            case 'html':
-                ipcRenderer.send('open-directory-dialog', {
-                    response_event_name: 'saveFolderToHtml',
-                });
-                break;
-            case 'default':
-                break;
-        }
-    }, []);
 
     const repoNameClickHandler = useCallback(() => {
         setShowAllRepo((_showAllRepo) => !_showAllRepo);
@@ -317,56 +271,6 @@ const CenterArea: React.FC<{
         <CenterAreaContainer>
             <TopRow className="child-border-color">
                 <EditorTools></EditorTools>
-                <SwitchExport>
-                    <ExportBtn
-                        className="btn-1-bg-color"
-                        onClick={() => {
-                            setShowSwitchExportPanel(
-                                (_showSwitchExportPanel) => !_showSwitchExportPanel
-                            );
-                        }}
-                    >
-                        导出
-                    </ExportBtn>
-                    {showSwitchExportPanel ? (
-                        <SwitchExportPanel className="float-panel-color">
-                            <ModeOption
-                                onClick={() => {
-                                    setShowSwitchExportPanel(false);
-                                    ExportFolder('html');
-                                }}
-                            >
-                                Folder to .html
-                            </ModeOption>
-                            <ModeOption
-                                onClick={() => {
-                                    setShowSwitchExportPanel(false);
-                                    ExportNote('html');
-                                }}
-                            >
-                                Note to.html
-                            </ModeOption>
-                            <ModeOption
-                                onClick={() => {
-                                    setShowSwitchExportPanel(false);
-                                    ExportNote('png');
-                                }}
-                            >
-                                Note to .png
-                            </ModeOption>
-                            <ModeOption
-                                onClick={() => {
-                                    setShowSwitchExportPanel(false);
-                                    ExportNote('md');
-                                }}
-                            >
-                                Note to .md
-                            </ModeOption>
-                        </SwitchExportPanel>
-                    ) : (
-                        <></>
-                    )}
-                </SwitchExport>
             </TopRow>
             <MarkdownArea>
                 <EditorPanel widthValue={editorWidth}>
@@ -393,10 +297,10 @@ const CenterArea: React.FC<{
                     )}
                 </RenderPanel>
             </MarkdownArea>
-            <BottomRow>
+            <BottomRow className="bottom-bar-color">
                 <BreakCrumb>
                     <CurRepoNameTag
-                        className="btn-1-bg-color"
+                        className="cur-repo-name-tag-color"
                         onClick={() => {
                             repoNameClickHandler();
                         }}
@@ -408,8 +312,8 @@ const CenterArea: React.FC<{
                         </RepoNameLabel>
                         {keySelect ? <RepoPanelKeyTab>Z</RepoPanelKeyTab> : <></>}
                     </CurRepoNameTag>
-                    <GreaterTag>&gt;</GreaterTag>
-                    <CurFolderNameTag>
+                    <GreaterTag className="bottom-text-color">&gt;</GreaterTag>
+                    <CurFolderNameTag className="bottom-text-color">
                         <FolderNameLabel>
                             {folders_obj && currentFolderKey && folders_obj[currentFolderKey]
                                 ? folders_obj[currentFolderKey].folder_name
@@ -431,7 +335,7 @@ const CenterArea: React.FC<{
                 </BreakCrumb>
                 <SwitchMode>
                     <SwitchModeBtn
-                        className="btn-1-bg-color"
+                        className="switch-mode-btn-color"
                         onClick={() => {
                             setShowSwitchModePanel((_showSwitchModePanel) => !_showSwitchModePanel);
                         }}
@@ -474,17 +378,6 @@ const CenterArea: React.FC<{
                         <></>
                     )}
                 </SwitchMode>
-                <AssistantActive>
-                    <AssistantActiveBtn
-                        onClick={() => {
-                            setShowAssistantPanel(
-                                (_showAssistantPanel: boolean) => !_showAssistantPanel
-                            );
-                        }}
-                    >
-                        {showAssistantPanel ? <div>&gt;</div> : <div>&lt;</div>}
-                    </AssistantActiveBtn>
-                </AssistantActive>
             </BottomRow>
         </CenterAreaContainer>
     );
@@ -516,38 +409,6 @@ const EditorTools = styled.div({
     alignItems: 'center',
     flex: '1',
     minWidth: '0',
-});
-
-const SwitchExport = styled.div({
-    position: 'relative',
-    display: 'flex',
-    flexDirection: 'row-reverse',
-    cursor: 'pointer',
-});
-
-const ExportBtn = styled.div({
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '32px',
-    lintHeight: '32px',
-    boxSizing: 'border-box',
-    padding: '0 10px',
-    borderRadius: '4px',
-    fontSize: '16px',
-    cursor: 'pointer',
-});
-
-const SwitchExportPanel = styled.div({
-    position: 'absolute',
-    top: '34px',
-    right: '0',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: '5px 0',
-    borderRadius: '4px',
-    zIndex: '4000',
 });
 
 const MarkdownArea = styled.div({
@@ -604,7 +465,7 @@ const CurRepoNameTag = styled.div({
     height: '32px',
     minWidth: '60px',
     lineHeight: '32px',
-    borderRadius: '4px',
+    borderRadius: '8px',
     cursor: 'pointer',
     overflow: 'hidden !important',
     textOverflow: 'ellipsis',
@@ -692,7 +553,7 @@ const SwitchModeBtn = styled.div({
     height: '30px',
     margin: '1px 5px',
     padding: '0 14px',
-    borderRadius: '14px',
+    borderRadius: '8px',
 });
 
 const ModeNameTag = styled.div({
@@ -735,28 +596,6 @@ const ModeOption = styled.div({
     justifyContent: 'center',
     width: '100%',
     padding: '5px',
-});
-
-const AssistantActive = styled.div({
-    width: '50px',
-    height: '40px',
-    display: 'flex',
-    flexDirection: 'row-reverse',
-});
-
-const AssistantActiveBtn = styled.div({
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '36px',
-    height: '36px',
-    lintHeight: '36px',
-    boxSizing: 'border-box',
-    margin: '2px 5px',
-    border: '1px solid rgba(58, 64, 76)',
-    borderRadius: '18px',
-    fontSize: '18px',
-    cursor: 'pointer',
 });
 
 export default CenterArea;

@@ -12,6 +12,7 @@ import WaitingMaskStatic from '../../components/WaitingMaskStatic';
 import useSearch from '../../lib/useSearch';
 import useData from '../../lib/useData';
 
+import searchIcon from '../../resources/icon/searchIcon.svg';
 import menuBtnIcon from '../../resources/icon/menuBtnIcon.svg';
 import { useDropAnimation } from '@dnd-kit/core/dist/components/DragOverlay/hooks';
 
@@ -196,10 +197,13 @@ const SideNav: React.FC<SideNavProps> = ({}) => {
         <LeftPanel className={'left-panel-color'}>
             <GlobalMenu showGlobalMenu={showGlobalMenu} setShowGlobalMenu={setShowGlobalMenu} />
             <ToolBar className="child-border-color">
-                <MenuIcon onClick={() => setShowGlobalMenu(true)}>
+                {/* <MenuIcon onClick={() => setShowGlobalMenu(true)}>
                     <MenuIconImg src={menuBtnIcon} alt="" />
-                </MenuIcon>
+                </MenuIcon> */}
                 <Search>
+                    <SearchIcon>
+                        <SearchIconImg src={searchIcon} alt="" />
+                    </SearchIcon>
                     <SearchInput
                         className="search-input"
                         ref={searchInputRef}
@@ -331,7 +335,7 @@ const LeftPanel = styled.div({
 const ToolBar = styled.div({
     position: 'relative',
     display: 'flex',
-    padding: '10px 30px 10px 20px',
+    padding: '10px 30px 10px 40px',
     borderBottomWidth: '1.5px',
     borderBottomStyle: 'solid',
 });
@@ -351,18 +355,33 @@ const MenuIconImg = styled.img({
 
 const Search = styled.div({
     position: 'relative',
+    display: 'flex',
+    alignItems: 'center',
     flex: '1',
     minWidth: '0',
+});
+
+const SearchIcon = styled.div({
+    width: '14px',
+    height: '14px',
+    marginBottom: '6px',
+});
+
+const SearchIconImg = styled.img({
+    width: '14px',
+    height: '14px',
 });
 
 const SearchInput = styled.input({
     border: 'none',
     outline: 'none',
+    fontFamily: 'PingFang SC',
     fontSize: '14px',
+    fontWeight: 500,
     lineHeight: '20px',
     letterSpacing: '1px',
     width: '100%',
-    padding: '9px 0 9px 50px',
+    padding: '9px 0 9px 20px',
     boxSizing: 'border-box',
 });
 
