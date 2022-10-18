@@ -21,23 +21,12 @@ type SideNavProps = Record<string, unknown>;
 const SideNav: React.FC<SideNavProps> = ({}) => {
     console.log('SideNav render');
     const {
-        curDataPath,
-        dxnote,
-        initDxnote,
         repoSwitch,
         folderSwitch,
         noteSwitch,
         currentNoteKey,
-        repos_obj,
-        notes,
-        initRepo,
-        allRepoNotesFetch,
-        repoNotesFetch,
-        folderNotesFetch,
-        initNotes,
         numArray,
         setNumArray,
-        setFocus,
         keySelect,
         setKeySelect,
     } = useContext(GlobalContext);

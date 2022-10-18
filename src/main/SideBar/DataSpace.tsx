@@ -3,10 +3,11 @@ import { useCallback, useContext, useEffect, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 import { usePopUp } from '../../lib/usePopUp';
+import WaitingMaskStatic from '../../components/WaitingMaskStatic';
 
 const DataSpace: React.FC<{}> = ({}) => {
-    const { curDataPath, setCurDataPath, dataPathList } = useContext(GlobalContext);
-    const [menuPopup, setMenuPopUp, mask] = usePopUp(500);
+    const { curDataPath, setCurDataPath, switchingData, setSwitchingData, dataPathList } =
+        useContext(GlobalContext);
     const [showPathUl, setShowPathUl] = useState(false);
 
     const addDataPath = useCallback(() => {
@@ -42,20 +43,25 @@ const DataSpace: React.FC<{}> = ({}) => {
                             {showPathUl ? (
                                 <PathUl className="menu-select-color">
                                     {dataPathList.map((dataPath: string, index: number) => {
-                                        return (
-                                            <PathLi
-                                                key={index}
-                                                onClick={(e) => {
-                                                    setShowPathUl(false);
-                                                    setCurDataPath(dataPath);
-                                                }}
-                                            >
-                                                {dataPath.indexOf('/whale_note/noteData') !== -1
-                                                    ? '默认 - '
-                                                    : ''}
-                                                {dataPath}
-                                            </PathLi>
-                                        );
+                                        if (curDataPath !== dataPath) {
+                                            return (
+                                                <PathLi
+                                                    key={index}
+                                                    onClick={(e) => {
+                                                        setShowPathUl(false);
+                                                        setSwitchingData(true);
+                                                        setTimeout(() => {
+                                                            setCurDataPath(dataPath);
+                                                        }, 200);
+                                                    }}
+                                                >
+                                                    {dataPath.indexOf('/whale_note/noteData') !== -1
+                                                        ? '默认 - '
+                                                        : ''}
+                                                    {dataPath}
+                                                </PathLi>
+                                            );
+                                        }
                                     })}
                                     <PathAddBtn onClick={addDataPath}>添加</PathAddBtn>
                                 </PathUl>
@@ -81,6 +87,7 @@ const DataSpace: React.FC<{}> = ({}) => {
             <ChildPart>
                 <PartTitle className={'child-border-color'}>同步</PartTitle>
             </ChildPart>
+            <WaitingMaskStatic show={switchingData} word={'载入中......'}></WaitingMaskStatic>
         </DataSpaceContainer>
     );
 };
@@ -124,6 +131,7 @@ const Path = styled.div({
 
 const CurrentPath = styled.div({
     display: ' flex',
+    justifyContent: 'space-between',
     height: '40px',
     lineHeight: '40px',
     padding: '0 15px 0 10px',

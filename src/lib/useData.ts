@@ -6,6 +6,9 @@ import initDefault from './initDefault';
 const useData = () => {
     const data = useRef<any>();
     const [curDataPath, setCurDataPath] = useState<string>('');
+    const [dataPathChangeFlag, setDataPathChangeFlag] = useState<number>(0);
+    const [initingData, setInitingData] = useState<boolean>(true);
+    const [switchingData, setSwitchingData] = useState<boolean>(false);
 
     const initExistRepo = useCallback((data_path: string) => {
         let dxnote = ipcRenderer.sendSync('readJson', {
@@ -173,11 +176,14 @@ const useData = () => {
         ) {
             init_data_path = ipcRenderer.sendSync('defaultDataPath');
         }
-        setCurDataPath(init_data_path);
+        setInitingData(true);
+        setTimeout(() => {
+            setCurDataPath(init_data_path);
+        }, 100);
     }, []);
 
     useEffect(() => {
-        console.log(curDataPath);
+        const startTimeStamp = new Date().getTime();
         if (curDataPath && ipcRenderer.sendSync('folderExist', { folder_path: curDataPath })) {
             window.localStorage.setItem('whalenote_current_data_path', curDataPath);
             const new_data = ipcRenderer.sendSync('fileExist', {
@@ -187,11 +193,33 @@ const useData = () => {
                 : initEmptyRepo(curDataPath);
             if (new_data) {
                 data.current = new_data;
+                setDataPathChangeFlag((dataPathChangeFlag) => dataPathChangeFlag + 1);
             }
+        }
+        const endTimeStamp = new Date().getTime();
+        const diff = endTimeStamp - startTimeStamp;
+        console.log(diff);
+        if (diff < 10) {
+            setTimeout(() => {
+                setSwitchingData(false);
+                setInitingData(false);
+            }, 500);
+        } else {
+            setSwitchingData(false);
+            setInitingData(false);
         }
     }, [curDataPath]);
 
-    return [data, curDataPath, setCurDataPath] as const;
+    return [
+        data,
+        curDataPath,
+        setCurDataPath,
+        dataPathChangeFlag,
+        initingData,
+        setInitingData,
+        switchingData,
+        setSwitchingData,
+    ] as const;
 };
 
 export default useData;

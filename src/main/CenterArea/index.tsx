@@ -13,13 +13,12 @@ const CenterArea: React.FC<{
 }> = ({ theme }) => {
     console.log('CenterArea render');
     const {
-        curDataPath,
+        dataPathChangeFlag,
         dxnote,
         currentRepoKey,
         currentFolderKey,
         currentNoteKey,
         repos_obj,
-        currentTitle,
         setNumArray,
         setFocus,
         setBlur,
@@ -29,7 +28,6 @@ const CenterArea: React.FC<{
 
     const repos_key = dxnote.repos_key;
     const folders_obj = repos_obj[currentRepoKey]?.folders_obj;
-    const notes_obj = repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj;
 
     const [editorWidth, setEditorWidth] = useState('100%');
     const [renderWidth, setRenderWidth] = useState('0');
@@ -71,14 +69,7 @@ const CenterArea: React.FC<{
 
     const handleKeyDown = useCallback(
         (e: any) => {
-            // console.log(e.ctrlKey)
-            // console.log(e.shiftKey)
-            // console.log(e.altKey)
-            // console.log(e.metaKey)
-            // console.log(e.keyCode)
             if (process.platform === 'darwin') {
-                // console.log('这是mac系统');
-
                 // normal number 0 and extra number 0
                 if ((e.keyCode === 48 || e.keyCode === 96) && e.metaKey) {
                     if (keySelect) {
@@ -111,7 +102,7 @@ const CenterArea: React.FC<{
                     setShowAllRepo((_showAllRepo) => !_showAllRepo);
                 }
 
-                //nromal enter and extra enter
+                //normal enter and extra enter
                 if (
                     (e.keyCode === 13 || e.keyCode === 108) &&
                     keySelect &&
@@ -165,8 +156,6 @@ const CenterArea: React.FC<{
                 }
             }
             if (process.platform === 'win32' || process.platform === 'linux') {
-                //console.log('这是windows系统');
-
                 // normal number 0 and extra number 0
                 if ((e.keyCode === 48 || e.keyCode === 96) && e.ctrlKey) {
                     if (keySelect) {
@@ -297,88 +286,98 @@ const CenterArea: React.FC<{
                     )}
                 </RenderPanel>
             </MarkdownArea>
-            <BottomRow className="bottom-bar-color">
-                <BreakCrumb>
-                    <CurRepoNameTag
-                        className="cur-repo-name-tag-color"
-                        onClick={() => {
-                            repoNameClickHandler();
-                        }}
-                    >
-                        <RepoNameLabel>
-                            {repos_obj && currentRepoKey && repos_obj[currentRepoKey]
-                                ? repos_obj[currentRepoKey].repo_name
-                                : ''}
-                        </RepoNameLabel>
-                        {keySelect ? <RepoPanelKeyTab>Z</RepoPanelKeyTab> : <></>}
-                    </CurRepoNameTag>
-                    <GreaterTag className="bottom-text-color">&gt;</GreaterTag>
-                    <CurFolderNameTag className="bottom-text-color">
-                        <FolderNameLabel>
-                            {folders_obj && currentFolderKey && folders_obj[currentFolderKey]
-                                ? folders_obj[currentFolderKey].folder_name
-                                : ''}
-                        </FolderNameLabel>
-                    </CurFolderNameTag>
-                    {showAllRepo ? (
-                        <AllRepo className="float-panel-color">
-                            <RepoPanel
-                                repos_key={repos_key}
-                                showAllRepo={showAllRepo}
-                                setShowAllRepo={setShowAllRepo}
-                                setAllowHiddenAllRepoViaEnter={setAllowHiddenAllRepoViaEnter}
-                            />
-                        </AllRepo>
-                    ) : (
-                        <></>
-                    )}
-                </BreakCrumb>
-                <SwitchMode>
-                    <SwitchModeBtn
-                        className="switch-mode-btn-color"
-                        onClick={() => {
-                            setShowSwitchModePanel((_showSwitchModePanel) => !_showSwitchModePanel);
-                        }}
-                    >
-                        <ModeNameTag>
-                            {renderPanelState === 'hidden' ? <ModeName>编辑</ModeName> : <></>}
-                            {renderPanelState === 'half' ? <ModeName>编辑+预览</ModeName> : <></>}
-                            {renderPanelState === 'all' ? <ModeName>预览</ModeName> : <></>}
-                        </ModeNameTag>
-                        <Triangle></Triangle>
-                    </SwitchModeBtn>
-                    {showSwitchModePanel ? (
-                        <SwitchModePanel className="float-panel-color">
-                            <ModeOption
-                                onClick={() => {
-                                    setRenderPanelState('hidden');
-                                    setShowSwitchModePanel(false);
-                                }}
-                            >
-                                编辑
-                            </ModeOption>
-                            <ModeOption
-                                onClick={() => {
-                                    setRenderPanelState('all');
-                                    setShowSwitchModePanel(false);
-                                }}
-                            >
-                                预览
-                            </ModeOption>
-                            <ModeOption
-                                onClick={() => {
-                                    setRenderPanelState('half');
-                                    setShowSwitchModePanel(false);
-                                }}
-                            >
-                                编辑+预览
-                            </ModeOption>
-                        </SwitchModePanel>
-                    ) : (
-                        <></>
-                    )}
-                </SwitchMode>
-            </BottomRow>
+            {dataPathChangeFlag > 0 ? (
+                <BottomRow className="bottom-bar-color">
+                    <BreakCrumb>
+                        <CurRepoNameTag
+                            className="cur-repo-name-tag-color"
+                            onClick={() => {
+                                repoNameClickHandler();
+                            }}
+                        >
+                            <RepoNameLabel>
+                                {repos_obj && currentRepoKey && repos_obj[currentRepoKey]
+                                    ? repos_obj[currentRepoKey].repo_name
+                                    : ''}
+                            </RepoNameLabel>
+                            {keySelect ? <RepoPanelKeyTab>Z</RepoPanelKeyTab> : <></>}
+                        </CurRepoNameTag>
+                        <GreaterTag className="bottom-text-color">&gt;</GreaterTag>
+                        <CurFolderNameTag className="bottom-text-color">
+                            <FolderNameLabel>
+                                {folders_obj && currentFolderKey && folders_obj[currentFolderKey]
+                                    ? folders_obj[currentFolderKey].folder_name
+                                    : ''}
+                            </FolderNameLabel>
+                        </CurFolderNameTag>
+                        {showAllRepo ? (
+                            <AllRepo className="float-panel-color">
+                                <RepoPanel
+                                    repos_key={repos_key}
+                                    showAllRepo={showAllRepo}
+                                    setShowAllRepo={setShowAllRepo}
+                                    setAllowHiddenAllRepoViaEnter={setAllowHiddenAllRepoViaEnter}
+                                />
+                            </AllRepo>
+                        ) : (
+                            <></>
+                        )}
+                    </BreakCrumb>
+                    <SwitchMode>
+                        <SwitchModeBtn
+                            className="switch-mode-btn-color"
+                            onClick={() => {
+                                setShowSwitchModePanel(
+                                    (_showSwitchModePanel) => !_showSwitchModePanel
+                                );
+                            }}
+                        >
+                            <ModeNameTag>
+                                {renderPanelState === 'hidden' ? <ModeName>编辑</ModeName> : <></>}
+                                {renderPanelState === 'half' ? (
+                                    <ModeName>编辑+预览</ModeName>
+                                ) : (
+                                    <></>
+                                )}
+                                {renderPanelState === 'all' ? <ModeName>预览</ModeName> : <></>}
+                            </ModeNameTag>
+                            <Triangle></Triangle>
+                        </SwitchModeBtn>
+                        {showSwitchModePanel ? (
+                            <SwitchModePanel className="float-panel-color">
+                                <ModeOption
+                                    onClick={() => {
+                                        setRenderPanelState('hidden');
+                                        setShowSwitchModePanel(false);
+                                    }}
+                                >
+                                    编辑
+                                </ModeOption>
+                                <ModeOption
+                                    onClick={() => {
+                                        setRenderPanelState('all');
+                                        setShowSwitchModePanel(false);
+                                    }}
+                                >
+                                    预览
+                                </ModeOption>
+                                <ModeOption
+                                    onClick={() => {
+                                        setRenderPanelState('half');
+                                        setShowSwitchModePanel(false);
+                                    }}
+                                >
+                                    编辑+预览
+                                </ModeOption>
+                            </SwitchModePanel>
+                        ) : (
+                            <></>
+                        )}
+                    </SwitchMode>
+                </BottomRow>
+            ) : (
+                <></>
+            )}
         </CenterAreaContainer>
     );
 };

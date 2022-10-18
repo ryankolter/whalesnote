@@ -1,13 +1,29 @@
 import styled from '@emotion/styled';
+import { useCallback } from 'react';
 
 import DataSpace from './DataSpace';
+import TrashList from './TrashList';
 
 const AssistantPanel: React.FC<{
+    theme: string;
     curAssistantPanelName: string;
-}> = ({ curAssistantPanelName }) => {
+    setCurAssistantPanelName: any;
+}> = ({ theme, curAssistantPanelName, setCurAssistantPanelName }) => {
+    const closeAssistantPanel = useCallback(() => {
+        setCurAssistantPanelName('none');
+    }, [setCurAssistantPanelName]);
+
     return (
         <AssistantPanelContainer className="child-border-color">
-            {curAssistantPanelName == 'data_panel' ? <DataSpace></DataSpace> : <></>}
+            {curAssistantPanelName == 'data_space' ? <DataSpace /> : <></>}
+            {curAssistantPanelName == 'mobile_panel' ? <></> : <></>}
+            {curAssistantPanelName == 'model_panel' ? <></> : <></>}
+            {curAssistantPanelName == 'trash_list' ? (
+                <TrashList theme={theme} closeAssistantPanel={closeAssistantPanel} />
+            ) : (
+                <></>
+            )}
+            {curAssistantPanelName == 'setting_panel' ? <></> : <></>}
         </AssistantPanelContainer>
     );
 };

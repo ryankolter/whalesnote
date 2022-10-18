@@ -5,27 +5,8 @@ import cryptoRandomString from 'crypto-random-string';
 import MiniSearch from 'minisearch';
 
 const useSearch = () => {
-    const {
-        curDataPath,
-        dxnote,
-        initDxnote,
-        repoSwitch,
-        folderSwitch,
-        noteSwitch,
-        currentNoteKey,
-        repos_obj,
-        notes,
-        initRepo,
-        allRepoNotesFetch,
-        repoNotesFetch,
-        folderNotesFetch,
-        initNotes,
-        numArray,
-        setNumArray,
-        setFocus,
-        keySelect,
-        setKeySelect,
-    } = useContext(GlobalContext);
+    const { curDataPath, dxnote, repos_obj, notes, allRepoNotesFetch, setFocus } =
+        useContext(GlobalContext);
 
     const miniSearch = useRef<any>();
     const [showUpdateIndexTips, setShowUpdateIndexTips] = useState(true);

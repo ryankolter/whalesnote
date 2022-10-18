@@ -22,6 +22,11 @@ import {
 const initContext: {
     curDataPath: string;
     setCurDataPath: (path: string) => void;
+    dataPathChangeFlag: number;
+    initingData: boolean;
+    setInitingData: (switchingData: boolean) => void;
+    switchingData: boolean;
+    setSwitchingData: (switchingData: boolean) => void;
     dataPathList: string[];
     dxnote: any;
     initDxnote: (new_dxnote: any) => void;
@@ -71,20 +76,20 @@ const initContext: {
     currentContent: string;
     currentNoteStr: string;
     cursorHead: number;
-    fromPos: number;
-    renderTop: number;
     updateCursorHead: (
         repo_key: string,
         folder_key: string,
         note_key: string,
         cursor_head: number
     ) => void;
+    fromPos: number;
     updateFromPos: (
         repo_key: string,
         folder_key: string,
         note_key: string,
         from_pos: number
     ) => void;
+    renderTop: number;
     updateRenderTop: (
         repo_key: string,
         folder_key: string,
@@ -102,6 +107,11 @@ const initContext: {
 } = {
     curDataPath: '',
     setCurDataPath: () => {},
+    dataPathChangeFlag: 0,
+    initingData: false,
+    setInitingData: () => {},
+    switchingData: false,
+    setSwitchingData: () => {},
     dataPathList: [],
     dxnote: null,
     initDxnote: () => {},
@@ -130,10 +140,10 @@ const initContext: {
     currentContent: '',
     currentNoteStr: '',
     cursorHead: 0,
-    fromPos: 0,
-    renderTop: 0,
     updateCursorHead: () => {},
+    fromPos: 0,
     updateFromPos: () => {},
+    renderTop: 0,
     updateRenderTop: () => {},
     numArray: [],
     setNumArray: () => {},
@@ -147,7 +157,16 @@ const initContext: {
 export const GlobalContext = createContext(initContext);
 
 export const GlobalProvider = ({ children }: { children: any }) => {
-    const [data, curDataPath, setCurDataPath] = useData();
+    const [
+        data,
+        curDataPath,
+        setCurDataPath,
+        dataPathChangeFlag,
+        initingData,
+        setInitingData,
+        switchingData,
+        setSwitchingData,
+    ] = useData();
     const [dataPathList, addDataPathToList, removeDataPathFromList] = useDataList();
     const [
         dxnote,
@@ -173,14 +192,13 @@ export const GlobalProvider = ({ children }: { children: any }) => {
     }, [setCurDataPath]);
 
     useEffect(() => {
-        if (curDataPath && data.current) {
+        if (data.current) {
             addDataPathToList(curDataPath);
-            console.log(data.current);
             initDxnote(data.current.dxnote);
             initRepo(data.current.repos);
             initNotes(data.current.notes);
         }
-    }, [curDataPath]);
+    }, [dataPathChangeFlag]);
 
     const [currentNoteStr, setCurrentNoteStr] = useState<string>('');
     const [cursorHeads, { updateCursorHead }] = useEditPos();
@@ -305,6 +323,11 @@ export const GlobalProvider = ({ children }: { children: any }) => {
             value={{
                 curDataPath,
                 setCurDataPath,
+                dataPathChangeFlag,
+                initingData,
+                setInitingData,
+                switchingData,
+                setSwitchingData,
                 dataPathList,
                 dxnote,
                 initDxnote,
@@ -333,10 +356,10 @@ export const GlobalProvider = ({ children }: { children: any }) => {
                 currentContent,
                 currentNoteStr,
                 cursorHead,
-                fromPos,
-                renderTop,
                 updateCursorHead,
+                fromPos,
                 updateFromPos,
+                renderTop,
                 updateRenderTop,
                 numArray,
                 setNumArray,

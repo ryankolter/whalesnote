@@ -24,6 +24,7 @@ const FolderList: React.FC<{
 }> = ({ width }) => {
     const {
         curDataPath,
+        dataPathChangeFlag,
         dxnote,
         repoSwitch,
         folderSwitch,
@@ -33,8 +34,6 @@ const FolderList: React.FC<{
         currentFolderKey,
         updateRepos,
         reorderFolder,
-        repoNotesFetch,
-        folderNotesFetch,
         changeNotesAfterNew,
         numArray,
         setNumArray,
@@ -391,13 +390,7 @@ const FolderList: React.FC<{
     // part5 : key event
     const handleKeyDown = useCallback(
         (e: any) => {
-            // console.log(e.ctrlKey)
-            // console.log(e.shiftKey)
-            // console.log(e.altKey)
-            // console.log(e.metaKey)
-            // console.log(e.keyCode)
             if (process.platform === 'darwin') {
-                //console.log('这是mac系统');
                 if (e.keyCode === 78 && e.metaKey && e.shiftKey) {
                     newFolder();
                 }
@@ -413,7 +406,6 @@ const FolderList: React.FC<{
                 }
             }
             if (process.platform === 'win32' || process.platform === 'linux') {
-                //console.log('这是windows/linux系统');
                 if (e.keyCode === 78 && e.ctrlKey && e.shiftKey) {
                     newFolder();
                 }
@@ -475,12 +467,16 @@ const FolderList: React.FC<{
 
     return (
         <FolderListContainer width={width}>
-            <FolderTopBar>
-                <CategoryIcon>
-                    <CategoryIconImg src={categoryIcon} alt="" />
-                </CategoryIcon>
-                <FolderTopTitle className="title-1-color">分类</FolderTopTitle>
-            </FolderTopBar>
+            {dataPathChangeFlag > 0 ? (
+                <FolderTopBar>
+                    <CategoryIcon>
+                        <CategoryIconImg src={categoryIcon} alt="" />
+                    </CategoryIcon>
+                    <FolderTopTitle className="title-1-color">分类</FolderTopTitle>
+                </FolderTopBar>
+            ) : (
+                <></>
+            )}
             {folders_key && folders_obj ? (
                 <DndContext
                     sensors={sensors}

@@ -1,7 +1,8 @@
-import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
+import { useContext, useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import styled from '@emotion/styled';
-import { GlobalProvider } from './GlobalProvider';
+import { GlobalProvider, GlobalContext } from './GlobalProvider';
 
+import InitingDataMask from './main/Mask/InitingDataMask';
 import SideNav from './main/SideNav';
 import CenterArea from './main/CenterArea';
 import SideBar from './main/SideBar';
@@ -15,11 +16,12 @@ const App = () => {
     return (
         <GlobalProvider>
             <AppContainer className={`${theme}-theme-global body-color`}>
-                <RepoContent>
+                <InitingDataMask />
+                <AppUI>
                     <SideNav />
                     <CenterArea theme={theme} />
-                    <SideBar />
-                </RepoContent>
+                    <SideBar theme={theme} />
+                </AppUI>
                 {/* <SocketClientBtn/>
                 <SocketServerBtn/> */}
             </AppContainer>
@@ -34,7 +36,7 @@ const AppContainer = styled.div({
     overflow: 'hidden',
 });
 
-const RepoContent = styled.div({
+const AppUI = styled.div({
     display: 'flex',
     alignItem: 'center',
     flex: '1',

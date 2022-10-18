@@ -14,13 +14,16 @@
             "*.js",
             "build"
         ],
-        "extraResources": [{
-            "from": "./src/resources/dict/",
-            "to": "extraResources/dict"
-        },{
-            "from": "./src/resources/css/",
-            "to": "extraResources/css"
-        }]
+        "extraResources": [
+            {
+                "from": "./src/resources/dict/",
+                "to": "extraResources/dict"
+            },
+            {
+                "from": "./src/resources/css/",
+                "to": "extraResources/css"
+            }
+        ]
     },
     "dependencies": {
         "@codemirror/autocomplete": "^6.2.0",

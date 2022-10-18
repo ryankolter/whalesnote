@@ -15,6 +15,7 @@ const NoteList: React.FC<{
 }> = ({ width }) => {
     const {
         curDataPath,
+        dataPathChangeFlag,
         noteSwitch,
         currentRepoKey,
         currentFolderKey,
@@ -268,13 +269,7 @@ const NoteList: React.FC<{
 
     const handleKeyDown = useCallback(
         (e: any) => {
-            // console.log(e.ctrlKey)
-            // console.log(e.shiftKey)
-            // console.log(e.altKey)
-            // console.log(e.metaKey)
-            // console.log(e.keyCode)
             if (process.platform === 'darwin') {
-                //console.log('这是mac系统');
                 if (e.keyCode === 78 && e.metaKey && !e.shiftKey) {
                     newNote();
                 }
@@ -290,7 +285,6 @@ const NoteList: React.FC<{
                 }
             }
             if (process.platform === 'win32' || process.platform === 'linux') {
-                //console.log('这是windows/linux系统');
                 if (e.keyCode === 78 && e.ctrlKey && !e.shiftKey) {
                     newNote();
                 }
@@ -361,11 +355,15 @@ const NoteList: React.FC<{
 
     return (
         <NoteListContainer width={width}>
-            <NoteAddFloat className="btn-1-bg-color">
-                <NoteAddBtn onKeyDown={(e) => handleKeyDown(e)} onClick={() => newNote()}>
-                    <NewNoteIconImg src={newNoteIcon} alt="" />
-                </NoteAddBtn>
-            </NoteAddFloat>
+            {dataPathChangeFlag > 0 ? (
+                <NoteAddFloat className="btn-1-bg-color">
+                    <NoteAddBtn onKeyDown={(e) => handleKeyDown(e)} onClick={() => newNote()}>
+                        <NewNoteIconImg src={newNoteIcon} alt="" />
+                    </NoteAddBtn>
+                </NoteAddFloat>
+            ) : (
+                <></>
+            )}
             {notes_key && notes_obj ? (
                 <DndContext
                     sensors={sensors}

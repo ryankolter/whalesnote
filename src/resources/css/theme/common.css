@@ -80,6 +80,7 @@ body {
 /* editor */
 
 .common-theme-cm .cm-editor {
+    height: 100%;
     font-size: 15px;
     word-spacing: 5px;
 }
@@ -161,6 +162,7 @@ body {
     height: calc(100% - 2px);
     top: 50px;
     box-sizing: border-box;
+    padding: 0 15px 0 10px;
     font-family: PingFangSC-Regular, sans-serif;
     font-size: 15px;
     user-select: text;

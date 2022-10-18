@@ -21,7 +21,6 @@ const RepoPanel: React.FC<{
 }> = ({ repos_key, showAllRepo, setShowAllRepo, setAllowHiddenAllRepoViaEnter }) => {
     const {
         curDataPath,
-        dxnote,
         updateDxnote,
         reorderRepo,
         repoSwitch,
@@ -31,7 +30,6 @@ const RepoPanel: React.FC<{
         currentFolderKey,
         repos_obj,
         updateRepos,
-        repoNotesFetch,
         changeNotesAfterNew,
         numArray,
         setFocus,
@@ -419,14 +417,7 @@ const RepoPanel: React.FC<{
 
     const handleKeyDown = useCallback(
         (e: any) => {
-            // console.log(e.ctrlKey)
-            // console.log(e.shiftKey)
-            // console.log(e.altKey)
-            // console.log(e.metaKey)
-            // console.log(e.keyCode)
             if (process.platform === 'darwin') {
-                //console.log('这是mac系统');
-
                 // normal number 1-9
                 if (e.keyCode >= 49 && e.keyCode <= 57 && !e.metaKey && numArray.length === 0) {
                     const num = parseInt(e.keyCode) - 48;
@@ -460,8 +451,6 @@ const RepoPanel: React.FC<{
                 }
             }
             if (process.platform === 'win32' || process.platform === 'linux') {
-                //console.log('这是windows系统');
-
                 // normal number 1-9
                 if (e.keyCode >= 49 && e.keyCode <= 57 && !e.ctrlKey && numArray.length === 0) {
                     const num = parseInt(e.keyCode) - 48;
