@@ -4,6 +4,8 @@ import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 import cryptoRandomString from 'crypto-random-string';
 
+import AssistantPanel from './AssistantPanel';
+
 import SvgIcon from '../../components/SvgIcon';
 import exportIcon from '../../resources/icon/sideBar/exportIcon.svg';
 import dataPanelIcon from '../../resources/icon/sideBar/dataPanelIcon.svg';
@@ -12,13 +14,10 @@ import modelPanelIcon from '../../resources/icon/sideBar/modelPanelIcon.svg';
 import trashPanelIcon from '../../resources/icon/sideBar/trashPanelIcon.svg';
 import settingPanelIcon from '../../resources/icon/sideBar/settingPanelIcon.svg';
 
-type SideBarProps = {
-    showAssistantPanel: boolean;
-    setShowAssistantPanel: any;
-};
-
-const SideBar: React.FC<SideBarProps> = ({ showAssistantPanel, setShowAssistantPanel }) => {
+const SideBar: React.FC<{}> = ({}) => {
     const { currentTitle } = useContext(GlobalContext);
+    const [showAssistantPanel, setShowAssistantPanel] = useState(false);
+    const [curAssistantPanelName, setCurAssistantPanelName] = useState('none');
 
     const [showSwitchExportPanel, setShowSwitchExportPanel] = useState(false);
 
@@ -66,84 +65,96 @@ const SideBar: React.FC<SideBarProps> = ({ showAssistantPanel, setShowAssistantP
     }, []);
 
     return (
-        <SideBarContainer className="side-bar-color">
-            <SideBarTopIcons>
-                <SwitchExport>
+        <SideBarContainer>
+            {showAssistantPanel ? (
+                <AssistantPanel curAssistantPanelName={curAssistantPanelName} />
+            ) : (
+                <></>
+            )}
+            <SideBarColumn className="side-bar-color">
+                <SideBarTopIcons>
+                    <SwitchExport>
+                        <SvgIcon
+                            iconWidth={33}
+                            iconHeight={28}
+                            iconSrc={exportIcon}
+                            onClick={() => {
+                                setShowSwitchExportPanel(
+                                    (_showSwitchExportPanel) => !_showSwitchExportPanel
+                                );
+                            }}
+                        />
+                        {showSwitchExportPanel ? (
+                            <SwitchExportPanel className="float-panel-color">
+                                <ModeOption
+                                    onClick={() => {
+                                        setShowSwitchExportPanel(false);
+                                        ExportFolder('html');
+                                    }}
+                                >
+                                    Folder to .html
+                                </ModeOption>
+                                <ModeOption
+                                    onClick={() => {
+                                        setShowSwitchExportPanel(false);
+                                        ExportNote('html');
+                                    }}
+                                >
+                                    Note to.html
+                                </ModeOption>
+                                <ModeOption
+                                    onClick={() => {
+                                        setShowSwitchExportPanel(false);
+                                        ExportNote('png');
+                                    }}
+                                >
+                                    Note to .png
+                                </ModeOption>
+                                <ModeOption
+                                    onClick={() => {
+                                        setShowSwitchExportPanel(false);
+                                        ExportNote('md');
+                                    }}
+                                >
+                                    Note to .md
+                                </ModeOption>
+                            </SwitchExportPanel>
+                        ) : (
+                            <></>
+                        )}
+                    </SwitchExport>
+                </SideBarTopIcons>
+                <SideBarBottomIcons>
                     <SvgIcon
-                        iconWidth={33}
-                        iconHeight={28}
-                        iconSrc={exportIcon}
+                        iconWidth={29}
+                        iconHeight={32}
+                        iconSrc={dataPanelIcon}
                         onClick={() => {
-                            setShowSwitchExportPanel(
-                                (_showSwitchExportPanel) => !_showSwitchExportPanel
+                            setShowAssistantPanel(
+                                (_showAssistantPanel: boolean) => !_showAssistantPanel
                             );
+                            setCurAssistantPanelName('data_panel');
                         }}
                     />
-                    {showSwitchExportPanel ? (
-                        <SwitchExportPanel className="float-panel-color">
-                            <ModeOption
-                                onClick={() => {
-                                    setShowSwitchExportPanel(false);
-                                    ExportFolder('html');
-                                }}
-                            >
-                                Folder to .html
-                            </ModeOption>
-                            <ModeOption
-                                onClick={() => {
-                                    setShowSwitchExportPanel(false);
-                                    ExportNote('html');
-                                }}
-                            >
-                                Note to.html
-                            </ModeOption>
-                            <ModeOption
-                                onClick={() => {
-                                    setShowSwitchExportPanel(false);
-                                    ExportNote('png');
-                                }}
-                            >
-                                Note to .png
-                            </ModeOption>
-                            <ModeOption
-                                onClick={() => {
-                                    setShowSwitchExportPanel(false);
-                                    ExportNote('md');
-                                }}
-                            >
-                                Note to .md
-                            </ModeOption>
-                        </SwitchExportPanel>
-                    ) : (
-                        <></>
-                    )}
-                </SwitchExport>
-            </SideBarTopIcons>
-            <SideBarBottomIcons>
-                <SvgIcon
-                    iconWidth={29}
-                    iconHeight={32}
-                    iconSrc={dataPanelIcon}
-                    onClick={() => {
-                        setShowAssistantPanel(
-                            (_showAssistantPanel: boolean) => !_showAssistantPanel
-                        );
-                    }}
-                />
-                <IconPadding />
-                <SvgIcon iconWidth={27} iconHeight={33} iconSrc={mobilePanelIcon} />
-                <IconPadding />
-                <SvgIcon iconWidth={30} iconHeight={26} iconSrc={modelPanelIcon} />
-                <IconPadding />
-                <SvgIcon iconWidth={26} iconHeight={33} iconSrc={trashPanelIcon} />
-                <IconPadding />
-                <SvgIcon iconWidth={32} iconHeight={32} iconSrc={settingPanelIcon} />
-            </SideBarBottomIcons>
+                    <IconPadding />
+                    <SvgIcon iconWidth={27} iconHeight={33} iconSrc={mobilePanelIcon} />
+                    <IconPadding />
+                    <SvgIcon iconWidth={30} iconHeight={26} iconSrc={modelPanelIcon} />
+                    <IconPadding />
+                    <SvgIcon iconWidth={26} iconHeight={33} iconSrc={trashPanelIcon} />
+                    <IconPadding />
+                    <SvgIcon iconWidth={32} iconHeight={32} iconSrc={settingPanelIcon} />
+                </SideBarBottomIcons>
+            </SideBarColumn>
         </SideBarContainer>
     );
 };
 
 const SideBarContainer = styled.div({
+    display: 'flex',
+});
+
+const SideBarColumn = styled.div({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',

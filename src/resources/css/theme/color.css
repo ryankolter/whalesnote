@@ -86,7 +86,7 @@
 
 .bottom-bar-color {
     background-color: var(--main-bg-color) !important;
-    /* border-top: 2px solid var(--border-1-color) !important; */
+    border-top: 2px solid var(--border-1-color) !important;
 }
 
 .bottom-text-color {

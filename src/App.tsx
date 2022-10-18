@@ -4,7 +4,6 @@ import { GlobalProvider } from './GlobalProvider';
 
 import SideNav from './main/SideNav';
 import CenterArea from './main/CenterArea';
-import AssistantPanel from './main/AssistantPanel';
 import SideBar from './main/SideBar';
 
 import SocketServerBtn from './components/socketServerBtn';
@@ -12,7 +11,6 @@ import SocketClientBtn from './socketClientBtn';
 
 const App = () => {
     const [theme, setTheme] = useState('grey');
-    const [showAssistantPanel, setShowAssistantPanel] = useState(false);
 
     return (
         <GlobalProvider>
@@ -20,11 +18,7 @@ const App = () => {
                 <RepoContent>
                     <SideNav />
                     <CenterArea theme={theme} />
-                    {showAssistantPanel ? <AssistantPanel /> : <></>}
-                    <SideBar
-                        showAssistantPanel={showAssistantPanel}
-                        setShowAssistantPanel={setShowAssistantPanel}
-                    />
+                    <SideBar />
                 </RepoContent>
                 {/* <SocketClientBtn/>
                 <SocketServerBtn/> */}
