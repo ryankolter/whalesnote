@@ -86,23 +86,21 @@
 
 .bottom-bar-color {
     background-color: var(--main-bg-color) !important;
-    border-top: 2px solid var(--border-1-color) !important;
+    /* border-top: 2px solid var(--border-1-color) !important; */
 }
 
 .bottom-text-color {
-    color: var(--bottom-text-color) !important;
+    color: var(--main-text-color) !important;
 }
 
 .switch-mode-btn-color {
     color: var(--bottom-text-color) !important;
-    border: 0.5px solid var(--bottom-text-color) !important;
     background-color: var(--bottom-btn-bg-color) !important;
 }
 
 .cur-repo-name-tag-color {
-    color: var(--bottom-text-color) !important;
-    border: 0.5px solid var(--bottom-text-color) !important;
-    background-color: var(--bottom-btn-bg-color) !important;
+    color: var(--main-text-color) !important;
+    background-color: var(--selected-bg-color) !important;
 }
 
 

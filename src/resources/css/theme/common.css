@@ -44,7 +44,7 @@ body {
     display: block;
     height: 12px;
     content: "";
-    border-width: 8px 10px 8px 10px;
+    border-width: 9px 10px 9px 10px;
     border-style: solid;
     cursor: pointer;
 }

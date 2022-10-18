@@ -335,7 +335,7 @@ const LeftPanel = styled.div({
 const ToolBar = styled.div({
     position: 'relative',
     display: 'flex',
-    padding: '10px 30px 10px 40px',
+    padding: '5px 30px 5px 40px',
     borderBottomWidth: '1.5px',
     borderBottomStyle: 'solid',
 });
@@ -387,13 +387,13 @@ const SearchInput = styled.input({
 
 const SearchPanel = styled.div({
     position: 'absolute',
-    top: '55px',
-    left: '15px',
+    top: '48px',
+    left: '0',
     display: 'flex',
     flexDirection: 'column',
-    width: 'calc(100% - 15px)',
-    height: 'calc(100vh - 55px)',
-    padding: '10px',
+    width: 'calc(100%)',
+    height: 'calc(100vh - 48px)',
+    padding: '15px',
     boxSizing: 'border-box',
     zIndex: '3000',
 });

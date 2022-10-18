@@ -5,9 +5,9 @@
     --title-text-color: #D5D5D5;
     --input-text-color: rgba(255, 255, 255, 0.6);
     --input-placeholder-text-color: rgba(255, 255, 255, 0.4);
-    --hover-text-color: #DDDDDD;
+    --hover-text-color: #D5D5D5;
 
-    --main-text-color: #B2B2B2;
+    --main-text-color: #A0A0A0;
     --main-bg-color: #2D3033;
 
     --codemirror-bg-color: #313437;
@@ -29,17 +29,12 @@
 
 /* ---------- grey theme for codemirror ---------- */
 
-.grey-theme-cm {
-    color: var(--editor-main-text-color) !important;
-    background-color: var(--codemirror-bg-color) !important;
-}
-
 /* editor */
 
 .grey-theme-cm .cm-editor {
     /* color: #a9b7c6; */
     color: var(--editor-main-text-color) !important;
-    background-color: var(--codemirror-bg-color) !important;
+    background-color: var(--main-bg-color) !important;
 }
 
 /* ͼ */

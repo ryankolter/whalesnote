@@ -655,7 +655,7 @@ const FolderListContainer = styled.div(
         flexDirection: 'column',
         height: '100%',
         minWidth: '60px',
-        padding: '0 0 20px 26px',
+        padding: '0 0 20px 16px',
         boxSizing: 'border-box',
     },
     (props: { width: number }) => ({
@@ -668,7 +668,7 @@ const FolderTopBar = styled.div({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    margin: '36px 16px 24px 6px',
+    margin: '30px 16px 20px 6px',
 });
 
 const CategoryIcon = styled.div({
@@ -708,18 +708,19 @@ const FolderItem = styled.div({
     display: 'flex',
     alignItems: 'center',
     position: 'relative',
-    height: '28px',
-    lineHeight: '15px',
+    height: '30px',
+    lineHeight: '30px',
     fontSize: '15px',
-    margin: '0 10px 4px 0',
+    margin: '0 10px 5px 0',
     padding: '0 0 0 8px',
     cursor: 'pointer',
 });
 
 const FolderIcon = styled.div({
+    display: 'flex',
     width: '14px',
     height: '14px',
-    marginRight: '18px',
+    marginRight: '12px',
 });
 
 const FolderIconImg = styled.img({

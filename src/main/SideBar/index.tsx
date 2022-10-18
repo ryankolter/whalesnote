@@ -148,7 +148,7 @@ const SideBarContainer = styled.div({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'space-between',
-    width: '52px',
+    width: '48px',
 });
 
 const SideBarTopIcons = styled.div({

@@ -397,7 +397,7 @@ const TopRow = styled.div({
     width: '100%',
     display: 'flex',
     alignItems: 'center',
-    height: '59.5px',
+    height: '49.5px',
     borderBottomWidth: '1.5px',
     borderBottomStyle: 'solid',
     paddingRight: '30px',
@@ -415,7 +415,7 @@ const MarkdownArea = styled.div({
     position: 'relative',
     flex: '1',
     minHeight: '0',
-    width: 'calc(100% - 39px)',
+    width: 'calc(100% - 29px)',
     paddingLeft: '24px',
     boxSizing: 'border-box',
 });
@@ -444,10 +444,10 @@ const RenderPanel = styled.div(
 
 const BottomRow = styled.div({
     width: '100%',
-    height: '69px',
+    height: '66px',
     display: 'flex',
     alignItems: 'center',
-    padding: '6px 30px 0 54px',
+    padding: '0 30px 0 30px',
     boxSizing: 'border-box',
 });
 
@@ -465,7 +465,7 @@ const CurRepoNameTag = styled.div({
     height: '32px',
     minWidth: '60px',
     lineHeight: '32px',
-    borderRadius: '8px',
+    borderRadius: '5px',
     cursor: 'pointer',
     overflow: 'hidden !important',
     textOverflow: 'ellipsis',
@@ -486,7 +486,7 @@ const RepoPanelKeyTab = styled.div({
 const RepoNameLabel = styled.div({
     flex: 1,
     fontSize: '16px',
-    padding: '0 30px',
+    padding: '0 25px',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
