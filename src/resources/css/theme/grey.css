@@ -121,6 +121,7 @@
     background-color: rgba(90, 214, 186, 0.2) !important;
 }
 
+/* ul */
 .grey-theme-rd ul > li > ul {
     border-left: 5px solid #3d4450;
 }
@@ -133,6 +134,18 @@
     border-left: 3px solid #3d4450;
 }
 
+/* ol + ul */
+.grey-theme-rd ol > li > ul {
+    border-left: 5px solid #3d4450;
+}
+
+.grey-theme-rd ol > li > ul > li > ul {
+    border-left: 4px solid #3d4450;
+}
+
+.grey-theme-rd ol > li > ul > li > ul > li > ul {
+    border-left: 3px solid #3d4450;
+}
 
 /* scroller */
 

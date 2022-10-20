@@ -2,6 +2,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 
+import './resources/css/global/img.css';
 import './resources/css/theme/common.css';
 import './resources/css/theme/grey.css';
 import './resources/css/theme/color.css';

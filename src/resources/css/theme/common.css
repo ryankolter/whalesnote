@@ -261,7 +261,7 @@ body {
 
 .common-theme-rd img {
     width: 100%;
-    margin-bottom: 1em;
+    margin-bottom: 0.5em;
 }
 
 .common-theme-rd a {
@@ -275,24 +275,33 @@ body {
     text-decoration-color: initial;
 }
 
+/* ul */
+
 .common-theme-rd ul {
     list-style-type: decimal;
     margin-left: -0.5em !important;
 }
 
 .common-theme-rd ul li {
-    margin: 1.5em 0 0 0 !important;
+    margin: 2em 0 0 0 !important;
 }
 
 .common-theme-rd ul > li > ul {
     margin-bottom: 1em !important;
-    margin-top: 0.8em;
+    margin-top: 1.5em;
     padding-top: 0.3em;
+    padding-bottom: 0.3em;
     list-style-type: none;
 }
 
 .common-theme-rd ul > li > ul > li {
-    margin: 0.7em 0 1.8em -0.7em !important;
+    margin-top: 0.3em !important;
+    margin-right: 0 !important;
+    margin-left: -0.7em !important;
+}
+
+.common-theme-rd ul > li > ul > li:not(:last-child) {
+    margin-bottom: 1.8em !important;
 }
 
 .common-theme-rd ul > li > ul > li > p {
@@ -300,12 +309,94 @@ body {
 }
 
 .common-theme-rd ul > li > ul > li > ul {
-    margin-top: 0.8em;
+    margin-top: 1em;
     padding-top: 0.3em;
     list-style-type: none;
 }
 
 .common-theme-rd ul > li > ul > li > ul > li {
+    margin: 0 0 0.5em -0.7em !important;
+}
+
+/* ol */
+
+.common-theme-rd ol {
+    list-style-type: decimal;
+    margin-left: -0.5em !important;
+}
+
+.common-theme-rd ol li {
+    margin: 2em 0 0 0 !important;
+}
+
+.common-theme-rd ol li > p {
+    margin: 0 !important;
+}
+
+.common-theme-rd ol > li > ol {
+    margin-bottom: 1em !important;
+    margin-top: 1em;
+    padding-top: 0.3em;
+    list-style-type: lower-alpha;
+}
+
+.common-theme-rd ol > li > ol > li {
+    margin: 0.3em 0 1.8em 0em !important;
+}
+
+.common-theme-rd ol > li > ol > li > p {
+    margin: 0 0 !important;
+}
+
+.common-theme-rd ol > li > ol > li > ol {
+    margin-top: 0.8em;
+    padding-top: 0.3em;
+    list-style-type: lower-roman;
+}
+
+.common-theme-rd ol > li > ol > li > ol > li {
+    margin: 0 0 0.5em 0em !important;
+}
+
+/* ol + ul */
+.common-theme-rd ol {
+    list-style-type: decimal;
+    margin-left: -0.5em !important;
+}
+
+.common-theme-rd ol li {
+    margin: 2em 0 0 0 !important;
+}
+
+.common-theme-rd ol > li > ul {
+    margin-bottom: 1em !important;
+    margin-top: 1.5em;
+    padding-top: 0.3em;
+    padding-bottom: 0.3em;
+    list-style-type: none;
+}
+
+.common-theme-rd ol > li > ul > li {
+    margin-top: 0 !important;
+    margin-right: 0 !important;
+    margin-left: -0.7em !important;
+}
+
+.common-theme-rd ol > li > ul > li:not(:last-child) {
+    margin-bottom: 1.8em !important;
+}
+
+.common-theme-rd ol > li > ul > li > p {
+    margin: 0 0 !important;
+}
+
+.common-theme-rd ol > li > ul > li > ul {
+    margin-top: 1.5em;
+    padding-top: 0.3em;
+    list-style-type: none;
+}
+
+.common-theme-rd ol > li > ul > li > ul > li {
     margin: 0 0 0.5em -0.7em !important;
 }
 

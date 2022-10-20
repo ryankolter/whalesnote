@@ -50,6 +50,7 @@ const createWindow = async () => {
         win.loadFile(path.join(__dirname, '/build/index.html'));
     } else {
         win.loadURL('http://localhost:3005');
+        //win.loadFile(path.join(__dirname, '/build/index.html'));
         win.webContents.openDevTools();
         await installExtensions();
     }

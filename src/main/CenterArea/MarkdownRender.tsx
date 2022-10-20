@@ -21,6 +21,10 @@ import markdownItSub from 'markdown-it-sub';
 import markdownItSup from 'markdown-it-sup';
 //@ts-ignore
 import markdownItTaskLists from 'markdown-it-task-lists';
+//@ts-ignore
+import markwodnItReplaceLink from 'markdown-it-replace-link';
+//@ts-ignore
+import implicitFigures from 'markdown-it-image-figures';
 /* eslint-enable */
 import markdownItAnchor from 'markdown-it-anchor';
 import markdownItTable from 'markdown-it-multimd-table';
@@ -46,8 +50,11 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
         updateRenderTop,
     } = useContext(GlobalContext);
 
-    const md: any = useRef<markdownIt>(
-        markdownIt({
+    const md: any = useRef<markdownIt>(markdownIt());
+    const print_md: any = useRef<markdownIt>(markdownIt());
+
+    md.current = useMemo(() => {
+        return markdownIt({
             breaks: true,
             linkify: true,
             typographer: true,
@@ -103,10 +110,18 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
                     }
                 },
             })
-    );
+            .use(markwodnItReplaceLink, {
+                replaceLink: function (link: string, env: string) {
+                    return curDataPath + '/images/' + link;
+                },
+            })
+            .use(implicitFigures, {
+                figcaption: 'title',
+            });
+    }, [curDataPath]);
 
-    const print_md: any = useRef<markdownIt>(
-        markdownIt({
+    print_md.current = useMemo(() => {
+        return markdownIt({
             breaks: true,
             linkify: true,
             typographer: true,
@@ -122,7 +137,9 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
                 }
 
                 return (
-                    '<pre><code class="hljs">' + md.current.utils.escapeHtml(str) + '</code></pre>'
+                    '<pre><code class="hljs">' +
+                    print_md.current.utils.escapeHtml(str) +
+                    '</code></pre>'
                 );
             },
         })
@@ -143,7 +160,12 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
                 multibody: true,
                 aotolabel: true,
             })
-    );
+            .use(markwodnItReplaceLink, {
+                replaceLink: function (link: string, env: string) {
+                    return curDataPath + '/images/' + link;
+                },
+            });
+    }, [curDataPath]);
 
     const [result, setResult] = useState('');
 
@@ -167,6 +189,10 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
     useEffect(() => {
         ipcRenderer.on('saveNoteToHtml', (event: any, path: string) => {
             const bodyContent = print_md.current.render(currentNoteStr);
+            const imgStyle =
+                ipcRenderer.sendSync('readCss', {
+                    file_name: '/global/img.css',
+                }) || '';
             const hljsStyle =
                 ipcRenderer.sendSync('readCss', {
                     file_name: '/hljs_theme/grey_standard.css',
@@ -184,6 +210,7 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
             <meta charset="UTF-8">
             <meta name = "viewport" content = "width = device-width, initial-scale = 1, maximum-scale = 1">
             <style>
+            ${imgStyle}
             ${commonStyle}
             ${themeStyle}
             ${hljsStyle}
