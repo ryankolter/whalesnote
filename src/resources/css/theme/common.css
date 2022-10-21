@@ -147,7 +147,29 @@ body {
     border-radius: 3px;
 }
 
-/*  */
+/* search */
+
+.common-theme-cm .cm-panel.cm-search {
+    padding: 5px 5px !important;
+}
+
+.common-theme-cm .cm-panel.cm-search button {
+    margin: 0em 0.6em 0em 0 !important;
+}
+
+.common-theme-cm .cm-panel.cm-search label {
+    display: inline-flex;
+    align-items: center;
+    margin: 0em 0.6em 0em 0 !important;
+}
+
+.common-theme-cm .cm-panels.cm-panels-bottom {
+    border-top: none !important;
+}
+
+.common-theme-cm .cm-textfield {
+    outline: none !important;
+}
 
 /*  */
 

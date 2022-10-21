@@ -88,7 +88,7 @@ const CenterArea: React.FC<{
                     } else {
                         setKeySelect(true);
                         setNumArray([]);
-                        // 只有这里才会让它初始化为显示框框
+                        //只有这里才会让它初始化为显示框框
                         setBlur(
                             cryptoRandomString({
                                 length: 24,
@@ -131,15 +131,6 @@ const CenterArea: React.FC<{
                     if (keySelect) {
                         setKeySelect(false);
                         setNumArray([]);
-                    } else {
-                        setTimeout(() => {
-                            setBlur(
-                                cryptoRandomString({
-                                    length: 24,
-                                    type: 'alphanumeric',
-                                })
-                            );
-                        }, 0);
                     }
                     setShowAllRepo(false);
                 }
@@ -212,15 +203,6 @@ const CenterArea: React.FC<{
                     if (keySelect) {
                         setKeySelect(false);
                         setNumArray([]);
-                    } else {
-                        setTimeout(() => {
-                            setBlur(
-                                cryptoRandomString({
-                                    length: 24,
-                                    type: 'alphanumeric',
-                                })
-                            );
-                        }, 0);
                     }
                     setShowAllRepo(false);
                 }

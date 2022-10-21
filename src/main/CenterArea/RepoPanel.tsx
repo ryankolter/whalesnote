@@ -33,7 +33,6 @@ const RepoPanel: React.FC<{
         changeNotesAfterNew,
         numArray,
         setFocus,
-        setBlur,
         keySelect,
         setKeySelect,
     } = useContext(GlobalContext);
@@ -426,7 +425,6 @@ const RepoPanel: React.FC<{
                         repoSwitchInPanel(repos_key[index]);
                         setKeySelect(true);
                     }
-                    setBlur(cryptoRandomString({ length: 24, type: 'alphanumeric' }));
                 }
 
                 // extra number 1-9
@@ -437,7 +435,6 @@ const RepoPanel: React.FC<{
                         repoSwitchInPanel(repos_key[index]);
                         setKeySelect(true);
                     }
-                    setBlur(cryptoRandomString({ length: 24, type: 'alphanumeric' }));
                 }
 
                 // arrow right 39 change to L 76
@@ -459,7 +456,6 @@ const RepoPanel: React.FC<{
                         repoSwitchInPanel(repos_key[index]);
                         setKeySelect(true);
                     }
-                    setBlur(cryptoRandomString({ length: 24, type: 'alphanumeric' }));
                 }
 
                 // extra number 1-9
@@ -470,7 +466,6 @@ const RepoPanel: React.FC<{
                         repoSwitchInPanel(repos_key[index]);
                         setKeySelect(true);
                     }
-                    setBlur(cryptoRandomString({ length: 24, type: 'alphanumeric' }));
                 }
 
                 // arrow right 39 change to L 76
@@ -490,7 +485,6 @@ const RepoPanel: React.FC<{
             repoSwitchInPanel,
             nextRepoPage,
             preRepoPage,
-            setBlur,
             setKeySelect,
             numArray,
         ]
