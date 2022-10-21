@@ -400,7 +400,7 @@ const FolderList: React.FC<{
                     nextFolderPage();
                 }
 
-                // arrow bottom 38 or I 73
+                // arrow top 38 or I 73
                 if ((e.keyCode === 38 || e.keyCode === 73) && e.metaKey && keySelect) {
                     preFolderPage();
                 }
@@ -415,7 +415,7 @@ const FolderList: React.FC<{
                     nextFolderPage();
                 }
 
-                // arrow bottom 38 or I 73
+                // arrow top 38 or I 73
                 if ((e.keyCode === 38 || e.keyCode === 73) && e.ctrlKey && keySelect) {
                     preFolderPage();
                 }

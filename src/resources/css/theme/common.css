@@ -85,10 +85,6 @@ body {
     word-spacing: 5px;
 }
 
-.common-theme-cm .cm-content {
-    margin-top: 14px !important;
-}
-
 .common-theme-cm .cm-line {
     font-family: PingFangSC-Regular, sans-serif;
     font-size: 15px;
