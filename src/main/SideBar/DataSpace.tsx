@@ -4,7 +4,7 @@ import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 import WaitingMaskStatic from '../../components/WaitingMaskStatic';
 
-const DataSpace: React.FC<{}> = ({}) => {
+const DataSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssistantPanel }) => {
     const { curDataPath, setCurDataPath, switchingData, setSwitchingData, dataPathList } =
         useContext(GlobalContext);
     const [showPathUl, setShowPathUl] = useState(false);
@@ -21,6 +21,15 @@ const DataSpace: React.FC<{}> = ({}) => {
 
     return (
         <DataSpaceContainer>
+            <TopRow>
+                <CloseDataSpaceBtn
+                    onClick={() => {
+                        closeAssistantPanel();
+                    }}
+                >
+                    x
+                </CloseDataSpaceBtn>
+            </TopRow>
             <ChildPart>
                 <PartTitle className={'child-border-color'}>数据空间</PartTitle>
                 <ShowPath>
@@ -91,7 +100,28 @@ const DataSpace: React.FC<{}> = ({}) => {
     );
 };
 
-const DataSpaceContainer = styled.div({});
+const DataSpaceContainer = styled.div({
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%',
+    padding: '5px',
+});
+
+const TopRow = styled.div({
+    display: 'flex',
+    alignItem: 'center',
+    justifyContent: 'flex-end',
+});
+
+const CloseDataSpaceBtn = styled.div({
+    width: '20px',
+    height: '20px',
+    lineHeight: '18px',
+    fontSize: '20px',
+    padding: '5px 10px',
+    margin: '0 0 2px 0',
+    cursor: 'pointer',
+});
 
 const ChildPart = styled.div({
     padding: '10px',
@@ -101,7 +131,7 @@ const PartTitle = styled.div({
     fontSize: '18px',
     fontWeight: '500',
     marginBottom: '15px',
-    paddingBottom: '2px',
+    paddingBottom: '4px',
     borderBottomWidth: '1.5px',
     borderBottomStyle: 'solid',
 });

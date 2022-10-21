@@ -16,7 +16,11 @@ const AssistantPanel: React.FC<{
 
     return (
         <AssistantPanelContainer className="child-border-color">
-            {curAssistantPanelName == 'data_space' ? <DataSpace /> : <></>}
+            {curAssistantPanelName == 'data_space' ? (
+                <DataSpace closeAssistantPanel={closeAssistantPanel} />
+            ) : (
+                <></>
+            )}
             {curAssistantPanelName == 'mobile_panel' ? <></> : <></>}
             {curAssistantPanelName == 'image_space' ? (
                 <ImageSpace closeAssistantPanel={closeAssistantPanel} />

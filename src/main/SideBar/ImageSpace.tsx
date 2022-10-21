@@ -57,6 +57,7 @@ const ImageSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssist
             y +
             addMultizero(m, 2) +
             addMultizero(d, 2) +
+            '_' +
             addMultizero(h, 2) +
             addMultizero(mm, 2) +
             addMultizero(s, 2) +
@@ -65,8 +66,11 @@ const ImageSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssist
     }, []);
 
     const copyImageMdLink = useCallback((file_name: string) => {
-        const md_link = `![](${file_name} "${file_name.substring(0, file_name.lastIndexOf('.'))}")`;
-        console.log(md_link);
+        const md_link = `![w500](${file_name} "${file_name.substring(
+            0,
+            file_name.lastIndexOf('.')
+        )}")`;
+        navigator.clipboard.writeText(md_link);
     }, []);
 
     const handleLoadImage = useCallback((e: MouseEvent<HTMLSpanElement>) => {
@@ -84,18 +88,21 @@ const ImageSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssist
             const timeStamp = generateTimeStamp();
             let i = 0;
             let success_count = 0;
+            let target_file_name = '';
             for (const path of paths) {
+                const dest_file_name =
+                    timeStamp +
+                    (len > 1 ? '_' + addMultizero(i, String(len).length) : '') +
+                    '.' +
+                    path.substring(path.lastIndexOf('.') + 1);
                 const result = ipcRenderer.sendSync('copy', {
                     src_file_path: path,
                     dest_dir_path: curDataPath + '/images',
-                    dest_file_name:
-                        timeStamp +
-                        addMultizero(i, String(len).length) +
-                        '.' +
-                        path.substring(path.lastIndexOf('.') + 1),
+                    dest_file_name: dest_file_name,
                 });
                 if (result) {
                     success_count++;
+                    target_file_name = dest_file_name;
                 }
                 i++;
             }
@@ -104,6 +111,9 @@ const ImageSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssist
             success_count === len
                 ? setLoadImageStatus('success')
                 : setLoadImageStatus('partial_success');
+            if (success_count >= 1) {
+                copyImageMdLink(target_file_name);
+            }
             setTimeout(() => {
                 setLoadImageStatus('none');
             }, 1500);
@@ -125,7 +135,7 @@ const ImageSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssist
             }
 
             const dest_file_name =
-                generateTimeStamp() + '0' + '.' + file.name.split('.').pop().toLowerCase();
+                generateTimeStamp() + '.' + file.name.split('.').pop().toLowerCase();
             const result = ipcRenderer.sendSync('copy', {
                 src_file_path: file.path,
                 dest_dir_path: curDataPath + '/images',
@@ -153,14 +163,6 @@ const ImageSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssist
     return (
         <ImageSpaceContainer>
             <TopRow>
-                <OpenImagePath>
-                    <OpenImagePathBtn
-                        className="btn-1-bg-color"
-                        onClick={(e) => openImagePath(curDataPath + '/images/')}
-                    >
-                        打开图片目录
-                    </OpenImagePathBtn>
-                </OpenImagePath>
                 <CloseImageSpaceBtn
                     onClick={() => {
                         closeAssistantPanel();
@@ -169,44 +171,54 @@ const ImageSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssist
                     x
                 </CloseImageSpaceBtn>
             </TopRow>
-            <AddImageBox>
-                <DragZone {...getRootProps()} className="drag-dotted-color">
-                    <input {...getInputProps()} />
-                    {loadImageStatus == 'none' ? (
-                        <DragZoneTips>
-                            将图片拖到此处，或
-                            <LoadImageBtn
-                                className="load-image-btn-border-color"
-                                onClick={handleLoadImage}
-                            >
-                                点击载入
-                            </LoadImageBtn>
-                        </DragZoneTips>
-                    ) : (
-                        <></>
-                    )}
-                    {loadImageStatus == 'fail' ? (
-                        <DragZoneTips>错误：仅支持图片</DragZoneTips>
-                    ) : (
-                        <></>
-                    )}
-                    {loadImageStatus == 'success' ? (
-                        <DragZoneTips>成功: {loadSuccessCount}</DragZoneTips>
-                    ) : (
-                        <></>
-                    )}
-                    {loadImageStatus == 'partial_success' ? (
-                        <DragZoneTips>
-                            成功: {loadSuccessCount}, 失败: {loadFailCount}
-                        </DragZoneTips>
-                    ) : (
-                        <></>
-                    )}
-                </DragZone>
-            </AddImageBox>
-            <LocalImage>
-                <LocalImageTitle>本地图片列表</LocalImageTitle>
-            </LocalImage>
+            <ChildPart>
+                <PartTitle className={'child-border-color'}>
+                    <PartTitleName>本地图库</PartTitleName>
+                    <OpenImagePath>
+                        <OpenImagePathBtn
+                            className="btn-1-bg-color"
+                            onClick={(e) => openImagePath(curDataPath + '/images/')}
+                        >
+                            打开
+                        </OpenImagePathBtn>
+                    </OpenImagePath>
+                </PartTitle>
+                <AddImageBox>
+                    <DragZone {...getRootProps()} className="drag-dotted-color">
+                        <input {...getInputProps()} />
+                        {loadImageStatus == 'none' ? (
+                            <DragZoneTips>
+                                将图片拖到此处，或
+                                <LoadImageBtn
+                                    className="load-image-btn-border-color"
+                                    onClick={handleLoadImage}
+                                >
+                                    点击载入
+                                </LoadImageBtn>
+                            </DragZoneTips>
+                        ) : (
+                            <></>
+                        )}
+                        {loadImageStatus == 'fail' ? (
+                            <DragZoneTips>错误：仅支持图片</DragZoneTips>
+                        ) : (
+                            <></>
+                        )}
+                        {loadImageStatus == 'success' ? (
+                            <DragZoneTips>成功: {loadSuccessCount} (已复制到剪贴板）</DragZoneTips>
+                        ) : (
+                            <></>
+                        )}
+                        {loadImageStatus == 'partial_success' ? (
+                            <DragZoneTips>
+                                成功: {loadSuccessCount}, 失败: {loadFailCount}
+                            </DragZoneTips>
+                        ) : (
+                            <></>
+                        )}
+                    </DragZone>
+                </AddImageBox>
+            </ChildPart>
         </ImageSpaceContainer>
     );
 };
@@ -221,15 +233,45 @@ const ImageSpaceContainer = styled.div({
 const TopRow = styled.div({
     display: 'flex',
     alignItem: 'center',
-    margin: '5px 0 10px 10px',
+    justifyContent: 'flex-end',
+});
+
+const CloseImageSpaceBtn = styled.div({
+    width: '20px',
+    height: '20px',
+    lineHeight: '18px',
+    fontSize: '20px',
+    padding: '5px 10px',
+    margin: '0 0 2px 0',
+    cursor: 'pointer',
+});
+
+const ChildPart = styled.div({
+    padding: '10px',
+});
+
+const PartTitle = styled.div({
+    display: 'flex',
+    alignItem: 'center',
+    justifyContent: 'space-between',
+    fontSize: '18px',
+    fontWeight: '500',
+    marginBottom: '15px',
+    paddingBottom: '4px',
+    borderBottomWidth: '1.5px',
+    borderBottomStyle: 'solid',
+});
+
+const PartTitleName = styled.div({
+    height: '28px',
+    lineHeight: '28px',
 });
 
 const OpenImagePath = styled.div({
     display: 'flex',
     flexDirection: 'row',
     alignItem: 'center',
-    flex: '1',
-    minWidth: '0',
+    margin: '0 0 4px 0',
 });
 
 const OpenImagePathBtn = styled.div({
@@ -241,16 +283,6 @@ const OpenImagePathBtn = styled.div({
     fontSize: '14px',
     padding: '0 8px',
     borderRadius: ' 4px',
-    cursor: 'pointer',
-});
-
-const CloseImageSpaceBtn = styled.div({
-    width: '20px',
-    height: '20px',
-    lineHeight: '18px',
-    fontSize: '20px',
-    padding: '5px 10px',
-    margin: '0 0 2px 0',
     cursor: 'pointer',
 });
 
@@ -275,14 +307,6 @@ const DragZoneTips = styled.div({
 
 const LoadImageBtn = styled.span({
     cursor: 'pointer',
-});
-
-const LocalImage = styled.div({
-    margin: '5px 12px',
-});
-
-const LocalImageTitle = styled.div({
-    fontSize: '18px',
 });
 
 export default ImageSpace;

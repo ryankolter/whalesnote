@@ -16,17 +16,7 @@ const TrashList: React.FC<{ theme: string; closeAssistantPanel: () => void }> = 
     theme,
     closeAssistantPanel,
 }) => {
-    const {
-        repos_obj,
-        curDataPath,
-        currentRepoKey,
-        currentFolderKey,
-        currentNoteKey,
-        repoSwitch,
-        folderSwitch,
-        noteSwitch,
-        folderNotesFetch,
-    } = useContext(GlobalContext);
+    const { curDataPath } = useContext(GlobalContext);
 
     const editor = useRef<HTMLDivElement>(null);
     const view = useRef<EditorView>();
@@ -40,7 +30,16 @@ const TrashList: React.FC<{ theme: string; closeAssistantPanel: () => void }> = 
 
     const fullDeleteNote = useCallback((trash_key: string) => {}, []);
 
-    const handleEmptyTrash = useCallback(() => {}, []);
+    const handleEmptyTrash = useCallback(() => {
+        const result = ipcRenderer.sendSync('remove', {
+            file_path: `${curDataPath}/trash.cson`,
+        });
+
+        if (result) {
+            setCurTrashKey('---');
+            trash.current = {};
+        }
+    }, [curDataPath, setCurTrashKey]);
 
     useEffect(() => {
         const read_trash = ipcRenderer.sendSync('readCson', {
@@ -52,7 +51,6 @@ const TrashList: React.FC<{ theme: string; closeAssistantPanel: () => void }> = 
         if (len > 0) {
             setCurTrashKey(Object.keys(trash.current)[len - 1]);
         }
-        console.log(trash.current);
     }, []);
 
     const getExtensions = [
@@ -118,16 +116,6 @@ const TrashList: React.FC<{ theme: string; closeAssistantPanel: () => void }> = 
     return (
         <NoteListContainer>
             <TrashTool>
-                <EmptyTrash>
-                    <EmptyTrashBtn
-                        className="btn-1-bg-color"
-                        onClick={() => {
-                            handleEmptyTrash();
-                        }}
-                    >
-                        <div>清空废纸篓</div>
-                    </EmptyTrashBtn>
-                </EmptyTrash>
                 <CloseTrashListBtn
                     onClick={() => {
                         closeAssistantPanel();
@@ -136,6 +124,21 @@ const TrashList: React.FC<{ theme: string; closeAssistantPanel: () => void }> = 
                     x
                 </CloseTrashListBtn>
             </TrashTool>
+            <ChildPart>
+                <PartTitle className={'child-border-color'}>
+                    <PartTitleName>已删除笔记</PartTitleName>
+                    <EmptyTrash>
+                        <EmptyTrashBtn
+                            className="btn-1-bg-color"
+                            onClick={() => {
+                                handleEmptyTrash();
+                            }}
+                        >
+                            <div>清空</div>
+                        </EmptyTrashBtn>
+                    </EmptyTrash>
+                </PartTitle>
+            </ChildPart>
             <NotesScroll ref={noteScrollRef}>
                 <Notes ref={outerRef}>
                     {Object.keys(trash.current)
@@ -175,7 +178,9 @@ const TrashList: React.FC<{ theme: string; closeAssistantPanel: () => void }> = 
                     )}
                 </Notes>
             </NotesScroll>
-            <CodeMirrorContainer>
+            <CodeMirrorContainer
+                style={{ visibility: curTrashKey === '---' ? 'hidden' : 'visible' }}
+            >
                 <div ref={editor} className={`${themeClassNames}`} />
             </CodeMirrorContainer>
         </NoteListContainer>
@@ -192,7 +197,7 @@ const NoteListContainer = styled.div({
 const TrashTool = styled.div({
     display: 'flex',
     alignItem: 'center',
-    margin: '5px 0 10px 10px',
+    justifyContent: 'flex-end',
 });
 
 const CloseTrashListBtn = styled.div({
@@ -205,12 +210,31 @@ const CloseTrashListBtn = styled.div({
     cursor: 'pointer',
 });
 
+const ChildPart = styled.div({
+    padding: '10px',
+});
+
+const PartTitle = styled.div({
+    display: 'flex',
+    alignItem: 'center',
+    justifyContent: 'space-between',
+    fontSize: '18px',
+    fontWeight: '500',
+    marginBottom: '15px',
+    paddingBottom: '4px',
+    borderBottomWidth: '1.5px',
+    borderBottomStyle: 'solid',
+});
+
+const PartTitleName = styled.div({
+    height: '28px',
+    lineHeight: '28px',
+});
+
 const EmptyTrash = styled.div({
     display: 'flex',
     flexDirection: 'row',
     alignItem: 'center',
-    flex: '1',
-    minWidth: '0',
 });
 
 const EmptyTrashBtn = styled.div({
@@ -249,8 +273,7 @@ const Notes = styled.div(
         display: 'flex',
         flexDirection: 'column',
         flexWrap: 'wrap',
-        margin: '8px 0',
-        height: 'calc(4 * 36px + 5px)',
+        height: 'calc(4 * 36px)',
     },
     `
     &::-webkit-scrollbar {
