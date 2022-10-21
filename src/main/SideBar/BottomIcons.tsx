@@ -42,7 +42,7 @@ const BottomIcons: React.FC<{
                 iconWidth={30}
                 iconHeight={26}
                 iconSrc={modelPanelIcon}
-                onClick={() => handleSvgIconClick('model_panel')}
+                onClick={() => handleSvgIconClick('image_space')}
             />
             <IconPadding />
             <SvgIcon

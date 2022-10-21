@@ -109,6 +109,14 @@
 .side-bar-color {
     background-color: var(--bottom-bg-color) !important;
 }
+
+.drag-dotted-color {
+    border: 3px dashed var(--drag-dashed-color) !important;
+}
+
+.load-image-btn-border-color {
+    border-bottom: 1px solid var(--drag-dashed-color) !important;
+}
   
   
   

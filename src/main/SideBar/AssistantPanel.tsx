@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { useCallback } from 'react';
 
 import DataSpace from './DataSpace';
+import ImageSpace from './ImageSpace';
 import TrashList from './TrashList';
 
 const AssistantPanel: React.FC<{
@@ -17,6 +18,11 @@ const AssistantPanel: React.FC<{
         <AssistantPanelContainer className="child-border-color">
             {curAssistantPanelName == 'data_space' ? <DataSpace /> : <></>}
             {curAssistantPanelName == 'mobile_panel' ? <></> : <></>}
+            {curAssistantPanelName == 'image_space' ? (
+                <ImageSpace closeAssistantPanel={closeAssistantPanel} />
+            ) : (
+                <></>
+            )}
             {curAssistantPanelName == 'model_panel' ? <></> : <></>}
             {curAssistantPanelName == 'trash_list' ? (
                 <TrashList theme={theme} closeAssistantPanel={closeAssistantPanel} />

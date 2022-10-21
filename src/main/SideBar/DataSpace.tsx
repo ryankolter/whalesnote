@@ -2,7 +2,6 @@ const { ipcRenderer } = window.require('electron');
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
-import { usePopUp } from '../../lib/usePopUp';
 import WaitingMaskStatic from '../../components/WaitingMaskStatic';
 
 const DataSpace: React.FC<{}> = ({}) => {
@@ -17,7 +16,7 @@ const DataSpace: React.FC<{}> = ({}) => {
     }, []);
 
     const openDataPath = useCallback((data_path: string) => {
-        ipcRenderer.send('open-folder', { folder_path: data_path });
+        ipcRenderer.send('open-parent-folder', { folder_path: data_path });
     }, []);
 
     return (

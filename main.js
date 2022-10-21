@@ -50,7 +50,7 @@ const createWindow = async () => {
         win.loadFile(path.join(__dirname, '/build/index.html'));
     } else {
         win.loadURL('http://localhost:3005');
-        //win.loadFile(path.join(__dirname, '/build/index.html'));
+        // win.loadFile(path.join(__dirname, '/build/index.html'));
         win.webContents.openDevTools();
         await installExtensions();
     }
@@ -304,6 +304,14 @@ const processIPC = () => {
         }
     });
 
+    ipcMain.on('copy', (event, { src_file_path, dest_dir_path, dest_file_name }) => {
+        const dest_file_path = path.join(dest_dir_path, dest_file_name);
+        console.log('copy: ' + src_file_path + ' to ' + dest_file_path);
+        fse.ensureDirSync(dest_dir_path);
+        fse.copyFileSync(src_file_path, dest_file_path);
+        event.returnValue = true;
+    });
+
     ipcMain.on('move', (event, { src_file_path, dest_file_path }) => {
         console.log('move: ' + src_file_path + ' to ' + dest_file_path);
         fse.moveSync(src_file_path, dest_file_path);
@@ -349,8 +357,35 @@ const processIPC = () => {
             });
     });
 
-    ipcMain.on('open-folder', (event, { folder_path }) => {
+    ipcMain.on('open-select-images-dialog', (event, { file_types, response_event_name }) => {
+        console.log(file_types);
+        dialog
+            .showOpenDialog({
+                title: 'Select images',
+                buttonLabel: 'Load',
+                defaultPath: '*/',
+                filters: [
+                    {
+                        name: 'Images',
+                        extensions: file_types,
+                    },
+                ],
+                properties: ['openFile', 'multiSelections'],
+            })
+            .then((files) => {
+                if (files && !files.canceled) {
+                    event.sender.send(response_event_name, files.filePaths);
+                }
+            });
+    });
+
+    ipcMain.on('open-parent-folder', (event, { folder_path }) => {
         shell.showItemInFolder(folder_path);
+    });
+
+    ipcMain.on('open-folder', (event, { folder_path }) => {
+        fse.ensureDirSync(folder_path);
+        shell.openPath(folder_path);
     });
 
     ipcMain.on('nodejieba', (event, { word }) => {
