@@ -130,6 +130,11 @@ const useData = () => {
             obj: whalenote,
         });
 
+        ipcRenderer.sendSync('writeJson', {
+            file_path: `${data_path}/history_info.json`,
+            obj: history,
+        });
+
         whalenote.repos_key.forEach((repo_key: string) => {
             const repo = repos[repo_key];
             if (repo) {

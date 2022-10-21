@@ -170,8 +170,8 @@ export const useHistory = () => {
         });
     }, []);
 
-    const initHistory = useCallback((new_whalenote: any) => {
-        dispatch({ type: 'init', new_state: new_whalenote });
+    const initHistory = useCallback((new_history: any) => {
+        dispatch({ type: 'init', new_state: new_history });
     }, []);
 
     return [
