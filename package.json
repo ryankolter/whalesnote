@@ -2,7 +2,7 @@
     "name": "whale_note",
     "description": "A note management tool for Windows, Mac and Linux. Easily classify and store tens of thousands of notes",
     "version": "1.0.0",
-    "author": "kurtor <zjuygp@gamil.com>",
+    "author": "ryankolter <zjuygp@gamil.com>",
     "license": "GPL",
     "private": true,
     "main": "main.js",
@@ -23,7 +23,8 @@
                 "from": "./src/resources/css/",
                 "to": "extraResources/css"
             }
-        ]
+        ],
+        "npmRebuild": false
     },
     "dependencies": {
         "@codemirror/autocomplete": "^6.3.0",
@@ -81,7 +82,7 @@
     },
     "scripts": {
         "start": "PORT=3005 react-app-rewired start",
-        "build": "react-app-rewired build",
+        "build": "GENERATE_SOURCEMAP=false react-app-rewired build",
         "test": "react-app-rewired test",
         "eject": "react-scripts eject",
         "prepare": "husky install",
