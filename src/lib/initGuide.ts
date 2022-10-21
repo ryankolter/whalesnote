@@ -67,9 +67,11 @@ const initGuide = () => {
                 },
             },
         },
-        dxnote: {
+        whalenote: {
             id: cryptoRandomString({ length: 36, type: 'alphanumeric' }),
             repos_key: ['DEFAULTREPO1'],
+        },
+        history: {
             cur_repo_key: 'DEFAULTREPO1',
             repos: {
                 DEFAULTREPO1: {

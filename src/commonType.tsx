@@ -1,7 +1,8 @@
 export type Data = {
     repos: object;
     notes: notesTypes;
-    dxnote: dxnoteTypes;
+    whalenote: whalenoteTypes;
+    history: historyTypes;
 };
 
 export type notesTypes = {
@@ -12,9 +13,12 @@ export type notesTypes = {
     };
 };
 
-export type dxnoteTypes = {
+export type whalenoteTypes = {
     id: string;
     repos_key: string[];
+};
+
+export type historyTypes = {
     cur_repo_key: string;
     repos:
         | {

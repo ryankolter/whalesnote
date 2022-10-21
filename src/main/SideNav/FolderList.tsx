@@ -25,7 +25,6 @@ const FolderList: React.FC<{
     const {
         curDataPath,
         dataPathChangeFlag,
-        dxnote,
         repoSwitch,
         folderSwitch,
         noteSwitch,
@@ -295,7 +294,6 @@ const FolderList: React.FC<{
         }
     }, [
         curDataPath,
-        dxnote,
         repos_obj,
         currentRepoKey,
         currentFolderKey,

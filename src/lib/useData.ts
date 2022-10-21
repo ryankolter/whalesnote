@@ -11,8 +11,12 @@ const useData = () => {
     const [switchingData, setSwitchingData] = useState<boolean>(false);
 
     const initExistRepo = useCallback((data_path: string) => {
-        let dxnote = ipcRenderer.sendSync('readJson', {
-            file_path: `${data_path}/dxnote_info.json`,
+        let whalenote = ipcRenderer.sendSync('readJson', {
+            file_path: `${data_path}/whalenote_info.json`,
+        });
+
+        let history = ipcRenderer.sendSync('readJson', {
+            file_path: `${data_path}/history_info.json`,
         });
 
         const repos = {};
@@ -20,7 +24,7 @@ const useData = () => {
         let first_repo_key = '';
         const valid_repos_key: string[] = [];
 
-        dxnote.repos_key.forEach((repo_key: string) => {
+        whalenote.repos_key.forEach((repo_key: string) => {
             const repo_info = ipcRenderer.sendSync('readJson', {
                 file_path: `${data_path}/${repo_key}/repo_info.json`,
             });
@@ -54,11 +58,11 @@ const useData = () => {
             }
         });
 
-        if (dxnote.repos_key.length !== valid_repos_key.length) {
-            dxnote.repos_key = valid_repos_key;
+        if (whalenote.repos_key.length !== valid_repos_key.length) {
+            whalenote.repos_key = valid_repos_key;
             ipcRenderer.sendSync('writeJson', {
-                file_path: `${data_path}/dxnote_info.json`,
-                obj: dxnote,
+                file_path: `${data_path}/whalenote_info.json`,
+                obj: whalenote,
             });
         }
 
@@ -66,14 +70,14 @@ const useData = () => {
             let init_repo_key = '';
             let folders_key = [];
 
-            if (repos[dxnote.cur_repo_key]) {
-                init_repo_key = dxnote.cur_repo_key;
+            if (repos[history.cur_repo_key]) {
+                init_repo_key = history.cur_repo_key;
                 folders_key = repos[init_repo_key].folders_key;
             } else {
                 init_repo_key = first_repo_key;
                 folders_key = repos[first_repo_key].folders_key;
 
-                dxnote = {
+                history = {
                     cur_repo_key: 'DEFAULTREPO1',
                     repos: {
                         DEFAULTREPO1: {
@@ -102,13 +106,15 @@ const useData = () => {
                 }
             });
         } else {
-            dxnote = {};
+            whalenote = {};
+            history = {};
         }
 
         return {
             repos: repos,
             notes: notes,
-            dxnote: dxnote,
+            whalenote: whalenote,
+            history: history,
         };
     }, []);
 
@@ -116,14 +122,15 @@ const useData = () => {
         const data = initDefault();
         const repos = data.repos;
         const notes = data.notes;
-        const dxnote = data.dxnote;
+        const whalenote = data.whalenote;
+        const history = data.history;
 
         ipcRenderer.sendSync('writeJson', {
-            file_path: `${data_path}/dxnote_info.json`,
-            obj: dxnote,
+            file_path: `${data_path}/whalenote_info.json`,
+            obj: whalenote,
         });
 
-        dxnote.repos_key.forEach((repo_key: string) => {
+        whalenote.repos_key.forEach((repo_key: string) => {
             const repo = repos[repo_key];
             if (repo) {
                 const repo_info = {
@@ -187,7 +194,7 @@ const useData = () => {
         if (curDataPath && ipcRenderer.sendSync('folderExist', { folder_path: curDataPath })) {
             window.localStorage.setItem('whalenote_current_data_path', curDataPath);
             const new_data = ipcRenderer.sendSync('fileExist', {
-                file_path: curDataPath + '/dxnote_info.json',
+                file_path: curDataPath + '/whalenote_info.json',
             })
                 ? initExistRepo(curDataPath)
                 : initEmptyRepo(curDataPath);
@@ -198,7 +205,6 @@ const useData = () => {
         }
         const endTimeStamp = new Date().getTime();
         const diff = endTimeStamp - startTimeStamp;
-        console.log(diff);
         if (diff < 10) {
             setTimeout(() => {
                 setSwitchingData(false);

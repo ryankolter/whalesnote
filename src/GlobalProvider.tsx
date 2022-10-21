@@ -3,8 +3,9 @@ import { createContext, useCallback, useState, useMemo, useEffect } from 'react'
 
 import useData from './lib/useData';
 import useDataList from './lib/useDataList';
+import { useWhalenote } from './lib/useWhalenote';
+import { useHistory } from './lib/useHistory';
 import { useRepos } from './lib/useRepos';
-import { useDxnote } from './lib/useDxnote';
 import { useEditPos } from './lib/useEditPos';
 import { useEditLine } from './lib/useEditLine';
 import { useRecordValue } from './lib/useRecordValue';
@@ -28,9 +29,10 @@ const initContext: {
     switchingData: boolean;
     setSwitchingData: (switchingData: boolean) => void;
     dataPathList: string[];
-    dxnote: any;
-    initDxnote: (new_dxnote: any) => void;
-    updateDxnote: (data_path: string) => void;
+    whalenote: any;
+    history: any;
+    initWhalenote: (new_whalenote: any) => void;
+    updateWhalenote: (data_path: string) => void;
     reorderRepo: (data_path: string, repo_key: string, new_repos_key: string[]) => void;
     repoSwitch: (repo_key: string | undefined) => void;
     folderSwitch: (repo_key: string | undefined, folderKey: string | undefined) => void;
@@ -113,9 +115,10 @@ const initContext: {
     switchingData: false,
     setSwitchingData: () => {},
     dataPathList: [],
-    dxnote: null,
-    initDxnote: () => {},
-    updateDxnote: () => {},
+    whalenote: null,
+    history: null,
+    initWhalenote: () => {},
+    updateWhalenote: () => {},
     reorderRepo: () => {},
     repoSwitch: () => {},
     folderSwitch: () => {},
@@ -168,20 +171,20 @@ export const GlobalProvider = ({ children }: { children: any }) => {
         setSwitchingData,
     ] = useData();
     const [dataPathList, addDataPathToList, removeDataPathFromList] = useDataList();
+    const [whalenote, { updateWhalenote, reorderRepo, initWhalenote }] = useWhalenote();
     const [
-        dxnote,
+        history,
         {
             switchRepo,
             switchFolder,
             switchNote,
-            updateDxnote,
             currentRepoKey,
             currentFolderKey,
             currentNoteKey,
-            reorderRepo,
-            initDxnote,
+            updateHistory,
+            initHistory,
         },
-    ] = useDxnote();
+    ] = useHistory();
     const [repos_obj, { updateRepos, initRepo, renameNote, reorderFolder, reorderNote }] =
         useRepos();
 
@@ -194,7 +197,8 @@ export const GlobalProvider = ({ children }: { children: any }) => {
     useEffect(() => {
         if (data.current) {
             addDataPathToList(curDataPath);
-            initDxnote(data.current.dxnote);
+            initWhalenote(data.current.whalenote);
+            initHistory(data.current.history);
             initRepo(data.current.repos);
             initNotes(data.current.notes);
         }
@@ -212,10 +216,10 @@ export const GlobalProvider = ({ children }: { children: any }) => {
 
     const repoSwitch = useCallback(
         (repo_key: string | undefined) => {
-            repoNotesFetch(curDataPath, dxnote, repos_obj, repo_key);
+            repoNotesFetch(curDataPath, history, repos_obj, repo_key);
             switchRepo(curDataPath, repo_key);
         },
-        [curDataPath, dxnote, repos_obj]
+        [curDataPath, history, repos_obj]
     );
 
     const folderSwitch = useCallback(
@@ -329,9 +333,10 @@ export const GlobalProvider = ({ children }: { children: any }) => {
                 switchingData,
                 setSwitchingData,
                 dataPathList,
-                dxnote,
-                initDxnote,
-                updateDxnote,
+                whalenote,
+                history,
+                initWhalenote,
+                updateWhalenote,
                 reorderRepo,
                 repoSwitch,
                 folderSwitch,

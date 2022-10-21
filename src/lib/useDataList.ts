@@ -9,7 +9,7 @@ const useDataList = () => {
         for (const data_path of data_path_list) {
             if (
                 ipcRenderer.sendSync('folderExist', { folder_path: data_path }) &&
-                ipcRenderer.sendSync('fileExist', { file_path: data_path + '/dxnote_info.json' })
+                ipcRenderer.sendSync('fileExist', { file_path: data_path + '/whalenote_info.json' })
             ) {
                 new_data_path_list.push(data_path);
             }
@@ -55,7 +55,6 @@ const useDataList = () => {
     }, []);
 
     useEffect(() => {
-        console.log(dataPathList);
         window.localStorage.setItem('whalenote_data_path_list', JSON.stringify(dataPathList));
     }, [dataPathList]);
 

@@ -1,116 +1,104 @@
 const { ipcRenderer } = window.require('electron');
 import { useReducer, useMemo, useCallback } from 'react';
 import produce from 'immer';
-import { dxnoteTypes } from '../commonType';
+import { historyTypes } from '../commonType';
 
-const dxnoteReducer = produce((state: dxnoteTypes, action: any) => {
+const historyReducer = produce((state: historyTypes, action: any) => {
     switch (action.type) {
         case 'switch_repo': {
-            const dxnote_info = action.data_path
+            const history = action.data_path
                 ? ipcRenderer.sendSync('readJson', {
-                      file_path: `${action.data_path}/dxnote_info.json`,
+                      file_path: `${action.data_path}/history_info.json`,
                   })
                 : state;
-            dxnote_info.cur_repo_key = action.repo_key;
-            !dxnote_info.repos && (dxnote_info.repos = {});
-            !dxnote_info.repos[action.repo_key] &&
-                (dxnote_info.repos[action.repo_key] = {
+            history.cur_repo_key = action.repo_key;
+            !history.repos && (history.repos = {});
+            !history.repos[action.repo_key] &&
+                (history.repos[action.repo_key] = {
                     cur_folder_key: '',
                     folders: {},
                 });
 
             const result = action.data_path
                 ? ipcRenderer.sendSync('writeJson', {
-                      file_path: `${action.data_path}/dxnote_info.json`,
-                      obj: dxnote_info,
+                      file_path: `${action.data_path}/history_info.json`,
+                      obj: history,
                   })
                 : true;
 
             if (result) {
-                state = dxnote_info;
+                state = history;
             }
 
             return state;
         }
         case 'switch_folder': {
-            const dxnote_info = action.data_path
+            const history = action.data_path
                 ? ipcRenderer.sendSync('readJson', {
-                      file_path: `${action.data_path}/dxnote_info.json`,
+                      file_path: `${action.data_path}/history_info.json`,
                   })
                 : state;
 
-            const cur_repo_key = action.repo_key ? action.repo_key : dxnote_info.cur_repo_key;
-            !dxnote_info.repos && (dxnote_info.repos = {});
-            !dxnote_info.repos[cur_repo_key] &&
-                (dxnote_info.repos[cur_repo_key] = {
+            const cur_repo_key = action.repo_key ? action.repo_key : history.cur_repo_key;
+            !history.repos && (history.repos = {});
+            !history.repos[cur_repo_key] &&
+                (history.repos[cur_repo_key] = {
                     cur_folder_key: '',
                     folders: {},
                 });
-            dxnote_info.repos[cur_repo_key].cur_folder_key = action.folder_key;
+            history.repos[cur_repo_key].cur_folder_key = action.folder_key;
 
             const result = action.data_path
                 ? ipcRenderer.sendSync('writeJson', {
-                      file_path: `${action.data_path}/dxnote_info.json`,
-                      obj: dxnote_info,
+                      file_path: `${action.data_path}/history_info.json`,
+                      obj: history,
                   })
                 : true;
 
             if (result) {
-                state = dxnote_info;
+                state = history;
             }
 
             return state;
         }
         case 'switch_note': {
-            const dxnote_info = action.data_path
+            const history = action.data_path
                 ? ipcRenderer.sendSync('readJson', {
-                      file_path: `${action.data_path}/dxnote_info.json`,
+                      file_path: `${action.data_path}/history_info.json`,
                   })
                 : state;
 
-            const cur_repo_key = action.repo_key ? action.repo_key : dxnote_info.cur_repo_key;
-            !dxnote_info.repos && (dxnote_info.repos = {});
-            !dxnote_info.repos[cur_repo_key] &&
-                (dxnote_info.repos[cur_repo_key] = {
+            const cur_repo_key = action.repo_key ? action.repo_key : history.cur_repo_key;
+            !history.repos && (history.repos = {});
+            !history.repos[cur_repo_key] &&
+                (history.repos[cur_repo_key] = {
                     cur_folder_key: action.folder_key,
                     folders: {},
                 });
 
             const cur_folder_key = action.folder_key
                 ? action.folder_key
-                : dxnote_info.repos[cur_repo_key].cur_folder_key;
-            dxnote_info.repos[cur_repo_key].folders[cur_folder_key] = action.note_key;
+                : history.repos[cur_repo_key].cur_folder_key;
+            history.repos[cur_repo_key].folders[cur_folder_key] = action.note_key;
 
             const result = action.data_path
                 ? ipcRenderer.sendSync('writeJson', {
-                      file_path: `${action.data_path}/dxnote_info.json`,
-                      obj: dxnote_info,
+                      file_path: `${action.data_path}/history_info.json`,
+                      obj: history,
                   })
                 : true;
 
             if (result) {
-                state = dxnote_info;
+                state = history;
             }
 
             return state;
         }
-        case 'updateDxnote': {
-            const dxnote_info = ipcRenderer.sendSync('readJson', {
-                file_path: `${action.data_path}/dxnote_info.json`,
+        case 'update_history': {
+            const history = ipcRenderer.sendSync('readJson', {
+                file_path: `${action.data_path}/history_info.json`,
             });
-            state = dxnote_info;
-            return state;
-        }
-        case 'reorderRepo': {
-            state.repos_key = action.new_repos_key;
-            const repo_info = ipcRenderer.sendSync('readJson', {
-                file_path: `${action.data_path}/dxnote_info.json`,
-            });
-            repo_info.repos_key = action.new_repos_key;
-            ipcRenderer.sendSync('writeJson', {
-                file_path: `${action.data_path}/dxnote_info.json`,
-                obj: repo_info,
-            });
+            state = history;
             return state;
         }
         case 'init': {
@@ -120,10 +108,8 @@ const dxnoteReducer = produce((state: dxnoteTypes, action: any) => {
     }
 });
 
-export const useDxnote = () => {
-    const [state, dispatch] = useReducer(dxnoteReducer, {
-        id: '',
-        repos_key: [],
+export const useHistory = () => {
+    const [state, dispatch] = useReducer(historyReducer, {
         cur_repo_key: '',
         repos: {},
     });
@@ -158,17 +144,6 @@ export const useDxnote = () => {
         });
     }, []);
 
-    const updateDxnote = useCallback((data_path: string | null) => {
-        dispatch({
-            type: 'updateDxnote',
-            data_path: data_path,
-        });
-    }, []);
-
-    // const currentRepoKey = state.cur_repo_key;
-    // const currentFolderKey = state.repos[state.cur_repo_key]?.cur_folder_key;
-    // const currentNoteKey = state.repos[state.cur_repo_key]?.folders?.cur_folder_key;
-
     const currentRepoKey = useMemo(() => {
         const cur_repo_key = state.cur_repo_key;
         console.log('cur_repo_key: ' + cur_repo_key);
@@ -188,22 +163,15 @@ export const useDxnote = () => {
         return cur_note_key;
     }, [state]);
 
-    const reorderRepo = useCallback(
-        (data_path: string, repo_key: string, new_repos_key: string[]) => {
-            if (repo_key) {
-                dispatch({
-                    type: 'reorderRepo',
-                    data_path,
-                    repo_key,
-                    new_repos_key,
-                });
-            }
-        },
-        []
-    );
+    const updateHistory = useCallback((data_path: string | null) => {
+        dispatch({
+            type: 'update_history',
+            data_path: data_path,
+        });
+    }, []);
 
-    const initDxnote = useCallback((new_dxnote: any) => {
-        dispatch({ type: 'init', new_state: new_dxnote });
+    const initHistory = useCallback((new_whalenote: any) => {
+        dispatch({ type: 'init', new_state: new_whalenote });
     }, []);
 
     return [
@@ -212,12 +180,11 @@ export const useDxnote = () => {
             switchRepo,
             switchFolder,
             switchNote,
-            updateDxnote,
             currentRepoKey,
             currentFolderKey,
             currentNoteKey,
-            reorderRepo,
-            initDxnote,
+            updateHistory,
+            initHistory,
         },
     ] as const;
 };

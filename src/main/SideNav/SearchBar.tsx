@@ -128,13 +128,11 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
 
                 // arrow bottom 40
                 if (e.keyCode === 40 && showSearchPanel) {
-                    console.log('next');
                     nextSearchResult();
                 }
 
                 // arrow top 38
                 if (e.keyCode === 38 && showSearchPanel) {
-                    console.log('prev');
                     prevSearchResult();
                 }
             }

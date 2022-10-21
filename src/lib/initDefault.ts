@@ -30,9 +30,11 @@ const initDefault = () => {
                 },
             },
         },
-        dxnote: {
+        whalenote: {
             id: cryptoRandomString({ length: 36, type: 'alphanumeric' }),
             repos_key: [repo_id],
+        },
+        history: {
             cur_repo_key: repo_id,
             repos: {
                 [repo_id]: {

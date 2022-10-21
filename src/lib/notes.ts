@@ -4,8 +4,8 @@ export let notes = {};
 
 const saveTimerObj = new Map();
 
-export const allRepoNotesFetch = (data_path: string | null, dxnote: any, repos_obj: any) => {
-    dxnote.repos_key.forEach((repo_key: string) => {
+export const allRepoNotesFetch = (data_path: string | null, whalenote: any, repos_obj: any) => {
+    whalenote.repos_key.forEach((repo_key: string) => {
         if (repos_obj[repo_key]) {
             if (!notes[repo_key]) {
                 notes[repo_key] = {};
@@ -35,7 +35,7 @@ export const allRepoNotesFetch = (data_path: string | null, dxnote: any, repos_o
 
 export const repoNotesFetch = (
     data_path: string | null,
-    dxnote: any,
+    history: any,
     repos: any,
     repo_key: string | undefined
 ) => {
@@ -43,7 +43,7 @@ export const repoNotesFetch = (
         notes[repo_key] = {};
         const folders_key = repos[repo_key].folders_key;
         folders_key.forEach((folder_key: string, index: number) => {
-            if (index === 0 || folder_key === dxnote.repos[repo_key].cur_folder_key) {
+            if (index === 0 || folder_key === history.repos[repo_key].cur_folder_key) {
                 const folder_info = ipcRenderer.sendSync('readJson', {
                     file_path: `${data_path}/${repo_key}/${folder_key}/folder_info.json`,
                 });

@@ -14,7 +14,7 @@ const CenterArea: React.FC<{
     console.log('CenterArea render');
     const {
         dataPathChangeFlag,
-        dxnote,
+        whalenote,
         currentRepoKey,
         currentFolderKey,
         currentNoteKey,
@@ -26,7 +26,7 @@ const CenterArea: React.FC<{
         setKeySelect,
     } = useContext(GlobalContext);
 
-    const repos_key = dxnote.repos_key;
+    const repos_key = whalenote.repos_key;
     const folders_obj = repos_obj[currentRepoKey]?.folders_obj;
 
     const [editorWidth, setEditorWidth] = useState('100%');

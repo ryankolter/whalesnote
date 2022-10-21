@@ -21,7 +21,7 @@ const RepoPanel: React.FC<{
 }> = ({ repos_key, showAllRepo, setShowAllRepo, setAllowHiddenAllRepoViaEnter }) => {
     const {
         curDataPath,
-        updateDxnote,
+        updateWhalenote,
         reorderRepo,
         repoSwitch,
         folderSwitch,
@@ -147,18 +147,26 @@ const RepoPanel: React.FC<{
                 type: 'alphanumeric',
             });
 
-            const dxnote_info = ipcRenderer.sendSync('readJson', {
-                file_path: `${curDataPath}/dxnote_info.json`,
+            const whalenote_info = ipcRenderer.sendSync('readJson', {
+                file_path: `${curDataPath}/whalenote_info.json`,
             });
-            dxnote_info.repos_key.push(repo_key);
-            dxnote_info.cur_repo_key = repo_key;
-            dxnote_info.repos[repo_key] = {
+            const history_info = ipcRenderer.sendSync('readJson', {
+                file_path: `${curDataPath}/history_info.json`,
+            });
+            whalenote_info.repos_key.push(repo_key);
+            history_info.cur_repo_key = repo_key;
+            history_info.repos[repo_key] = {
                 cur_folder_key: default_folder_key,
                 folders: {},
             };
             ipcRenderer.sendSync('writeJson', {
-                file_path: `${curDataPath}/dxnote_info.json`,
-                obj: dxnote_info,
+                file_path: `${curDataPath}/whalenote_info.json`,
+                obj: whalenote_info,
+            });
+
+            ipcRenderer.sendSync('writeJson', {
+                file_path: `${curDataPath}/whalenote_info.json`,
+                obj: whalenote_info,
             });
 
             const repo_info = {
@@ -186,7 +194,7 @@ const RepoPanel: React.FC<{
                 obj: folder_info,
             });
 
-            updateDxnote(curDataPath);
+            updateWhalenote(curDataPath);
             updateRepos('repo', { data_path: curDataPath, repo_key });
             updateRepos('folder', {
                 data_path: curDataPath,
@@ -203,7 +211,7 @@ const RepoPanel: React.FC<{
             setNewRepoKey('');
             setNewRepoName('');
             repoSwitchInPanel(repo_key);
-            setRepoScrollPage(Math.ceil(dxnote_info.repos_key.length / 9) - 1);
+            setRepoScrollPage(Math.ceil(whalenote_info.repos_key.length / 9) - 1);
             folderSwitch(repo_key, default_folder_key);
             noteSwitch(default_note_key);
             setAllowHiddenAllRepoViaEnter(true);
@@ -226,7 +234,7 @@ const RepoPanel: React.FC<{
             scrollToRight,
             setAllowHiddenAllRepoViaEnter,
             setFocus,
-            updateDxnote,
+            updateWhalenote,
             updateRepos,
         ]
     );
@@ -323,20 +331,20 @@ const RepoPanel: React.FC<{
                 obj: trash,
             });
 
-            const dxnote_info = ipcRenderer.sendSync('readJson', {
-                file_path: `${curDataPath}/dxnote_info.json`,
+            const whalenote_info = ipcRenderer.sendSync('readJson', {
+                file_path: `${curDataPath}/whalenote_info.json`,
             });
 
             const new_repos_key: string[] = [];
             let other_repo_key = undefined;
 
-            dxnote_info.repos_key.forEach((key: string, index: number) => {
+            whalenote_info.repos_key.forEach((key: string, index: number) => {
                 if (key === currentRepoKey) {
-                    if (dxnote_info.repos_key.length > 1) {
-                        if (index === dxnote_info.repos_key.length - 1) {
-                            other_repo_key = dxnote_info.repos_key[index - 1];
+                    if (whalenote_info.repos_key.length > 1) {
+                        if (index === whalenote_info.repos_key.length - 1) {
+                            other_repo_key = whalenote_info.repos_key[index - 1];
                         } else {
-                            other_repo_key = dxnote_info.repos_key[index + 1];
+                            other_repo_key = whalenote_info.repos_key[index + 1];
                         }
                     }
                 } else {
@@ -344,14 +352,14 @@ const RepoPanel: React.FC<{
                 }
             });
 
-            dxnote_info.repos_key = new_repos_key;
-            if (dxnote_info.repos[currentRepoKey]) {
-                delete dxnote_info.repos[currentRepoKey];
+            whalenote_info.repos_key = new_repos_key;
+            if (whalenote_info.repos[currentRepoKey]) {
+                delete whalenote_info.repos[currentRepoKey];
             }
 
             ipcRenderer.sendSync('writeJson', {
-                file_path: `${curDataPath}/dxnote_info.json`,
-                obj: dxnote_info,
+                file_path: `${curDataPath}/whalenote_info.json`,
+                obj: whalenote_info,
             });
 
             ipcRenderer.sendSync('remove', {
@@ -362,7 +370,7 @@ const RepoPanel: React.FC<{
             if (other_repo_key) {
                 repoSwitchInPanel(other_repo_key);
             }
-            setRepoScrollPage(Math.ceil(dxnote_info.repos_key.length / 9) - 1);
+            setRepoScrollPage(Math.ceil(whalenote_info.repos_key.length / 9) - 1);
             setDeletePopUp(false);
             setAllowHiddenAllRepoViaEnter(true);
         }
