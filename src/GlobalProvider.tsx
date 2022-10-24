@@ -29,6 +29,7 @@ const initContext: {
     switchingData: boolean;
     setSwitchingData: (switchingData: boolean) => void;
     dataPathList: string[];
+    removeDataPathFromList: (data_path: string) => void;
     whalenote: any;
     history: any;
     initWhalenote: (new_whalenote: any) => void;
@@ -115,6 +116,7 @@ const initContext: {
     switchingData: false,
     setSwitchingData: () => {},
     dataPathList: [],
+    removeDataPathFromList: () => {},
     whalenote: null,
     history: null,
     initWhalenote: () => {},
@@ -187,12 +189,6 @@ export const GlobalProvider = ({ children }: { children: any }) => {
     ] = useHistory();
     const [repos_obj, { updateRepos, initRepo, renameNote, reorderFolder, reorderNote }] =
         useRepos();
-
-    useMemo(() => {
-        ipcRenderer.on('checkoutDataPath', (event: any, path: string) => {
-            setCurDataPath(path);
-        });
-    }, [setCurDataPath]);
 
     useEffect(() => {
         if (data.current) {
@@ -333,6 +329,7 @@ export const GlobalProvider = ({ children }: { children: any }) => {
                 switchingData,
                 setSwitchingData,
                 dataPathList,
+                removeDataPathFromList,
                 whalenote,
                 history,
                 initWhalenote,

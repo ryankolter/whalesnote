@@ -15,7 +15,8 @@ const SideNav: React.FC<SideNavProps> = ({}) => {
 
     const resizeFolderOffsetX = useRef<number>(0);
     const resizeNoteOffsetX = useRef<number>(0);
-
+    const lastFolderPageX = useRef<number>(0);
+    const lastNotePageX = useRef<number>(0);
     const [folderWidth, setFolderWidth] = useState(
         Number(window.localStorage.getItem('folder_width')) || 186
     );
@@ -92,6 +93,8 @@ const SideNav: React.FC<SideNavProps> = ({}) => {
                             resizeFolderOffsetX.current = e.pageX - folderWidth;
                         }}
                         onDrag={(e) => {
+                            if (Math.abs(e.pageX - lastFolderPageX.current) < 5) return;
+                            lastFolderPageX.current = e.pageX;
                             if (e.pageX > 0) {
                                 const newFolderWidth = e.pageX - resizeFolderOffsetX.current;
                                 if (newFolderWidth >= 60 && newFolderWidth <= 400) {
@@ -111,6 +114,8 @@ const SideNav: React.FC<SideNavProps> = ({}) => {
                             resizeNoteOffsetX.current = e.pageX - noteWidth;
                         }}
                         onDrag={(e) => {
+                            if (Math.abs(e.pageX - lastNotePageX.current) < 5) return;
+                            lastNotePageX.current = e.pageX;
                             if (e.pageX > 0) {
                                 const newNoteWidth = e.pageX - resizeNoteOffsetX.current;
                                 if (newNoteWidth > 100 && newNoteWidth <= 600) {

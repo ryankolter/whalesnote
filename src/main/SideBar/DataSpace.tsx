@@ -1,13 +1,20 @@
 const { ipcRenderer } = window.require('electron');
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 import WaitingMaskStatic from '../../components/WaitingMaskStatic';
 
 const DataSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssistantPanel }) => {
-    const { curDataPath, setCurDataPath, switchingData, setSwitchingData, dataPathList } =
-        useContext(GlobalContext);
+    const {
+        curDataPath,
+        setCurDataPath,
+        switchingData,
+        setSwitchingData,
+        dataPathList,
+        removeDataPathFromList,
+    } = useContext(GlobalContext);
     const [showPathUl, setShowPathUl] = useState(false);
+    const pathUlRef = useRef<HTMLDivElement>(null);
 
     const addDataPath = useCallback(() => {
         ipcRenderer.send('open-directory-dialog', {
@@ -18,6 +25,38 @@ const DataSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssista
     const openDataPath = useCallback((data_path: string) => {
         ipcRenderer.send('open-parent-folder', { folder_path: data_path });
     }, []);
+
+    useEffect(() => {
+        ipcRenderer.on('checkoutDataPath', (event: any, path: string) => {
+            setSwitchingData(true);
+            setShowPathUl(false);
+            setTimeout(() => {
+                setCurDataPath(path);
+            }, 50);
+        });
+        return () => {
+            ipcRenderer.removeAllListeners('checkoutDataPath');
+        };
+    }, [setSwitchingData, setCurDataPath]);
+
+    const handleClick = useCallback(
+        (event: MouseEvent) => {
+            event.preventDefault();
+            if (pathUlRef && pathUlRef.current?.contains(event.target as Node)) {
+                setShowPathUl((showPathUl) => !showPathUl);
+            } else {
+                setShowPathUl(false);
+            }
+        },
+        [setShowPathUl]
+    );
+
+    useEffect(() => {
+        document.addEventListener('click', handleClick);
+        return () => {
+            document.removeEventListener('click', handleClick);
+        };
+    }, [handleClick]);
 
     return (
         <DataSpaceContainer>
@@ -33,21 +72,17 @@ const DataSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssista
             <ChildPart>
                 <PartTitle className={'child-border-color'}>数据空间</PartTitle>
                 <ShowPath>
-                    <PathContainer>
+                    <PathContainer ref={pathUlRef}>
                         <Path>
-                            <CurrentPath
-                                className="menu-select-color"
-                                onClick={() => setShowPathUl((showPathUl) => !showPathUl)}
-                            >
+                            <CurrentPath className="menu-select-color">
                                 <PathValue>
+                                    <UnicodeSpan>{curDataPath}</UnicodeSpan>
                                     {curDataPath.indexOf('/whale_note/noteData') !== -1
-                                        ? '默认 - '
+                                        ? ' - 默认'
                                         : ''}
-                                    {curDataPath}
                                 </PathValue>
                                 <Triangle></Triangle>
                             </CurrentPath>
-
                             {showPathUl ? (
                                 <PathUl className="menu-select-color">
                                     {dataPathList.map((dataPath: string, index: number) => {
@@ -63,10 +98,19 @@ const DataSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssista
                                                         }, 200);
                                                     }}
                                                 >
+                                                    <UnicodeSpan>{dataPath}</UnicodeSpan>
                                                     {dataPath.indexOf('/whale_note/noteData') !== -1
-                                                        ? '默认 - '
+                                                        ? ' - 默认'
                                                         : ''}
-                                                    {dataPath}
+                                                    <RemovePathBtn
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            e.stopPropagation();
+                                                            removeDataPathFromList(dataPath);
+                                                        }}
+                                                    >
+                                                        x
+                                                    </RemovePathBtn>
                                                 </PathLi>
                                             );
                                         }
@@ -163,16 +207,22 @@ const CurrentPath = styled.div({
     justifyContent: 'space-between',
     height: '40px',
     lineHeight: '40px',
-    padding: '0 15px 0 10px',
+    padding: '0 8px 0 10px',
     boxSizing: 'border-box',
 });
 
 const PathValue = styled.div({
     wordBreak: 'break-all',
+    direction: 'rtl',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
     cursor: 'pointer',
+});
+
+const UnicodeSpan = styled.span({
+    direction: 'ltr',
+    unicodeBidi: 'bidi-override',
 });
 
 const Triangle = styled.div({
@@ -194,15 +244,26 @@ const PathUl = styled.div({
 });
 
 const PathLi = styled.div({
+    position: 'relative',
     width: '100%',
     height: '40px',
     lineHeight: '40px',
-    padding: '0 10px',
+    padding: '0 30px 0 5px',
     boxSizing: 'border-box',
     wordBreak: 'break-all',
+    direction: 'rtl',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
+    cursor: 'pointer',
+});
+
+const RemovePathBtn = styled.div({
+    position: 'absolute',
+    top: '0',
+    right: '12px',
+    padding: '0 10px',
+    margin: '0 -10px',
     cursor: 'pointer',
 });
 
