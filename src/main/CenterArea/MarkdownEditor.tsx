@@ -2,15 +2,7 @@ import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 
-import { basicSetup } from 'codemirror';
-import { EditorState, StateEffect } from '@codemirror/state';
-import { EditorView, keymap, ViewUpdate } from '@codemirror/view';
-import { indentWithTab } from '@codemirror/commands';
-import { oneDark } from '@codemirror/theme-one-dark';
-import { indentUnit } from '@codemirror/language';
-import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
-import { languages } from '@codemirror/language-data';
-import { Completion, autocompletion } from '@codemirror/autocomplete';
+import { EditorView, ViewUpdate } from '@codemirror/view';
 
 import useCodeMirror from '../../lib/useCodeMirror';
 
