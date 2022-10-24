@@ -183,7 +183,6 @@ export const GlobalProvider = ({ children }: { children: any }) => {
             currentRepoKey,
             currentFolderKey,
             currentNoteKey,
-            updateHistory,
             initHistory,
         },
     ] = useHistory();
@@ -259,7 +258,7 @@ export const GlobalProvider = ({ children }: { children: any }) => {
                       currentNoteKey
                   ].title
                 : '新建文档',
-        [currentRepoKey, currentFolderKey, currentNoteKey, repos_obj]
+        [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, repos_obj]
     );
 
     const currentContent = useMemo(
@@ -272,7 +271,7 @@ export const GlobalProvider = ({ children }: { children: any }) => {
             notes[currentRepoKey][currentFolderKey][currentNoteKey]
                 ? notes[currentRepoKey][currentFolderKey][currentNoteKey]
                 : '',
-        [currentRepoKey, currentFolderKey, currentNoteKey]
+        [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey]
     );
 
     useEffect(() => {
@@ -289,7 +288,7 @@ export const GlobalProvider = ({ children }: { children: any }) => {
             cursorHeads[currentRepoKey][currentFolderKey][currentNoteKey]
                 ? cursorHeads[currentRepoKey][currentFolderKey][currentNoteKey]
                 : -1,
-        [currentRepoKey, currentFolderKey, currentNoteKey, cursorHeads]
+        [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, cursorHeads]
     );
 
     const fromPos = useMemo(
@@ -302,7 +301,7 @@ export const GlobalProvider = ({ children }: { children: any }) => {
             fromPoses[currentRepoKey][currentFolderKey][currentNoteKey]
                 ? fromPoses[currentRepoKey][currentFolderKey][currentNoteKey]
                 : 0,
-        [currentRepoKey, currentFolderKey, currentNoteKey, fromPoses]
+        [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, fromPoses]
     );
 
     const renderTop = useMemo(
@@ -315,7 +314,7 @@ export const GlobalProvider = ({ children }: { children: any }) => {
             renderTops[currentRepoKey][currentFolderKey][currentNoteKey]
                 ? renderTops[currentRepoKey][currentFolderKey][currentNoteKey]
                 : 0,
-        [currentRepoKey, currentFolderKey, currentNoteKey, renderTops]
+        [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, renderTops]
     );
 
     return (

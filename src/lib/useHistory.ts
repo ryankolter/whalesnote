@@ -94,13 +94,6 @@ const historyReducer = produce((state: historyTypes, action: any) => {
 
             return state;
         }
-        case 'update_history': {
-            const history = ipcRenderer.sendSync('readJson', {
-                file_path: `${action.data_path}/history_info.json`,
-            });
-            state = history;
-            return state;
-        }
         case 'init': {
             state = action.new_state;
             return state;
@@ -163,13 +156,6 @@ export const useHistory = () => {
         return cur_note_key;
     }, [state]);
 
-    const updateHistory = useCallback((data_path: string | null) => {
-        dispatch({
-            type: 'update_history',
-            data_path: data_path,
-        });
-    }, []);
-
     const initHistory = useCallback((new_history: any) => {
         dispatch({ type: 'init', new_state: new_history });
     }, []);
@@ -183,7 +169,6 @@ export const useHistory = () => {
             currentRepoKey,
             currentFolderKey,
             currentNoteKey,
-            updateHistory,
             initHistory,
         },
     ] as const;

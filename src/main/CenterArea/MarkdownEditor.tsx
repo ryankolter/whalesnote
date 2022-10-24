@@ -12,6 +12,8 @@ import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
 import { languages } from '@codemirror/language-data';
 import { Completion, autocompletion } from '@codemirror/autocomplete';
 
+import useCodeMirror from '../../lib/useCodeMirror';
+
 export const MarkdownEditor: React.FC<{
     theme: string;
     cursorInRender: boolean;
@@ -37,48 +39,31 @@ export const MarkdownEditor: React.FC<{
         setKeySelect,
     } = useContext(GlobalContext);
 
-    const editor = useRef<HTMLDivElement>(null);
-    const view = useRef<EditorView>();
-
     const [showEditorScrollPos, setShowEditorScrollPos] = useState(false);
     const [cursorInEditor, setCursorInEditor] = useState(false);
 
     const autoScroll = useRef<boolean>(false);
     const scrollSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
     const scrollRatioSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
-    const noteSwitchRef = useRef<boolean>(false);
     const editorContainerRef = useRef<HTMLDivElement>(null);
 
-    const docChangeHandler = useCallback(
+    const onDocChange = useCallback(
         (new_value: string, viewUpdate: any) => {
-            if (!noteSwitchRef.current) {
-                updateNote(
-                    curDataPath,
-                    currentRepoKey,
-                    currentFolderKey,
-                    currentNoteKey,
-                    new_value
-                );
-                const doc = view.current?.state.doc;
-                if (doc) {
-                    const first_line_content = doc.lineAt(0).text.replace(/^[#\-\_*>\s]+/g, '');
-                    const new_name: string = first_line_content || '新建文档';
-                    renameNote(
-                        curDataPath,
-                        currentRepoKey,
-                        currentFolderKey,
-                        currentNoteKey,
-                        new_name
-                    );
-                }
+            updateNote(curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, new_value);
+            const doc = view.current?.state.doc;
+            if (doc) {
+                const first_line_content = doc.lineAt(0).text.replace(/^[#\-\_*>\s]+/g, '');
+                const new_name: string = first_line_content || '新建文档';
+                renameNote(curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, new_name);
             }
         },
         [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, renameNote, updateNote]
     );
 
-    const selectionSetHandler = useCallback(
+    const onSelectionSet = useCallback(
         (vu: ViewUpdate) => {
             if (view.current) {
+                setKeySelect(false);
                 const cursorHead = view.current.state.selection.main.head;
                 updateCursorHead(currentRepoKey, currentFolderKey, currentNoteKey, cursorHead);
             }
@@ -86,8 +71,44 @@ export const MarkdownEditor: React.FC<{
         [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey]
     );
 
+    const [editor, view] = useCodeMirror<HTMLDivElement>({
+        value: currentContent,
+        onDocChange,
+        onSelectionSet,
+    });
+
+    useEffect(() => {
+        console.log('focus');
+        if (focus === '') return;
+        view.current?.focus();
+    }, [focus]);
+
+    useEffect(() => {
+        console.log('blur');
+        if (blur === '') return;
+        view.current?.contentDOM.blur();
+    }, [blur]);
+
+    useEffect(() => {
+        autoScroll.current = true;
+        fromPos && fromPos > 10 ? setShowEditorScrollPos(true) : setShowEditorScrollPos(false);
+    }, [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey]);
+
+    useEffect(() => {
+        if (view.current) {
+            const offsetHeight = view.current.contentDOM.getBoundingClientRect().height;
+            const scrollTop = offsetHeight * renderScrollRatio;
+            const scrollPos = view.current.lineBlockAtHeight(scrollTop).from;
+
+            view.current?.dispatch({
+                effects: EditorView.scrollIntoView(scrollPos, {
+                    y: 'start',
+                }),
+            });
+        }
+    }, [renderScrollRatio]);
+
     const autoScrollToLine = useCallback(() => {
-        console.log('editor autoScrollToLine');
         if (view.current) {
             const max_height = view.current.contentDOM.getBoundingClientRect().height;
             const start_line = fromPos <= max_height && fromPos > 0 ? fromPos : max_height;
@@ -108,197 +129,6 @@ export const MarkdownEditor: React.FC<{
 
         setShowEditorScrollPos(false);
     }, [cursorHead, fromPos]);
-
-    const defaultThemeOption = EditorView.theme({
-        '&': {
-            height: '100%',
-        },
-    });
-
-    const updateListener = EditorView.updateListener.of((vu: ViewUpdate) => {
-        if (vu.docChanged && typeof docChangeHandler === 'function') {
-            console.log('docChanged');
-            const doc = vu.state.doc;
-            const value = doc.toString();
-            docChangeHandler(value, vu);
-        }
-    });
-
-    const cursorActiveListener = EditorView.updateListener.of((vu: ViewUpdate) => {
-        if (vu.selectionSet && typeof selectionSetHandler === 'function') {
-            console.log('selectionSet');
-            setKeySelect(false);
-            selectionSetHandler(vu);
-        }
-    });
-
-    const myCompletions = useCallback((CompletionContext: any) => {
-        const word = CompletionContext.matchBefore(/\s*```[a-z]*/);
-        const assistant_word = CompletionContext.matchBefore(/```[a-z]*/);
-
-        if (!word || (word.from == word.to && !CompletionContext.explicit)) return null;
-
-        const space_count = word.to - word.from - (assistant_word.to - assistant_word.from);
-
-        const langs = [
-            '',
-            'bash',
-            'cpp',
-            'css',
-            'go',
-            'html',
-            'java',
-            'js',
-            'php',
-            'py',
-            'ruby',
-            'sql',
-            'swift',
-        ];
-        const options = [];
-        const newPosAfterCompletion = assistant_word.to + space_count + 1;
-
-        for (const lang of langs) {
-            let label = '```' + lang + '\n';
-            for (let i = 0; i < space_count; ++i) {
-                label += ' ';
-            }
-            label += '\n';
-            for (let i = 0; i < space_count; ++i) {
-                label += ' ';
-            }
-            label += '```';
-            label += '\n';
-            for (let i = 0; i < space_count; ++i) {
-                label += ' ';
-            }
-            options.push({
-                label,
-                apply: (view: EditorView, completion: Completion, from: number, to: number) => {
-                    view.dispatch({
-                        changes: {
-                            from: word.from + space_count,
-                            to: word.to,
-                            insert: label,
-                        },
-                    });
-                    view.dispatch({
-                        selection: {
-                            anchor: newPosAfterCompletion,
-                            head: newPosAfterCompletion,
-                        },
-                    });
-                },
-            });
-        }
-
-        return {
-            from: word.from + space_count,
-            to: word.to,
-            options,
-        };
-    }, []);
-
-    const getExtensions = [
-        basicSetup,
-        updateListener,
-        defaultThemeOption,
-        keymap.of([indentWithTab]),
-        EditorView.lineWrapping,
-        markdown({ base: markdownLanguage, addKeymap: false, codeLanguages: languages }),
-        indentUnit.of('    '),
-        autocompletion({
-            activateOnTyping: true,
-            aboveCursor: true,
-            override: [myCompletions],
-        }),
-    ];
-
-    getExtensions.push(oneDark);
-
-    useEffect(() => {
-        if (editor.current) {
-            const defaultState = EditorState.create({
-                doc: currentContent,
-                extensions: [...getExtensions, cursorActiveListener],
-            });
-            view.current = new EditorView({
-                state: defaultState,
-                parent: editor.current,
-            });
-        }
-
-        return () => {
-            view.current?.destroy();
-            view.current = undefined;
-        };
-    }, []);
-
-    useEffect(() => {
-        view.current?.dispatch({
-            effects: StateEffect.reconfigure.of([...getExtensions, cursorActiveListener]),
-        });
-    }, [selectionSetHandler]);
-
-    useEffect(() => {
-        autoScroll.current = true;
-        noteSwitchRef.current = true;
-        setTimeout(() => {
-            noteSwitchRef.current = false;
-        }, 500);
-
-        const newState = EditorState.create({
-            doc: currentContent,
-            extensions: [...getExtensions, EditorView.editable.of(false)],
-        });
-        view.current?.setState(newState);
-
-        setTimeout(() => {
-            view.current?.dispatch({
-                effects: EditorView.scrollIntoView(0, {
-                    y: 'start',
-                }),
-            });
-        }, 0);
-
-        setTimeout(() => {
-            view.current?.dispatch({
-                effects: StateEffect.reconfigure.of([
-                    ...getExtensions,
-                    EditorView.editable.of(true),
-                    cursorActiveListener,
-                ]),
-            });
-        }, 250);
-
-        fromPos && fromPos > 10 ? setShowEditorScrollPos(true) : setShowEditorScrollPos(false);
-    }, [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey]);
-
-    useEffect(() => {
-        console.log('focus');
-        if (focus === '') return;
-        view.current?.focus();
-    }, [focus]);
-
-    useEffect(() => {
-        console.log('blur');
-        if (blur === '') return;
-        view.current?.contentDOM.blur();
-    }, [blur]);
-
-    useEffect(() => {
-        if (view.current) {
-            const offsetHeight = view.current.contentDOM.getBoundingClientRect().height;
-            const scrollTop = offsetHeight * renderScrollRatio;
-            const scrollPos = view.current.lineBlockAtHeight(scrollTop).from;
-
-            view.current?.dispatch({
-                effects: EditorView.scrollIntoView(scrollPos, {
-                    y: 'start',
-                }),
-            });
-        }
-    }, [renderScrollRatio]);
 
     const handleKeyDown = useCallback(
         (e: any) => {
