@@ -129,13 +129,13 @@ const DataSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssista
                     </OpenDataPath>
                 </ShowPath>
             </ChildPart>
-            <ChildPart>
+            {/* <ChildPart>
                 <PartTitle className={'child-border-color'}>操作</PartTitle>
                 <OperationList>
                     <OperationBtn style={{ marginBottom: '15px' }}>一键备份</OperationBtn>
                     <OperationBtn style={{ marginBottom: '15px' }}>加密备份</OperationBtn>
                 </OperationList>
-            </ChildPart>
+            </ChildPart> */}
             <ChildPart>
                 <PartTitle className={'child-border-color'}>同步</PartTitle>
             </ChildPart>
