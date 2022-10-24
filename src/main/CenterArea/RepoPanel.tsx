@@ -424,9 +424,15 @@ const RepoPanel: React.FC<{
 
     const handleKeyDown = useCallback(
         (e: any) => {
-            if (process.platform === 'darwin') {
+            if (
+                process.platform === 'darwin' ||
+                process.platform === 'win32' ||
+                process.platform === 'linux'
+            ) {
+                const modKey = process.platform === 'darwin' ? e.metaKey : e.ctrlKey;
+
                 // normal number 1-9
-                if (e.keyCode >= 49 && e.keyCode <= 57 && !e.metaKey && numArray.length === 0) {
+                if (e.keyCode >= 49 && e.keyCode <= 57 && !modKey && numArray.length === 0) {
                     const num = parseInt(e.keyCode) - 48;
                     const index = num + 9 * repoScrollPage - 1;
                     if (repos_key && index < repos_key.length) {
@@ -436,7 +442,7 @@ const RepoPanel: React.FC<{
                 }
 
                 // extra number 1-9
-                if (e.keyCode >= 97 && e.keyCode <= 105 && !e.metaKey && numArray.length === 0) {
+                if (e.keyCode >= 97 && e.keyCode <= 105 && !modKey && numArray.length === 0) {
                     const num = parseInt(e.keyCode) - 96;
                     const index = num + 9 * repoScrollPage - 1;
                     if (repos_key && index < repos_key.length) {
@@ -446,43 +452,12 @@ const RepoPanel: React.FC<{
                 }
 
                 // arrow right 39 change to L 76
-                if ((e.keyCode === 39 || e.keyCode === 76) && !e.metaKey) {
+                if ((e.keyCode === 39 || e.keyCode === 76) && !modKey) {
                     nextRepoPage();
                 }
 
                 // arrow left 37 change to J 74
-                if ((e.keyCode === 37 || e.keyCode === 74) && !e.metaKey) {
-                    preRepoPage();
-                }
-            }
-            if (process.platform === 'win32' || process.platform === 'linux') {
-                // normal number 1-9
-                if (e.keyCode >= 49 && e.keyCode <= 57 && !e.ctrlKey && numArray.length === 0) {
-                    const num = parseInt(e.keyCode) - 48;
-                    const index = num + 9 * repoScrollPage - 1;
-                    if (repos_key && index < repos_key.length) {
-                        repoSwitchInPanel(repos_key[index]);
-                        setKeySelect(true);
-                    }
-                }
-
-                // extra number 1-9
-                if (e.keyCode >= 97 && e.keyCode <= 105 && !e.ctrlKey && numArray.length === 0) {
-                    const num = parseInt(e.keyCode) - 96;
-                    const index = num + 9 * repoScrollPage - 1;
-                    if (repos_key && index < repos_key.length) {
-                        repoSwitchInPanel(repos_key[index]);
-                        setKeySelect(true);
-                    }
-                }
-
-                // arrow right 39 change to L 76
-                if ((e.keyCode === 39 || e.keyCode === 76) && !e.ctrlKey) {
-                    nextRepoPage();
-                }
-
-                // arrow left 37 change to J 74
-                if ((e.keyCode === 37 || e.keyCode === 74) && !e.ctrlKey) {
+                if ((e.keyCode === 37 || e.keyCode === 74) && !modKey) {
                     preRepoPage();
                 }
             }

@@ -10,15 +10,8 @@ import WaitingMaskStatic from '../../components/WaitingMaskStatic';
 import searchIcon from '../../resources/icon/searchIcon.svg';
 
 const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
-    const {
-        repoSwitch,
-        folderSwitch,
-        noteSwitch,
-        currentNoteKey,
-        repos_obj,
-        keySelect,
-        setKeySelect,
-    } = useContext(GlobalContext);
+    const { repoSwitch, folderSwitch, noteSwitch, currentNoteKey, keySelect, setKeySelect } =
+        useContext(GlobalContext);
 
     const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -27,6 +20,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
     const [curResultIndex, setCurResultIndex] = useState(-1);
     const [showResultHighlight, setShowResultHighlight] = useState(false);
     const [showSearchPanel, setShowSearchPanel] = useState(false);
+
     const [showUpdateIndexTips, showWaitingMask, updateMiniSearch, searchNote] = useSearch();
 
     const handleSearchInputChange = useCallback(

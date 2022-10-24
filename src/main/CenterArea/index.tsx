@@ -69,9 +69,15 @@ const CenterArea: React.FC<{
 
     const handleKeyDown = useCallback(
         (e: any) => {
-            if (process.platform === 'darwin') {
+            if (
+                process.platform === 'darwin' ||
+                process.platform === 'win32' ||
+                process.platform === 'linux'
+            ) {
+                const modKey = process.platform === 'darwin' ? e.metaKey : e.ctrlKey;
+
                 // normal number 0 and extra number 0
-                if ((e.keyCode === 48 || e.keyCode === 96) && e.metaKey) {
+                if ((e.keyCode === 48 || e.keyCode === 96) && modKey) {
                     if (keySelect) {
                         setKeySelect(false);
                         setNumArray([]);
@@ -98,7 +104,7 @@ const CenterArea: React.FC<{
                     }
                 }
 
-                if (e.keyCode === 90 && !e.metaKey && keySelect) {
+                if (e.keyCode === 90 && !modKey && keySelect) {
                     setShowAllRepo((_showAllRepo) => !_showAllRepo);
                 }
 
@@ -136,79 +142,7 @@ const CenterArea: React.FC<{
                 }
 
                 //switch among hidden, half, all
-                if ((e.keyCode === 191 || e.keyCode === 47) && e.metaKey) {
-                    if (renderPanelState === 'hidden') {
-                        setRenderPanelState('half');
-                    } else if (renderPanelState === 'half') {
-                        setRenderPanelState('all');
-                    } else if (renderPanelState === 'all') {
-                        setRenderPanelState('hidden');
-                    }
-                }
-            }
-            if (process.platform === 'win32' || process.platform === 'linux') {
-                // normal number 0 and extra number 0
-                if ((e.keyCode === 48 || e.keyCode === 96) && e.ctrlKey) {
-                    if (keySelect) {
-                        setKeySelect(false);
-                        setNumArray([]);
-                        if (currentNoteKey) {
-                            setTimeout(() => {
-                                setFocus(
-                                    cryptoRandomString({
-                                        length: 24,
-                                        type: 'alphanumeric',
-                                    })
-                                );
-                            }, 0);
-                        }
-                    } else {
-                        setKeySelect(true);
-                        setNumArray([]);
-                        setBlur(
-                            cryptoRandomString({
-                                length: 24,
-                                type: 'alphanumeric',
-                            })
-                        );
-                    }
-                }
-
-                if (e.keyCode === 90 && !e.ctrlKey && keySelect) {
-                    setShowAllRepo((_showAllRepo) => !_showAllRepo);
-                }
-
-                //nromal enter and extra enter
-                if ((e.keyCode === 13 || e.keyCode === 108) && keySelect) {
-                    setKeySelect(false);
-                    setNumArray([]);
-                    if (currentNoteKey) {
-                        setTimeout(() => {
-                            setFocus(
-                                cryptoRandomString({
-                                    length: 24,
-                                    type: 'alphanumeric',
-                                })
-                            );
-                        }, 0);
-                    }
-                }
-
-                if (e.keyCode === 13 || e.keyCode === 108) {
-                    setShowAllRepo(false);
-                }
-
-                // esc
-                if (e.keyCode === 27) {
-                    if (keySelect) {
-                        setKeySelect(false);
-                        setNumArray([]);
-                    }
-                    setShowAllRepo(false);
-                }
-
-                //switch among hidden, half, all
-                if ((e.keyCode === 191 || e.keyCode === 47) && e.ctrlKey) {
+                if ((e.keyCode === 191 || e.keyCode === 47) && modKey) {
                     if (renderPanelState === 'hidden') {
                         setRenderPanelState('half');
                     } else if (renderPanelState === 'half') {

@@ -388,33 +388,24 @@ const FolderList: React.FC<{
     // part5 : key event
     const handleKeyDown = useCallback(
         (e: any) => {
-            if (process.platform === 'darwin') {
-                if (e.keyCode === 78 && e.metaKey && e.shiftKey) {
+            if (
+                process.platform === 'darwin' ||
+                process.platform === 'win32' ||
+                process.platform === 'linux'
+            ) {
+                const modKey = process.platform === 'darwin' ? e.metaKey : e.ctrlKey;
+
+                if (e.keyCode === 78 && modKey && e.shiftKey) {
                     newFolder();
                 }
 
                 // arrow bottom 40 or K 75
-                if ((e.keyCode === 40 || e.keyCode === 75) && e.metaKey && keySelect) {
+                if ((e.keyCode === 40 || e.keyCode === 75) && modKey && keySelect) {
                     nextFolderPage();
                 }
 
                 // arrow top 38 or I 73
-                if ((e.keyCode === 38 || e.keyCode === 73) && e.metaKey && keySelect) {
-                    preFolderPage();
-                }
-            }
-            if (process.platform === 'win32' || process.platform === 'linux') {
-                if (e.keyCode === 78 && e.ctrlKey && e.shiftKey) {
-                    newFolder();
-                }
-
-                // arrow bottom 40 or K 75
-                if ((e.keyCode === 40 || e.keyCode === 75) && e.ctrlKey && keySelect) {
-                    nextFolderPage();
-                }
-
-                // arrow top 38 or I 73
-                if ((e.keyCode === 38 || e.keyCode === 73) && e.ctrlKey && keySelect) {
+                if ((e.keyCode === 38 || e.keyCode === 73) && modKey && keySelect) {
                     preFolderPage();
                 }
             }
