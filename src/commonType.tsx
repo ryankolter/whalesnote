@@ -1,18 +1,3 @@
-export type Data = {
-    repos: object;
-    notes: notesTypes;
-    whalenote: whalenoteTypes;
-    history: historyTypes;
-};
-
-export type notesTypes = {
-    [key: string]: {
-        [key: string]: {
-            [key: string]: string;
-        };
-    };
-};
-
 export type whalenoteTypes = {
     id: string;
     repos_key: string[];
@@ -34,21 +19,39 @@ export type historyTypes = {
         | {};
 };
 
-export type Repo = {
-    order: number;
-    id: string;
-    title: string;
-    show: boolean;
-    folders: object | undefined;
+export type reposObjTypes = {
+    [repo_key: string]: {
+        repo_name: string;
+        folders_key: string[];
+        folders_obj:
+            | {
+                  [folder_key: string]: {
+                      folder_name: string;
+                      notes_key: string[];
+                      notes_obj:
+                          | {
+                                [note_key: string]: {
+                                    title: string;
+                                };
+                            }
+                          | {};
+                  };
+              }
+            | {};
+    };
 };
 
-export type Folder = {
-    id: string;
-    title: string;
-    notes: note[];
+export type notesTypes = {
+    [key: string]: {
+        [key: string]: {
+            [key: string]: string;
+        };
+    };
 };
 
-export type note = {
-    id: string;
-    title: string;
+export type DataTypes = {
+    whalenote: whalenoteTypes;
+    history: historyTypes;
+    repos: reposObjTypes;
+    notes: notesTypes;
 };

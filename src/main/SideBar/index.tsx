@@ -1,9 +1,8 @@
-import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { useContext, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 
 import AssistantPanel from './AssistantPanel';
-
 import TopIcons from './TopIcons';
 import BottomIcons from './BottomIcons';
 

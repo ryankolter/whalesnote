@@ -1,11 +1,11 @@
 import cryptoRandomString from 'crypto-random-string';
-import { Data } from '../commonType';
+import { DataTypes } from '../commonType';
 
 const initDefault = () => {
     const repo_id = cryptoRandomString({ length: 12, type: 'alphanumeric' });
     const folder_id = cryptoRandomString({ length: 12, type: 'alphanumeric' });
     const note_id = cryptoRandomString({ length: 12, type: 'alphanumeric' });
-    const default_data: Data = {
+    const default_data: DataTypes = {
         repos: {
             [repo_id]: {
                 repo_name: '1号资料库',

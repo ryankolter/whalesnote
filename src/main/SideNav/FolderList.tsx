@@ -421,14 +421,14 @@ const FolderList: React.FC<{
     }, [handleKeyDown]);
 
     // part5 : drag sort
-    const handleDragStart = (event: any) => {
-        setActiveId(event.active.id);
+    const handleDragStart = (e: any) => {
+        setActiveId(e.active.id);
     };
 
     const handleDragEnd = useCallback(
-        (event: any) => {
+        (e: any) => {
             setActiveId(null);
-            const { active, over } = event;
+            const { active, over } = e;
 
             if (!over) return;
 
@@ -587,7 +587,7 @@ const FolderList: React.FC<{
                     </SortableContext>
                     <DragOverlay>
                         <div>
-                            {activeId && folders_obj ? (
+                            {activeId && folders_obj && folders_obj[activeId] ? (
                                 <FolderItem
                                     key={activeId}
                                     className={
@@ -599,7 +599,9 @@ const FolderList: React.FC<{
                                     <FolderIcon>
                                         <FolderIconImg src={folderIcon} alt="" />
                                     </FolderIcon>
-                                    <FolderName>{folders_obj[activeId].folder_name}</FolderName>
+                                    <FolderName>
+                                        {folders_obj[activeId as string].folder_name}
+                                    </FolderName>
                                 </FolderItem>
                             ) : null}
                         </div>

@@ -1,11 +1,9 @@
-const { ipcRenderer } = window.require('electron');
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
-import cryptoRandomString from 'crypto-random-string';
 
+import { SearchResult } from 'minisearch';
 import useSearch from '../../lib/useSearch';
-
 import WaitingMaskStatic from '../../components/WaitingMaskStatic';
 import searchIcon from '../../resources/icon/searchIcon.svg';
 
@@ -16,7 +14,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
     const searchInputRef = useRef<HTMLInputElement>(null);
 
     const [word, setWord] = useState('');
-    const [searchResults, setSearchResults] = useState([]);
+    const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
     const [curResultIndex, setCurResultIndex] = useState(-1);
     const [showResultHighlight, setShowResultHighlight] = useState(false);
     const [showSearchPanel, setShowSearchPanel] = useState(false);
@@ -24,17 +22,17 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
     const [showUpdateIndexTips, showWaitingMask, updateMiniSearch, searchNote] = useSearch();
 
     const handleSearchInputChange = useCallback(
-        (event: any) => {
-            setWord(event.target.value);
+        (e: any) => {
+            setWord(e.target.value);
             if (!showSearchPanel) setShowSearchPanel(true);
         },
         [setWord, showSearchPanel, setShowSearchPanel]
     );
 
     const handleSearchInputEnter = useCallback(
-        (event: any) => {
-            if (event.keyCode === 13) {
-                setWord(event.target.value);
+        (e: any) => {
+            if (e.keyCode === 13) {
+                setWord(e.target.value);
                 if (!showSearchPanel) setShowSearchPanel(true);
             }
         },
@@ -91,7 +89,6 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
 
     useEffect(() => {
         if (curResultIndex >= 0 && curResultIndex <= searchResults.length) {
-            console.log(searchResults[curResultIndex]);
             /* eslint-disable */
             resultSwitch(searchResults[curResultIndex]['id']);
             /* eslint-enable */
@@ -193,9 +190,9 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                     )}
                     <SearchResultList className="no-scroller">
                         {searchResults && searchResults.length > 0 ? (
-                            searchResults.map((result: any, index: number) => {
+                            searchResults.map((result: SearchResult, index: number) => {
                                 return (
-                                    <SearchResult
+                                    <SearchResultDiv
                                         onClick={() => {
                                             setCurResultIndex(index);
                                             resultSwitch(result.id);
@@ -212,7 +209,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                                         <FolderName>{result.folder_name}</FolderName>
                                         <Seperator>&gt;</Seperator>
                                         <TitleName>{result.title}</TitleName>
-                                    </SearchResult>
+                                    </SearchResultDiv>
                                 );
                             })
                         ) : (
@@ -336,7 +333,7 @@ const SearchResultList = styled.div({
     overflowY: 'auto',
 });
 
-const SearchResult = styled.div({
+const SearchResultDiv = styled.div({
     display: 'flex',
     height: '36px',
     lineHeight: '36px',

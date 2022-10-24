@@ -1,10 +1,15 @@
 const { ipcRenderer } = window.require('electron');
+import { whalenoteTypes, historyTypes, reposObjTypes } from '../commonType';
 
 export let notes = {};
 
 const saveTimerObj = new Map();
 
-export const allRepoNotesFetch = (data_path: string | null, whalenote: any, repos_obj: any) => {
+export const allRepoNotesFetch = (
+    data_path: string | null,
+    whalenote: whalenoteTypes,
+    repos_obj: reposObjTypes
+) => {
     whalenote.repos_key.forEach((repo_key: string) => {
         if (repos_obj[repo_key]) {
             if (!notes[repo_key]) {
@@ -35,13 +40,13 @@ export const allRepoNotesFetch = (data_path: string | null, whalenote: any, repo
 
 export const repoNotesFetch = (
     data_path: string | null,
-    history: any,
-    repos: any,
+    history: historyTypes,
+    repos_obj: reposObjTypes,
     repo_key: string | undefined
 ) => {
     if (repo_key && !notes[repo_key]) {
         notes[repo_key] = {};
-        const folders_key = repos[repo_key].folders_key;
+        const folders_key = repos_obj[repo_key].folders_key;
         folders_key.forEach((folder_key: string, index: number) => {
             if (index === 0 || folder_key === history.repos[repo_key].cur_folder_key) {
                 const folder_info = ipcRenderer.sendSync('readJson', {
@@ -86,7 +91,15 @@ export const folderNotesFetch = (
     }
 };
 
-export const changeNotesAfterNew = (action_name: string, obj: any) => {
+export const changeNotesAfterNew = (
+    action_name: string,
+    obj: {
+        data_path: string;
+        repo_key: string;
+        folder_key?: string;
+        note_key?: string;
+    }
+) => {
     switch (action_name) {
         case 'repo': {
             const { data_path, repo_key } = obj;

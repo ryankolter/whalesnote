@@ -5,6 +5,10 @@ import { historyTypes } from '../commonType';
 
 const historyReducer = produce((state: historyTypes, action: any) => {
     switch (action.type) {
+        case 'init': {
+            state = action.new_state;
+            return state;
+        }
         case 'switch_repo': {
             const history = action.data_path
                 ? ipcRenderer.sendSync('readJson', {
@@ -94,10 +98,6 @@ const historyReducer = produce((state: historyTypes, action: any) => {
 
             return state;
         }
-        case 'init': {
-            state = action.new_state;
-            return state;
-        }
     }
 });
 
@@ -106,6 +106,10 @@ export const useHistory = () => {
         cur_repo_key: '',
         repos: {},
     });
+
+    const initHistory = useCallback((new_history: historyTypes) => {
+        dispatch({ type: 'init', new_state: new_history });
+    }, []);
 
     const switchRepo = useCallback((curDataPath: string, repoKey: string | undefined) => {
         repoKey = repoKey ? repoKey : undefined;
@@ -156,20 +160,16 @@ export const useHistory = () => {
         return cur_note_key;
     }, [state]);
 
-    const initHistory = useCallback((new_history: any) => {
-        dispatch({ type: 'init', new_state: new_history });
-    }, []);
-
     return [
         state,
         {
+            initHistory,
             switchRepo,
             switchFolder,
             switchNote,
             currentRepoKey,
             currentFolderKey,
             currentNoteKey,
-            initHistory,
         },
     ] as const;
 };

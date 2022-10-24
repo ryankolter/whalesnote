@@ -4,6 +4,7 @@ import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 
 import SvgIcon from '../../components/SvgIcon';
+
 import exportIcon from '../../resources/icon/sideBar/exportIcon.svg';
 
 const TopIcons: React.FC<{}> = ({}) => {

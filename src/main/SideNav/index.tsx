@@ -1,5 +1,4 @@
-const { ipcRenderer } = window.require('electron');
-import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 
@@ -7,10 +6,7 @@ import SearchBar from './SearchBar';
 import FolderList from './FolderList';
 import NoteList from './NoteList';
 
-type SideNavProps = Record<string, unknown>;
-
-const SideNav: React.FC<SideNavProps> = ({}) => {
-    console.log('SideNav render');
+const SideNav: React.FC<Record<string, unknown>> = ({}) => {
     const { numArray, setNumArray, keySelect } = useContext(GlobalContext);
 
     const resizeFolderOffsetX = useRef<number>(0);

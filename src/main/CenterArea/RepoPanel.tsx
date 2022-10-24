@@ -6,6 +6,7 @@ import cryptoRandomString from 'crypto-random-string';
 
 import { DndContext, MouseSensor, useSensor, useSensors, DragOverlay } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+
 import { Sortable } from '../../components/Sortable';
 import { TextInput } from '../../components/TextInput';
 import { AlertPopUp } from '../../components/AlertPopUp';
@@ -16,8 +17,8 @@ import useContextMenu from '../../lib/useContextMenu';
 const RepoPanel: React.FC<{
     repos_key: string[] | undefined;
     showAllRepo: boolean;
-    setShowAllRepo: (state: boolean) => void;
-    setAllowHiddenAllRepoViaEnter: (state: boolean) => void;
+    setShowAllRepo: React.Dispatch<React.SetStateAction<boolean>>;
+    setAllowHiddenAllRepoViaEnter: React.Dispatch<React.SetStateAction<boolean>>;
 }> = ({ repos_key, showAllRepo, setShowAllRepo, setAllowHiddenAllRepoViaEnter }) => {
     const {
         curDataPath,
@@ -497,14 +498,14 @@ const RepoPanel: React.FC<{
         }
     }, [handleWhell]);
 
-    const handleDragStart = (event: any) => {
-        setActiveId(event.active.id);
+    const handleDragStart = (e: any) => {
+        setActiveId(e.active.id);
     };
 
     const handleDragEnd = useCallback(
-        (event: any) => {
+        (e: any) => {
             setActiveId(null);
-            const { active, over } = event;
+            const { active, over } = e;
 
             if (!over) return;
 

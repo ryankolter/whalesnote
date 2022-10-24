@@ -30,7 +30,14 @@ import markdownItAnchor from 'markdown-it-anchor';
 import markdownItTable from 'markdown-it-multimd-table';
 import markdownItTocDoneRight from 'markdown-it-toc-done-right';
 
-export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
+export const MarkdownRender: React.FC<{
+    theme: string;
+    editorScrollRatio: number;
+    renderPanelState: string;
+    cursorInRender: boolean;
+    setCursorInRender: React.Dispatch<React.SetStateAction<boolean>>;
+    setRenderScrollRatio: React.Dispatch<React.SetStateAction<number>>;
+}> = ({
     editorScrollRatio,
     renderPanelState,
     theme,
@@ -50,8 +57,8 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
         updateRenderTop,
     } = useContext(GlobalContext);
 
-    const md: any = useRef<markdownIt>(markdownIt());
-    const print_md: any = useRef<markdownIt>(markdownIt());
+    const md = useRef<markdownIt>(markdownIt());
+    const print_md = useRef<markdownIt>(markdownIt());
 
     md.current = useMemo(() => {
         return markdownIt({
@@ -66,7 +73,7 @@ export const MarkdownRender: React.FC<MarkdownRenderProps> = ({
                             type: 'alphanumeric',
                         });
                         const html = `<button class="copy-btn copy-btn-color" type="button" data-clipboard-action="copy" data-clipboard-target="#copy-${copyId}">复制</button>`;
-                        const textarea: any = `<textarea style="position: absolute;top: -9999px;left: -9999px;z-index: -9999;" id="copy-${copyId}">${str}</textarea>`;
+                        const textarea = `<textarea style="position: absolute;top: -9999px;left: -9999px;z-index: -9999;" id="copy-${copyId}">${str}</textarea>`;
                         return (
                             '<pre><code class="hljs" style="position: relative;">' +
                             html +
@@ -513,12 +520,3 @@ const TocDirectory = styled.div({
     overflowY: 'auto',
     zIndex: 1000,
 });
-
-type MarkdownRenderProps = {
-    theme: string;
-    editorScrollRatio: number;
-    renderPanelState: string;
-    cursorInRender: boolean;
-    setCursorInRender: (cursorInRender: boolean) => void;
-    setRenderScrollRatio: (editorScrollRatio: number) => void;
-};

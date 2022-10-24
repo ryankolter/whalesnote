@@ -1,8 +1,9 @@
 const { ipcRenderer } = window.require('electron');
 import { useCallback, useReducer, useRef } from 'react';
 import produce from 'immer';
+import { reposObjTypes } from '../commonType';
 
-const reposReducer = produce((state: object, action: any) => {
+const reposReducer = produce((state: reposObjTypes, action: any) => {
     switch (action.type) {
         case 'fetchRepo': {
             const repo_info = ipcRenderer.sendSync('readJson', {
@@ -113,42 +114,52 @@ export const useRepos = () => {
     const [state, dispatch] = useReducer(reposReducer, {});
     const renameSaveTimerObj = useRef<Map<string, NodeJS.Timeout>>(new Map());
 
-    const updateRepos = useCallback((action_name: string, obj: any) => {
-        switch (action_name) {
-            case 'repo': {
-                const { data_path, repo_key } = obj;
-                dispatch({
-                    type: 'fetchRepo',
-                    data_path,
-                    repo_key,
-                });
-                break;
+    const updateRepos = useCallback(
+        (
+            action_name: string,
+            obj: {
+                data_path: string;
+                repo_key: string;
+                folder_key?: string;
             }
-            case 'folder': {
-                const { data_path, repo_key, folder_key } = obj;
-                dispatch({
-                    type: 'fetchFolder',
-                    data_path,
-                    repo_key,
-                    folder_key,
-                });
-                break;
+        ) => {
+            switch (action_name) {
+                case 'repo': {
+                    const { data_path, repo_key } = obj;
+                    dispatch({
+                        type: 'fetchRepo',
+                        data_path,
+                        repo_key,
+                    });
+                    break;
+                }
+                case 'folder': {
+                    const { data_path, repo_key, folder_key } = obj;
+                    dispatch({
+                        type: 'fetchFolder',
+                        data_path,
+                        repo_key,
+                        folder_key,
+                    });
+                    break;
+                }
+                case 'note': {
+                    const { data_path, repo_key, folder_key } = obj;
+                    dispatch({
+                        type: 'fetchNote',
+                        data_path,
+                        repo_key,
+                        folder_key,
+                    });
+                    break;
+                }
             }
-            case 'note': {
-                const { data_path, repo_key, folder_key } = obj;
-                dispatch({
-                    type: 'fetchNote',
-                    data_path,
-                    repo_key,
-                    folder_key,
-                });
-                break;
-            }
-        }
-    }, []);
+        },
+        []
+    );
 
     const initRepo = useCallback(
-        (newRepo: any) => dispatch({ type: 'init', new_state: newRepo }),
+        (newRepo: reposObjTypes) => dispatch({ type: 'init', new_state: newRepo }),
         []
     );
 

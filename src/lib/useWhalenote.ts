@@ -5,7 +5,11 @@ import { whalenoteTypes } from '../commonType';
 
 const whalenoteReducer = produce((state: whalenoteTypes, action: any) => {
     switch (action.type) {
-        case 'update_whalenote': {
+        case 'init': {
+            state = action.new_state;
+            return state;
+        }
+        case 'update': {
             const whalenote_info = ipcRenderer.sendSync('readJson', {
                 file_path: `${action.data_path}/whalenote_info.json`,
             });
@@ -24,10 +28,6 @@ const whalenoteReducer = produce((state: whalenoteTypes, action: any) => {
             });
             return state;
         }
-        case 'init': {
-            state = action.new_state;
-            return state;
-        }
     }
 });
 
@@ -39,7 +39,7 @@ export const useWhalenote = () => {
 
     const updateWhalenote = useCallback((data_path: string | null) => {
         dispatch({
-            type: 'update_whalenote',
+            type: 'update',
             data_path: data_path,
         });
     }, []);
@@ -58,16 +58,16 @@ export const useWhalenote = () => {
         []
     );
 
-    const initWhalenote = useCallback((new_whalenote: any) => {
+    const initWhalenote = useCallback((new_whalenote: whalenoteTypes) => {
         dispatch({ type: 'init', new_state: new_whalenote });
     }, []);
 
     return [
         state,
         {
+            initWhalenote,
             updateWhalenote,
             reorderRepo,
-            initWhalenote,
         },
     ] as const;
 };

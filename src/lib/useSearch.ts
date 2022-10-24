@@ -2,13 +2,13 @@ const { ipcRenderer } = window.require('electron');
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { GlobalContext } from '../GlobalProvider';
 import cryptoRandomString from 'crypto-random-string';
-import MiniSearch from 'minisearch';
+import MiniSearch, { SearchResult } from 'minisearch';
 
 const useSearch = () => {
     const { curDataPath, whalenote, repos_obj, notes, allRepoNotesFetch, setFocus } =
         useContext(GlobalContext);
 
-    const miniSearch = useRef<any>();
+    const miniSearch = useRef<MiniSearch | null>();
     const [showUpdateIndexTips, setShowUpdateIndexTips] = useState(true);
     const [showWaitingMask, setShowWaitingMask] = useState(false);
 
@@ -61,7 +61,13 @@ const useSearch = () => {
         setTimeout(() => {
             allRepoNotesFetch(curDataPath, whalenote, repos_obj);
 
-            const documents: any = [];
+            const documents: {
+                id: string;
+                type: string;
+                title: string;
+                folder_name: string;
+                content: string;
+            }[] = [];
             Object.keys(notes).forEach((repo_key: string) => {
                 const folders_obj = repos_obj[repo_key].folders_obj;
                 Object.keys(notes[repo_key]).forEach((folder_key: string) => {
@@ -91,7 +97,7 @@ const useSearch = () => {
                 fields: ['title', 'content'],
                 storeFields: ['id', 'type', 'title', 'folder_name'],
                 tokenize: (string, _fieldName) => {
-                    const result: any = ipcRenderer.sendSync('nodejieba', {
+                    const result: string[] = ipcRenderer.sendSync('nodejieba', {
                         word: string,
                     });
                     return result;
@@ -133,7 +139,7 @@ const useSearch = () => {
     const searchNote = (word: string) => {
         if (!miniSearch.current) return [];
         return miniSearch.current.search(word, {
-            filter: (result: any) => result.type === 'note',
+            filter: (result: SearchResult) => result.type === 'note',
         });
     };
 

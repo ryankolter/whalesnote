@@ -1,8 +1,8 @@
 import cryptoRandomString from 'crypto-random-string';
-import { Data } from '../commonType';
+import { DataTypes } from '../commonType';
 
 const initGuide = () => {
-    const guide_data: Data = {
+    const guide_data: DataTypes = {
         repos: {
             DEFAULTREPO1: {
                 repo_name: '1号资料库',

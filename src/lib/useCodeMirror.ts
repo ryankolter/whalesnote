@@ -12,7 +12,7 @@ import { Completion, autocompletion } from '@codemirror/autocomplete';
 
 interface Props {
     value: string;
-    onDocChange?: (new_value: string, viewUpdate: any) => void;
+    onDocChange?: (new_value: string, viewUpdate: ViewUpdate) => void;
     onSelectionSet?: (vu: ViewUpdate) => void;
 }
 
@@ -33,7 +33,6 @@ const useCodeMirror = <T extends Element>({
 
     const updateListener = EditorView.updateListener.of((vu: ViewUpdate) => {
         if (vu.docChanged && onDocChange && typeof onDocChange === 'function') {
-            console.log('docChanged');
             if (!forbidUpdate.current) {
                 const doc = vu.state.doc;
                 const value = doc.toString();
@@ -44,7 +43,6 @@ const useCodeMirror = <T extends Element>({
 
     const cursorActiveListener = EditorView.updateListener.of((vu: ViewUpdate) => {
         if (vu.selectionSet && onSelectionSet && typeof onSelectionSet === 'function') {
-            console.log('selectionSet');
             onSelectionSet(vu);
         }
     });

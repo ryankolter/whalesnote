@@ -7,20 +7,20 @@ const recordValueReducer = produce((state: renderTopTypes, action: any) => {
             state[action.repo_key] || (state[action.repo_key] = {});
             state[action.repo_key][action.folder_key] ||
                 (state[action.repo_key][action.folder_key] = {});
-            state[action.repo_key][action.folder_key][action.note_key] = action.render_top;
+            state[action.repo_key][action.folder_key][action.note_key] = action.value;
             return state;
         }
     }
 });
 
-export const useRecordValue = () => {
+export const useRecordValue = <T>() => {
     const [state, dispatch] = useReducer(recordValueReducer, {});
 
     const updateRecordValue = (
         repo_key: string,
         folder_key: string,
         note_key: string,
-        render_top: number
+        value: T
     ) => {
         if (repo_key && folder_key && note_key) {
             dispatch({
@@ -28,7 +28,7 @@ export const useRecordValue = () => {
                 repo_key,
                 folder_key,
                 note_key,
-                render_top,
+                value,
             });
         }
     };

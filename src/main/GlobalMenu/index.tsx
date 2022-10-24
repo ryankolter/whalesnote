@@ -1,14 +1,13 @@
 const { ipcRenderer } = window.require('electron');
-import { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 import { usePopUp } from '../../lib/usePopUp';
 
 const GlobalMenu: React.FC<{
     showGlobalMenu: boolean;
-    setShowGlobalMenu: any;
+    setShowGlobalMenu: React.Dispatch<React.SetStateAction<boolean>>;
 }> = ({ showGlobalMenu, setShowGlobalMenu }) => {
-    const { curDataPath, setCurDataPath, dataPathList } = useContext(GlobalContext);
     const [menuPopup, setMenuPopUp, mask] = usePopUp(500);
 
     useEffect(() => {

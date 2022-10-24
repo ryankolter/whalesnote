@@ -8,7 +8,7 @@ import TrashList from './TrashList';
 const AssistantPanel: React.FC<{
     theme: string;
     curAssistantPanelName: string;
-    setCurAssistantPanelName: any;
+    setCurAssistantPanelName: React.Dispatch<React.SetStateAction<string>>;
 }> = ({ theme, curAssistantPanelName, setCurAssistantPanelName }) => {
     const resizeAssistantPanelOffsetX = useRef<number>(0);
     const lastPageX = useRef<number>(0);

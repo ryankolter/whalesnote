@@ -3,9 +3,11 @@ import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 import cryptoRandomString from 'crypto-random-string';
+
 import { DndContext, MouseSensor, useSensor, useSensors, DragOverlay } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { restrictToFirstScrollableAncestor, restrictToVerticalAxis } from '@dnd-kit/modifiers';
+
 import { Sortable } from '../../components/Sortable';
 import useContextMenu from '../../lib/useContextMenu';
 import newNoteIcon from '../../resources/icon/newNoteIcon.svg';

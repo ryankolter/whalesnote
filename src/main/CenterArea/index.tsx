@@ -1,4 +1,3 @@
-const { ipcRenderer } = window.require('electron');
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
@@ -11,7 +10,6 @@ import RepoPanel from './RepoPanel';
 const CenterArea: React.FC<{
     theme: string;
 }> = ({ theme }) => {
-    console.log('CenterArea render');
     const {
         dataPathChangeFlag,
         whalenote,

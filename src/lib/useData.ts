@@ -1,10 +1,11 @@
 const { ipcRenderer } = window.require('electron');
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { DataTypes } from '../commonType';
 import initDefault from './initDefault';
 
 const useData = () => {
-    const data = useRef<any>();
+    const data = useRef<DataTypes>();
     const [curDataPath, setCurDataPath] = useState<string>('');
     const [dataPathChangeFlag, setDataPathChangeFlag] = useState<number>(0);
     const [initingData, setInitingData] = useState<boolean>(true);

@@ -10,7 +10,7 @@ import settingPanelIcon from '../../resources/icon/sideBar/settingPanelIcon.svg'
 
 const BottomIcons: React.FC<{
     curAssistantPanelName: string;
-    setCurAssistantPanelName: any;
+    setCurAssistantPanelName: React.Dispatch<React.SetStateAction<string>>;
 }> = ({ curAssistantPanelName, setCurAssistantPanelName }) => {
     const handleSvgIconClick = useCallback((btn_type: string) => {
         setCurAssistantPanelName((curAssistantPanelName: string) => {

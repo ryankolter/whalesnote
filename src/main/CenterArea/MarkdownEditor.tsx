@@ -11,9 +11,8 @@ export const MarkdownEditor: React.FC<{
     cursorInRender: boolean;
     renderPanelState: string;
     renderScrollRatio: number;
-    setEditorScrollRatio: (editorScrollRatio: number) => void;
+    setEditorScrollRatio: React.Dispatch<React.SetStateAction<number>>;
 }> = ({ theme, cursorInRender, renderPanelState, renderScrollRatio, setEditorScrollRatio }) => {
-    console.log('MarkdownEditor render');
     const {
         curDataPath,
         currentRepoKey,
@@ -40,7 +39,7 @@ export const MarkdownEditor: React.FC<{
     const editorContainerRef = useRef<HTMLDivElement>(null);
 
     const onDocChange = useCallback(
-        (new_value: string, viewUpdate: any) => {
+        (new_value: string, viewUpdate: ViewUpdate) => {
             updateNote(curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, new_value);
             const doc = view.current?.state.doc;
             if (doc) {
@@ -70,13 +69,11 @@ export const MarkdownEditor: React.FC<{
     });
 
     useEffect(() => {
-        console.log('focus');
         if (focus === '') return;
         view.current?.focus();
     }, [focus]);
 
     useEffect(() => {
-        console.log('blur');
         if (blur === '') return;
         view.current?.contentDOM.blur();
     }, [blur]);

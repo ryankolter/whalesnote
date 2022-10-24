@@ -1,13 +1,19 @@
-const { ipcRenderer } = window.require('electron');
-import { createContext, useCallback, useState, useMemo, useEffect } from 'react';
+import {
+    createContext,
+    Dispatch,
+    SetStateAction,
+    useCallback,
+    useState,
+    useMemo,
+    useEffect,
+} from 'react';
+import { whalenoteTypes, historyTypes, reposObjTypes, notesTypes } from './commonType';
 
 import useData from './lib/useData';
 import useDataList from './lib/useDataList';
 import { useWhalenote } from './lib/useWhalenote';
 import { useHistory } from './lib/useHistory';
 import { useRepos } from './lib/useRepos';
-import { useEditPos } from './lib/useEditPos';
-import { useEditLine } from './lib/useEditLine';
 import { useRecordValue } from './lib/useRecordValue';
 
 import {
@@ -22,17 +28,17 @@ import {
 
 const initContext: {
     curDataPath: string;
-    setCurDataPath: (path: string) => void;
+    setCurDataPath: Dispatch<SetStateAction<string>>;
     dataPathChangeFlag: number;
     initingData: boolean;
-    setInitingData: (switchingData: boolean) => void;
+    setInitingData: Dispatch<SetStateAction<boolean>>;
     switchingData: boolean;
-    setSwitchingData: (switchingData: boolean) => void;
+    setSwitchingData: Dispatch<SetStateAction<boolean>>;
     dataPathList: string[];
     removeDataPathFromList: (data_path: string) => void;
-    whalenote: any;
-    history: any;
-    initWhalenote: (new_whalenote: any) => void;
+    whalenote: whalenoteTypes;
+    history: historyTypes;
+    initWhalenote: (new_whalenote: whalenoteTypes) => void;
     updateWhalenote: (data_path: string) => void;
     reorderRepo: (data_path: string, repo_key: string, new_repos_key: string[]) => void;
     repoSwitch: (repo_key: string | undefined) => void;
@@ -41,9 +47,16 @@ const initContext: {
     currentRepoKey: string;
     currentFolderKey: string;
     currentNoteKey: string;
-    repos_obj: any;
-    initRepo: (newRepo: any) => void;
-    updateRepos: (action_name: string, obj: object) => void;
+    repos_obj: reposObjTypes;
+    initRepo: (newRepo: reposObjTypes) => void;
+    updateRepos: (
+        action_name: string,
+        obj: {
+            data_path: string;
+            repo_key: string;
+            folder_key?: string;
+        }
+    ) => void;
     renameNote: (
         data_path: string,
         repo_key: string,
@@ -58,8 +71,8 @@ const initContext: {
         folder_key: string,
         new_notes_key: string[]
     ) => void;
-    notes: any;
-    initNotes: (folder: any) => void;
+    notes: notesTypes;
+    initNotes: (_notes: notesTypes) => void;
     updateNote: (
         data_path: string,
         repo_key: string,
@@ -67,14 +80,31 @@ const initContext: {
         note_key: string,
         currentContent: string
     ) => void;
-    allRepoNotesFetch: any;
-    repoNotesFetch: any;
+    allRepoNotesFetch: (
+        data_path: string | null,
+        whalenote: whalenoteTypes,
+        repos_obj: reposObjTypes
+    ) => void;
+    repoNotesFetch: (
+        data_path: string | null,
+        history: historyTypes,
+        repos_obj: reposObjTypes,
+        repo_key: string | undefined
+    ) => void;
     folderNotesFetch: (
         data_path: string | null,
         repo_key: string | undefined,
         folder_key: string | undefined
     ) => void;
-    changeNotesAfterNew: (action_name: string, obj: object) => void;
+    changeNotesAfterNew: (
+        action_name: string,
+        obj: {
+            data_path: string;
+            repo_key: string;
+            folder_key?: string;
+            note_key?: string;
+        }
+    ) => void;
     currentTitle: string;
     currentContent: string;
     currentNoteStr: string;
@@ -100,13 +130,13 @@ const initContext: {
         render_scroll_value: number
     ) => void;
     numArray: number[];
-    setNumArray: any;
+    setNumArray: Dispatch<SetStateAction<number[]>>;
     focus: string;
-    setFocus: (focus: string) => void;
+    setFocus: Dispatch<SetStateAction<string>>;
     blur: string;
-    setBlur: (blur: string) => void;
+    setBlur: Dispatch<SetStateAction<string>>;
     keySelect: boolean;
-    setKeySelect: (keySelect: boolean) => void;
+    setKeySelect: Dispatch<SetStateAction<boolean>>;
 } = {
     curDataPath: '',
     setCurDataPath: () => {},
@@ -117,28 +147,28 @@ const initContext: {
     setSwitchingData: () => {},
     dataPathList: [],
     removeDataPathFromList: () => {},
-    whalenote: null,
-    history: null,
+    whalenote: { id: '', repos_key: [] },
     initWhalenote: () => {},
     updateWhalenote: () => {},
     reorderRepo: () => {},
+    history: { cur_repo_key: '', repos: {} },
     repoSwitch: () => {},
     folderSwitch: () => {},
     noteSwitch: () => {},
     currentRepoKey: '',
     currentFolderKey: '',
     currentNoteKey: '',
-    repos_obj: null,
+    repos_obj: {},
     initRepo: () => {},
     updateRepos: () => {},
     renameNote: () => {},
     reorderFolder: () => {},
     reorderNote: () => {},
-    notes: null,
+    notes: {},
     initNotes: () => {},
     updateNote: () => {},
-    allRepoNotesFetch: null,
-    repoNotesFetch: null,
+    allRepoNotesFetch: () => {},
+    repoNotesFetch: () => {},
     folderNotesFetch: () => {},
     changeNotesAfterNew: () => {},
     currentTitle: '',
@@ -162,6 +192,7 @@ const initContext: {
 export const GlobalContext = createContext(initContext);
 
 export const GlobalProvider = ({ children }: { children: any }) => {
+    console.log('GlobalProvider render');
     const [
         data,
         curDataPath,
@@ -173,17 +204,17 @@ export const GlobalProvider = ({ children }: { children: any }) => {
         setSwitchingData,
     ] = useData();
     const [dataPathList, addDataPathToList, removeDataPathFromList] = useDataList();
-    const [whalenote, { updateWhalenote, reorderRepo, initWhalenote }] = useWhalenote();
+    const [whalenote, { initWhalenote, updateWhalenote, reorderRepo }] = useWhalenote();
     const [
         history,
         {
+            initHistory,
             switchRepo,
             switchFolder,
             switchNote,
             currentRepoKey,
             currentFolderKey,
             currentNoteKey,
-            initHistory,
         },
     ] = useHistory();
     const [repos_obj, { updateRepos, initRepo, renameNote, reorderFolder, reorderNote }] =
@@ -199,15 +230,15 @@ export const GlobalProvider = ({ children }: { children: any }) => {
         }
     }, [dataPathChangeFlag]);
 
-    const [currentNoteStr, setCurrentNoteStr] = useState<string>('');
-    const [cursorHeads, { updateCursorHead }] = useEditPos();
-    const [fromPoses, { updateFromPos }] = useEditLine();
-    const [renderTops, { updateRecordValue: updateRenderTop }] = useRecordValue();
+    const [cursorHeads, { updateRecordValue: updateCursorHead }] = useRecordValue<number>();
+    const [fromPoses, { updateRecordValue: updateFromPos }] = useRecordValue<number>();
+    const [renderTops, { updateRecordValue: updateRenderTop }] = useRecordValue<number>();
 
+    const [currentNoteStr, setCurrentNoteStr] = useState<string>('');
+    const [focus, setFocus] = useState<string>('');
+    const [blur, setBlur] = useState<string>('');
+    const [keySelect, setKeySelect] = useState<boolean>(false);
     const [numArray, setNumArray] = useState<number[]>([]);
-    const [focus, setFocus] = useState('');
-    const [blur, setBlur] = useState('');
-    const [keySelect, setKeySelect] = useState(false);
 
     const repoSwitch = useCallback(
         (repo_key: string | undefined) => {
@@ -231,7 +262,6 @@ export const GlobalProvider = ({ children }: { children: any }) => {
         },
         [curDataPath]
     );
-    console.log('render');
 
     const updateNote = useCallback(
         (

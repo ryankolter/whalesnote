@@ -143,7 +143,7 @@ const TrashList: React.FC<{ theme: string; closeAssistantPanel: () => void }> = 
                 <Notes ref={outerRef}>
                     {Object.keys(trash.current)
                         ?.reverse()
-                        .map((trash_key: any) => {
+                        .map((trash_key: string) => {
                             const arr = trash_key.split('-');
                             return (
                                 <NoteItem

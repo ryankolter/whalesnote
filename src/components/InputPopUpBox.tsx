@@ -9,8 +9,8 @@ export const InputPopUpBox: React.FC<{
     onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => void;
 }> = ({ initValue, setValue, onCancel, onConfirm, onKeyDown }) => {
     const onChangeHandle = useCallback(
-        (event: any) => {
-            setValue(event.target.value);
+        (e: any) => {
+            setValue(e.target.value);
         },
         [setValue]
     );
