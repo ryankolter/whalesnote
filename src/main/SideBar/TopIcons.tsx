@@ -59,6 +59,7 @@ const TopIcons: React.FC<{}> = ({}) => {
                 <SvgIcon
                     iconWidth={33}
                     iconHeight={28}
+                    iconPadding={12}
                     iconSrc={exportIcon}
                     onClick={() => {
                         setShowSwitchExportPanel(
@@ -113,26 +114,13 @@ const TopIconsContainer = styled.div({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    marginTop: '30px',
+    marginTop: '15px',
 });
 
 const SwitchExport = styled.div({
     position: 'relative',
     display: 'flex',
     flexDirection: 'row-reverse',
-    cursor: 'pointer',
-});
-
-const ExportBtn = styled.div({
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '32px',
-    lintHeight: '32px',
-    boxSizing: 'border-box',
-    padding: '0 10px',
-    borderRadius: '4px',
-    fontSize: '16px',
     cursor: 'pointer',
 });
 
@@ -153,10 +141,6 @@ const ModeOption = styled.div({
     justifyContent: 'center',
     width: '100%',
     padding: '5px',
-});
-
-const IconPadding = styled.div({
-    height: '26px',
 });
 
 export default TopIcons;

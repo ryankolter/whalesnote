@@ -27,34 +27,35 @@ const BottomIcons: React.FC<{
             <SvgIcon
                 iconWidth={29}
                 iconHeight={32}
+                iconPadding={12}
                 iconSrc={dataPanelIcon}
                 onClick={() => handleSvgIconClick('data_space')}
             />
-            <IconPadding />
             <SvgIcon
                 iconWidth={27}
                 iconHeight={33}
+                iconPadding={12}
                 iconSrc={mobilePanelIcon}
                 onClick={() => handleSvgIconClick('mobile_panel')}
             />
-            <IconPadding />
             <SvgIcon
                 iconWidth={30}
                 iconHeight={26}
+                iconPadding={12}
                 iconSrc={modelPanelIcon}
                 onClick={() => handleSvgIconClick('image_space')}
             />
-            <IconPadding />
             <SvgIcon
                 iconWidth={26}
                 iconHeight={33}
+                iconPadding={12}
                 iconSrc={trashPanelIcon}
                 onClick={() => handleSvgIconClick('trash_list')}
             />
-            <IconPadding />
             <SvgIcon
                 iconWidth={32}
                 iconHeight={32}
+                iconPadding={12}
                 iconSrc={settingPanelIcon}
                 onClick={() => handleSvgIconClick('setting_panel')}
             />
@@ -66,11 +67,8 @@ const BottomIconsContainer = styled.div({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    marginBottom: '30px',
-});
-
-const IconPadding = styled.div({
-    height: '26px',
+    marginBottom: '15px',
+    cursor: 'pointer',
 });
 
 export default BottomIcons;
