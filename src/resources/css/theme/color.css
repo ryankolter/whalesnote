@@ -109,7 +109,7 @@
 /* side bar*/
 
 .side-bar-color {
-    background-color: var(--bottom-bg-color) !important;
+    background-color: var(--sidebar-bg-color) !important;
 }
 
 .drag-dotted-color {
