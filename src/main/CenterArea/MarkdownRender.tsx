@@ -474,7 +474,7 @@ export const MarkdownRender: React.FC<{
                 <MenuUl top={yPos} left={xPos} className="menu-ui-color">
                     <MenuLi
                         className="menu-li-color"
-                        // onClick={() => deleteRepo()}
+                        // onClick={() => copySelection()}
                     >
                         复制
                     </MenuLi>

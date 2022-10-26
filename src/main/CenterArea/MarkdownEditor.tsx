@@ -230,13 +230,13 @@ export const MarkdownEditor: React.FC<{
             <div ref={editor} className={`${themeClassNames} ${scrollClassNames}`} />
             {menu ? (
                 <MenuUl top={yPos} left={xPos} className="menu-ui-color">
-                    <MenuLi className="menu-li-color">剪切</MenuLi>
                     <MenuLi
                         className="menu-li-color"
-                        // onClick={() => deleteRepo()}
+                        // onClick={() => copySelection()}
                     >
                         复制
                     </MenuLi>
+                    <MenuLi className="menu-li-color">剪切</MenuLi>
                     <MenuLi className="menu-li-color">粘贴</MenuLi>
                 </MenuUl>
             ) : (
