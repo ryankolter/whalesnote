@@ -41,6 +41,7 @@ const useSearch = () => {
                     },
                 });
             } else {
+                setShowUpdateIndexTips(true);
                 miniSearch.current = null;
             }
             setTimeout(() => {

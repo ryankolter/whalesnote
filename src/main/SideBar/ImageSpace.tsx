@@ -121,7 +121,7 @@ const ImageSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssist
         return () => {
             ipcRenderer.removeAllListeners('loadIamges');
         };
-    }, [curDataPath]);
+    }, [curDataPath, copyImageMdLink]);
 
     const handleZoneDrop = useCallback(
         (acceptedFiles: any) => {
@@ -155,7 +155,7 @@ const ImageSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssist
                 setLoadImageStatus('none');
             }, 1500);
         },
-        [curDataPath, setLoadImageStatus]
+        [curDataPath, setLoadImageStatus, copyImageMdLink]
     );
 
     const { getRootProps, getInputProps } = useDropzone({ onDrop: handleZoneDrop, noClick: true });

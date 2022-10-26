@@ -29,16 +29,18 @@ const DataSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssista
 
     useEffect(() => {
         ipcRenderer.on('checkoutDataPath', (event: any, path: string) => {
-            setSwitchingData(true);
             setShowPathUl(false);
-            setTimeout(() => {
-                setCurDataPath(path);
-            }, 50);
+            if (path !== curDataPath) {
+                setSwitchingData(true);
+                setTimeout(() => {
+                    setCurDataPath(path);
+                }, 50);
+            }
         });
         return () => {
             ipcRenderer.removeAllListeners('checkoutDataPath');
         };
-    }, [setSwitchingData, setCurDataPath]);
+    }, [curDataPath, setSwitchingData, setCurDataPath]);
 
     const handleClick = useCallback(
         (event: MouseEvent) => {
