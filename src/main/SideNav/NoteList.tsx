@@ -536,7 +536,7 @@ const Notes = styled.div({
     flex: '1',
     minHeight: '0',
     padding: '10px 0 70px 0',
-    bordeLeft: '1px solid var(--main-border-color)',
+    borderLeft: '1px solid var(--main-border-color)',
     borderRight: '1px solid var(--main-border-color)',
     scrollBehavior: 'smooth',
 });
