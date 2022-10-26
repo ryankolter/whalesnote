@@ -50,10 +50,12 @@ const useCodeMirror = <T extends Element>({
     const myCompletions = useCallback((CompletionContext: any) => {
         const word = CompletionContext.matchBefore(/\s*```[a-z]*/);
         const assistant_word = CompletionContext.matchBefore(/```[a-z]*/);
+        console.log(word);
+        console.log(assistant_word);
 
         if (!word || (word.from == word.to && !CompletionContext.explicit)) return null;
 
-        const space_count = word.to - word.from - (assistant_word.to - assistant_word.from);
+        const space_count = assistant_word.from - word.from;
 
         const langs = [
             '',
@@ -71,7 +73,7 @@ const useCodeMirror = <T extends Element>({
             'swift',
         ];
         const options = [];
-        const newPosAfterCompletion = assistant_word.to + space_count + 1;
+        const newPosOffset = assistant_word.from + 3;
 
         for (const lang of langs) {
             let label = '```' + lang + '\n';
@@ -99,8 +101,8 @@ const useCodeMirror = <T extends Element>({
                     });
                     view.dispatch({
                         selection: {
-                            anchor: newPosAfterCompletion,
-                            head: newPosAfterCompletion,
+                            anchor: newPosOffset + lang.length + 1 + space_count,
+                            head: newPosOffset + lang.length + 1 + space_count,
                         },
                     });
                 },
