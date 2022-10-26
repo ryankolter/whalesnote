@@ -227,7 +227,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
 const SearchBarContainer = styled.div({
     position: 'relative',
     display: 'flex',
-    padding: '5px 30px 5px 40px',
+    padding: '5px 30px 5px 90px',
     borderBottomWidth: '1.5px',
     borderBottomStyle: 'solid',
 });

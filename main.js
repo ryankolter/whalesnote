@@ -35,6 +35,8 @@ const createWindow = async () => {
         minWidth: 800,
         minHeight: 520,
         maximizable: true,
+        titleBarStyle: 'hiddenInset',
+        trafficLightPosition: { x: 18, y: 16 },
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,

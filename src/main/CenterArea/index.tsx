@@ -308,16 +308,21 @@ const CenterAreaContainer = styled.div({
     boxSizing: 'border-box',
 });
 
-const TopRow = styled.div({
-    width: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    height: '49.5px',
-    borderBottomWidth: '1.5px',
-    borderBottomStyle: 'solid',
-    paddingRight: '30px',
-    boxSizing: 'border-box',
-});
+const TopRow = styled.div(
+    {
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        height: '49.5px',
+        borderBottomWidth: '1.5px',
+        borderBottomStyle: 'solid',
+        paddingRight: '30px',
+        boxSizing: 'border-box',
+    },
+    `
+    -webkit-app-region: drag;
+`
+);
 
 const EditorTools = styled.div({
     display: 'flex',
