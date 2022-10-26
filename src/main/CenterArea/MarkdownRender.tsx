@@ -369,6 +369,13 @@ export const MarkdownRender: React.FC<{
         setShowRenderScrollPos(false);
     }, [renderTop]);
 
+    const copySelection = useCallback(() => {
+        const sel = window.getSelection();
+        if (sel && sel.type === 'Range') {
+            navigator.clipboard.writeText(sel.toString());
+        }
+    }, []);
+
     const handleKeyDown = useCallback(
         (e: any) => {
             if (process.platform === 'darwin') {
@@ -472,10 +479,7 @@ export const MarkdownRender: React.FC<{
             <TocDirectory ref={TocRef} className="toc-scroller"></TocDirectory>
             {menu ? (
                 <MenuUl top={yPos} left={xPos} className="menu-ui-color">
-                    <MenuLi
-                        className="menu-li-color"
-                        // onClick={() => copySelection()}
-                    >
+                    <MenuLi className="menu-li-color" onClick={() => copySelection()}>
                         复制
                     </MenuLi>
                 </MenuUl>

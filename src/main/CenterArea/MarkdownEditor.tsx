@@ -122,6 +122,64 @@ export const MarkdownEditor: React.FC<{
         setShowEditorScrollPos(false);
     }, [cursorHead, fromPos]);
 
+    const copySelection = useCallback(() => {
+        if (view.current) {
+            const from = view.current.state.selection.main.from;
+            const to = view.current.state.selection.main.to;
+            if (from < to) {
+                const slice_doc = view.current.state.sliceDoc(from, to);
+                navigator.clipboard.writeText(slice_doc);
+            }
+        }
+    }, []);
+
+    const cutSelection = useCallback(() => {
+        if (view.current) {
+            const from = view.current.state.selection.main.from;
+            const to = view.current.state.selection.main.to;
+            if (from < to) {
+                const slice_doc = view.current.state.sliceDoc(from, to);
+                navigator.clipboard.writeText(slice_doc);
+                view.current.dispatch({
+                    changes: {
+                        from: from,
+                        to: to,
+                        insert: '',
+                    },
+                });
+                view.current.focus();
+                view.current.dispatch({
+                    selection: {
+                        anchor: from,
+                        head: from,
+                    },
+                });
+            }
+        }
+    }, []);
+
+    const pasteClipboard = useCallback(() => {
+        navigator.clipboard.readText().then((clipText) => {
+            if (view.current) {
+                const from = view.current.state.selection.main.from;
+                const to = view.current.state.selection.main.to;
+                view.current.dispatch({
+                    changes: {
+                        from: from,
+                        to: to,
+                        insert: clipText,
+                    },
+                });
+                view.current.dispatch({
+                    selection: {
+                        anchor: from + clipText.length,
+                        head: from + clipText.length,
+                    },
+                });
+            }
+        });
+    }, []);
+
     const handleKeyDown = useCallback(
         (e: any) => {
             if (process.platform === 'darwin') {
@@ -230,14 +288,15 @@ export const MarkdownEditor: React.FC<{
             <div ref={editor} className={`${themeClassNames} ${scrollClassNames}`} />
             {menu ? (
                 <MenuUl top={yPos} left={xPos} className="menu-ui-color">
-                    <MenuLi
-                        className="menu-li-color"
-                        // onClick={() => copySelection()}
-                    >
+                    <MenuLi className="menu-li-color" onClick={() => copySelection()}>
                         复制
                     </MenuLi>
-                    <MenuLi className="menu-li-color">剪切</MenuLi>
-                    <MenuLi className="menu-li-color">粘贴</MenuLi>
+                    <MenuLi className="menu-li-color" onClick={() => cutSelection()}>
+                        剪切
+                    </MenuLi>
+                    <MenuLi className="menu-li-color" onClick={() => pasteClipboard()}>
+                        粘贴
+                    </MenuLi>
                 </MenuUl>
             ) : (
                 <></>
