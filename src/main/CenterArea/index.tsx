@@ -174,7 +174,7 @@ const CenterArea: React.FC<{
 
     return (
         <CenterAreaContainer>
-            <TopRow className="child-border-color">
+            <TopRow>
                 <EditorTools></EditorTools>
             </TopRow>
             <MarkdownArea>
@@ -203,7 +203,7 @@ const CenterArea: React.FC<{
                 </RenderPanel>
             </MarkdownArea>
             {dataPathChangeFlag > 0 ? (
-                <BottomRow className="bottom-bar-color">
+                <BottomRow>
                     <BreakCrumb>
                         <CurRepoNameTag
                             className="cur-repo-name-tag-color"
@@ -227,7 +227,7 @@ const CenterArea: React.FC<{
                             </FolderNameLabel>
                         </CurFolderNameTag>
                         {showAllRepo ? (
-                            <AllRepo className="float-panel-color">
+                            <AllRepo>
                                 <RepoPanel
                                     repos_key={repos_key}
                                     showAllRepo={showAllRepo}
@@ -260,7 +260,7 @@ const CenterArea: React.FC<{
                             <Triangle></Triangle>
                         </SwitchModeBtn>
                         {showSwitchModePanel ? (
-                            <SwitchModePanel className="float-panel-color">
+                            <SwitchModePanel>
                                 <ModeOption
                                     onClick={() => {
                                         setRenderPanelState('hidden');
@@ -313,9 +313,8 @@ const TopRow = styled.div(
         width: '100%',
         display: 'flex',
         alignItems: 'center',
-        height: '49.5px',
-        borderBottomWidth: '1.5px',
-        borderBottomStyle: 'solid',
+        height: '49px',
+        borderBottom: '1px solid var(--main-border-color)',
         paddingRight: '30px',
         boxSizing: 'border-box',
     },
@@ -369,6 +368,8 @@ const BottomRow = styled.div({
     alignItems: 'center',
     padding: '0 30px 0 30px',
     boxSizing: 'border-box',
+    backgroundColor: 'var(--bottom-main-bg-color)',
+    borderTop: 'var(--large-line-width) solid var(--main-border-color)',
 });
 
 const BreakCrumb = styled.div({
@@ -449,14 +450,16 @@ const GreaterTag = styled.div({
 });
 
 const AllRepo = styled.div({
-    width: 'calc(100% - 20px)',
+    width: 'calc(100% - 52px)',
     position: 'absolute',
-    left: '10px',
-    bottom: '48px',
+    left: '24px',
+    bottom: '65px',
     padding: '10px',
     boxSizing: 'border-box',
     borderRadius: '8px',
     zIndex: '3000',
+    border: '1px solid var(--float-panel-border-color)',
+    backgroundColor: 'var(--float-panel-bg-color)',
 });
 
 const SwitchMode = styled.div({
@@ -468,12 +471,13 @@ const SwitchMode = styled.div({
 
 const SwitchModeBtn = styled.div({
     display: 'flex',
-    width: '110px',
+    width: '112px',
     boxSizing: 'border-box',
     height: '30px',
     margin: '1px 5px',
     padding: '0 14px',
     borderRadius: '8px',
+    border: '1px solid var(--bottom-btn-border-color)',
 });
 
 const ModeNameTag = styled.div({
@@ -485,7 +489,7 @@ const ModeNameTag = styled.div({
 
 const ModeName = styled.div({
     fontSize: '14px',
-    lineHeight: '30px',
+    lineHeight: '28px',
 });
 
 const Triangle = styled.div({
@@ -501,14 +505,17 @@ const Triangle = styled.div({
 
 const SwitchModePanel = styled.div({
     position: 'absolute',
-    bottom: '34px',
-    left: 'calc(50% - 50px)',
+    bottom: '31px',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    width: '112px',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     padding: '5px 0',
     borderRadius: '4px',
     zIndex: '4000',
+    backgroundColor: 'var(--float-panel-bg-color-no-border)',
 });
 
 const ModeOption = styled.div({

@@ -172,7 +172,7 @@ const ImageSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssist
                 </CloseImageSpaceBtn>
             </TopRow>
             <ChildPart>
-                <PartTitle className={'child-border-color'}>
+                <PartTitle>
                     <PartTitleName>本地图库</PartTitleName>
                     <OpenImagePath>
                         <OpenImagePathBtn
@@ -258,8 +258,7 @@ const PartTitle = styled.div({
     fontWeight: '500',
     marginBottom: '15px',
     paddingBottom: '4px',
-    borderBottomWidth: '1.5px',
-    borderBottomStyle: 'solid',
+    border: '1px solid var(--main-border-color)',
 });
 
 const PartTitleName = styled.div({

@@ -21,7 +21,7 @@ const AssistantPanel: React.FC<{
     }, [setCurAssistantPanelName]);
 
     return (
-        <AssistantPanelContainer className="child-border-color" width={assistantPanelWidth}>
+        <AssistantPanelContainer width={assistantPanelWidth}>
             <ResizeAssistantPanelWidth
                 left={0}
                 onDragStart={(e) => {
@@ -75,8 +75,7 @@ const AssistantPanel: React.FC<{
 const AssistantPanelContainer = styled.div(
     {
         position: 'relative',
-        borderLeftWidth: '1.5px',
-        borderLeftStyle: 'solid',
+        border: '1px solid var(--main-border-color)',
         padding: '5px',
     },
     (props: { width: number }) => ({

@@ -365,7 +365,7 @@ const NoteList: React.FC<{
                     onDragEnd={handleDragEnd}
                 >
                     <SortableContext items={notes_key} strategy={verticalListSortingStrategy}>
-                        <Notes ref={outerRef} className="notes-scroller notes-border">
+                        <Notes ref={outerRef} className="notes-scroller">
                             {notes_key
                                 .filter((key: string) => notes_obj && notes_obj[key])
                                 .map((key: string, index: number) => {
@@ -536,6 +536,8 @@ const Notes = styled.div({
     flex: '1',
     minHeight: '0',
     padding: '10px 0 70px 0',
+    bordeLeft: '1px solid var(--main-border-color)',
+    borderRight: '1px solid var(--main-border-color)',
     scrollBehavior: 'smooth',
 });
 

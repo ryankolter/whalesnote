@@ -74,12 +74,6 @@ export const MarkdownRender: React.FC<{
 
     const { xPos, yPos, menu } = useContextMenu(renderRef);
 
-    const themeClassNames = useMemo(() => {
-        return typeof theme === 'string'
-            ? `${theme}-theme-rd common-theme-rd`
-            : 'grey-theme-rd common-theme-rd';
-    }, [theme]);
-
     md.current = useMemo(() => {
         return markdownIt({
             breaks: true,
@@ -203,7 +197,7 @@ export const MarkdownRender: React.FC<{
                 }) || '';
             const hljsStyle =
                 ipcRenderer.sendSync('readCss', {
-                    file_name: '/hljs_theme/grey_standard.css',
+                    file_name: `/hljs_theme/${theme}_standard.css`,
                 }) || '';
             const commonStyle =
                 ipcRenderer.sendSync('readCss', {
@@ -225,7 +219,7 @@ export const MarkdownRender: React.FC<{
             </style>
             </head>
             <body>
-            <div class='${theme}-theme-global ${theme}-theme-rd common-theme-rd'>
+            <div class='${theme}-theme-global common-theme-rd'>
                 ${bodyContent}
             </div>
             </body></html>`;
@@ -271,7 +265,7 @@ export const MarkdownRender: React.FC<{
         ipcRenderer.on('saveFolderToHtml', (event: any, path: string) => {
             const hljsStyle =
                 ipcRenderer.sendSync('readCss', {
-                    file_name: '/hljs_theme/grey_standard.css',
+                    file_name: `/hljs_theme/${theme}_standard.css`,
                 }) || '';
             const commonStyle =
                 ipcRenderer.sendSync('readCss', {
@@ -304,7 +298,7 @@ export const MarkdownRender: React.FC<{
                 </style>
                 </head>
                 <body>
-                <div class='${theme}-theme-global ${theme}-theme-rd common-theme-rd'>
+                <div class='${theme}-theme-global common-theme-rd'>
                     ${bodyContent}
                 </div>
                 </body></html>`;
@@ -469,14 +463,14 @@ export const MarkdownRender: React.FC<{
             )}
             <div
                 ref={renderRef}
-                className={themeClassNames}
+                className={'common-theme-rd'}
                 style={{
                     overflowX: 'hidden',
                     scrollBehavior: renderPanelState === 'all' ? 'auto' : 'smooth',
                 }}
                 dangerouslySetInnerHTML={{ __html: result }}
             ></div>
-            <TocDirectory ref={TocRef} className="toc-scroller"></TocDirectory>
+            <TocDirectory ref={TocRef} className="toc-scroller tips-1-bg-color"></TocDirectory>
             {menu ? (
                 <MenuUl top={yPos} left={xPos} className="menu-ui-color">
                     <MenuLi className="menu-li-color" onClick={() => copySelection()}>
@@ -533,7 +527,6 @@ const TocDirectory = styled.div({
     maxHeight: '50%',
     borderRadius: '10px',
     paddingRight: '6px',
-    backgroundColor: '#2F3338',
     overflowY: 'auto',
     zIndex: 1000,
 });

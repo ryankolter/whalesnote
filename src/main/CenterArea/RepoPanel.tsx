@@ -563,7 +563,7 @@ const RepoPanel: React.FC<{
                                                             style={{
                                                                 backgroundColor:
                                                                     currentRepoKey === key
-                                                                        ? '#3a404c'
+                                                                        ? 'var(--selected-bg-color)'
                                                                         : '',
                                                             }}
                                                         >
@@ -613,7 +613,7 @@ const RepoPanel: React.FC<{
                                                             style={{
                                                                 backgroundColor:
                                                                     currentRepoKey === key
-                                                                        ? '#3a404c'
+                                                                        ? 'var(--selected-bg-color)'
                                                                         : '',
                                                             }}
                                                         >
@@ -655,7 +655,7 @@ const RepoPanel: React.FC<{
                                                             style={{
                                                                 backgroundColor:
                                                                     currentRepoKey === key
-                                                                        ? '#3a404c'
+                                                                        ? 'var(--selected-bg-color)'
                                                                         : '',
                                                             }}
                                                         >
@@ -694,7 +694,7 @@ const RepoPanel: React.FC<{
                                                 style={{
                                                     backgroundColor:
                                                         currentRepoKey === activeId
-                                                            ? '#3a404c'
+                                                            ? 'var(--selected-bg-color)'
                                                             : '',
                                                 }}
                                             >
@@ -796,10 +796,10 @@ const ReposScroll = styled.div(
         height: 9px;
     }
     &::-webkit-scrollbar-track {
-        background-color: #2C3033;
+        background-color: inherit;
     }
     &::-webkit-scrollbar-thumb {
-        background-color: hsla(0,0%,78%,.2);
+        background-color: var(--scroller-color);
         border-radius: 3px;
     }
 `
@@ -854,7 +854,7 @@ const RepoGroupItem = styled.div({
     letterSpacing: '1px',
     padding: '2px',
     borderRadius: '8px',
-    backgroundColor: 'rgb(58, 64, 76)',
+    backgroundColor: 'var(--selected-bg-color)',
 });
 
 const RepoItemPadding = styled.div({

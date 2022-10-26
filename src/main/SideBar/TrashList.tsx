@@ -108,11 +108,6 @@ const TrashList: React.FC<{ theme: string; closeAssistantPanel: () => void }> = 
         }
     }, [handleWhell]);
 
-    const themeClassNames =
-        typeof theme === 'string'
-            ? `${theme}-theme-cm common-theme-cm`
-            : 'grey-theme-cm common-theme-cm';
-
     return (
         <NoteListContainer>
             <TrashTool>
@@ -125,7 +120,7 @@ const TrashList: React.FC<{ theme: string; closeAssistantPanel: () => void }> = 
                 </CloseTrashListBtn>
             </TrashTool>
             <ChildPart>
-                <PartTitle className={'child-border-color'}>
+                <PartTitle>
                     <PartTitleName>已删除笔记</PartTitleName>
                     <EmptyTrash>
                         <EmptyTrashBtn
@@ -181,7 +176,7 @@ const TrashList: React.FC<{ theme: string; closeAssistantPanel: () => void }> = 
             <CodeMirrorContainer
                 style={{ visibility: curTrashKey === '---' ? 'hidden' : 'visible' }}
             >
-                <div ref={editor} className={`${themeClassNames}`} />
+                <div ref={editor} className={'common-theme-cm'} />
             </CodeMirrorContainer>
         </NoteListContainer>
     );
@@ -222,8 +217,7 @@ const PartTitle = styled.div({
     fontWeight: '500',
     marginBottom: '15px',
     paddingBottom: '4px',
-    borderBottomWidth: '1.5px',
-    borderBottomStyle: 'solid',
+    border: '1px solid var(--main-border-color)',
 });
 
 const PartTitleName = styled.div({

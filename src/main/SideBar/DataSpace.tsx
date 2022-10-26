@@ -73,7 +73,7 @@ const DataSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssista
                 </CloseDataSpaceBtn>
             </TopRow>
             <ChildPart>
-                <PartTitle className={'child-border-color'}>数据空间</PartTitle>
+                <PartTitle>数据空间</PartTitle>
                 <ShowPath>
                     <PathContainer ref={pathUlRef}>
                         <Path>
@@ -133,14 +133,14 @@ const DataSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssista
                 </ShowPath>
             </ChildPart>
             {/* <ChildPart>
-                <PartTitle className={'child-border-color'}>操作</PartTitle>
+                <PartTitle>操作</PartTitle>
                 <OperationList>
                     <OperationBtn style={{ marginBottom: '15px' }}>一键备份</OperationBtn>
                     <OperationBtn style={{ marginBottom: '15px' }}>加密备份</OperationBtn>
                 </OperationList>
             </ChildPart> */}
             <ChildPart>
-                <PartTitle className={'child-border-color'}>同步</PartTitle>
+                <PartTitle>同步</PartTitle>
             </ChildPart>
             <WaitingMaskStatic show={switchingData} word={'载入中......'}></WaitingMaskStatic>
         </DataSpaceContainer>
@@ -179,8 +179,7 @@ const PartTitle = styled.div({
     fontWeight: '500',
     marginBottom: '15px',
     paddingBottom: '4px',
-    borderBottomWidth: '1.5px',
-    borderBottomStyle: 'solid',
+    border: '1px solid var(--main-border-color)',
 });
 
 const ShowPath = styled.div({

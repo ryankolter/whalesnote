@@ -22,7 +22,7 @@ const GlobalMenu: React.FC<{
                 onClick={() => setShowGlobalMenu(false)}
             ></div>
             <MenuPanel
-                className="float-panel-color no-scroller"
+                className="no-scroller"
                 style={{ transform: showGlobalMenu ? 'translate(0, 0)' : 'translate(-400px, 0)' }}
             ></MenuPanel>
         </GlobalMenuContainer>
@@ -42,6 +42,8 @@ const MenuPanel = styled.div({
     transition: 'all 400ms ease',
     zIndex: '9000',
     overflowY: 'auto',
+    border: '1px solid var(--float-panel-border-color)',
+    backgroundColor: 'var(--float-panel-bg-color)',
 });
 
 export default GlobalMenu;

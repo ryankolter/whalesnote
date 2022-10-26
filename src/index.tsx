@@ -3,10 +3,10 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 
 import './resources/css/global/img.css';
-import './resources/css/theme/common.css';
-import './resources/css/theme/grey.css';
 import './resources/css/theme/color.css';
+import './resources/css/theme/common.css';
 
+import './resources/css/hljs_theme/white_standard.css';
 import './resources/css/hljs_theme/grey_standard.css';
 
 import App from './App';

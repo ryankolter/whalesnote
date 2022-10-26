@@ -139,7 +139,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
     }, [handleKeyDown]);
 
     return (
-        <SearchBarContainer className="child-border-color">
+        <SearchBarContainer>
             <WaitingMaskStatic show={showWaitingMask} word={'请等待......'}></WaitingMaskStatic>
             <Search>
                 <SearchIcon>
@@ -155,7 +155,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                 />
             </Search>
             {showSearchPanel ? (
-                <SearchPanel className="float-panel-color ">
+                <SearchPanel>
                     <SearchTool>
                         <UpdateIndex>
                             <UpdateIndexBtn
@@ -202,7 +202,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                                             backgroundColor:
                                                 currentNoteKey === result.id.split('-')[2] &&
                                                 showResultHighlight
-                                                    ? '#3a404c'
+                                                    ? 'var(--selected-bg-color)'
                                                     : '',
                                         }}
                                     >
@@ -228,8 +228,7 @@ const SearchBarContainer = styled.div({
     position: 'relative',
     display: 'flex',
     padding: '5px 30px 5px 90px',
-    borderBottomWidth: '1.5px',
-    borderBottomStyle: 'solid',
+    borderBottom: '1px solid var(--main-border-color)',
 });
 
 const Search = styled.div({
@@ -266,15 +265,18 @@ const SearchInput = styled.input({
 
 const SearchPanel = styled.div({
     position: 'absolute',
-    top: '48px',
-    left: '0',
+    top: '40px',
+    left: '16px',
     display: 'flex',
     flexDirection: 'column',
-    width: 'calc(100%)',
-    height: 'calc(100vh - 48px)',
+    width: 'calc(100% - 16px)',
+    height: 'calc(100vh - 140px)',
     padding: '15px',
     boxSizing: 'border-box',
     zIndex: '3000',
+    borderRadius: '10px',
+    border: '1px solid var(--float-panel-border-color)',
+    backgroundColor: 'var(--float-panel-bg-color)',
 });
 
 const SearchTool = styled.div({

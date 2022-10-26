@@ -69,7 +69,7 @@ const TopIcons: React.FC<{}> = ({}) => {
                     }}
                 />
                 {showSwitchExportPanel ? (
-                    <SwitchExportPanel className="float-panel-color">
+                    <SwitchExportPanel>
                         <ModeOption
                             onClick={() => {
                                 setShowSwitchExportPanel(false);
@@ -135,6 +135,8 @@ const SwitchExportPanel = styled.div({
     padding: '5px 0',
     borderRadius: '4px',
     zIndex: '4000',
+    border: '1px solid var(--float-panel-border-color)',
+    backgroundColor: 'var(--float-panel-bg-color)',
 });
 
 const ModeOption = styled.div({

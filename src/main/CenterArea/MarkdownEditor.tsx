@@ -269,11 +269,6 @@ export const MarkdownEditor: React.FC<{
         };
     }, [handleKeyDown, handleScroll, handleMouseEnter, handleMouseLeave]);
 
-    const themeClassNames =
-        typeof theme === 'string'
-            ? `${theme}-theme-cm common-theme-cm`
-            : 'grey-theme-cm common-theme-cm';
-
     const scrollClassNames = cursorInRender ? 'editor-smooth' : 'editor-auto';
 
     return (
@@ -285,7 +280,7 @@ export const MarkdownEditor: React.FC<{
             ) : (
                 <></>
             )}
-            <div ref={editor} className={`${themeClassNames} ${scrollClassNames}`} />
+            <div ref={editor} className={'common-theme-cm'} />
             {menu ? (
                 <MenuUl top={yPos} left={xPos} className="menu-ui-color">
                     <MenuLi className="menu-li-color" onClick={() => copySelection()}>
