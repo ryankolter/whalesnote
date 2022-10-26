@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 import cryptoRandomString from 'crypto-random-string';
@@ -41,6 +41,8 @@ const CenterArea: React.FC<{
     const [cursorInRender, setCursorInRender] = useState(false);
     const [editorScrollRatio, setEditorScrollRatio] = useState(0);
     const [renderScrollRatio, setRenderScrollRatio] = useState(0);
+
+    const outerRef = useRef<HTMLDivElement>(null);
 
     const repoNameClickHandler = useCallback(() => {
         setShowAllRepo((_showAllRepo) => !_showAllRepo);

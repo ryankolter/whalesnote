@@ -300,10 +300,8 @@ const MenuUl = styled.ul(
     {
         listStyleType: 'none',
         position: 'fixed',
-        padding: '4px 0',
-        border: '1px solid #BABABA',
-        color: '#000000',
-        backgroundColor: '#FFFFFF',
+        padding: '4px',
+        borderRadius: '5px',
         zIndex: '4000',
     },
     (props: { top: string; left: string }) => ({
@@ -314,14 +312,18 @@ const MenuUl = styled.ul(
 
 const MenuLi = styled.li(
     {
-        padding: '0 22px',
-        fontSize: '12px',
+        padding: '0 10px',
+        fontSize: '13px',
+        fontWeight: '500',
         lineHeight: '22px',
+        letterSpacing: '1px',
         cursor: 'pointer',
     },
-    `&:hover {
-background-color: #EBEBEB; 
-}`
+    `
+    &:hover {
+        border-radius: 4px;
+    }
+`
 );
 
 const CodeMirrorContainer = styled.div({

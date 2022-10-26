@@ -30,6 +30,8 @@ import markdownItAnchor from 'markdown-it-anchor';
 import markdownItTable from 'markdown-it-multimd-table';
 import markdownItTocDoneRight from 'markdown-it-toc-done-right';
 
+import useContextMenu from '../../lib/useContextMenu';
+
 export const MarkdownRender: React.FC<{
     theme: string;
     editorScrollRatio: number;
@@ -57,8 +59,26 @@ export const MarkdownRender: React.FC<{
         updateRenderTop,
     } = useContext(GlobalContext);
 
+    const [result, setResult] = useState('');
+    const [showRenderScrollPos, setShowRenderScrollPos] = useState(false);
+
     const md = useRef<markdownIt>(markdownIt());
-    const print_md = useRef<markdownIt>(markdownIt());
+    const mdPrint = useRef<markdownIt>(markdownIt());
+    const renderRef = useRef<HTMLDivElement>(null);
+    const scrollSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
+    const scrollRatioSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
+    const TocRef = useRef<HTMLDivElement>(null);
+    const renderContainerRef = useRef<HTMLDivElement>(null);
+    const autoScroll = useRef<boolean>(false);
+    const clipboard: any = useRef<ClipboardJS>(null);
+
+    const { xPos, yPos, menu } = useContextMenu(renderRef);
+
+    const themeClassNames = useMemo(() => {
+        return typeof theme === 'string'
+            ? `${theme}-theme-rd common-theme-rd`
+            : 'grey-theme-rd common-theme-rd';
+    }, [theme]);
 
     md.current = useMemo(() => {
         return markdownIt({
@@ -127,7 +147,7 @@ export const MarkdownRender: React.FC<{
             });
     }, [curDataPath]);
 
-    print_md.current = useMemo(() => {
+    mdPrint.current = useMemo(() => {
         return markdownIt({
             breaks: true,
             linkify: true,
@@ -145,7 +165,7 @@ export const MarkdownRender: React.FC<{
 
                 return (
                     '<pre><code class="hljs">' +
-                    print_md.current.utils.escapeHtml(str) +
+                    mdPrint.current.utils.escapeHtml(str) +
                     '</code></pre>'
                 );
             },
@@ -174,28 +194,9 @@ export const MarkdownRender: React.FC<{
             });
     }, [curDataPath]);
 
-    const [result, setResult] = useState('');
-
-    const [showRenderScrollPos, setShowRenderScrollPos] = useState(false);
-
-    const renderRef = useRef<HTMLDivElement>(null);
-    const scrollSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
-    const scrollRatioSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
-    const autoScroll = useRef<boolean>(false);
-    const TocRef = useRef<HTMLDivElement>(null);
-    const renderContainerRef = useRef<HTMLDivElement>(null);
-
-    const clipboard: any = useRef<ClipboardJS>(null);
-
-    const themeClassNames = useMemo(() => {
-        return typeof theme === 'string'
-            ? `${theme}-theme-rd common-theme-rd`
-            : 'grey-theme-rd common-theme-rd';
-    }, [theme]);
-
     useEffect(() => {
         ipcRenderer.on('saveNoteToHtml', (event: any, path: string) => {
-            const bodyContent = print_md.current.render(currentNoteStr);
+            const bodyContent = mdPrint.current.render(currentNoteStr);
             const imgStyle =
                 ipcRenderer.sendSync('readCss', {
                     file_name: '/global/img.css',
@@ -291,7 +292,7 @@ export const MarkdownRender: React.FC<{
                         : '';
                 if (title === '' || title === '新建文档') title = note_key;
                 const content = notes[currentRepoKey][currentFolderKey][note_key];
-                const bodyContent = print_md.current.render(content);
+                const bodyContent = mdPrint.current.render(content);
                 const outerHtml = `<!DOCTYPE html><html>
                 <head>
                 <meta charset="UTF-8">
@@ -469,6 +470,18 @@ export const MarkdownRender: React.FC<{
                 dangerouslySetInnerHTML={{ __html: result }}
             ></div>
             <TocDirectory ref={TocRef} className="toc-scroller"></TocDirectory>
+            {menu ? (
+                <MenuUl top={yPos} left={xPos} className="menu-ui-color">
+                    <MenuLi
+                        className="menu-li-color"
+                        // onClick={() => deleteRepo()}
+                    >
+                        复制
+                    </MenuLi>
+                </MenuUl>
+            ) : (
+                <></>
+            )}
         </MarkdownRenderContainer>
     );
 };
@@ -520,3 +533,33 @@ const TocDirectory = styled.div({
     overflowY: 'auto',
     zIndex: 1000,
 });
+
+const MenuUl = styled.ul(
+    {
+        listStyleType: 'none',
+        position: 'fixed',
+        padding: '4px',
+        borderRadius: '5px',
+        zIndex: '4000',
+    },
+    (props: { top: string; left: string }) => ({
+        top: props.top,
+        left: props.left,
+    })
+);
+
+const MenuLi = styled.li(
+    {
+        padding: '0 10px',
+        fontSize: '13px',
+        fontWeight: '500',
+        lineHeight: '22px',
+        letterSpacing: '1px',
+        cursor: 'pointer',
+    },
+    `
+    &:hover {
+        border-radius: 4px;
+    }
+`
+);

@@ -5,6 +5,7 @@ import styled from '@emotion/styled';
 import { EditorView, ViewUpdate } from '@codemirror/view';
 
 import useCodeMirror from '../../lib/useCodeMirror';
+import useContextMenu from '../../lib/useContextMenu';
 
 export const MarkdownEditor: React.FC<{
     theme: string;
@@ -37,6 +38,8 @@ export const MarkdownEditor: React.FC<{
     const scrollSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
     const scrollRatioSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
     const editorContainerRef = useRef<HTMLDivElement>(null);
+
+    const { xPos, yPos, menu } = useContextMenu(editorContainerRef);
 
     const onDocChange = useCallback(
         (new_value: string, viewUpdate: ViewUpdate) => {
@@ -225,6 +228,20 @@ export const MarkdownEditor: React.FC<{
                 <></>
             )}
             <div ref={editor} className={`${themeClassNames} ${scrollClassNames}`} />
+            {menu ? (
+                <MenuUl top={yPos} left={xPos} className="menu-ui-color">
+                    <MenuLi className="menu-li-color">剪切</MenuLi>
+                    <MenuLi
+                        className="menu-li-color"
+                        // onClick={() => deleteRepo()}
+                    >
+                        复制
+                    </MenuLi>
+                    <MenuLi className="menu-li-color">粘贴</MenuLi>
+                </MenuUl>
+            ) : (
+                <></>
+            )}
         </MarkdownEditorContainer>
     );
 };
@@ -260,6 +277,36 @@ const LastScrollPos = styled.div(
         position: absolute;
         top: 0;
         width: 0;
+    }
+`
+);
+
+const MenuUl = styled.ul(
+    {
+        listStyleType: 'none',
+        position: 'fixed',
+        padding: '4px',
+        borderRadius: '5px',
+        zIndex: '4000',
+    },
+    (props: { top: string; left: string }) => ({
+        top: props.top,
+        left: props.left,
+    })
+);
+
+const MenuLi = styled.li(
+    {
+        padding: '0 10px',
+        fontSize: '13px',
+        fontWeight: '500',
+        lineHeight: '22px',
+        letterSpacing: '1px',
+        cursor: 'pointer',
+    },
+    `
+    &:hover {
+        border-radius: 4px;
     }
 `
 );

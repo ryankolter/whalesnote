@@ -74,12 +74,13 @@
 }
 
 .menu-ui-color {
-    border: 1px solid #BABABA;
-    background-color: #FFFFFF;
+    color: #CDCDCD;
+    border: 1px solid #585655;
+    background-color: #2E2A27;
 }
 
 .menu-li-color:hover {
-    background-color: #EBEBEB; 
+    background-color: #185DC5; 
 }
 
 /* bottom bar */

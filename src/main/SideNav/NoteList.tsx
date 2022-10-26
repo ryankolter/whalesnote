@@ -584,7 +584,8 @@ const MenuUl = styled.ul(
     {
         listStyleType: 'none',
         position: 'fixed',
-        padding: '4px 0',
+        padding: '4px',
+        borderRadius: '5px',
         zIndex: '4000',
     },
     (props: { top: string; left: string }) => ({
@@ -593,11 +594,20 @@ const MenuUl = styled.ul(
     })
 );
 
-const MenuLi = styled.li({
-    padding: '0 22px',
-    fontSize: '12px',
-    lineHeight: '22px',
-    cursor: 'pointer',
-});
+const MenuLi = styled.li(
+    {
+        padding: '0 10px',
+        fontSize: '13px',
+        fontWeight: '500',
+        lineHeight: '22px',
+        letterSpacing: '1px',
+        cursor: 'pointer',
+    },
+    `
+    &:hover {
+        border-radius: 4px;
+    }
+`
+);
 
 export default NoteList;

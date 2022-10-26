@@ -8,7 +8,7 @@ const useContextMenu = (outerRef: any) => {
     const handleContextMenu = useCallback(
         (event: MouseEvent) => {
             event.preventDefault();
-            if (outerRef && outerRef.current.contains(event.target)) {
+            if (outerRef && outerRef.current && outerRef.current.contains(event.target)) {
                 setXPos(`${event.pageX}px`);
                 setYPos(`${event.pageY}px`);
                 showMenu(true);
