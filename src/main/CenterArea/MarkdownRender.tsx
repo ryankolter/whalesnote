@@ -191,31 +191,31 @@ export const MarkdownRender: React.FC<{
     useEffect(() => {
         ipcRenderer.on('saveNoteToHtml', (event: any, path: string) => {
             const bodyContent = mdPrint.current.render(currentNoteStr);
-            const imgStyle =
+            const colorStyle =
                 ipcRenderer.sendSync('readCss', {
-                    file_name: '/global/img.css',
+                    file_name: '/theme/color_variable.css',
+                }) || '';
+            const globalStyle =
+                ipcRenderer.sendSync('readCss', {
+                    file_name: '/theme/global.css',
                 }) || '';
             const hljsStyle =
                 ipcRenderer.sendSync('readCss', {
                     file_name: `/hljs_theme/${theme}_standard.css`,
                 }) || '';
-            const commonStyle =
+            const renderStyle =
                 ipcRenderer.sendSync('readCss', {
-                    file_name: '/theme/common.css',
-                }) || '';
-            const themeStyle =
-                ipcRenderer.sendSync('readCss', {
-                    file_name: `/theme/${theme}.css`,
+                    file_name: '/theme/render.css',
                 }) || '';
             const outerHtml = `<!DOCTYPE html><html>
             <head>
             <meta charset="UTF-8">
-            <meta name = "viewport" content = "width = device-width, initial-scale = 1, maximum-scale = 1">
+            <meta name = "viewport" content = "width = device-width, initial-scale = 1.5, maximum-scale = 1">
             <style>
-            ${imgStyle}
-            ${commonStyle}
-            ${themeStyle}
+            ${colorStyle}
+            ${globalStyle}
             ${hljsStyle}
+            ${renderStyle}
             </style>
             </head>
             <body>
@@ -263,19 +263,22 @@ export const MarkdownRender: React.FC<{
 
     useEffect(() => {
         ipcRenderer.on('saveFolderToHtml', (event: any, path: string) => {
+            const colorStyle =
+                ipcRenderer.sendSync('readCss', {
+                    file_name: '/theme/color_variable.css',
+                }) || '';
+            const globalStyle =
+                ipcRenderer.sendSync('readCss', {
+                    file_name: '/theme/global.css',
+                }) || '';
             const hljsStyle =
                 ipcRenderer.sendSync('readCss', {
                     file_name: `/hljs_theme/${theme}_standard.css`,
                 }) || '';
-            const commonStyle =
+            const renderStyle =
                 ipcRenderer.sendSync('readCss', {
-                    file_name: '/theme/common.css',
+                    file_name: '/theme/render.css',
                 }) || '';
-            const themeStyle =
-                ipcRenderer.sendSync('readCss', {
-                    file_name: `/theme/${theme}.css`,
-                }) || '';
-
             Object.keys(notes[currentRepoKey][currentFolderKey]).forEach((note_key: string) => {
                 let title =
                     repos_obj[currentRepoKey]?.folders_obj &&
@@ -292,9 +295,10 @@ export const MarkdownRender: React.FC<{
                 <meta charset="UTF-8">
                 <meta name = "viewport" content = "width = device-width, initial-scale = 1, maximum-scale = 1">
                 <style>
-                ${commonStyle}
-                ${themeStyle}
+                ${colorStyle}
+                ${globalStyle}
                 ${hljsStyle}
+                ${renderStyle}
                 </style>
                 </head>
                 <body>

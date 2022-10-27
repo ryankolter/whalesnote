@@ -4,7 +4,7 @@ import './index.css';
 
 import './resources/css/theme/color_variable.css';
 import './resources/css/theme/global.css';
-import './resources/css/theme/codemirror.css';
+import './resources/css/theme/editor.css';
 import './resources/css/theme/render.css';
 
 import './resources/css/hljs_theme/white_standard.css';
