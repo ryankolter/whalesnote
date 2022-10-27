@@ -31,7 +31,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
 
     const handleSearchInputEnter = useCallback(
         (e: any) => {
-            if (e.keyCode === 13) {
+            if (e.key === 'Enter') {
                 setWord(e.target.value);
                 if (!showSearchPanel) setShowSearchPanel(true);
             }
@@ -109,8 +109,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                     if (keySelect) setKeySelect(false);
                 }
 
-                //esc
-                if (e.keyCode === 27) {
+                if (e.key === 'Escape') {
                     if (showSearchPanel) {
                         setShowSearchPanel(false);
                     }

@@ -109,11 +109,7 @@ const CenterArea: React.FC<{
                 }
 
                 //normal enter and extra enter
-                if (
-                    (e.keyCode === 13 || e.keyCode === 108) &&
-                    keySelect &&
-                    allowHiddenAllRepoViaEnter
-                ) {
+                if (e.key === 'Enter' && keySelect && allowHiddenAllRepoViaEnter) {
                     setKeySelect(false);
                     setNumArray([]);
                     if (currentNoteKey) {
@@ -128,12 +124,12 @@ const CenterArea: React.FC<{
                     }
                 }
 
-                if ((e.keyCode === 13 || e.keyCode === 108) && allowHiddenAllRepoViaEnter) {
+                if (e.key === 'Enter' && allowHiddenAllRepoViaEnter) {
                     setShowAllRepo(false);
                 }
 
                 // esc
-                if (e.keyCode === 27) {
+                if (e.key === 'Escape') {
                     if (keySelect) {
                         setKeySelect(false);
                         setNumArray([]);
@@ -142,7 +138,7 @@ const CenterArea: React.FC<{
                 }
 
                 //switch among hidden, half, all
-                if ((e.keyCode === 191 || e.keyCode === 47) && modKey) {
+                if (e.key === '/' && modKey && !e.shiftKey) {
                     if (renderPanelState === 'hidden') {
                         setRenderPanelState('half');
                     } else if (renderPanelState === 'half') {

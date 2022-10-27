@@ -62,6 +62,7 @@ export const MarkdownRender: React.FC<{
 
     const [result, setResult] = useState('');
     const [showRenderScrollPos, setShowRenderScrollPos] = useState(false);
+    const [showToc, setShowToc] = useState(false);
 
     const md = useRef<markdownIt>(markdownIt());
     const mdPrint = useRef<markdownIt>(markdownIt());
@@ -378,17 +379,24 @@ export const MarkdownRender: React.FC<{
     const handleKeyDown = useCallback(
         (e: any) => {
             if (process.platform === 'darwin') {
+                console.log(e.key);
                 if (e.keyCode === 74 && e.metaKey && !e.shiftKey && renderPanelState === 'all') {
                     autoScrollToLine();
+                }
+                if (e.key === '.' && e.metaKey && !e.shiftKey) {
+                    setShowToc((showToc) => !showToc);
                 }
             }
             if (process.platform === 'win32' || process.platform === 'linux') {
                 if (e.keyCode === 74 && e.crtlKey && !e.shiftKey && renderPanelState === 'all') {
                     autoScrollToLine();
                 }
+                if (e.key === '.' && e.crtlKey && !e.shiftKey) {
+                    setShowToc((showToc) => !showToc);
+                }
             }
         },
-        [renderPanelState, autoScrollToLine]
+        [renderPanelState, autoScrollToLine, setShowToc]
     );
 
     const handleScroll = useCallback(
@@ -473,7 +481,12 @@ export const MarkdownRender: React.FC<{
                 }}
                 dangerouslySetInnerHTML={{ __html: result }}
             ></div>
-            <TocDirectory ref={TocRef} className="toc-scroller"></TocDirectory>
+            <TocToggleBtn onClick={() => setShowToc((showToc) => !showToc)}></TocToggleBtn>
+            <TocDirectory
+                ref={TocRef}
+                className="toc-scroller"
+                tocHeight={showToc ? '40%' : '0'}
+            ></TocDirectory>
             {menu ? (
                 <MenuUl top={yPos} left={xPos}>
                     <MenuLi className="menu-li-color" onClick={() => copySelection()}>
@@ -528,31 +541,37 @@ const LastScrollPos = styled.div(
 `
 );
 
+const TocToggleBtn = styled.div({
+    position: 'absolute',
+    top: '0',
+    right: '18px',
+    width: '30%',
+    height: '16px',
+    paddingRight: '6px',
+    zIndex: 10000,
+    borderBottom: '1px solid var(--main-border-color)',
+    backgroundColor: 'var(--main-tips-bg-color)',
+});
+
 const TocDirectory = styled.div(
     {
         position: 'absolute',
-        top: '0',
+        top: '17px',
         right: '18px',
         width: '30%',
-        maxHeight: '50%',
         borderRadius: '10px',
         paddingRight: '6px',
         overflowY: 'auto',
         zIndex: 1000,
         backgroundColor: 'var(--main-tips-bg-color)',
+        transition: 'height .3s 0s ease',
     },
+    (props: { tocHeight: string }) => ({
+        height: props.tocHeight,
+    }),
     `
     &::-webkit-scrollbar {
-        width: 8px;
-    }
-
-    &::-webkit-scrollbar-thumb {
-        border-radius: 3px;
-        background-color: var(--main-scroller-bg-color);
-    }
-    
-    &::-webkit-scrollbar-track {
-        background-color: inherit;
+        display: none;
     }
 `
 );

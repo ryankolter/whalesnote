@@ -119,7 +119,7 @@ const RepoPanel: React.FC<{
     };
 
     const newRepoInputEnter = (e: any, repo_key: string) => {
-        if (e.keyCode === 13) {
+        if (e.key === 'Enter') {
             newRepoSubmit(e, repo_key);
         }
     };
@@ -279,14 +279,14 @@ const RepoPanel: React.FC<{
 
     const handleRenameRepoKeyDown = useCallback(
         (e: any) => {
-            if (e.keyCode === 27) {
+            if (e.key === 'Escape') {
                 setRenamePopUp(false);
                 setCurRepoName(
                     repos_obj && currentRepoKey && repos_obj[currentRepoKey]
                         ? repos_obj[currentRepoKey].repo_name
                         : ''
                 );
-            } else if (e.keyCode === 13) {
+            } else if (e.key === 'Enter') {
                 renameRepoConfirm();
             }
         },
@@ -386,9 +386,9 @@ const RepoPanel: React.FC<{
 
     const handleDeleteRepoKeyDown = useCallback(
         (e: any) => {
-            if (e.keyCode === 27) {
+            if (e.key === 'Escape') {
                 setDeletePopUp(false);
-            } else if (e.keyCode === 13) {
+            } else if (e.key === 'Enter') {
                 deleteRepoConfirm();
             }
         },

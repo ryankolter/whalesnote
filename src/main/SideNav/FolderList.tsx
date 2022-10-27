@@ -74,7 +74,7 @@ const FolderList: React.FC<{
     };
 
     const newFolderInputEnter = (e: any, folder_key: string) => {
-        if (e.keyCode === 13) {
+        if (e.key === 'Enter') {
             newFolderConfirm(e, folder_key);
         }
     };
@@ -192,9 +192,9 @@ const FolderList: React.FC<{
     }, [setRenamePopUp]);
 
     const handleRenameFolderKeyDown = (e: any) => {
-        if (e.keyCode === 27) {
+        if (e.key === 'Escape') {
             setRenamePopUp(false);
-        } else if (e.keyCode === 13) {
+        } else if (e.key === 'Enter') {
             renameFolderConfirm();
         }
     };
@@ -305,9 +305,9 @@ const FolderList: React.FC<{
 
     const handleDeleteFolderKeyDown = useCallback(
         (e: any) => {
-            if (e.keyCode === 13) {
+            if (e.key === 'Enter') {
                 deleteFolderConfirm();
-            } else if (e.keyCode === 27) {
+            } else if (e.key === 'Escape') {
                 setDeletePopUp(false);
             }
         },
