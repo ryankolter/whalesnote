@@ -84,14 +84,14 @@
     --main-tips-bg-color: #E3F3ED; /*#72c4a4*/
 
     /* editor */
-    --editor-main-text-color: #000000;
+    --editor-main-text-color: #000000F0;
     --editor-main-bg-color: #F7F7FA;
-    --editor-htag-text-color: #A9B7C6;
+    --editor-htag-text-color: #000000;
     --editor-lastpos-bg-color: #F7F7FA;
 
     /* render */
     --render-main-bg-color: #FAFAFC;
-    --render-code-text-color: #000000;
+    --render-code-text-color: #000000F0;
     --render-code-line-bg-color: #E5EEFF80;
     --render-code-block-bg-color: #E5EEFF80;
     --render-blockquote-text-color: #A0A0A0;
