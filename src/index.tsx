@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 
 import './resources/css/theme/color_variable.css';
-import './resources/css/theme/global.css';
+import './resources/css/theme/global.scss';
 import './resources/css/theme/editor.css';
 import './resources/css/theme/render.css';
 

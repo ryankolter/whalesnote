@@ -51,6 +51,40 @@ body {
     cursor: pointer;
 }
 
+.radio-beauty-container {
+    font-size: 0;
+    $bgc: var(--main-text-color);
+    %common {
+        padding: 2px;
+        background-color: $bgc;
+        background-clip: content-box;
+    }
+    .radio-name {
+        vertical-align: middle;
+        font-size: 16px;
+    }
+    .radio-input {
+        display: none;
+    }
+    .radio-beauty {
+        width: 15px;
+        height: 15px;
+        box-sizing: border-box;
+        display: inline-block;
+        border: 1px solid $bgc;
+        border-radius: 50%;
+        vertical-align: middle;
+        margin: 0 15px 0 3px;
+        &:hover {
+            box-shadow: 0 0 7px $bgc;
+            @extend %common;
+        }
+    }
+    input[type="radio"]:checked+.radio-beauty {
+        @extend %common;
+    }
+}
+
 
 figure {
     display: flex;

@@ -4,12 +4,14 @@ import { useCallback, useRef, useState } from 'react';
 import DataSpace from './DataSpace';
 import ImageSpace from './ImageSpace';
 import TrashList from './TrashList';
+import GlobalSetting from './GlobalSetting';
 
 const AssistantPanel: React.FC<{
     theme: string;
+    setTheme: React.Dispatch<React.SetStateAction<string>>;
     curAssistantPanelName: string;
     setCurAssistantPanelName: React.Dispatch<React.SetStateAction<string>>;
-}> = ({ theme, curAssistantPanelName, setCurAssistantPanelName }) => {
+}> = ({ theme, setTheme, curAssistantPanelName, setCurAssistantPanelName }) => {
     const resizeAssistantPanelOffsetX = useRef<number>(0);
     const lastPageX = useRef<number>(0);
     const [assistantPanelWidth, setAssistantPanelWidth] = useState(
@@ -67,7 +69,15 @@ const AssistantPanel: React.FC<{
             ) : (
                 <></>
             )}
-            {curAssistantPanelName == 'setting_panel' ? <></> : <></>}
+            {curAssistantPanelName == 'global_setting' ? (
+                <GlobalSetting
+                    theme={theme}
+                    setTheme={setTheme}
+                    closeAssistantPanel={closeAssistantPanel}
+                />
+            ) : (
+                <></>
+            )}
         </AssistantPanelContainer>
     );
 };

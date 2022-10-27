@@ -20,7 +20,7 @@ const App = () => {
                 <AppUI>
                     <SideNav />
                     <CenterArea theme={theme} />
-                    <SideBar theme={theme} />
+                    <SideBar theme={theme} setTheme={setTheme} />
                 </AppUI>
                 {/* <SocketClientBtn/>
                 <SocketServerBtn/> */}

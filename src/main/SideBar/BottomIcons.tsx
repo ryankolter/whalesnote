@@ -57,7 +57,7 @@ const BottomIcons: React.FC<{
                 iconHeight={32}
                 iconPadding={12}
                 iconSrc={settingPanelIcon}
-                onClick={() => handleSvgIconClick('setting_panel')}
+                onClick={() => handleSvgIconClick('global_setting')}
             />
         </BottomIconsContainer>
     );
