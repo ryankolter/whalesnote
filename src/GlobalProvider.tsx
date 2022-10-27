@@ -137,6 +137,10 @@ const initContext: {
     setBlur: Dispatch<SetStateAction<string>>;
     keySelect: boolean;
     setKeySelect: Dispatch<SetStateAction<boolean>>;
+    editorFontSize: number;
+    setEditorFontSize: Dispatch<SetStateAction<number>>;
+    renderFontSize: number;
+    setRenderFontSize: Dispatch<SetStateAction<number>>;
 } = {
     curDataPath: '',
     setCurDataPath: () => {},
@@ -188,6 +192,10 @@ const initContext: {
     setBlur: () => {},
     keySelect: false,
     setKeySelect: () => {},
+    editorFontSize: 15,
+    setEditorFontSize: () => {},
+    renderFontSize: 15,
+    setRenderFontSize: () => {},
 };
 export const GlobalContext = createContext(initContext);
 
@@ -239,6 +247,12 @@ export const GlobalProvider = ({ children }: { children: any }) => {
     const [blur, setBlur] = useState<string>('');
     const [keySelect, setKeySelect] = useState<boolean>(false);
     const [numArray, setNumArray] = useState<number[]>([]);
+    const [editorFontSize, setEditorFontSize] = useState<number>(
+        Number(window.localStorage.getItem('editor_font_size')) || 15
+    );
+    const [renderFontSize, setRenderFontSize] = useState<number>(
+        Number(window.localStorage.getItem('render_font_size')) || 15
+    );
 
     const repoSwitch = useCallback(
         (repo_key: string | undefined) => {
@@ -400,6 +414,10 @@ export const GlobalProvider = ({ children }: { children: any }) => {
                 setBlur,
                 keySelect,
                 setKeySelect,
+                editorFontSize,
+                setEditorFontSize,
+                renderFontSize,
+                setRenderFontSize,
             }}
         >
             {children}

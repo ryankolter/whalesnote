@@ -57,6 +57,7 @@ export const MarkdownRender: React.FC<{
         currentNoteStr,
         renderTop,
         updateRenderTop,
+        renderFontSize,
     } = useContext(GlobalContext);
 
     const [result, setResult] = useState('');
@@ -457,7 +458,7 @@ export const MarkdownRender: React.FC<{
     }, [handleKeyDown, handleScroll]);
 
     return (
-        <MarkdownRenderContainer ref={renderContainerRef}>
+        <MarkdownRenderContainer ref={renderContainerRef} fontSizeValue={renderFontSize}>
             {showRenderScrollPos && renderPanelState === 'all' ? (
                 <LastScrollPos onClick={autoScrollToLine}>上次在</LastScrollPos>
             ) : (
@@ -486,11 +487,16 @@ export const MarkdownRender: React.FC<{
     );
 };
 
-const MarkdownRenderContainer = styled.div({
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-});
+const MarkdownRenderContainer = styled.div(
+    {
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+    },
+    (props: { fontSizeValue: number }) => ({
+        fontSize: props.fontSizeValue + 'px',
+    })
+);
 
 const LastScrollPos = styled.div(
     {

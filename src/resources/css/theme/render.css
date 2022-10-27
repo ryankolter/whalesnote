@@ -6,7 +6,6 @@
     box-sizing: border-box;
     padding: 0 15px 0 10px;
     font-family: PingFangSC-Regular, sans-serif;
-    font-size: 15px;
     user-select: text;
     overflow-y: auto;
     color: var(--editor-main-text-color) !important;
@@ -51,7 +50,7 @@
 }
 
 .wn-theme-rd pre code {
-    font-size: 15px;
+    font-size: 1em;
     background-color: var(--render-code-block-bg-color) !important;
 }
 
@@ -69,13 +68,13 @@
 }
 
 .wn-theme-rd h1 {
-    font-size: 28px !important;
-    line-height: 40px !important;
+    font-size: 1.8em !important;
+    line-height: 1.4em !important;
 }
 
 .wn-theme-rd h2 {
-    font-size: 22px !important;
-    line-height: 30px !important;
+    font-size: 1.4em !important;
+    line-height: 1.4em !important;
     margin-block-start: 1.5em !important;
     margin-block-end: 1em !important;
     padding-bottom: 0.1em !important;
@@ -83,15 +82,15 @@
 }
 
 .wn-theme-rd h3 {
-    font-size: 18px !important;
-    line-height: 26px !important;
+    font-size: 1.2em !important;
+    line-height: 1.4em !important;
     margin-block-start: 2em !important;
     margin-block-end: 1em !important;
 }
 
 .wn-theme-rd h4 {
-    font-size: 16px !important;
-    line-height: 22px !important;
+    font-size: 1em !important;
+    line-height: 1.4em !important;
     margin-block-start: 1.6em !important;
     margin-block-end: 1em !important;
 }
@@ -287,7 +286,7 @@
 #renderTocId ul {
     margin-block-start: 1.5em !important;
     margin-block-end: 1.5em !important;
-    padding-inline-start: 25px !important;
+    padding-inline-start: 1.6em !important;
 }
 
 #renderTocId ul > li > ul {

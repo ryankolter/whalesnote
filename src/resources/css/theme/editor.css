@@ -5,16 +5,14 @@
 
 .wn-theme-cm .cm-editor {
     height: 100%;
-    font-size: 15px;
-    word-spacing: 5px;
+    word-spacing: 0.333em;
     color: var(--editor-main-text-color) !important;
     background-color: var(--editor-main-bg-color) !important;
 }
 
 .wn-theme-cm .cm-line {
     font-family: PingFangSC-Regular, sans-serif;
-    font-size: 15px;
-    line-height: 24px;
+    line-height: 1.6em;
 }
 
 .wn-theme-cm .cm-focused {
@@ -27,31 +25,32 @@
 }
 
 .wn-theme-cm .ͼ13 {
-    letter-spacing: 0.6px;
+    letter-spacing: 0.04em;
     color: var(--editor-htag-text-color) !important;
 }
 
 /* gutter */
 .wn-theme-cm .cm-gutters {
-    display: none !important;
+    
+    background-color: #2F3338;
 }
 
 .wn-theme-cm .cm-gutter {
-    line-height: 24px;
+    line-height: 1.6em;
 }
 
 .wn-theme-cm .cm-foldGutter {
-    width: 14px;
-    padding: 0 4px 0 0;
+    width: 0.933em;
+    padding: 0 0.266em 0 0;
 }
 
 .wn-theme-cm .cm-foldGutter .cm-gutterElement {
-    font-size: 16px;
+    font-size: 1em;
     transform: translateY(-4px);
 }
 
 .wn-theme-cm .cm-lineNumbers .cm-gutterElement {
-    min-width: 24px !important;
+    min-width: 1.6em !important;
 }
 
 /* scroller */

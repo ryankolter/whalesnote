@@ -29,6 +29,7 @@ export const MarkdownEditor: React.FC<{
         focus,
         blur,
         setKeySelect,
+        editorFontSize,
     } = useContext(GlobalContext);
 
     const [showEditorScrollPos, setShowEditorScrollPos] = useState(false);
@@ -270,7 +271,7 @@ export const MarkdownEditor: React.FC<{
     }, [handleKeyDown, handleScroll, handleMouseEnter, handleMouseLeave]);
 
     return (
-        <MarkdownEditorContainer ref={editorContainerRef}>
+        <MarkdownEditorContainer ref={editorContainerRef} fontSizeValue={editorFontSize}>
             {showEditorScrollPos && renderPanelState !== 'all' ? (
                 <LastScrollPos onClick={autoScrollToLine}>上次在</LastScrollPos>
             ) : (
@@ -299,11 +300,17 @@ export const MarkdownEditor: React.FC<{
     );
 };
 
-const MarkdownEditorContainer = styled.div({
-    position: 'relative',
-    width: '100%',
-    height: '100%',
-});
+const MarkdownEditorContainer = styled.div(
+    {
+        position: 'relative',
+        width: '100%',
+        height: '100%',
+        fontSize: '15px',
+    },
+    (props: { fontSizeValue: number }) => ({
+        fontSize: props.fontSizeValue + 'px',
+    })
+);
 
 const LastScrollPos = styled.div(
     {
