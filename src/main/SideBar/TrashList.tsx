@@ -124,7 +124,6 @@ const TrashList: React.FC<{ theme: string; closeAssistantPanel: () => void }> = 
                     <PartTitleName>已删除笔记</PartTitleName>
                     <EmptyTrash>
                         <EmptyTrashBtn
-                            className="btn-1-bg-color"
                             onClick={() => {
                                 handleEmptyTrash();
                             }}
@@ -143,10 +142,10 @@ const TrashList: React.FC<{ theme: string; closeAssistantPanel: () => void }> = 
                             return (
                                 <NoteItem
                                     key={arr[2]}
-                                    className={
+                                    style={
                                         curTrashKey === trash_key
-                                            ? 'item-selected-color item-hover-color'
-                                            : 'item-hover-color'
+                                            ? { backgroundColor: 'var(--main-selected-bg-color)' }
+                                            : {}
                                     }
                                     onClick={() => {
                                         setCurTrashKey(trash_key);
@@ -160,7 +159,7 @@ const TrashList: React.FC<{ theme: string; closeAssistantPanel: () => void }> = 
                             );
                         })}
                     {menu && curTrashKey ? (
-                        <MenuUl top={yPos} left={xPos} className="menu-ui-color">
+                        <MenuUl top={yPos} left={xPos}>
                             <MenuLi
                                 className="menu-li-color"
                                 onClick={() => fullDeleteNote(curTrashKey)}
@@ -176,7 +175,7 @@ const TrashList: React.FC<{ theme: string; closeAssistantPanel: () => void }> = 
             <CodeMirrorContainer
                 style={{ visibility: curTrashKey === '---' ? 'hidden' : 'visible' }}
             >
-                <div ref={editor} className={'common-theme-cm'} />
+                <div ref={editor} className={'wn-theme-cm'} />
             </CodeMirrorContainer>
         </NoteListContainer>
     );
@@ -217,7 +216,7 @@ const PartTitle = styled.div({
     fontWeight: '500',
     marginBottom: '15px',
     paddingBottom: '4px',
-    border: '1px solid var(--main-border-color)',
+    borderBottom: '1px solid var(--main-border-color)',
 });
 
 const PartTitleName = styled.div({
@@ -241,6 +240,7 @@ const EmptyTrashBtn = styled.div({
     padding: '0 8px',
     borderRadius: ' 4px',
     cursor: 'pointer',
+    backgroundColor: 'var(--main-btn-bg-color)',
 });
 
 const NotesScroll = styled.div(
@@ -276,19 +276,26 @@ const Notes = styled.div(
 `
 );
 
-const NoteItem = styled.div({
-    position: 'relative',
-    height: '36px',
-    lineHeight: '36px',
-    width: '33%',
-    padding: '0 10px',
-    margin: '0 10px',
-    fontSize: '15px',
-    cursor: 'pointer',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-});
+const NoteItem = styled.div(
+    {
+        position: 'relative',
+        height: '36px',
+        lineHeight: '36px',
+        width: '33%',
+        padding: '0 10px',
+        margin: '0 10px',
+        fontSize: '15px',
+        cursor: 'pointer',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+    },
+    `
+    &:hover {
+        color: var(--main-text-hover-color);
+    }
+`
+);
 
 const MenuUl = styled.ul(
     {
@@ -297,6 +304,9 @@ const MenuUl = styled.ul(
         padding: '4px',
         borderRadius: '5px',
         zIndex: '4000',
+        border: '1px solid var(--menu-border-color)',
+        color: 'var(--menu-text-color)',
+        backgroundColor: 'var(--menu-bg-color)',
     },
     (props: { top: string; left: string }) => ({
         top: props.top,
@@ -316,6 +326,7 @@ const MenuLi = styled.li(
     `
     &:hover {
         border-radius: 4px;
+        background-color: var(--menu-hover-color);
     }
 `
 );

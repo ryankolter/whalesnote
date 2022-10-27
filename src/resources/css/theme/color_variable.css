@@ -1,0 +1,129 @@
+/* ---------- grey theme ---------- */
+
+.grey-theme-global {
+    /* text */
+    --main-text-color: #A0A0A0;
+    --main-text-hover-color: #D5D5D5;
+    --main-text-title-color: #D5D5D5;
+
+    /* border */
+    --main-border-color: #3A404C;
+    --main-dashed-border-color: #FFFFFF4D;
+    --main-tips-border-color: #3A404C;
+
+    /* background */
+    --main-bg-color: #2D3033;
+    --main-btn-bg-color: #3A404C;
+    --main-selected-bg-color: #3A404C;
+    --main-scroller-bg-color: #C7C7C733;
+    --main-tips-bg-color: #2F3338;
+
+    /* editor */
+    --editor-main-text-color: #999183;
+    --editor-main-bg-color: #2D3033;
+    --editor-htag-text-color: #A9B7C6;
+    --editor-lastpos-bg-color: #3A404C;
+
+    /* render */
+    --render-main-bg-color: #2D3033;
+    --render-code-text-color: #A9B7C6;
+    --render-code-line-bg-color: #363A3E;
+    --render-code-block-bg-color: #212121;
+    --render-blockquote-text-color: #A0A0A0;
+    --render-link-text-color: #2BAC8F;
+    --render-link-hover-bg-color: rgba(90, 214, 186, 0.2);
+    --render-list-border-color: #3D4450;
+    --render-copy-btn-text-color: #A0A0A0;
+    --render-copy-btn-bg-color: #3A404C;
+    --render-copy-btn-hover-color: #D5D5D5;
+
+    /* bottom bar */
+    --bottom-main-bg-color: #2D3033;
+    --bottom-btn-text-color: #CDCDCD;
+    --bottom-btn-bg-color: #585B62;
+    --bottom-btn-border-color: #585B62;
+
+    /* side bar */
+    --sidebar-bg-color: #3C3F42;
+
+    /* float panel */
+    --float-panel-bg-color: #2D3033;
+    --float-panel-bg-color-no-border: #2D3033;
+    --float-panel-border-color: #3A404C;
+
+    /* menu panel */
+    --menu-text-color: #CDCDCD;
+    --menu-border-color: #585655;
+    --menu-bg-color: #2E2A27;
+    --menu-hover-color: #3A404C;
+
+    /* other */
+    --input-text-color: rgba(255, 255, 255, 0.6);
+    --input-placeholder-text-color: rgba(255, 255, 255, 0.4);
+    --key-tab-bg-color: #3A404C;
+}
+
+/* ---------- white theme ---------- */
+
+.white-theme-global {
+    /* text */
+    --main-text-color: #666666;
+    --main-text-hover-color: #000000;
+    --main-text-title-color: #000000;
+
+    /* border */
+    --main-border-color: rgba(0, 0, 0, 0.3);
+    --main-dashed-border-color: #FFFFFF4D;
+    --main-tips-border-color: rgba(0, 0, 0, 0.3);
+
+    /* background */
+    --main-bg-color: #FFFFFF;
+    --main-btn-bg-color: #F7F7FA;
+    --main-selected-bg-color: #E5EEFF;
+    --main-scroller-bg-color: #94949666;
+    --main-tips-bg-color: #E3F3ED; /*#72c4a4*/
+
+    /* editor */
+    --editor-main-text-color: #000000;
+    --editor-main-bg-color: #F7F7FA;
+    --editor-htag-text-color: #A9B7C6;
+    --editor-lastpos-bg-color: #F7F7FA;
+
+    /* render */
+    --render-main-bg-color: #FAFAFC;
+    --render-code-text-color: #000000;
+    --render-code-line-bg-color: #E5EEFF80;
+    --render-code-block-bg-color: #E5EEFF80;
+    --render-blockquote-text-color: #A0A0A0;
+    --render-link-text-color: #2BAC8F;
+    --render-link-hover-bg-color: rgba(90, 214, 186, 0.2);
+    --render-list-border-color: #00000018;
+    --render-copy-btn-text-color: #00095EE6;
+    --render-copy-btn-bg-color: #DBDCE8;
+    --render-copy-btn-hover-color: #000000;
+
+    /* bottom bar */
+    --bottom-main-bg-color: #FFFFFF;
+    --bottom-btn-text-color: #4C4C4C;
+    --bottom-btn-bg-color: #FFFFFF;
+    --bottom-btn-border-color: #0059FFB3;
+
+    /* side bar */
+    --sidebar-bg-color: #F0F0F2;
+
+    /* float panel */
+    --float-panel-bg-color: #F7FAFF;
+    --float-panel-bg-color-no-border: #E5EEFFB0;
+    --float-panel-border-color: #0059FFB3;
+
+    /* menu panel */
+    --menu-text-color: #CDCDCD;
+    --menu-border-color: #585655;
+    --menu-bg-color: #2E2A27;
+    --menu-hover-color: #3A404C;
+
+    /* other */
+    --input-text-color: #808080;
+    --input-placeholder-text-color: #808080;
+    --key-tab-bg-color: #F7F7FA;
+}

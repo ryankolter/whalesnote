@@ -62,7 +62,7 @@ const SideNav: React.FC<Record<string, unknown>> = ({}) => {
     }, [handleKeyDown]);
 
     return (
-        <LeftPanel className={'left-panel-color'}>
+        <LeftPanel>
             <SearchBar />
             <SelectArea className={'select-area-border'}>
                 <List>
@@ -119,6 +119,7 @@ const LeftPanel = styled.div({
     flexDirection: 'column',
     height: '100%',
     boxSizing: 'border-box',
+    color: 'var(--main-text-color)',
 });
 
 const SelectArea = styled.div({

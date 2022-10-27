@@ -461,7 +461,7 @@ const FolderList: React.FC<{
                     <CategoryIcon>
                         <CategoryIconImg src={categoryIcon} alt="" />
                     </CategoryIcon>
-                    <FolderTopTitle className="title-1-color">分类</FolderTopTitle>
+                    <FolderTopTitle>分类</FolderTopTitle>
                 </FolderTopBar>
             ) : (
                 <></>
@@ -483,9 +483,15 @@ const FolderList: React.FC<{
                                             <FolderItem
                                                 key={`item-${key}`}
                                                 className={
+                                                    currentFolderKey === key ? 'item-selected' : ''
+                                                }
+                                                style={
                                                     currentFolderKey === key
-                                                        ? 'item-selected item-selected-color item-hover-color'
-                                                        : 'item-hover-color'
+                                                        ? {
+                                                              backgroundColor:
+                                                                  'var(--main-selected-bg-color)',
+                                                          }
+                                                        : {}
                                                 }
                                                 onClick={() => {
                                                     if (currentFolderKey !== key) {
@@ -507,7 +513,7 @@ const FolderList: React.FC<{
                                                 {keySelect &&
                                                 currentFolderKey !== key &&
                                                 index < 21 * 10 ? (
-                                                    <FolderKeyTab className="key-tab-color">
+                                                    <FolderKeyTab>
                                                         <span
                                                             style={{
                                                                 color:
@@ -545,7 +551,7 @@ const FolderList: React.FC<{
                                     );
                                 })}
                             {menu && currentFolderKey ? (
-                                <MenuUl top={yPos} left={xPos} className="menu-ui-color">
+                                <MenuUl top={yPos} left={xPos}>
                                     <MenuLi
                                         className="menu-li-color"
                                         onClick={() => renameFolder()}
@@ -590,10 +596,11 @@ const FolderList: React.FC<{
                             {activeId && folders_obj && folders_obj[activeId] ? (
                                 <FolderItem
                                     key={activeId}
-                                    className={
+                                    className={currentFolderKey === activeId ? 'item-selected' : ''}
+                                    style={
                                         currentFolderKey === activeId
-                                            ? 'item-selected item-selected-color item-hover-color'
-                                            : 'item-hover-color'
+                                            ? { backgroundColor: 'var(--main-selected-bg-color)' }
+                                            : {}
                                     }
                                 >
                                     <FolderIcon>
@@ -672,6 +679,7 @@ const CategoryIconImg = styled.img({
 const FolderTopTitle = styled.div({
     height: '18px',
     lineHeight: '18px',
+    color: 'var(--main-text-title-color)',
 });
 
 const Folders = styled.div(
@@ -691,17 +699,24 @@ const Folders = styled.div(
 `
 );
 
-const FolderItem = styled.div({
-    display: 'flex',
-    alignItems: 'center',
-    position: 'relative',
-    height: '30px',
-    lineHeight: '30px',
-    fontSize: '15px',
-    margin: '0 10px 5px 0',
-    padding: '0 0 0 8px',
-    cursor: 'pointer',
-});
+const FolderItem = styled.div(
+    {
+        display: 'flex',
+        alignItems: 'center',
+        position: 'relative',
+        height: '30px',
+        lineHeight: '30px',
+        fontSize: '15px',
+        margin: '0 10px 5px 0',
+        padding: '0 0 0 8px',
+        cursor: 'pointer',
+    },
+    `
+    &:hover {
+        color: var(--main-text-hover-color);
+    }
+`
+);
 
 const FolderIcon = styled.div({
     display: 'flex',
@@ -732,6 +747,7 @@ const FolderKeyTab = styled.div({
     letterSpacing: '1px',
     padding: '2px 4px',
     borderRadius: '4px',
+    backgroundColor: 'var(--key-tab-bg-color)',
 });
 
 const MenuUl = styled.ul(
@@ -741,6 +757,9 @@ const MenuUl = styled.ul(
         padding: '4px',
         borderRadius: '5px',
         zIndex: '4000',
+        border: '1px solid var(--menu-border-color)',
+        color: 'var(--menu-text-color)',
+        backgroundColor: 'var(--menu-bg-color)',
     },
     (props: { top: string; left: string }) => ({
         top: props.top,
@@ -760,6 +779,7 @@ const MenuLi = styled.li(
     `
     &:hover {
         border-radius: 4px;
+        background-color: var(--menu-hover-color);
     }
 `
 );

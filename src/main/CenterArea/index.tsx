@@ -206,7 +206,6 @@ const CenterArea: React.FC<{
                 <BottomRow>
                     <BreakCrumb>
                         <CurRepoNameTag
-                            className="cur-repo-name-tag-color"
                             onClick={() => {
                                 repoNameClickHandler();
                             }}
@@ -218,8 +217,8 @@ const CenterArea: React.FC<{
                             </RepoNameLabel>
                             {keySelect ? <RepoPanelKeyTab>Z</RepoPanelKeyTab> : <></>}
                         </CurRepoNameTag>
-                        <GreaterTag className="bottom-text-color">&gt;</GreaterTag>
-                        <CurFolderNameTag className="bottom-text-color">
+                        <GreaterTag>&gt;</GreaterTag>
+                        <CurFolderNameTag>
                             <FolderNameLabel>
                                 {folders_obj && currentFolderKey && folders_obj[currentFolderKey]
                                     ? folders_obj[currentFolderKey].folder_name
@@ -241,7 +240,6 @@ const CenterArea: React.FC<{
                     </BreakCrumb>
                     <SwitchMode>
                         <SwitchModeBtn
-                            className="switch-mode-btn-color"
                             onClick={() => {
                                 setShowSwitchModePanel(
                                     (_showSwitchModePanel) => !_showSwitchModePanel
@@ -369,7 +367,7 @@ const BottomRow = styled.div({
     padding: '0 30px 0 30px',
     boxSizing: 'border-box',
     backgroundColor: 'var(--bottom-main-bg-color)',
-    borderTop: 'var(--large-line-width) solid var(--main-border-color)',
+    borderTop: '1px solid var(--main-border-color)',
 });
 
 const BreakCrumb = styled.div({
@@ -391,6 +389,8 @@ const CurRepoNameTag = styled.div({
     overflow: 'hidden !important',
     textOverflow: 'ellipsis',
     wordBreak: 'break-all',
+    color: 'var(--main-text-color)',
+    backgroundColor: 'var(--main-selected-bg-color)',
 });
 
 const RepoPanelKeyTab = styled.div({
@@ -419,6 +419,7 @@ const CurFolderNameTag = styled.div({
     overflow: 'hidden !important',
     textOverflow: 'ellipsis',
     wordBreak: 'break-all',
+    color: 'var(--main-text-color)',
 });
 
 const FolderNameLabel = styled.div({
@@ -447,6 +448,7 @@ const NoteNameLabel = styled.div({
 
 const GreaterTag = styled.div({
     padding: '0 15px',
+    color: 'var(--main-text-color)',
 });
 
 const AllRepo = styled.div({
@@ -478,6 +480,8 @@ const SwitchModeBtn = styled.div({
     padding: '0 14px',
     borderRadius: '8px',
     border: '1px solid var(--bottom-btn-border-color)',
+    color: 'var(--bottom-btn-text-color)',
+    backgroundColor: 'var(--bottom-btn-bg-color)',
 });
 
 const ModeNameTag = styled.div({

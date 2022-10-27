@@ -269,20 +269,19 @@ export const MarkdownEditor: React.FC<{
         };
     }, [handleKeyDown, handleScroll, handleMouseEnter, handleMouseLeave]);
 
-    const scrollClassNames = cursorInRender ? 'editor-smooth' : 'editor-auto';
-
     return (
         <MarkdownEditorContainer ref={editorContainerRef}>
             {showEditorScrollPos && renderPanelState !== 'all' ? (
-                <LastScrollPos className="btn-1-bg-color" onClick={autoScrollToLine}>
-                    上次在
-                </LastScrollPos>
+                <LastScrollPos onClick={autoScrollToLine}>上次在</LastScrollPos>
             ) : (
                 <></>
             )}
-            <div ref={editor} className={'common-theme-cm'} />
+            <div
+                ref={editor}
+                className={`wn-theme-cm ${cursorInRender ? 'editor-smooth' : 'editor-auto'}`}
+            />
             {menu ? (
-                <MenuUl top={yPos} left={xPos} className="menu-ui-color">
+                <MenuUl top={yPos} left={xPos}>
                     <MenuLi className="menu-li-color" onClick={() => copySelection()}>
                         复制
                     </MenuLi>
@@ -317,6 +316,7 @@ const LastScrollPos = styled.div(
         padding: '0 12px 0 6px',
         zIndex: 1000,
         cursor: 'pointer',
+        backgroundColor: 'var(--editor-lastpos-bg-color)',
     },
     `
     &:before {
@@ -342,6 +342,9 @@ const MenuUl = styled.ul(
         padding: '4px',
         borderRadius: '5px',
         zIndex: '4000',
+        border: '1px solid var(--menu-border-color)',
+        color: 'var(--menu-text-color)',
+        backgroundColor: 'var(--menu-bg-color)',
     },
     (props: { top: string; left: string }) => ({
         top: props.top,
@@ -361,6 +364,7 @@ const MenuLi = styled.li(
     `
     &:hover {
         border-radius: 4px;
+        background-color: var(--menu-hover-color);
     }
 `
 );

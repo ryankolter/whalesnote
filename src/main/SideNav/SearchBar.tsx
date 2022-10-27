@@ -146,7 +146,6 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                     <SearchIconImg src={searchIcon} alt="" />
                 </SearchIcon>
                 <SearchInput
-                    className="search-input"
                     ref={searchInputRef}
                     onChange={handleSearchInputChange}
                     onKeyDown={handleSearchInputEnter}
@@ -159,7 +158,6 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                     <SearchTool>
                         <UpdateIndex>
                             <UpdateIndexBtn
-                                className="btn-1-bg-color"
                                 onClick={() => {
                                     updateMiniSearch();
                                     search();
@@ -181,14 +179,14 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                         </CloseSearchPanelBtn>
                     </SearchTool>
                     {showUpdateIndexTips ? (
-                        <UpdateIndexTips className="tips-1-bg-color tips-1-border-color">
+                        <UpdateIndexTips>
                             <div>搜索功能需要搜索树</div>
                             <div>请点击上方生成</div>
                         </UpdateIndexTips>
                     ) : (
                         <></>
                     )}
-                    <SearchResultList className="no-scroller">
+                    <SearchResultList>
                         {searchResults && searchResults.length > 0 ? (
                             searchResults.map((result: SearchResult, index: number) => {
                                 return (
@@ -202,7 +200,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                                             backgroundColor:
                                                 currentNoteKey === result.id.split('-')[2] &&
                                                 showResultHighlight
-                                                    ? 'var(--selected-bg-color)'
+                                                    ? 'var(--main-selected-bg-color)'
                                                     : '',
                                         }}
                                     >
@@ -250,18 +248,27 @@ const SearchIconImg = styled.img({
     height: '14px',
 });
 
-const SearchInput = styled.input({
-    border: 'none',
-    outline: 'none',
-    fontFamily: 'PingFang SC',
-    fontSize: '14px',
-    fontWeight: 500,
-    lineHeight: '20px',
-    letterSpacing: '1px',
-    width: '100%',
-    padding: '9px 0 9px 20px',
-    boxSizing: 'border-box',
-});
+const SearchInput = styled.input(
+    {
+        border: 'none',
+        outline: 'none',
+        fontFamily: 'PingFang SC',
+        fontSize: '14px',
+        fontWeight: 500,
+        lineHeight: '20px',
+        letterSpacing: '1px',
+        width: '100%',
+        padding: '9px 0 9px 20px',
+        boxSizing: 'border-box',
+        color: 'var(--input-text-color)',
+        backgroundColor: 'var(--main-bg-color)',
+    },
+    `
+    &::-webkit-input-placeholder {
+        color: var(--input-placeholder-text-color) !important;
+    }
+`
+);
 
 const SearchPanel = styled.div({
     position: 'absolute',
@@ -313,6 +320,7 @@ const UpdateIndexBtn = styled.div({
     padding: '0 8px',
     borderRadius: ' 4px',
     cursor: 'pointer',
+    backgroundColor: 'var(--main-btn-bg-color)',
 });
 
 const UpdateIndexTips = styled.div({
@@ -327,13 +335,22 @@ const UpdateIndexTips = styled.div({
     fontSize: '14px',
     padding: '5px 10px',
     borderRadius: '5px',
+    border: '1px dotted var(--main-tips-border-color)',
+    backgroundColor: 'var(--main-tips-bg-color)',
 });
 
-const SearchResultList = styled.div({
-    flex: '1',
-    minHeight: '0',
-    overflowY: 'auto',
-});
+const SearchResultList = styled.div(
+    {
+        flex: '1',
+        minHeight: '0',
+        overflowY: 'auto',
+    },
+    `
+    &::-webkit-scrollbar {
+        display: none;
+    }
+`
+);
 
 const SearchResultDiv = styled.div({
     display: 'flex',

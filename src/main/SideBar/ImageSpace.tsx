@@ -175,16 +175,13 @@ const ImageSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssist
                 <PartTitle>
                     <PartTitleName>本地图库</PartTitleName>
                     <OpenImagePath>
-                        <OpenImagePathBtn
-                            className="btn-1-bg-color"
-                            onClick={(e) => openImagePath(curDataPath + '/images/')}
-                        >
+                        <OpenImagePathBtn onClick={(e) => openImagePath(curDataPath + '/images/')}>
                             打开
                         </OpenImagePathBtn>
                     </OpenImagePath>
                 </PartTitle>
                 <AddImageBox>
-                    <DragZone {...getRootProps()} className="drag-dotted-color">
+                    <DragZone {...getRootProps()}>
                         <input {...getInputProps()} />
                         {loadImageStatus == 'none' ? (
                             <DragZoneTips>
@@ -258,7 +255,7 @@ const PartTitle = styled.div({
     fontWeight: '500',
     marginBottom: '15px',
     paddingBottom: '4px',
-    border: '1px solid var(--main-border-color)',
+    borderBottom: '1px solid var(--main-border-color)',
 });
 
 const PartTitleName = styled.div({
@@ -283,6 +280,7 @@ const OpenImagePathBtn = styled.div({
     padding: '0 8px',
     borderRadius: ' 4px',
     cursor: 'pointer',
+    backgroundColor: 'var(--main-btn-bg-color)',
 });
 
 const AddImageBox = styled.div({
@@ -298,6 +296,7 @@ const DragZone = styled.div({
     margin: '10px 12px',
     borderRadius: '4px',
     outline: 'none',
+    border: '3px dashed var(--main-dashed-border-color)',
 });
 
 const DragZoneTips = styled.div({

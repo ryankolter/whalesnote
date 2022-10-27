@@ -2,9 +2,10 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 
-import './resources/css/global/img.css';
-import './resources/css/theme/color.css';
-import './resources/css/theme/common.css';
+import './resources/css/theme/color_variable.css';
+import './resources/css/theme/global.css';
+import './resources/css/theme/codemirror.css';
+import './resources/css/theme/render.css';
 
 import './resources/css/hljs_theme/white_standard.css';
 import './resources/css/hljs_theme/grey_standard.css';

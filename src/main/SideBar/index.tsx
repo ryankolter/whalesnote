@@ -21,7 +21,7 @@ const SideBar: React.FC<{ theme: string }> = ({ theme }) => {
             ) : (
                 <></>
             )}
-            <SideBarColumn className="side-bar-color">
+            <SideBarColumn>
                 <TopIcons />
                 <BottomIcons
                     curAssistantPanelName={curAssistantPanelName}
@@ -42,6 +42,7 @@ const SideBarColumn = styled.div({
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '48px',
+    backgroundColor: 'var(--sidebar-bg-color)',
 });
 
 const SideBarTopIcons = styled.div({

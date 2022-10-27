@@ -77,7 +77,7 @@ const DataSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssista
                 <ShowPath>
                     <PathContainer ref={pathUlRef}>
                         <Path>
-                            <CurrentPath className="menu-select-color">
+                            <CurrentPath>
                                 <PathValue>
                                     <UnicodeSpan>{curDataPath}</UnicodeSpan>
                                     {curDataPath.indexOf('/whale_note/noteData') !== -1
@@ -87,7 +87,7 @@ const DataSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssista
                                 <Triangle></Triangle>
                             </CurrentPath>
                             {showPathUl ? (
-                                <PathUl className="menu-select-color">
+                                <PathUl>
                                     {dataPathList.map((dataPath: string, index: number) => {
                                         if (curDataPath !== dataPath) {
                                             return (
@@ -179,7 +179,7 @@ const PartTitle = styled.div({
     fontWeight: '500',
     marginBottom: '15px',
     paddingBottom: '4px',
-    border: '1px solid var(--main-border-color)',
+    borderBottom: '1px solid var(--main-border-color)',
 });
 
 const ShowPath = styled.div({
@@ -211,6 +211,8 @@ const CurrentPath = styled.div({
     lineHeight: '40px',
     padding: '0 8px 0 10px',
     boxSizing: 'border-box',
+    border: '1px solid var(--main-border-color)',
+    backgroundColor: 'var(--main-bg-color)',
 });
 
 const PathValue = styled.div({
@@ -243,6 +245,8 @@ const PathUl = styled.div({
     width: '100%',
     position: 'absolute',
     padding: '5px 0',
+    border: '1px solid var(--main-border-color)',
+    backgroundColor: 'var(--main-bg-color)',
 });
 
 const PathLi = styled.div({

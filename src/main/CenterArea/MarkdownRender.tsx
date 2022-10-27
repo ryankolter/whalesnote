@@ -86,7 +86,7 @@ export const MarkdownRender: React.FC<{
                             length: 12,
                             type: 'alphanumeric',
                         });
-                        const html = `<button class="copy-btn copy-btn-color" type="button" data-clipboard-action="copy" data-clipboard-target="#copy-${copyId}">复制</button>`;
+                        const html = `<button class="copy-btn" type="button" data-clipboard-action="copy" data-clipboard-target="#copy-${copyId}">复制</button>`;
                         const textarea = `<textarea style="position: absolute;top: -9999px;left: -9999px;z-index: -9999;" id="copy-${copyId}">${str}</textarea>`;
                         return (
                             '<pre><code class="hljs" style="position: relative;">' +
@@ -219,7 +219,7 @@ export const MarkdownRender: React.FC<{
             </style>
             </head>
             <body>
-            <div class='${theme}-theme-global common-theme-rd'>
+            <div class='${theme}-theme-global wn-theme-rd'>
                 ${bodyContent}
             </div>
             </body></html>`;
@@ -298,7 +298,7 @@ export const MarkdownRender: React.FC<{
                 </style>
                 </head>
                 <body>
-                <div class='${theme}-theme-global common-theme-rd'>
+                <div class='${theme}-theme-global wn-theme-rd'>
                     ${bodyContent}
                 </div>
                 </body></html>`;
@@ -455,24 +455,22 @@ export const MarkdownRender: React.FC<{
     return (
         <MarkdownRenderContainer ref={renderContainerRef}>
             {showRenderScrollPos && renderPanelState === 'all' ? (
-                <LastScrollPos className="btn-1-bg-color" onClick={autoScrollToLine}>
-                    上次在
-                </LastScrollPos>
+                <LastScrollPos onClick={autoScrollToLine}>上次在</LastScrollPos>
             ) : (
                 <></>
             )}
             <div
                 ref={renderRef}
-                className={'common-theme-rd'}
+                className={'wn-theme-rd'}
                 style={{
                     overflowX: 'hidden',
                     scrollBehavior: renderPanelState === 'all' ? 'auto' : 'smooth',
                 }}
                 dangerouslySetInnerHTML={{ __html: result }}
             ></div>
-            <TocDirectory ref={TocRef} className="toc-scroller tips-1-bg-color"></TocDirectory>
+            <TocDirectory ref={TocRef} className="toc-scroller"></TocDirectory>
             {menu ? (
-                <MenuUl top={yPos} left={xPos} className="menu-ui-color">
+                <MenuUl top={yPos} left={xPos}>
                     <MenuLi className="menu-li-color" onClick={() => copySelection()}>
                         复制
                     </MenuLi>
@@ -501,6 +499,7 @@ const LastScrollPos = styled.div(
         padding: '0 12px 0 6px',
         zIndex: 1000,
         cursor: 'pointer',
+        backgroundColor: 'var(--editor-lastpos-bg-color)',
     },
     `
     &:before {
@@ -519,17 +518,34 @@ const LastScrollPos = styled.div(
 `
 );
 
-const TocDirectory = styled.div({
-    position: 'absolute',
-    top: '0',
-    right: '18px',
-    width: '30%',
-    maxHeight: '50%',
-    borderRadius: '10px',
-    paddingRight: '6px',
-    overflowY: 'auto',
-    zIndex: 1000,
-});
+const TocDirectory = styled.div(
+    {
+        position: 'absolute',
+        top: '0',
+        right: '18px',
+        width: '30%',
+        maxHeight: '50%',
+        borderRadius: '10px',
+        paddingRight: '6px',
+        overflowY: 'auto',
+        zIndex: 1000,
+        backgroundColor: 'var(--main-tips-bg-color)',
+    },
+    `
+    &::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        border-radius: 3px;
+        background-color: var(--main-scroller-bg-color);
+    }
+    
+    &::-webkit-scrollbar-track {
+        background-color: inherit;
+    }
+`
+);
 
 const MenuUl = styled.ul(
     {
@@ -538,6 +554,9 @@ const MenuUl = styled.ul(
         padding: '4px',
         borderRadius: '5px',
         zIndex: '4000',
+        border: '1px solid var(--menu-border-color)',
+        color: 'var(--menu-text-color)',
+        backgroundColor: 'var(--menu-bg-color)',
     },
     (props: { top: string; left: string }) => ({
         top: props.top,
@@ -557,6 +576,7 @@ const MenuLi = styled.li(
     `
     &:hover {
         border-radius: 4px;
+        background-color: var(--menu-hover-color);
     }
 `
 );

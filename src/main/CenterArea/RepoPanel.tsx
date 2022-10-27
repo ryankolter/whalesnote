@@ -563,7 +563,7 @@ const RepoPanel: React.FC<{
                                                             style={{
                                                                 backgroundColor:
                                                                     currentRepoKey === key
-                                                                        ? 'var(--selected-bg-color)'
+                                                                        ? 'var(--main-selected-bg-color)'
                                                                         : '',
                                                             }}
                                                         >
@@ -613,7 +613,7 @@ const RepoPanel: React.FC<{
                                                             style={{
                                                                 backgroundColor:
                                                                     currentRepoKey === key
-                                                                        ? 'var(--selected-bg-color)'
+                                                                        ? 'var(--main-selected-bg-color)'
                                                                         : '',
                                                             }}
                                                         >
@@ -655,7 +655,7 @@ const RepoPanel: React.FC<{
                                                             style={{
                                                                 backgroundColor:
                                                                     currentRepoKey === key
-                                                                        ? 'var(--selected-bg-color)'
+                                                                        ? 'var(--main-selected-bg-color)'
                                                                         : '',
                                                             }}
                                                         >
@@ -668,7 +668,7 @@ const RepoPanel: React.FC<{
                                         // }
                                     })}
                                 {menu && currentRepoKey && !folderMenu ? (
-                                    <MenuUl top={yPos} left={xPos} className="menu-ui-color">
+                                    <MenuUl top={yPos} left={xPos}>
                                         <MenuLi
                                             className="menu-li-color"
                                             onClick={() => renameRepo()}
@@ -694,7 +694,7 @@ const RepoPanel: React.FC<{
                                                 style={{
                                                     backgroundColor:
                                                         currentRepoKey === activeId
-                                                            ? 'var(--selected-bg-color)'
+                                                            ? 'var(--main-selected-bg-color)'
                                                             : '',
                                                 }}
                                             >
@@ -710,12 +710,12 @@ const RepoPanel: React.FC<{
                     )}
                     {curDataPath && !newRepoKey ? (
                         <RepoAdd>
-                            <RepoAddBtn className="btn-1-bg-color" onClick={newRepo}>
+                            <RepoAddBtn onClick={newRepo}>
                                 +
                                 {repos_key &&
                                 repos_key.filter((key) => repos_obj && repos_obj[key]).length ==
                                     1 ? (
-                                    <AddReposTips className="tips-1-bg-color tips-1-border-color">
+                                    <AddReposTips>
                                         <div>点击按钮</div>
                                         <div>添加新资料库</div>
                                     </AddReposTips>
@@ -799,7 +799,7 @@ const ReposScroll = styled.div(
         background-color: inherit;
     }
     &::-webkit-scrollbar-thumb {
-        background-color: var(--scroller-color);
+        background-color: var(--main-scroller-bg-color);
         border-radius: 3px;
     }
 `
@@ -854,7 +854,7 @@ const RepoGroupItem = styled.div({
     letterSpacing: '1px',
     padding: '2px',
     borderRadius: '8px',
-    backgroundColor: 'var(--selected-bg-color)',
+    backgroundColor: 'var(--main-selected-bg-color)',
 });
 
 const RepoItemPadding = styled.div({
@@ -869,6 +869,9 @@ const MenuUl = styled.ul(
         padding: '4px',
         borderRadius: '5px',
         zIndex: '4000',
+        border: '1px solid var(--menu-border-color)',
+        color: 'var(--menu-text-color)',
+        backgroundColor: 'var(--menu-bg-color)',
     },
     (props: { top: string; left: string }) => ({
         top: props.top,
@@ -888,6 +891,7 @@ const MenuLi = styled.li(
     `
     &:hover {
         border-radius: 4px;
+        background-color: var(--menu-hover-color);
     }
 `
 );
@@ -908,6 +912,7 @@ const RepoAddBtn = styled.div({
     alignItem: 'center',
     justifyContent: 'center',
     cursor: 'pointer',
+    backgroundColor: 'var(--main-btn-bg-color)',
 });
 
 const AddReposTips = styled.div({
@@ -922,6 +927,8 @@ const AddReposTips = styled.div({
     left: '10px',
     padding: '5px 10px',
     borderRadius: '5px',
+    border: '1px dotted var(--main-tips-border-color)',
+    backgroundColor: 'var(--main-tips-bg-color)',
 });
 
 export default RepoPanel;

@@ -15,7 +15,7 @@ const App = () => {
 
     return (
         <GlobalProvider>
-            <AppContainer className={`${theme}-theme-global body-color`}>
+            <AppContainer className={`${theme}-theme-global`}>
                 <InitingDataMask />
                 <AppUI>
                     <SideNav />
@@ -34,6 +34,8 @@ const AppContainer = styled.div({
     display: 'flex',
     flexDirection: 'column',
     overflow: 'hidden',
+    color: 'var(--main-text-color)',
+    backgroundColor: 'var(--main-bg-color)',
 });
 
 const AppUI = styled.div({
