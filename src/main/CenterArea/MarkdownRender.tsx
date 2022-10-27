@@ -62,7 +62,9 @@ export const MarkdownRender: React.FC<{
 
     const [result, setResult] = useState('');
     const [showRenderScrollPos, setShowRenderScrollPos] = useState(false);
-    const [showToc, setShowToc] = useState(false);
+    const [showTocFlag, setShowTocFlag] = useState(
+        Number(window.localStorage.getItem('show_toc_flag')) || 0
+    );
 
     const md = useRef<markdownIt>(markdownIt());
     const mdPrint = useRef<markdownIt>(markdownIt());
@@ -75,6 +77,10 @@ export const MarkdownRender: React.FC<{
     const clipboard: any = useRef<ClipboardJS>(null);
 
     const { xPos, yPos, menu } = useContextMenu(renderRef);
+
+    useEffect(() => {
+        window.localStorage.setItem('show_toc_flag', String(showTocFlag));
+    }, [showTocFlag]);
 
     md.current = useMemo(() => {
         return markdownIt({
@@ -379,12 +385,11 @@ export const MarkdownRender: React.FC<{
     const handleKeyDown = useCallback(
         (e: any) => {
             if (process.platform === 'darwin') {
-                console.log(e.key);
                 if (e.keyCode === 74 && e.metaKey && !e.shiftKey && renderPanelState === 'all') {
                     autoScrollToLine();
                 }
                 if (e.key === '.' && e.metaKey && !e.shiftKey) {
-                    setShowToc((showToc) => !showToc);
+                    setShowTocFlag((showTocFlag) => 1 - showTocFlag);
                 }
             }
             if (process.platform === 'win32' || process.platform === 'linux') {
@@ -392,11 +397,11 @@ export const MarkdownRender: React.FC<{
                     autoScrollToLine();
                 }
                 if (e.key === '.' && e.crtlKey && !e.shiftKey) {
-                    setShowToc((showToc) => !showToc);
+                    setShowTocFlag((showTocFlag) => 1 - showTocFlag);
                 }
             }
         },
-        [renderPanelState, autoScrollToLine, setShowToc]
+        [renderPanelState, autoScrollToLine, setShowTocFlag]
     );
 
     const handleScroll = useCallback(
@@ -481,11 +486,13 @@ export const MarkdownRender: React.FC<{
                 }}
                 dangerouslySetInnerHTML={{ __html: result }}
             ></div>
-            <TocToggleBtn onClick={() => setShowToc((showToc) => !showToc)}></TocToggleBtn>
+            <TocToggleBtn
+                onClick={() => setShowTocFlag((showTocFlag) => 1 - showTocFlag)}
+            ></TocToggleBtn>
             <TocDirectory
                 ref={TocRef}
                 className="toc-scroller"
-                tocHeight={showToc ? '40%' : '0'}
+                tocHeight={showTocFlag ? '40%' : '0'}
             ></TocDirectory>
             {menu ? (
                 <MenuUl top={yPos} left={xPos}>
