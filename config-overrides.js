@@ -1,4 +1,5 @@
 const { override } = require('customize-cra');
+const path = require('path');
 
 const ignoreWarnings = (value) => (config) => {
     config.ignoreWarnings = value;
@@ -14,4 +15,16 @@ const addFallback = (value) => (config) => {
     return config;
 };
 
-module.exports = override(ignoreWarnings([/Failed to parse source map/]), addFallback());
+const publicPathPlugin = (value) => (config) => {
+    config.output = {
+        ...config.output,
+        path: path.join(__dirname, 'app/build'),
+    };
+    return config;
+};
+
+module.exports = override(
+    ignoreWarnings([/Failed to parse source map/]),
+    addFallback(),
+    publicPathPlugin()
+);
