@@ -12,7 +12,7 @@
         "extends": null,
         "files": [
             "main.js",
-            "../build/**/*"
+            "build/**/*"
         ],
         "extraResources": [
             {
@@ -24,8 +24,7 @@
                 "to": "extraResources/css"
             }
         ],
-        "npmRebuild": false,
-        "asar": false
+        "npmRebuild": false
     },
     "dependencies": {
         "cson": "^7.20.0",
