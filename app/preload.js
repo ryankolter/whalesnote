@@ -6,6 +6,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     checkFolderExist: (params) => ipcRenderer.invoke('operate:checkFolderExist', params),
     checkFileExist: (params) => ipcRenderer.invoke('operate:checkFileExist', params),
     getDefaultDataPath: (params) => ipcRenderer.invoke('operate:getDefaultDataPath', params),
+    getPlatform: (params) => ipcRenderer.invoke('operate:getPlatform', params),
     writeCson: (params) => ipcRenderer.invoke('operate:writeCson', params),
     writeJson: (params) => ipcRenderer.invoke('operate:writeJson', params),
     writeStr: (params) => ipcRenderer.invoke('operate:writeStr', params),

@@ -48,62 +48,48 @@ const reposReducer = produce((state: any, action: any) => {
             return state;
         }
 
-        case 'fetch_folder': {
-            if (!state[action.repo_key]) return state;
+        // case 'fetch_folder': {
+        //     if (!state[action.repo_key]) return state;
 
-            const repo_info = window.electronAPI.readJson({
-                file_path: `${action.data_path}/${action.repo_key}/repo_info.json`,
-            });
-            state[action.repo_key].folders_key = repo_info.folders_key;
+        //     const repo_info = window.electronAPI.readJson({
+        //         file_path: `${action.data_path}/${action.repo_key}/repo_info.json`,
+        //     });
+        //     state[action.repo_key].folders_key = repo_info.folders_key;
 
-            const folder_info = window.electronAPI.readJson({
-                file_path: `${action.data_path}/${action.repo_key}/${action.folder_key}/folder_info.json`,
-            });
+        //     const folder_info = window.electronAPI.readJson({
+        //         file_path: `${action.data_path}/${action.repo_key}/${action.folder_key}/folder_info.json`,
+        //     });
 
-            if (folder_info) {
-                state[action.repo_key].folders_obj[action.folder_key] = folder_info;
-            } else {
-                state[action.repo_key].folders_obj[action.folder_key] = {};
-            }
+        //     if (folder_info) {
+        //         state.repos_obj[action.repo_key].folders_obj[action.folder_key] = folder_info;
+        //     } else {
+        //         state.repos_obj[action.repo_key].folders_obj[action.folder_key] = {};
+        //     }
 
-            return state;
-        }
-        case 'fetch_note': {
-            if (!state[action.repo_key]) return state;
-            if (!state[action.repo_key].folders_obj[action.folder_key]) return state;
+        //     return state;
+        // }
+        // case 'fetch_note': {
+        //     if (!state[action.repo_key]) return state;
+        //     if (!state[action.repo_key].folders_obj[action.folder_key]) return state;
 
-            const folder_info = window.electronAPI.readJson({
-                file_path: `${action.data_path}/${action.repo_key}/${action.folder_key}/folder_info.json`,
-            });
+        //     const folder_info = window.electronAPI.readJson({
+        //         file_path: `${action.data_path}/${action.repo_key}/${action.folder_key}/folder_info.json`,
+        //     });
 
-            if (folder_info) {
-                state[action.repo_key].folders_obj[action.folder_key] = folder_info;
-            }
+        //     if (folder_info) {
+        //         state[action.repo_key].folders_obj[action.folder_key] = folder_info;
+        //     }
 
-            return state;
-        }
+        //     return state;
+        // }
         case 'init': {
             state = action.new_state;
             return state;
         }
         case 'rename': {
-            const old_title =
-                state[action.repo_key].folders_obj[action.folder_key].notes_obj[action.note_key]
-                    .title;
-            if (old_title !== action.new_title) {
-                state[action.repo_key].folders_obj[action.folder_key].notes_obj[
-                    action.note_key
-                ].title = action.new_title;
-                const folder_info = window.electronAPI.readJson({
-                    file_path: `${action.data_path}/${action.repo_key}/${action.folder_key}/folder_info.json`,
-                });
-                folder_info.notes_obj[action.note_key].title = action.new_title;
-                window.electronAPI.writeJson({
-                    file_path: `${action.data_path}/${action.repo_key}/${action.folder_key}/folder_info.json`,
-                    obj: folder_info,
-                });
-            }
-
+            state.repos_obj[action.repo_key].folders_obj[action.folder_key].notes_obj[
+                action.note_key
+            ].title = action.new_title;
             return state;
         }
         case 'reorder_repo': {
@@ -431,21 +417,34 @@ export const useRepos = () => {
     );
 
     const renameSaveNow = useCallback(
-        (
+        async (
             data_path: string,
             repo_key: string,
             folder_key: string,
             note_key: string,
             new_title: string
         ) => {
-            dispatch({
-                type: 'rename',
-                data_path,
-                repo_key,
-                folder_key,
-                note_key,
-                new_title,
-            });
+            const old_title =
+                state.repos_obj[repo_key].folders_obj[folder_key].notes_obj[note_key].title;
+            if (old_title !== new_title) {
+                const folder_info = await window.electronAPI.readJson({
+                    file_path: `${data_path}/${repo_key}/${folder_key}/folder_info.json`,
+                });
+                folder_info.notes_obj[note_key].title = new_title;
+                await window.electronAPI.writeJson({
+                    file_path: `${data_path}/${repo_key}/${folder_key}/folder_info.json`,
+                    obj: folder_info,
+                });
+
+                dispatch({
+                    type: 'rename',
+                    data_path,
+                    repo_key,
+                    folder_key,
+                    note_key,
+                    new_title,
+                });
+            }
         },
         []
     );
@@ -465,8 +464,8 @@ export const useRepos = () => {
 
                 renameSaveTimerObj.current.set(
                     note_key,
-                    setTimeout(() => {
-                        renameSaveNow(data_path, repo_key, folder_key, note_key, new_title);
+                    setTimeout(async () => {
+                        await renameSaveNow(data_path, repo_key, folder_key, note_key, new_title);
                         renameSaveTimerObj.current.delete(note_key);
                     }, 500)
                 );

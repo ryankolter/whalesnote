@@ -382,8 +382,9 @@ export const MarkdownRender: React.FC<{
     }, []);
 
     const handleKeyDown = useCallback(
-        (e: any) => {
-            if (process.platform === 'darwin') {
+        async (e: any) => {
+            const process_platform = await window.electronAPI.getPlatform();
+            if (process_platform === 'darwin') {
                 if (e.keyCode === 74 && e.metaKey && !e.shiftKey && renderPanelState === 'all') {
                     autoScrollToLine();
                 }
@@ -391,7 +392,7 @@ export const MarkdownRender: React.FC<{
                     setShowTocFlag((showTocFlag) => 1 - showTocFlag);
                 }
             }
-            if (process.platform === 'win32' || process.platform === 'linux') {
+            if (process_platform === 'win32' || process_platform === 'linux') {
                 if (e.keyCode === 74 && e.crtlKey && !e.shiftKey && renderPanelState === 'all') {
                     autoScrollToLine();
                 }

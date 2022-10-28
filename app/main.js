@@ -76,7 +76,7 @@ const installExtensions = async () => {
 };
 
 const createMenu = async () => {
-    const isMac = process.platform === 'darwin';
+    const isMac = process_platform === 'darwin';
 
     const template = [
         // { role: 'appMenu' }
@@ -226,52 +226,56 @@ const processIPC = () => {
     //     socket?.emit('PcToMobile', data);
     // });
 
-    ipcMain.handle('operate:checkFolderExist', async ({ folder_path }) => {
+    ipcMain.handle('operate:getPlatform', (event) => {
+        return process.platform;
+    });
+
+    ipcMain.handle('operate:checkFolderExist', async (event, { folder_path }) => {
         return fse.existsSync(folder_path);
     });
 
-    ipcMain.handle('operate:checkFileExist', async ({ file_path }) => {
+    ipcMain.handle('operate:checkFileExist', async (event, { file_path }) => {
         return fse.existsSync(file_path);
     });
 
-    ipcMain.handle('operate:getDefaultDataPath', async () => {
+    ipcMain.handle('operate:getDefaultDataPath', async (event) => {
         let default_data_Path = path.join(app.getPath('userData'), 'noteData');
         fse.ensureDirSync(default_data_Path);
         return default_data_Path;
     });
 
-    ipcMain.handle('operate:writeCson', async ({ file_path, obj }) => {
+    ipcMain.handle('operate:writeCson', async (event, { file_path, obj }) => {
         fse.ensureFileSync(file_path);
         fse.writeFileSync(file_path, CSON.createCSONString(obj));
         return true;
     });
 
-    ipcMain.handle('operate:writeJson', async ({ file_path, obj }) => {
+    ipcMain.handle('operate:writeJson', async (event, { file_path, obj }) => {
         fse.ensureFileSync(file_path);
         fse.writeFileSync(file_path, CSON.createJSONString(obj));
         return true;
     });
 
-    ipcMain.handle('operate:writeStr', async ({ file_path, str }) => {
+    ipcMain.handle('operate:writeStr', async (event, { file_path, str }) => {
         fse.ensureFileSync(file_path);
         fse.writeFileSync(file_path, str);
         return true;
     });
 
-    ipcMain.handle('operate:writeStrToFile', async ({ folder_path, file_name, str }) => {
+    ipcMain.handle('operate:writeStrToFile', async (event, { folder_path, file_name, str }) => {
         const file_path = path.join(folder_path, file_name);
         fse.ensureFileSync(file_path);
         fse.writeFileSync(file_path, str);
         return true;
     });
 
-    ipcMain.handle('operate:writePngBlob', async ({ file_path, url }) => {
+    ipcMain.handle('operate:writePngBlob', async (event, { file_path, url }) => {
         fse.ensureFileSync(file_path);
         fse.writeFileSync(file_path, url.replace(/^data:image\/png;base64,/, ''), 'base64');
         return true;
     });
 
-    ipcMain.handle('operate:readCson', async ({ file_path }) => {
+    ipcMain.handle('operate:readCson', async (event, { file_path }) => {
         if (!fse.pathExistsSync(file_path)) {
             return false;
         } else {
@@ -280,7 +284,7 @@ const processIPC = () => {
         }
     });
 
-    ipcMain.handle('operate:readJson', async ({ file_path }) => {
+    ipcMain.handle('operate:readJson', async (event, { file_path }) => {
         if (!fse.pathExistsSync(file_path)) {
             return false;
         } else {
@@ -289,7 +293,7 @@ const processIPC = () => {
         }
     });
 
-    ipcMain.handle('operate:readCss', async ({ file_name }) => {
+    ipcMain.handle('operate:readCss', async (event, { file_name }) => {
         let file_path = path.join(__dirname, '/src/resources/css/' + file_name);
         if (app.isPackaged) {
             let cssFilePath = path.join(__dirname, '../extraResources/css/');
@@ -303,27 +307,30 @@ const processIPC = () => {
         }
     });
 
-    ipcMain.handle('operate:copy', async ({ src_file_path, dest_dir_path, dest_file_name }) => {
-        const dest_file_path = path.join(dest_dir_path, dest_file_name);
-        console.log('copy: ' + src_file_path + ' to ' + dest_file_path);
-        fse.ensureDirSync(dest_dir_path);
-        fse.copyFileSync(src_file_path, dest_file_path);
-        return true;
-    });
+    ipcMain.handle(
+        'operate:copy',
+        async (event, { src_file_path, dest_dir_path, dest_file_name }) => {
+            const dest_file_path = path.join(dest_dir_path, dest_file_name);
+            console.log('copy: ' + src_file_path + ' to ' + dest_file_path);
+            fse.ensureDirSync(dest_dir_path);
+            fse.copyFileSync(src_file_path, dest_file_path);
+            return true;
+        }
+    );
 
-    ipcMain.handle('operate:move', async ({ src_file_path, dest_file_path }) => {
+    ipcMain.handle('operate:move', async (event, { src_file_path, dest_file_path }) => {
         console.log('move: ' + src_file_path + ' to ' + dest_file_path);
         fse.moveSync(src_file_path, dest_file_path);
         return true;
     });
 
-    ipcMain.handle('operate:remove', async ({ file_path }) => {
+    ipcMain.handle('operate:remove', async (event, { file_path }) => {
         console.log('remove: ' + file_path);
         fse.removeSync(file_path);
         return true;
     });
 
-    ipcMain.handle('dialog:openDirectoryDialog', async () => {
+    ipcMain.handle('dialog:openDirectoryDialog', async (event) => {
         const { canceled, filePaths } = await dialog.showOpenDialog({
             properties: ['openDirectory'],
         });
@@ -335,7 +342,7 @@ const processIPC = () => {
         }
     });
 
-    ipcMain.handle('dialog:openSaveDialog', async ({ file_name, file_types }) => {
+    ipcMain.handle('dialog:openSaveDialog', async (event, { file_name, file_types }) => {
         const { canceled, filePath } = await dialog.showSaveDialog({
             title: 'Select the File Path to save',
             buttonLabel: 'Save',
@@ -356,7 +363,7 @@ const processIPC = () => {
         }
     });
 
-    ipcMain.handle('dialog:openSelectImagesDialog', async ({ file_types }) => {
+    ipcMain.handle('dialog:openSelectImagesDialog', async (event, { file_types }) => {
         const { canceled, filePaths } = await dialog.showOpenDialog({
             title: 'Select images',
             buttonLabel: 'Load',
@@ -377,18 +384,18 @@ const processIPC = () => {
         }
     });
 
-    ipcMain.handle('dialog:openParentFolder', async ({ folder_path }) => {
+    ipcMain.handle('dialog:openParentFolder', async (event, { folder_path }) => {
         shell.showItemInFolder(folder_path);
         return;
     });
 
-    ipcMain.handle('dialog:openFolder', async ({ folder_path }) => {
+    ipcMain.handle('dialog:openFolder', async (event, { folder_path }) => {
         fse.ensureDirSync(folder_path);
         shell.openPath(folder_path);
         return;
     });
 
-    ipcMain.handle('plugin:nodejieba', async ({ word }) => {
+    ipcMain.handle('plugin:nodejieba', async (event, { word }) => {
         let en_word = word.replace(/[^a-zA-Z]/g, ' ').replace(/\s+/g, ' ');
         let zh_word = word.replace(/[a-zA-Z]/g, ' ').replace(/\s+/g, ' ');
         let result = [...en_word.split(' '), ...nodejieba.cut(zh_word)];
@@ -415,7 +422,7 @@ app.on('second-instance', () => {
 });
 
 app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
+    if (process_platform !== 'darwin') {
         app.quit();
     }
 });

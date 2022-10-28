@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 import cryptoRandomString from 'crypto-random-string';
@@ -41,8 +41,12 @@ const FolderList: React.FC<{
         keySelect,
     } = useContext(GlobalContext);
 
-    const folders_key = repos.repos_obj[currentRepoKey]?.folders_key;
-    const folders_obj = repos.repos_obj[currentRepoKey]?.folders_obj;
+    const folders_key = useMemo(() => {
+        return repos.repos_obj ? repos.repos_obj[currentRepoKey]?.folders_key : undefined;
+    }, [repos, currentRepoKey, currentFolderKey]);
+    const folders_obj = useMemo(() => {
+        return repos.repos_obj ? repos.repos_obj[currentRepoKey]?.folders_obj : undefined;
+    }, [repos, currentRepoKey, currentFolderKey]);
 
     const [activeId, setActiveId] = useState(null);
     const [newFolderKey, setNewFolderKey] = useState('');
@@ -267,13 +271,14 @@ const FolderList: React.FC<{
 
     // part5 : key event
     const handleKeyDown = useCallback(
-        (e: any) => {
+        async (e: any) => {
+            const process_platform = await window.electronAPI.getPlatform();
             if (
-                process.platform === 'darwin' ||
-                process.platform === 'win32' ||
-                process.platform === 'linux'
+                process_platform === 'darwin' ||
+                process_platform === 'win32' ||
+                process_platform === 'linux'
             ) {
-                const modKey = process.platform === 'darwin' ? e.metaKey : e.ctrlKey;
+                const modKey = process_platform === 'darwin' ? e.metaKey : e.ctrlKey;
 
                 if (e.keyCode === 78 && modKey && e.shiftKey) {
                     handleNewFolder();

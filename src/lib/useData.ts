@@ -192,7 +192,7 @@ const useData = () => {
             let init_data_path = window.localStorage.getItem('whalenote_current_data_path') || '';
             if (
                 !init_data_path ||
-                !(await window.electronAPI.folderExist({ folder_path: init_data_path }))
+                !(await window.electronAPI.checkFolderExist({ folder_path: init_data_path }))
             ) {
                 init_data_path = await window.electronAPI.getDefaultDataPath();
             }
@@ -208,10 +208,10 @@ const useData = () => {
             const startTimeStamp = new Date().getTime();
             if (
                 curDataPath &&
-                (await window.electronAPI.folderExist({ folder_path: curDataPath }))
+                (await window.electronAPI.checkFolderExist({ folder_path: curDataPath }))
             ) {
                 window.localStorage.setItem('whalenote_current_data_path', curDataPath);
-                const new_data = (await window.electronAPI.fileExist({
+                const new_data = (await window.electronAPI.checkFileExist({
                     file_path: curDataPath + '/whalenote_info.json',
                 }))
                     ? await initExistRepo(curDataPath)

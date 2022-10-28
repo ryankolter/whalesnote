@@ -281,13 +281,14 @@ const RepoPanel: React.FC<{
     }, [repos_key]);
 
     const handleKeyDown = useCallback(
-        (e: any) => {
+        async (e: any) => {
+            const process_platform = await window.electronAPI.getPlatform();
             if (
-                process.platform === 'darwin' ||
-                process.platform === 'win32' ||
-                process.platform === 'linux'
+                process_platform === 'darwin' ||
+                process_platform === 'win32' ||
+                process_platform === 'linux'
             ) {
-                const modKey = process.platform === 'darwin' ? e.metaKey : e.ctrlKey;
+                const modKey = process_platform === 'darwin' ? e.metaKey : e.ctrlKey;
 
                 // normal number 1-9
                 if (e.keyCode >= 49 && e.keyCode <= 57 && !modKey && numArray.length === 0) {

@@ -267,6 +267,8 @@ export const GlobalProvider = ({ children }: { children: any }) => {
     ] = useRepos();
 
     useEffect(() => {
+        console.log('dataPathChangeFlag');
+        console.log(data.current);
         if (data.current) {
             addDataPathToList(curDataPath);
             initWhalenote(data.current.whalenote);

@@ -7,8 +7,8 @@ const useDataList = () => {
         const new_data_path_list = [];
         for (const data_path of data_path_list) {
             if (
-                (await window.electronAPI.folderExist({ folder_path: data_path })) &&
-                (await window.electronAPI.fileExist({
+                (await window.electronAPI.checkFolderExist({ folder_path: data_path })) &&
+                (await window.electronAPI.checkFileExist({
                     file_path: data_path + '/whalenote_info.json',
                 }))
             ) {

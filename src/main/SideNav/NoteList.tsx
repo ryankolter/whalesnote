@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 import cryptoRandomString from 'crypto-random-string';
@@ -31,8 +31,16 @@ const NoteList: React.FC<{
         setKeySelect,
     } = useContext(GlobalContext);
 
-    const notes_key = repos.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_key;
-    const notes_obj = repos.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj;
+    const notes_key = useMemo(() => {
+        return repos.repos_obj
+            ? repos.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_key
+            : undefined;
+    }, [repos, currentRepoKey, currentFolderKey]);
+    const notes_obj = useMemo(() => {
+        return repos.repos_obj
+            ? repos.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj
+            : undefined;
+    }, [repos, currentRepoKey, currentFolderKey]);
 
     const [activeId, setActiveId] = useState(null);
 
@@ -256,13 +264,14 @@ const NoteList: React.FC<{
     }, [currentRepoKey, currentFolderKey, currentNoteKey]);
 
     const handleKeyDown = useCallback(
-        (e: any) => {
+        async (e: any) => {
+            const process_platform = await window.electronAPI.getPlatform();
             if (
-                process.platform === 'darwin' ||
-                process.platform === 'win32' ||
-                process.platform === 'linux'
+                process_platform === 'darwin' ||
+                process_platform === 'win32' ||
+                process_platform === 'linux'
             ) {
-                const modKey = process.platform === 'darwin' ? e.metaKey : e.ctrlKey;
+                const modKey = process_platform === 'darwin' ? e.metaKey : e.ctrlKey;
 
                 if (e.keyCode === 78 && modKey && !e.shiftKey) {
                     newNote();
