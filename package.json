@@ -7,25 +7,6 @@
     "private": true,
     "main": "main.js",
     "homepage": ".",
-    "build": {
-        "productName": "WhaleNote",
-        "extends": null,
-        "files": [
-            "*.js",
-            "build"
-        ],
-        "extraResources": [
-            {
-                "from": "./src/resources/dict/",
-                "to": "extraResources/dict"
-            },
-            {
-                "from": "./src/resources/css/",
-                "to": "extraResources/css"
-            }
-        ],
-        "npmRebuild": false
-    },
     "dependencies": {
         "@codemirror/autocomplete": "^6.3.0",
         "@codemirror/commands": "^6.1.2",
@@ -50,9 +31,7 @@
         "codemirror": "^6.0.1",
         "crypto-browserify": "^3.12.0",
         "crypto-random-string": "^5.0.0",
-        "cson": "^7.20.0",
         "customize-cra": "^1.0.0",
-        "fs-extra": "^10.1.0",
         "highlight.js": "^11.6.0",
         "html-to-image": "^1.10.8",
         "immer": "^9.0.15",
@@ -69,7 +48,6 @@
         "markdown-it-task-lists": "2.1.1",
         "markdown-it-toc-done-right": "^4.2.0",
         "minisearch": "^5.0.0",
-        "nodejieba": "^2.6.0",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "react-dropzone": "^14.2.3",
@@ -87,11 +65,7 @@
         "test": "react-app-rewired test",
         "eject": "react-scripts eject",
         "prepare": "husky install",
-        "electron": "electron .",
-        "cors-server": "node server/cors-server.js",
-        "dist-win32": "electron-builder --win --ia32",
-        "dist-win64": "electron-builder --win --x64",
-        "dist-mac": "electron-builder --mac"
+        "cors-server": "node server/cors-server.js"
     },
     "eslintConfig": {
         "extends": [
@@ -115,8 +89,6 @@
     "devDependencies": {
         "@commitlint/cli": "^16.0.2",
         "@commitlint/config-conventional": "^16.0.0",
-        "@types/cson": "^7.20.1",
-        "@types/fs-extra": "^9.0.13",
         "@types/markdown-it": "^12.2.3",
         "@types/react": "^18.0.17",
         "@types/react-dom": "^18.0.6",
@@ -125,9 +97,6 @@
         "@types/socket.io-client": "^3.0.0",
         "@typescript-eslint/eslint-plugin": "^5.36.2",
         "@typescript-eslint/parser": "^5.36.2",
-        "electron": "^20.2.0",
-        "electron-builder": "^23.3.3",
-        "electron-devtools-installer": "^3.2.0",
         "eslint": "^8.23.0",
         "eslint-config-airbnb-typescript": "^17.0.0",
         "eslint-plugin-import": "^2.26.0",
