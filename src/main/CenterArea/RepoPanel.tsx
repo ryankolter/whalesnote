@@ -1,4 +1,3 @@
-const { ipcRenderer } = window.require('electron');
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
@@ -22,15 +21,17 @@ const RepoPanel: React.FC<{
 }> = ({ repos_key, showAllRepo, setShowAllRepo, setAllowHiddenAllRepoViaEnter }) => {
     const {
         curDataPath,
-        updateWhalenote,
+        whalenote,
         reorderRepo,
         repoSwitch,
         folderSwitch,
         noteSwitch,
         currentRepoKey,
         currentFolderKey,
-        repos_obj,
-        updateRepos,
+        repos,
+        newRepo,
+        renameRepo,
+        deleteRepo,
         changeNotesAfterNew,
         numArray,
         setFocus,
@@ -38,7 +39,7 @@ const RepoPanel: React.FC<{
         setKeySelect,
     } = useContext(GlobalContext);
 
-    const [activeId, setActiveId] = useState(null);
+    const [activeId, setActiveId] = useState<string>('');
     const [newRepoKey, setNewRepoKey] = useState('');
     const [newRepoName, setNewRepoName] = useState('');
 
@@ -49,7 +50,7 @@ const RepoPanel: React.FC<{
     const [repoScrollPage, setRepoScrollPage] = useState(() => {
         let page = 0;
         repos_key
-            ?.filter((key) => repos_obj && repos_obj[key])
+            ?.filter((key) => repos && repos.repos_obj && repos.repos_obj[key])
             .forEach((key, index) => {
                 if (key === currentRepoKey) page = Math.floor(index / 9.0);
             });
@@ -74,7 +75,7 @@ const RepoPanel: React.FC<{
         if (keySelect) {
             let page = 0;
             repos_key
-                ?.filter((key) => repos_obj && repos_obj[key])
+                ?.filter((key) => repos && repos.repos_obj && repos.repos_obj[key])
                 .forEach((key, index) => {
                     if (key === currentRepoKey) page = Math.floor(index / 9.0);
                 });
@@ -83,7 +84,7 @@ const RepoPanel: React.FC<{
                     Math.floor(page / 5.0) * repoScrollRef.current.offsetWidth;
             }
         }
-    }, [keySelect, repos_obj, currentRepoKey, repos_key]);
+    }, [keySelect, repos, currentRepoKey, repos_key]);
 
     useEffect(() => {
         if (showAllRepo) {
@@ -93,10 +94,10 @@ const RepoPanel: React.FC<{
 
     //part1: switch repo in panel
     const repoSwitchInPanel = useCallback(
-        (repo_key: string) => {
-            repoSwitch(repo_key);
+        async (repo_key: string) => {
+            await repoSwitch(repo_key);
             repos_key
-                ?.filter((key) => repos_obj && repos_obj[key])
+                ?.filter((key) => repos && repos.repos_obj && repos.repos_obj[key])
                 .forEach((key, index) => {
                     if (key === repo_key) setRepoScrollPage(Math.floor(index / 9.0));
                 });
@@ -105,7 +106,7 @@ const RepoPanel: React.FC<{
     );
 
     // part2 : new repo
-    const newRepo = () => {
+    const handleNewRepo = () => {
         const repo_key = cryptoRandomString({
             length: 12,
             type: 'alphanumeric',
@@ -114,24 +115,8 @@ const RepoPanel: React.FC<{
         setAllowHiddenAllRepoViaEnter(false);
     };
 
-    const newRepoInputChange = (e: any) => {
-        setNewRepoName(e.target.value);
-    };
-
-    const newRepoInputEnter = (e: any, repo_key: string) => {
-        if (e.key === 'Enter') {
-            newRepoSubmit(e, repo_key);
-        }
-    };
-
-    const scrollToRight = useCallback(() => {
-        if (repoScrollRef && repoScrollRef.current) {
-            repoScrollRef.current.scrollLeft = repoScrollRef.current.scrollWidth;
-        }
-    }, [repoScrollRef]);
-
     const newRepoSubmit = useCallback(
-        (e: any, repo_key: string) => {
+        async (e: any, repo_key: string) => {
             if (e.target.value === '') {
                 setNewRepoKey('');
                 setNewRepoName('');
@@ -148,75 +133,24 @@ const RepoPanel: React.FC<{
                 type: 'alphanumeric',
             });
 
-            const whalenote_info = ipcRenderer.sendSync('readJson', {
-                file_path: `${curDataPath}/whalenote_info.json`,
-            });
-            const history_info = ipcRenderer.sendSync('readJson', {
-                file_path: `${curDataPath}/history_info.json`,
-            });
-            whalenote_info.repos_key.push(repo_key);
-            history_info.cur_repo_key = repo_key;
-            history_info.repos[repo_key] = {
-                cur_folder_key: default_folder_key,
-                folders: {},
-            };
-            ipcRenderer.sendSync('writeJson', {
-                file_path: `${curDataPath}/whalenote_info.json`,
-                obj: whalenote_info,
-            });
-
-            ipcRenderer.sendSync('writeJson', {
-                file_path: `${curDataPath}/whalenote_info.json`,
-                obj: whalenote_info,
-            });
-
-            const repo_info = {
-                repo_name: e.target.value,
-                folders_key: [default_folder_key],
-            };
-            ipcRenderer.sendSync('writeJson', {
-                file_path: `${curDataPath}/${repo_key}/repo_info.json`,
-                obj: repo_info,
-            });
-
-            // default folder
-            const folder_info = {
-                folder_name: '默认分类',
-                notes_key: [default_note_key],
-                notes_obj: {
-                    [default_note_key]: {
-                        title: '新建文档',
-                    },
-                },
-            };
-
-            ipcRenderer.sendSync('writeJson', {
-                file_path: `${curDataPath}/${repo_key}/${default_folder_key}/folder_info.json`,
-                obj: folder_info,
-            });
-
-            updateWhalenote(curDataPath);
-            updateRepos('repo', { data_path: curDataPath, repo_key });
-            updateRepos('folder', {
+            newRepo(curDataPath, repo_key, e.target.value, default_folder_key, default_note_key);
+            await changeNotesAfterNew('repo', { data_path: curDataPath, repo_key });
+            await changeNotesAfterNew('folder', {
                 data_path: curDataPath,
                 repo_key,
                 folder_key: default_folder_key,
             });
-            changeNotesAfterNew('repo', { data_path: curDataPath, repo_key });
-            changeNotesAfterNew('folder', {
-                data_path: curDataPath,
-                repo_key,
-                folder_key: default_folder_key,
-            });
-
             setNewRepoKey('');
             setNewRepoName('');
             repoSwitchInPanel(repo_key);
-            setRepoScrollPage(Math.ceil(whalenote_info.repos_key.length / 9) - 1);
-            folderSwitch(repo_key, default_folder_key);
-            noteSwitch(default_note_key);
+            setRepoScrollPage(Math.ceil(repos.repos_key.length / 9) - 1);
+            await repoSwitch(repo_key);
+            await folderSwitch(repo_key, default_folder_key);
+            await noteSwitch(repo_key, default_folder_key, default_note_key);
             setAllowHiddenAllRepoViaEnter(true);
-            scrollToRight();
+            if (repoScrollRef && repoScrollRef.current) {
+                repoScrollRef.current.scrollLeft = repoScrollRef.current.scrollWidth;
+            }
             setShowAllRepo(false);
             setTimeout(() => {
                 setFocus(
@@ -232,39 +166,29 @@ const RepoPanel: React.FC<{
             changeNotesAfterNew,
             folderSwitch,
             repoSwitchInPanel,
-            scrollToRight,
+            repoScrollRef,
             setAllowHiddenAllRepoViaEnter,
             setFocus,
-            updateWhalenote,
-            updateRepos,
         ]
     );
 
     // part3 : rename repo
     useEffect(() => {
         setCurRepoName(
-            repos_obj && currentRepoKey && repos_obj[currentRepoKey]
-                ? repos_obj[currentRepoKey].repo_name
+            repos && repos.repos_obj && currentRepoKey && repos.repos_obj[currentRepoKey]
+                ? repos.repos_obj[currentRepoKey].repo_name
                 : ''
         );
-    }, [repos_obj, currentRepoKey]);
+    }, [repos, currentRepoKey]);
 
-    const renameRepo = () => {
+    const handleRenameRepo = () => {
         setRenamePopUp(true);
         setAllowHiddenAllRepoViaEnter(false);
     };
 
-    const renameRepoConfirm = useCallback(() => {
+    const renameRepoConfirm = useCallback(async () => {
         if (currentRepoKey) {
-            const repo_info = ipcRenderer.sendSync('readJson', {
-                file_path: `${curDataPath}/${currentRepoKey}/repo_info.json`,
-            });
-            repo_info.repo_name = curRepoName;
-            ipcRenderer.sendSync('writeJson', {
-                file_path: `${curDataPath}/${currentRepoKey}/repo_info.json`,
-                obj: repo_info,
-            });
-            updateRepos('repo', { data_path: curDataPath, repo_key: currentRepoKey });
+            await renameRepo(curDataPath, currentRepoKey, curRepoName);
             setRenamePopUp(false);
             setAllowHiddenAllRepoViaEnter(true);
         }
@@ -272,9 +196,9 @@ const RepoPanel: React.FC<{
         curDataPath,
         currentRepoKey,
         curRepoName,
+        renameRepo,
         setRenamePopUp,
         setAllowHiddenAllRepoViaEnter,
-        updateRepos,
     ]);
 
     const handleRenameRepoKeyDown = useCallback(
@@ -282,96 +206,30 @@ const RepoPanel: React.FC<{
             if (e.key === 'Escape') {
                 setRenamePopUp(false);
                 setCurRepoName(
-                    repos_obj && currentRepoKey && repos_obj[currentRepoKey]
-                        ? repos_obj[currentRepoKey].repo_name
+                    repos && repos.repos_obj && currentRepoKey && repos.repos_obj[currentRepoKey]
+                        ? repos.repos_obj[currentRepoKey].repo_name
                         : ''
                 );
             } else if (e.key === 'Enter') {
                 renameRepoConfirm();
             }
         },
-        [setRenamePopUp, setCurRepoName, repos_obj, currentRepoKey, renameRepoConfirm]
+        [setRenamePopUp, setCurRepoName, repos, currentRepoKey, renameRepoConfirm]
     );
 
     // part4 : delete repo
-    const deleteRepo = () => {
+    const handleDeleteRepo = () => {
         setDeletePopUp(true);
         setAllowHiddenAllRepoViaEnter(false);
     };
 
-    const deleteRepoConfirm = useCallback(() => {
+    const deleteRepoConfirm = useCallback(async () => {
         if (currentRepoKey) {
-            const repo_info = ipcRenderer.sendSync('readJson', {
-                file_path: `${curDataPath}/${currentRepoKey}/repo_info.json`,
-            });
-
-            let trash = ipcRenderer.sendSync('readCson', {
-                file_path: `${curDataPath}/trash.cson`,
-            });
-
-            trash = trash ? trash : {};
-
-            repo_info.folders_key.forEach((folder_key: string) => {
-                const folder_info = ipcRenderer.sendSync('readJson', {
-                    file_path: `${curDataPath}/${currentRepoKey}/${folder_key}/folder_info.json`,
-                });
-
-                folder_info.notes_key.forEach((note_key: string) => {
-                    const note_info = ipcRenderer.sendSync('readCson', {
-                        file_path: `${curDataPath}/${currentRepoKey}/${folder_key}/${note_key}.cson`,
-                    });
-
-                    trash[
-                        `${currentRepoKey}-${folder_key}-${note_key}-${folder_info.notes_obj[note_key]?.title}`
-                    ] = note_info.content;
-                });
-            });
-
-            ipcRenderer.sendSync('writeCson', {
-                file_path: `${curDataPath}/trash.cson`,
-                obj: trash,
-            });
-
-            const whalenote_info = ipcRenderer.sendSync('readJson', {
-                file_path: `${curDataPath}/whalenote_info.json`,
-            });
-
-            const new_repos_key: string[] = [];
-            let other_repo_key = undefined;
-
-            whalenote_info.repos_key.forEach((key: string, index: number) => {
-                if (key === currentRepoKey) {
-                    if (whalenote_info.repos_key.length > 1) {
-                        if (index === whalenote_info.repos_key.length - 1) {
-                            other_repo_key = whalenote_info.repos_key[index - 1];
-                        } else {
-                            other_repo_key = whalenote_info.repos_key[index + 1];
-                        }
-                    }
-                } else {
-                    new_repos_key.push(key);
-                }
-            });
-
-            whalenote_info.repos_key = new_repos_key;
-            if (whalenote_info.repos[currentRepoKey]) {
-                delete whalenote_info.repos[currentRepoKey];
-            }
-
-            ipcRenderer.sendSync('writeJson', {
-                file_path: `${curDataPath}/whalenote_info.json`,
-                obj: whalenote_info,
-            });
-
-            ipcRenderer.sendSync('remove', {
-                file_path: `${curDataPath}/${currentRepoKey}`,
-            });
-
-            updateRepos('repo', { data_path: curDataPath, repo_key: currentRepoKey });
+            const other_repo_key = await deleteRepo(curDataPath, currentRepoKey);
             if (other_repo_key) {
                 repoSwitchInPanel(other_repo_key);
             }
-            setRepoScrollPage(Math.ceil(whalenote_info.repos_key.length / 9) - 1);
+            setRepoScrollPage(Math.ceil(repos.repos_key.length / 9) - 1);
             setDeletePopUp(false);
             setAllowHiddenAllRepoViaEnter(true);
         }
@@ -381,7 +239,6 @@ const RepoPanel: React.FC<{
         setDeletePopUp,
         repoSwitchInPanel,
         setAllowHiddenAllRepoViaEnter,
-        updateRepos,
     ]);
 
     const handleDeleteRepoKeyDown = useCallback(
@@ -504,7 +361,7 @@ const RepoPanel: React.FC<{
 
     const handleDragEnd = useCallback(
         (e: any) => {
-            setActiveId(null);
+            setActiveId('');
             const { active, over } = e;
 
             if (!over) return;
@@ -530,7 +387,7 @@ const RepoPanel: React.FC<{
             </CloseRepoListBtn>
             <ReposScroll ref={repoScrollRef}>
                 <Repos ref={outerRef}>
-                    {repos_key && repos_obj ? (
+                    {repos_key && repos ? (
                         <DndContext
                             sensors={sensors}
                             // modifiers={[restrictToVerticalAxis, restrictToFirstScrollableAncestor]}
@@ -542,7 +399,9 @@ const RepoPanel: React.FC<{
                                 strategy={verticalListSortingStrategy}
                             >
                                 {repos_key
-                                    .filter((key) => repos_obj && repos_obj[key])
+                                    .filter(
+                                        (key) => repos && repos.repos_obj && repos.repos_obj[key]
+                                    )
                                     .map((key, index) => {
                                         if (index === repoScrollPage * 9) {
                                             return (
@@ -567,7 +426,7 @@ const RepoPanel: React.FC<{
                                                                         : '',
                                                             }}
                                                         >
-                                                            {repos_obj[key].repo_name}
+                                                            {repos.repos_obj[key].repo_name}
                                                             {keySelect ? (
                                                                 <RepoGroupItem
                                                                     style={{
@@ -617,7 +476,7 @@ const RepoPanel: React.FC<{
                                                                         : '',
                                                             }}
                                                         >
-                                                            {repos_obj[key].repo_name}
+                                                            {repos.repos_obj[key].repo_name}
                                                             {keySelect ? (
                                                                 <RepoGroupItem
                                                                     style={{
@@ -659,7 +518,7 @@ const RepoPanel: React.FC<{
                                                                         : '',
                                                             }}
                                                         >
-                                                            {repos_obj[key].repo_name}
+                                                            {repos.repos_obj[key].repo_name}
                                                         </RepoItemName>
                                                     </RepoItem>
                                                 </Sortable>
@@ -671,13 +530,13 @@ const RepoPanel: React.FC<{
                                     <MenuUl top={yPos} left={xPos}>
                                         <MenuLi
                                             className="menu-li-color"
-                                            onClick={() => renameRepo()}
+                                            onClick={() => handleRenameRepo()}
                                         >
                                             重命名
                                         </MenuLi>
                                         <MenuLi
                                             className="menu-li-color"
-                                            onClick={() => deleteRepo()}
+                                            onClick={() => handleDeleteRepo()}
                                         >
                                             删除仓库
                                         </MenuLi>
@@ -688,7 +547,7 @@ const RepoPanel: React.FC<{
                             </SortableContext>
                             <DragOverlay>
                                 <div>
-                                    {activeId && repos_obj ? (
+                                    {activeId && repos && repos.repos_obj ? (
                                         <RepoItem key={activeId}>
                                             <RepoItemName
                                                 style={{
@@ -698,7 +557,7 @@ const RepoPanel: React.FC<{
                                                             : '',
                                                 }}
                                             >
-                                                {repos_obj[activeId].repo_name}
+                                                {repos.repos_obj[activeId].repo_name}
                                             </RepoItemName>
                                         </RepoItem>
                                     ) : null}
@@ -710,11 +569,12 @@ const RepoPanel: React.FC<{
                     )}
                     {curDataPath && !newRepoKey ? (
                         <RepoAdd>
-                            <RepoAddBtn onClick={newRepo}>
+                            <RepoAddBtn onClick={handleNewRepo}>
                                 +
                                 {repos_key &&
-                                repos_key.filter((key) => repos_obj && repos_obj[key]).length ==
-                                    1 ? (
+                                repos_key.filter(
+                                    (key) => repos && repos.repos_obj && repos.repos_obj[key]
+                                ).length == 1 ? (
                                     <AddReposTips>
                                         <div>点击按钮</div>
                                         <div>添加新资料库</div>
@@ -735,8 +595,14 @@ const RepoPanel: React.FC<{
                             placeholder="输入新的资料库名"
                             autoFocus={true}
                             onBlur={(e) => newRepoSubmit(e, newRepoKey)}
-                            onChange={(e) => newRepoInputChange(e)}
-                            onKeyDown={(e) => newRepoInputEnter(e, newRepoKey)}
+                            onChange={(e: any) => {
+                                setNewRepoName(e.target.value);
+                            }}
+                            onKeyDown={(e: any) => {
+                                if (e.key === 'Enter') {
+                                    newRepoSubmit(e, newRepoKey);
+                                }
+                            }}
                         />
                     ) : (
                         <div></div>
@@ -749,8 +615,8 @@ const RepoPanel: React.FC<{
                 maskState={deleteMask}
                 title="提示"
                 content={`即将删除仓库「${
-                    repos_obj && currentRepoKey && repos_obj[currentRepoKey]
-                        ? repos_obj[currentRepoKey].repo_name
+                    repos && repos.repos_obj && currentRepoKey && repos.repos_obj[currentRepoKey]
+                        ? repos.repos_obj[currentRepoKey].repo_name
                         : ''
                 }」内所有笔记，不可撤销(但内容可在废纸篓找回)`}
                 onCancel={() => setDeletePopUp(false)}

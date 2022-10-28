@@ -16,7 +16,7 @@ const CenterArea: React.FC<{
         currentRepoKey,
         currentFolderKey,
         currentNoteKey,
-        repos_obj,
+        repos,
         setNumArray,
         setFocus,
         setBlur,
@@ -24,8 +24,8 @@ const CenterArea: React.FC<{
         setKeySelect,
     } = useContext(GlobalContext);
 
-    const repos_key = whalenote.repos_key;
-    const folders_obj = repos_obj[currentRepoKey]?.folders_obj;
+    const repos_key = repos.repos_key;
+    const folders_obj = repos.repos_obj[currentRepoKey]?.folders_obj;
 
     const [editorWidth, setEditorWidth] = useState('100%');
     const [renderWidth, setRenderWidth] = useState('0');
@@ -207,8 +207,10 @@ const CenterArea: React.FC<{
                             }}
                         >
                             <RepoNameLabel>
-                                {repos_obj && currentRepoKey && repos_obj[currentRepoKey]
-                                    ? repos_obj[currentRepoKey].repo_name
+                                {repos.repos_obj &&
+                                currentRepoKey &&
+                                repos.repos_obj[currentRepoKey]
+                                    ? repos.repos_obj[currentRepoKey].repo_name
                                     : ''}
                             </RepoNameLabel>
                             {keySelect ? <RepoPanelKeyTab>Z</RepoPanelKeyTab> : <></>}

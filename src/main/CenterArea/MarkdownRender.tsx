@@ -1,4 +1,3 @@
-const { ipcRenderer } = window.require('electron');
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
@@ -52,7 +51,7 @@ export const MarkdownRender: React.FC<{
         currentRepoKey,
         currentFolderKey,
         currentNoteKey,
-        repos_obj,
+        repos,
         notes,
         currentNoteStr,
         renderTop,
@@ -196,136 +195,136 @@ export const MarkdownRender: React.FC<{
             });
     }, [curDataPath]);
 
-    useEffect(() => {
-        ipcRenderer.on('saveNoteToHtml', (event: any, path: string) => {
-            const bodyContent = mdPrint.current.render(currentNoteStr);
-            const colorStyle =
-                ipcRenderer.sendSync('readCss', {
-                    file_name: '/theme/color_variable.css',
-                }) || '';
-            const globalStyle =
-                ipcRenderer.sendSync('readCss', {
-                    file_name: '/theme/global.css',
-                }) || '';
-            const hljsStyle =
-                ipcRenderer.sendSync('readCss', {
-                    file_name: `/hljs_theme/${theme}_standard.css`,
-                }) || '';
-            const renderStyle =
-                ipcRenderer.sendSync('readCss', {
-                    file_name: '/theme/render.css',
-                }) || '';
-            const outerHtml = `<!DOCTYPE html><html>
-            <head>
-            <meta charset="UTF-8">
-            <meta name = "viewport" content = "width = device-width, initial-scale = 1.5, maximum-scale = 1">
-            <style>
-            ${colorStyle}
-            ${globalStyle}
-            ${hljsStyle}
-            ${renderStyle}
-            </style>
-            </head>
-            <body>
-            <div class='${theme}-theme-global wn-theme-rd'>
-                ${bodyContent}
-            </div>
-            </body></html>`;
-            ipcRenderer.sendSync('writeStr', {
-                file_path: path,
-                str: outerHtml,
-            });
-        });
-        return () => {
-            ipcRenderer.removeAllListeners('saveNoteToHtml');
-        };
-    }, [currentNoteStr, theme]);
+    // useEffect(() => {
+    //     ipcRenderer.on('saveNoteToHtml', async (event: any, path: string) => {
+    //         const bodyContent = mdPrint.current.render(currentNoteStr);
+    //         const colorStyle =
+    //         await window.electronAPI.readCss({
+    //                 file_name: '/theme/color_variable.css',
+    //             }) || '';
+    //         const globalStyle =
+    //             await window.electronAPI.readCss({
+    //                 file_name: '/theme/global.css',
+    //             }) || '';
+    //         const hljsStyle =
+    //             await window.electronAPI.readCss({
+    //                 file_name: `/hljs_theme/${theme}_standard.css`,
+    //             }) || '';
+    //         const renderStyle =
+    //             await window.electronAPI.readCss({
+    //                 file_name: '/theme/render.css',
+    //             }) || '';
+    //         const outerHtml = `<!DOCTYPE html><html>
+    //         <head>
+    //         <meta charset="UTF-8">
+    //         <meta name = "viewport" content = "width = device-width, initial-scale = 1.5, maximum-scale = 1">
+    //         <style>
+    //         ${colorStyle}
+    //         ${globalStyle}
+    //         ${hljsStyle}
+    //         ${renderStyle}
+    //         </style>
+    //         </head>
+    //         <body>
+    //         <div class='${theme}-theme-global wn-theme-rd'>
+    //             ${bodyContent}
+    //         </div>
+    //         </body></html>`;
+    //         await window.electronAPI.writeStr({
+    //             file_path: path,
+    //             str: outerHtml,
+    //         });
+    //     });
+    //     return () => {
+    //         ipcRenderer.removeAllListeners('saveNoteToHtml');
+    //     };
+    // }, [currentNoteStr, theme]);
 
-    useEffect(() => {
-        ipcRenderer.on('saveNoteToMd', (event: any, path: string) => {
-            ipcRenderer.sendSync('writeStr', {
-                file_path: path,
-                str: currentNoteStr,
-            });
-        });
-        return () => {
-            ipcRenderer.removeAllListeners('saveNoteToPng');
-        };
-    }, [currentNoteStr, theme]);
+    // useEffect(() => {
+    //     ipcRenderer.on('saveNoteToMd', async (event: any, path: string) => {
+    //         await window.electronAPI.writeStr({
+    //             file_path: path,
+    //             str: currentNoteStr,
+    //         });
+    //     });
+    //     return () => {
+    //         ipcRenderer.removeAllListeners('saveNoteToPng');
+    //     };
+    // }, [currentNoteStr, theme]);
 
-    useEffect(() => {
-        ipcRenderer.on('saveNoteToPng', (event: any, path: string) => {
-            toPng(renderRef.current as HTMLElement, {
-                height: renderRef.current?.scrollHeight,
-            }).then((dataUrl) => {
-                ipcRenderer.sendSync('writePngBlob', {
-                    file_path: path,
-                    url: dataUrl,
-                });
-            });
-        });
-        return () => {
-            ipcRenderer.removeAllListeners('saveNoteToPng');
-        };
-    }, []);
+    // useEffect(() => {
+    //     ipcRenderer.on('saveNoteToPng', (event: any, path: string) => {
+    //         toPng(renderRef.current as HTMLElement, {
+    //             height: renderRef.current?.scrollHeight,
+    //         }).then(async (dataUrl) => {
+    //             await window.electronAPI.writePngBlob({
+    //                 file_path: path,
+    //                 url: dataUrl,
+    //             });
+    //         });
+    //     });
+    //     return () => {
+    //         ipcRenderer.removeAllListeners('saveNoteToPng');
+    //     };
+    // }, []);
 
-    useEffect(() => {
-        ipcRenderer.on('saveFolderToHtml', (event: any, path: string) => {
-            const colorStyle =
-                ipcRenderer.sendSync('readCss', {
-                    file_name: '/theme/color_variable.css',
-                }) || '';
-            const globalStyle =
-                ipcRenderer.sendSync('readCss', {
-                    file_name: '/theme/global.css',
-                }) || '';
-            const hljsStyle =
-                ipcRenderer.sendSync('readCss', {
-                    file_name: `/hljs_theme/${theme}_standard.css`,
-                }) || '';
-            const renderStyle =
-                ipcRenderer.sendSync('readCss', {
-                    file_name: '/theme/render.css',
-                }) || '';
-            Object.keys(notes[currentRepoKey][currentFolderKey]).forEach((note_key: string) => {
-                let title =
-                    repos_obj[currentRepoKey]?.folders_obj &&
-                    repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj
-                        ? repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj[
-                              note_key
-                          ]?.title || ''
-                        : '';
-                if (title === '' || title === '新建文档') title = note_key;
-                const content = notes[currentRepoKey][currentFolderKey][note_key];
-                const bodyContent = mdPrint.current.render(content);
-                const outerHtml = `<!DOCTYPE html><html>
-                <head>
-                <meta charset="UTF-8">
-                <meta name = "viewport" content = "width = device-width, initial-scale = 1, maximum-scale = 1">
-                <style>
-                ${colorStyle}
-                ${globalStyle}
-                ${hljsStyle}
-                ${renderStyle}
-                </style>
-                </head>
-                <body>
-                <div class='${theme}-theme-global wn-theme-rd'>
-                    ${bodyContent}
-                </div>
-                </body></html>`;
+    // useEffect(() => {
+    //     ipcRenderer.on('saveFolderToHtml', async (event: any, path: string) => {
+    //         const colorStyle =
+    //             await window.electronAPI.readCss({
+    //                 file_name: '/theme/color_variable.css',
+    //             }) || '';
+    //         const globalStyle =
+    //             await window.electronAPI.readCss({
+    //                 file_name: '/theme/global.css',
+    //             }) || '';
+    //         const hljsStyle =
+    //             await window.electronAPI.readCss({
+    //                 file_name: `/hljs_theme/${theme}_standard.css`,
+    //             }) || '';
+    //         const renderStyle =
+    //             await window.electronAPI.readCss({
+    //                 file_name: '/theme/render.css',
+    //             }) || '';
+    //         for (const note_key of Object.keys(notes[currentRepoKey][currentFolderKey])) {
+    //             let title =
+    //                 repos.repos_obj[currentRepoKey]?.folders_obj &&
+    //                 repos.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj
+    //                     ? repos.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj[
+    //                           note_key
+    //                       ]?.title || ''
+    //                     : '';
+    //             if (title === '' || title === '新建文档') title = note_key;
+    //             const content = notes[currentRepoKey][currentFolderKey][note_key];
+    //             const bodyContent = mdPrint.current.render(content);
+    //             const outerHtml = `<!DOCTYPE html><html>
+    //             <head>
+    //             <meta charset="UTF-8">
+    //             <meta name = "viewport" content = "width = device-width, initial-scale = 1, maximum-scale = 1">
+    //             <style>
+    //             ${colorStyle}
+    //             ${globalStyle}
+    //             ${hljsStyle}
+    //             ${renderStyle}
+    //             </style>
+    //             </head>
+    //             <body>
+    //             <div class='${theme}-theme-global wn-theme-rd'>
+    //                 ${bodyContent}
+    //             </div>
+    //             </body></html>`;
 
-                ipcRenderer.sendSync('writeStrToFile', {
-                    folder_path: path,
-                    file_name: title + '.html',
-                    str: outerHtml,
-                });
-            });
-        });
-        return () => {
-            ipcRenderer.removeAllListeners('saveFolderToHtml');
-        };
-    }, [repos_obj, notes, currentRepoKey, currentFolderKey, theme]);
+    //             await window.electronAPI.writeStrToFile({
+    //                 folder_path: path,
+    //                 file_name: title + '.html',
+    //                 str: outerHtml,
+    //             });
+    //         }
+    //     });
+    //     return () => {
+    //         ipcRenderer.removeAllListeners('saveFolderToHtml');
+    //     };
+    // }, [repos, notes, currentRepoKey, currentFolderKey, theme]);
 
     useEffect(() => {
         setResult(md.current.render(currentNoteStr));

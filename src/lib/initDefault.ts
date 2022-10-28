@@ -7,16 +7,19 @@ const initDefault = () => {
     const note_id = cryptoRandomString({ length: 12, type: 'alphanumeric' });
     const default_data: DataTypes = {
         repos: {
-            [repo_id]: {
-                repo_name: '1号资料库',
-                folders_key: [folder_id],
-                folders_obj: {
-                    [folder_id]: {
-                        folder_name: '默认分类',
-                        notes_key: [note_id],
-                        notes_obj: {
-                            [note_id]: {
-                                title: '新建文档',
+            repos_key: [repo_id],
+            repos_obj: {
+                [repo_id]: {
+                    repo_name: '1号资料库',
+                    folders_key: [folder_id],
+                    folders_obj: {
+                        [folder_id]: {
+                            folder_name: '默认分类',
+                            notes_key: [note_id],
+                            notes_obj: {
+                                [note_id]: {
+                                    title: '新建文档',
+                                },
                             },
                         },
                     },
@@ -32,11 +35,10 @@ const initDefault = () => {
         },
         whalenote: {
             id: cryptoRandomString({ length: 36, type: 'alphanumeric' }),
-            repos_key: [repo_id],
         },
         history: {
             cur_repo_key: repo_id,
-            repos: {
+            repos_record: {
                 [repo_id]: {
                     cur_folder_key: folder_id,
                     folders: {

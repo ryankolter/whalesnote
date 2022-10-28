@@ -1,15 +1,16 @@
-const { ipcRenderer } = window.require('electron');
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 const useDataList = () => {
     const [dataPathList, setDataPathList] = useState<string[]>([]);
 
-    const validateDataPathList = useCallback((data_path_list: string[]) => {
+    const validateDataPathList = useCallback(async (data_path_list: string[]) => {
         const new_data_path_list = [];
         for (const data_path of data_path_list) {
             if (
-                ipcRenderer.sendSync('folderExist', { folder_path: data_path }) &&
-                ipcRenderer.sendSync('fileExist', { file_path: data_path + '/whalenote_info.json' })
+                (await window.electronAPI.folderExist({ folder_path: data_path })) &&
+                (await window.electronAPI.fileExist({
+                    file_path: data_path + '/whalenote_info.json',
+                }))
             ) {
                 new_data_path_list.push(data_path);
             }
@@ -42,16 +43,18 @@ const useDataList = () => {
     );
 
     useEffect(() => {
-        let data_path_list: string[] = [];
-        try {
-            data_path_list = JSON.parse(
-                window.localStorage.getItem('whalenote_data_path_list') || '[]'
-            );
-        } catch (e) {
-            window.localStorage.setItem('whalenote_data_path_list', '[]');
-        }
-        const new_data_path_list = validateDataPathList(data_path_list);
-        setDataPathList(new_data_path_list);
+        (async function func() {
+            let data_path_list: string[] = [];
+            try {
+                data_path_list = JSON.parse(
+                    window.localStorage.getItem('whalenote_data_path_list') || '[]'
+                );
+            } catch (e) {
+                window.localStorage.setItem('whalenote_data_path_list', '[]');
+            }
+            const new_data_path_list = await validateDataPathList(data_path_list);
+            setDataPathList(new_data_path_list);
+        })();
     }, []);
 
     useEffect(() => {

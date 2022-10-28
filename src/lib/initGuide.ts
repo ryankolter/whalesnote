@@ -4,49 +4,57 @@ import { DataTypes } from '../commonType';
 const initGuide = () => {
     const guide_data: DataTypes = {
         repos: {
-            DEFAULTREPO1: {
-                repo_name: '1号资料库',
-                folders_key: ['SIMPLEGUIDE1', 'MIDDLEGUIDE1'],
-                folders_obj: {
-                    SIMPLEGUIDE1: {
-                        folder_name: '1. 入门教程',
-                        notes_key: ['SIMPLENOTE01', 'SIMPLENOTE02', 'SIMPLENOTE03', 'SIMPLENOTE04'],
-                        notes_obj: {
-                            SIMPLENOTE01: {
-                                title: '添加数据目录',
-                            },
-                            SIMPLENOTE02: {
-                                title: '新建仓库',
-                            },
-                            SIMPLENOTE03: {
-                                title: '新建文件夹',
-                            },
-                            SIMPLENOTE04: {
-                                title: '写笔记',
-                            },
-                        },
-                    },
-                    MIDDLEGUIDE1: {
-                        folder_name: '2. 进阶',
-                        notes_key: ['MIDDLENOTE01', 'MIDDLENOTE02'],
-                        notes_obj: {
-                            MIDDLENOTE01: {
-                                title: '快捷键',
-                            },
-                            MIDDLENOTE02: {
-                                title: '单向同步到手机',
+            repos_key: ['DEFAULTREPO1'],
+            repos_obj: {
+                DEFAULTREPO1: {
+                    repo_name: '1号资料库',
+                    folders_key: ['SIMPLEGUIDE1', 'MIDDLEGUIDE1'],
+                    folders_obj: {
+                        SIMPLEGUIDE1: {
+                            folder_name: '1. 入门教程',
+                            notes_key: [
+                                'SIMPLENOTE01',
+                                'SIMPLENOTE02',
+                                'SIMPLENOTE03',
+                                'SIMPLENOTE04',
+                            ],
+                            notes_obj: {
+                                SIMPLENOTE01: {
+                                    title: '添加数据目录',
+                                },
+                                SIMPLENOTE02: {
+                                    title: '新建仓库',
+                                },
+                                SIMPLENOTE03: {
+                                    title: '新建文件夹',
+                                },
+                                SIMPLENOTE04: {
+                                    title: '写笔记',
+                                },
                             },
                         },
-                    },
-                    PRIMERGUIDE1: {
-                        folder_name: '3. 高级',
-                        notes_key: ['PRIMERNOTE01', 'PRIMERNOTE02'],
-                        notes_obj: {
-                            PRIMERNOTE01: {
-                                title: '快捷键',
+                        MIDDLEGUIDE1: {
+                            folder_name: '2. 进阶',
+                            notes_key: ['MIDDLENOTE01', 'MIDDLENOTE02'],
+                            notes_obj: {
+                                MIDDLENOTE01: {
+                                    title: '快捷键',
+                                },
+                                MIDDLENOTE02: {
+                                    title: '单向同步到手机',
+                                },
                             },
-                            PRIMERNOTE02: {
-                                title: '单向同步到手机',
+                        },
+                        PRIMERGUIDE1: {
+                            folder_name: '3. 高级',
+                            notes_key: ['PRIMERNOTE01', 'PRIMERNOTE02'],
+                            notes_obj: {
+                                PRIMERNOTE01: {
+                                    title: '快捷键',
+                                },
+                                PRIMERNOTE02: {
+                                    title: '单向同步到手机',
+                                },
                             },
                         },
                     },
@@ -69,11 +77,10 @@ const initGuide = () => {
         },
         whalenote: {
             id: cryptoRandomString({ length: 36, type: 'alphanumeric' }),
-            repos_key: ['DEFAULTREPO1'],
         },
         history: {
             cur_repo_key: 'DEFAULTREPO1',
-            repos: {
+            repos_record: {
                 DEFAULTREPO1: {
                     cur_folder_key: 'SIMPLEGUIDE1',
                     folders: {

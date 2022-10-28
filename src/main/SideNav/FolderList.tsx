@@ -1,4 +1,3 @@
-const { ipcRenderer } = window.require('electron');
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
@@ -28,10 +27,12 @@ const FolderList: React.FC<{
         repoSwitch,
         folderSwitch,
         noteSwitch,
-        repos_obj,
+        repos,
+        newFolder,
+        renameFolder,
+        deleteFolder,
         currentRepoKey,
         currentFolderKey,
-        updateRepos,
         reorderFolder,
         changeNotesAfterNew,
         numArray,
@@ -40,8 +41,8 @@ const FolderList: React.FC<{
         keySelect,
     } = useContext(GlobalContext);
 
-    const folders_key = repos_obj[currentRepoKey]?.folders_key;
-    const folders_obj = repos_obj[currentRepoKey]?.folders_obj;
+    const folders_key = repos.repos_obj[currentRepoKey]?.folders_key;
+    const folders_obj = repos.repos_obj[currentRepoKey]?.folders_obj;
 
     const [activeId, setActiveId] = useState(null);
     const [newFolderKey, setNewFolderKey] = useState('');
@@ -61,7 +62,7 @@ const FolderList: React.FC<{
     const [folderScrollTop, setFolderScrollTop] = useState(0);
 
     // part1 : new folder
-    const newFolder = () => {
+    const handleNewFolder = () => {
         const folder_key = cryptoRandomString({
             length: 12,
             type: 'alphanumeric',
@@ -69,18 +70,8 @@ const FolderList: React.FC<{
         setNewFolderKey(folder_key);
     };
 
-    const newFolderInputChange = (e: any) => {
-        setNewFolderName(e.target.value);
-    };
-
-    const newFolderInputEnter = (e: any, folder_key: string) => {
-        if (e.key === 'Enter') {
-            newFolderConfirm(e, folder_key);
-        }
-    };
-
     const newFolderConfirm = useCallback(
-        (e: any, folder_key: string) => {
+        async (e: any, folder_key: string) => {
             if (e.target.value === '') {
                 setNewFolderKey('');
                 setNewFolderName('');
@@ -94,42 +85,15 @@ const FolderList: React.FC<{
                 type: 'alphanumeric',
             });
 
-            const repo_info = ipcRenderer.sendSync('readJson', {
-                file_path: `${curDataPath}/${currentRepoKey}/repo_info.json`,
-            });
-            repo_info.folders_key.push(folder_key);
-            ipcRenderer.sendSync('writeJson', {
-                file_path: `${curDataPath}/${currentRepoKey}/repo_info.json`,
-                obj: repo_info,
-            });
+            await newFolder(curDataPath, currentRepoKey, newFolderKey, e.target.value, note_key);
 
-            const folder_info = {
-                folder_name: e.target.value,
-                notes_key: [note_key],
-                notes_obj: {
-                    [note_key]: {
-                        title: '新建文档',
-                    },
-                },
-            };
-
-            ipcRenderer.sendSync('writeJson', {
-                file_path: `${curDataPath}/${currentRepoKey}/${folder_key}/folder_info.json`,
-                obj: folder_info,
-            });
-
-            updateRepos('folder', {
-                data_path: curDataPath,
-                repo_key: currentRepoKey,
-                folder_key,
-            });
-            changeNotesAfterNew('folder', {
+            await changeNotesAfterNew('folder', {
                 data_path: curDataPath,
                 repo_key: currentRepoKey,
                 folder_key,
             });
 
-            folderSwitch(currentRepoKey, folder_key);
+            await folderSwitch(currentRepoKey, folder_key);
 
             const note_info = {
                 createAt: new Date(),
@@ -138,23 +102,18 @@ const FolderList: React.FC<{
                 content: '',
             };
 
-            ipcRenderer.sendSync('writeCson', {
+            await window.electronAPI.writeCson({
                 file_path: `${curDataPath}/${currentRepoKey}/${folder_key}/${note_key}.cson`,
                 obj: note_info,
             });
 
-            updateRepos('note', {
-                data_path: curDataPath,
-                repo_key: currentRepoKey,
-                folder_key: folder_key,
-            });
-            changeNotesAfterNew('note', {
+            await changeNotesAfterNew('note', {
                 data_path: curDataPath,
                 repo_key: currentRepoKey,
                 folder_key: folder_key,
                 note_key,
             });
-            noteSwitch(note_key);
+            await noteSwitch(currentRepoKey, folder_key, note_key);
 
             setNewFolderKey('');
             setNewFolderName('');
@@ -170,11 +129,11 @@ const FolderList: React.FC<{
         [
             curDataPath,
             currentRepoKey,
+            newFolder,
             changeNotesAfterNew,
             folderSwitch,
             repoSwitch,
             setFocus,
-            updateRepos,
         ]
     );
 
@@ -187,117 +146,38 @@ const FolderList: React.FC<{
         );
     }, [folders_obj, currentFolderKey]);
 
-    const renameFolder = useCallback(() => {
+    const handleRenameFolder = useCallback(() => {
         setRenamePopUp(true);
     }, [setRenamePopUp]);
 
-    const handleRenameFolderKeyDown = (e: any) => {
-        if (e.key === 'Escape') {
-            setRenamePopUp(false);
-        } else if (e.key === 'Enter') {
-            renameFolderConfirm();
-        }
-    };
-
-    const renameFolderConfirm = useCallback(() => {
+    const renameFolderConfirm = useCallback(async () => {
         if (currentRepoKey && currentFolderKey) {
-            const folder_info = ipcRenderer.sendSync('readJson', {
-                file_path: `${curDataPath}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
-            });
-            folder_info.folder_name = curFolderName;
-            ipcRenderer.sendSync('writeJson', {
-                file_path: `${curDataPath}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
-                obj: folder_info,
-            });
-            updateRepos('folder', {
-                data_path: curDataPath,
-                repo_key: currentRepoKey,
-                folder_key: currentFolderKey,
-            });
+            await renameFolder(curDataPath, currentRepoKey, currentFolderKey, curFolderName);
             setRenamePopUp(false);
         }
-    }, [curDataPath, currentRepoKey, currentFolderKey, curFolderName, setRenamePopUp, updateRepos]);
+    }, [curDataPath, currentRepoKey, currentFolderKey, curFolderName, setRenamePopUp]);
 
     // part3 : delete folder
-    const deleteFolder = () => {
+    const handleDeleteFolder = () => {
         setDeletePopUp(true);
     };
 
-    const deleteFolderConfirm = useCallback(() => {
+    const deleteFolderConfirm = useCallback(async () => {
         if (currentRepoKey && currentFolderKey) {
-            const folder_info = ipcRenderer.sendSync('readJson', {
-                file_path: `${curDataPath}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
-            });
-
-            let trash = ipcRenderer.sendSync('readCson', {
-                file_path: `${curDataPath}/trash.cson`,
-            });
-
-            trash = trash ? trash : {};
-
-            folder_info.notes_key.forEach((note_key: string) => {
-                const note_info = ipcRenderer.sendSync('readCson', {
-                    file_path: `${curDataPath}/${currentRepoKey}/${currentFolderKey}/${note_key}.cson`,
-                });
-
-                trash[
-                    `${currentRepoKey}-${currentFolderKey}-${note_key}-${folder_info.notes_obj[note_key].title}`
-                ] = note_info.content;
-            });
-
-            ipcRenderer.sendSync('writeCson', {
-                file_path: `${curDataPath}/trash.cson`,
-                obj: trash,
-            });
-
-            const repo_info = ipcRenderer.sendSync('readJson', {
-                file_path: `${curDataPath}/${currentRepoKey}/repo_info.json`,
-            });
-
-            const new_folders_key: string[] = [];
-            let other_folder_key = undefined;
-
-            repo_info.folders_key.forEach((key: string, index: number) => {
-                if (key === currentFolderKey) {
-                    if (repo_info.folders_key.length > 1) {
-                        if (index === repo_info.folders_key.length - 1) {
-                            other_folder_key = repo_info.folders_key[index - 1];
-                        } else {
-                            other_folder_key = repo_info.folders_key[index + 1];
-                        }
-                    }
-                } else {
-                    new_folders_key.push(key);
-                }
-            });
-
-            repo_info.folders_key = new_folders_key;
-
-            ipcRenderer.sendSync('writeJson', {
-                file_path: `${curDataPath}/${currentRepoKey}/repo_info.json`,
-                obj: repo_info,
-            });
-
-            ipcRenderer.sendSync('remove', {
-                file_path: `${curDataPath}/${currentRepoKey}/${currentFolderKey}`,
-            });
-
-            updateRepos('repo', { data_path: curDataPath, repo_key: currentRepoKey });
-            updateRepos('folder', {
-                data_path: curDataPath,
-                repo_key: currentRepoKey,
-                folder_key: currentFolderKey,
-            });
+            const remain_folder_key = await deleteFolder(
+                curDataPath,
+                currentRepoKey,
+                currentFolderKey
+            );
             repoSwitch(currentRepoKey);
-            folderSwitch(currentRepoKey, other_folder_key);
+            folderSwitch(currentRepoKey, remain_folder_key);
             setDeletePopUp(false);
         }
     }, [
         curDataPath,
-        repos_obj,
+        repos,
         currentRepoKey,
         currentFolderKey,
-        updateRepos,
         repoSwitch,
         folderSwitch,
         setDeletePopUp,
@@ -396,7 +276,7 @@ const FolderList: React.FC<{
                 const modKey = process.platform === 'darwin' ? e.metaKey : e.ctrlKey;
 
                 if (e.keyCode === 78 && modKey && e.shiftKey) {
-                    newFolder();
+                    handleNewFolder();
                 }
 
                 // arrow bottom 40 or K 75
@@ -554,13 +434,13 @@ const FolderList: React.FC<{
                                 <MenuUl top={yPos} left={xPos}>
                                     <MenuLi
                                         className="menu-li-color"
-                                        onClick={() => renameFolder()}
+                                        onClick={() => handleRenameFolder()}
                                     >
                                         重命名
                                     </MenuLi>
                                     <MenuLi
                                         className="menu-li-color"
-                                        onClick={() => deleteFolder()}
+                                        onClick={() => handleDeleteFolder()}
                                     >
                                         删除文件夹
                                     </MenuLi>
@@ -569,7 +449,7 @@ const FolderList: React.FC<{
                                 <></>
                             )}
                             {curDataPath && !newFolderKey ? (
-                                <FolderAddBtn onClick={() => newFolder()}>
+                                <FolderAddBtn onClick={() => handleNewFolder()}>
                                     <img src={newFolderIcon} alt="" />
                                 </FolderAddBtn>
                             ) : (
@@ -583,8 +463,14 @@ const FolderList: React.FC<{
                                     placeholder="输入新的分类名"
                                     autoFocus={true}
                                     onBlur={(e) => newFolderConfirm(e, newFolderKey)}
-                                    onChange={(e) => newFolderInputChange(e)}
-                                    onKeyDown={(e) => newFolderInputEnter(e, newFolderKey)}
+                                    onChange={(e: any) => {
+                                        setNewFolderName(e.target.value);
+                                    }}
+                                    onKeyDown={(e: any) => {
+                                        if (e.key === 'Enter') {
+                                            newFolderConfirm(e, newFolderKey);
+                                        }
+                                    }}
                                 />
                             ) : (
                                 <div></div>
@@ -637,7 +523,13 @@ const FolderList: React.FC<{
                 setValue={setCurFolderName}
                 onCancel={() => setRenamePopUp(false)}
                 onConfirm={renameFolderConfirm}
-                onKeyDown={handleRenameFolderKeyDown}
+                onKeyDown={(e: any) => {
+                    if (e.key === 'Escape') {
+                        setRenamePopUp(false);
+                    } else if (e.key === 'Enter') {
+                        renameFolderConfirm();
+                    }
+                }}
             ></InputPopUp>
         </FolderListContainer>
     );

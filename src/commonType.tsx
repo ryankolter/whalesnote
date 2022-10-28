@@ -1,11 +1,10 @@
 export type whalenoteTypes = {
     id: string;
-    repos_key: string[];
 };
 
 export type historyTypes = {
     cur_repo_key: string;
-    repos:
+    repos_record:
         | {
               [key: string]:
                   | {
@@ -20,25 +19,30 @@ export type historyTypes = {
 };
 
 export type reposObjTypes = {
-    [repo_key: string]: {
-        repo_name: string;
-        folders_key: string[];
-        folders_obj:
-            | {
-                  [folder_key: string]: {
-                      folder_name: string;
-                      notes_key: string[];
-                      notes_obj:
-                          | {
-                                [note_key: string]: {
-                                    title: string;
-                                };
-                            }
-                          | {};
-                  };
-              }
-            | {};
-    };
+    repos_key: string[];
+    repos_obj:
+        | {
+              [repo_key: string]: {
+                  repo_name: string;
+                  folders_key: string[];
+                  folders_obj:
+                      | {
+                            [folder_key: string]: {
+                                folder_name: string;
+                                notes_key: string[];
+                                notes_obj:
+                                    | {
+                                          [note_key: string]: {
+                                              title: string;
+                                          };
+                                      }
+                                    | {};
+                            };
+                        }
+                      | {};
+              };
+          }
+        | {};
 };
 
 export type notesTypes = {

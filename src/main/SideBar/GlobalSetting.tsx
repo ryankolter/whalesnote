@@ -1,4 +1,3 @@
-const { ipcRenderer } = window.require('electron');
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';

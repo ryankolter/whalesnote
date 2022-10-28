@@ -1,4 +1,3 @@
-const { ipcRenderer } = window.require('electron');
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
@@ -17,30 +16,31 @@ const DataSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssista
     const [showPathUl, setShowPathUl] = useState(false);
     const pathUlRef = useRef<HTMLDivElement>(null);
 
-    const addDataPath = useCallback(() => {
-        ipcRenderer.send('open-directory-dialog', {
-            response_event_name: 'checkoutDataPath',
-        });
+    const addDataPath = useCallback(async () => {
+        const filePath = await window.electronAPI.openDirectoryDialog();
+        // ipcRenderer.send('open-directory-dialog', {
+        //     response_event_name: 'checkoutDataPath',
+        // });
     }, []);
 
-    const openDataPath = useCallback((data_path: string) => {
-        ipcRenderer.send('open-parent-folder', { folder_path: data_path });
+    const openDataPath = useCallback(async (data_path: string) => {
+        await window.electronAPI.openParentFolder({ folder_path: data_path });
     }, []);
 
-    useEffect(() => {
-        ipcRenderer.on('checkoutDataPath', (event: any, path: string) => {
-            setShowPathUl(false);
-            if (path !== curDataPath) {
-                setSwitchingData(true);
-                setTimeout(() => {
-                    setCurDataPath(path);
-                }, 50);
-            }
-        });
-        return () => {
-            ipcRenderer.removeAllListeners('checkoutDataPath');
-        };
-    }, [curDataPath, setSwitchingData, setCurDataPath]);
+    // useEffect(() => {
+    //     ipcRenderer.on('checkoutDataPath', (event: any, path: string) => {
+    //         setShowPathUl(false);
+    //         if (path !== curDataPath) {
+    //             setSwitchingData(true);
+    //             setTimeout(() => {
+    //                 setCurDataPath(path);
+    //             }, 50);
+    //         }
+    //     });
+    //     return () => {
+    //         ipcRenderer.removeAllListeners('checkoutDataPath');
+    //     };
+    // }, [curDataPath, setSwitchingData, setCurDataPath]);
 
     const handleClick = useCallback(
         (event: MouseEvent) => {

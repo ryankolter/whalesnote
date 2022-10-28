@@ -23,10 +23,10 @@ if (!app.requestSingleInstanceLock()) {
 
 app.disableHardwareAcceleration();
 
-let win = null;
+let mainWindow = null;
 
 const createWindow = async () => {
-    win = new BrowserWindow({
+    mainWindow = new BrowserWindow({
         show: false,
         vibrancy: 'under-window',
         visualEffectState: 'active',
@@ -38,28 +38,29 @@ const createWindow = async () => {
         titleBarStyle: 'hiddenInset',
         trafficLightPosition: { x: 18, y: 16 },
         webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: true,
-            contextIsolation: false,
+            contextIsolation: true,
         },
     });
 
-    win.webContents.setWindowOpenHandler(({ url }) => {
+    mainWindow.webContents.setWindowOpenHandler(({ url }) => {
         shell.openExternal(url);
         return { action: 'deny' };
     });
 
     if (app.isPackaged) {
-        win.loadFile(path.join(__dirname, '/build/index.html'));
+        mainWindow.loadFile(path.join(__dirname, '/build/index.html'));
     } else {
-        win.loadURL('http://localhost:3005');
-        // win.loadFile(path.join(__dirname, '/build/index.html'));
-        win.webContents.openDevTools();
-        await installExtensions();
+        mainWindow.loadURL('http://localhost:3005');
+        // mainWindow.loadFile(path.join(__dirname, '/build/index.html'));
+        mainWindow.webContents.openDevTools();
+        //await installExtensions();
     }
 
-    win.on('ready-to-show', () => {
-        if (!win?.isVisible()) {
-            win?.show();
+    mainWindow.on('ready-to-show', () => {
+        if (!mainWindow?.isVisible()) {
+            mainWindow?.show();
         }
     });
 };
@@ -167,254 +168,249 @@ let server = null;
 let socket = null;
 
 const processIPC = () => {
-    ipcMain.on('askOpenHttp', (event, { port }) => {
-        server = require('http').createServer();
-        const io = require('socket.io')(server);
-        io.on('connection', (s) => {
-            socket = s;
-            socket.on('MobileToPc', (data) => {
-                console.log('电脑收到消息:' + data);
-            });
-            socket.emit('connectSuccess', '电脑已经连上!');
-        });
+    // ipcMain.on('askOpenHttp', (event, { port }) => {
+    //     server = require('http').createServer();
+    //     const io = require('socket.io')(server);
+    //     io.on('connection', (s) => {
+    //         socket = s;
+    //         socket.on('MobileToPc', (data) => {
+    //             console.log('电脑收到消息:' + data);
+    //         });
+    //         socket.emit('connectSuccess', '电脑已经连上!');
+    //     });
 
-        server.on('listening', () => {
-            win?.webContents.send('openHttpStatus', {
-                httpStatus: true,
-                message: `open http on ${port} success!!`,
-            });
-            console.log('这里服务器被开启，要上报坐标');
-        });
+    //     server.on('listening', () => {
+    //         mainWindow?.webContents.send('openHttpStatus', {
+    //             httpStatus: true,
+    //             message: `open http on ${port} success!!`,
+    //         });
+    //         console.log('这里服务器被开启，要上报坐标');
+    //     });
 
-        server.once('close', () => {
-            win?.webContents.send('closeHttpSuccess');
-            console.log('这里服务器被停止');
-        });
+    //     server.once('close', () => {
+    //         mainWindow?.webContents.send('closeHttpSuccess');
+    //         console.log('这里服务器被停止');
+    //     });
 
-        server.on('error', (err) => {
-            console.log(err);
-            if (err.code === 'EADDRINUSE') {
-                win?.webContents.send('openHttpStatus', {
-                    httpStatus: false,
-                    message: `open http on ${port} failed!!`,
-                });
-            }
-        });
+    //     server.on('error', (err) => {
+    //         console.log(err);
+    //         if (err.code === 'EADDRINUSE') {
+    //             mainWindow?.webContents.send('openHttpStatus', {
+    //                 httpStatus: false,
+    //                 message: `open http on ${port} failed!!`,
+    //             });
+    //         }
+    //     });
 
-        server.listen(port);
+    //     server.listen(port);
+    // });
+
+    // ipcMain.on('askcloseHttp', (event) => {
+    //     let result = server.close();
+    //     console.log(result);
+
+    //     if (result._connections > 0) {
+    //         mainWindow?.webContents.send('closeHttpStatus', {
+    //             httpStatus: false,
+    //             message: `close http failed!!`,
+    //         });
+    //     } else {
+    //         mainWindow?.webContents.send('closeHttpStatus', {
+    //             httpStatus: true,
+    //             message: `close http success!!`,
+    //         });
+    //     }
+    // });
+
+    // ipcMain.on('pcSendMessage', (event, { data }) => {
+    //     socket?.emit('PcToMobile', data);
+    // });
+
+    ipcMain.handle('operate:checkFolderExist', async ({ folder_path }) => {
+        return fse.existsSync(folder_path);
     });
 
-    ipcMain.on('askcloseHttp', (event) => {
-        let result = server.close();
-        console.log(result);
-
-        if (result._connections > 0) {
-            win?.webContents.send('closeHttpStatus', {
-                httpStatus: false,
-                message: `close http failed!!`,
-            });
-        } else {
-            win?.webContents.send('closeHttpStatus', {
-                httpStatus: true,
-                message: `close http success!!`,
-            });
-        }
+    ipcMain.handle('operate:checkFileExist', async ({ file_path }) => {
+        return fse.existsSync(file_path);
     });
 
-    ipcMain.on('pcSendMessage', (event, { data }) => {
-        socket?.emit('PcToMobile', data);
-    });
-
-    ipcMain.on('folderExist', (event, { folder_path }) => {
-        event.returnValue = fse.existsSync(folder_path);
-    });
-
-    ipcMain.on('fileExist', (event, { file_path }) => {
-        event.returnValue = fse.existsSync(file_path);
-    });
-
-    ipcMain.on('defaultDataPath', (event) => {
+    ipcMain.handle('operate:getDefaultDataPath', async () => {
         let default_data_Path = path.join(app.getPath('userData'), 'noteData');
         fse.ensureDirSync(default_data_Path);
-        event.returnValue = default_data_Path;
+        return default_data_Path;
     });
 
-    ipcMain.on('writeCson', (event, { file_path, obj }) => {
-        console.log('writeCson: ' + file_path);
+    ipcMain.handle('operate:writeCson', async ({ file_path, obj }) => {
         fse.ensureFileSync(file_path);
         fse.writeFileSync(file_path, CSON.createCSONString(obj));
-        event.returnValue = true;
+        return true;
     });
 
-    ipcMain.on('writeJson', (event, { file_path, obj }) => {
-        console.log('writeJson: ' + file_path);
+    ipcMain.handle('operate:writeJson', async ({ file_path, obj }) => {
         fse.ensureFileSync(file_path);
         fse.writeFileSync(file_path, CSON.createJSONString(obj));
-        event.returnValue = true;
+        return true;
     });
 
-    ipcMain.on('writeStr', (event, { file_path, str }) => {
+    ipcMain.handle('operate:writeStr', async ({ file_path, str }) => {
         fse.ensureFileSync(file_path);
         fse.writeFileSync(file_path, str);
-        event.returnValue = true;
+        return true;
     });
 
-    ipcMain.on('writeStrToFile', (event, { folder_path, file_name, str }) => {
+    ipcMain.handle('operate:writeStrToFile', async ({ folder_path, file_name, str }) => {
         const file_path = path.join(folder_path, file_name);
         fse.ensureFileSync(file_path);
         fse.writeFileSync(file_path, str);
-        event.returnValue = true;
+        return true;
     });
 
-    ipcMain.on('writePngBlob', (event, { file_path, url }) => {
+    ipcMain.handle('operate:writePngBlob', async ({ file_path, url }) => {
         fse.ensureFileSync(file_path);
         fse.writeFileSync(file_path, url.replace(/^data:image\/png;base64,/, ''), 'base64');
-        event.returnValue = true;
+        return true;
     });
 
-    ipcMain.on('readCson', (event, { file_path }) => {
-        console.log('readCson: ' + file_path);
+    ipcMain.handle('operate:readCson', async ({ file_path }) => {
         if (!fse.pathExistsSync(file_path)) {
-            event.returnValue = false;
+            return false;
         } else {
             let cson_str = fse.readFileSync(file_path);
-            event.returnValue = CSON.parseCSONString(cson_str);
+            return CSON.parseCSONString(cson_str);
         }
     });
 
-    ipcMain.on('readJson', (event, { file_path }) => {
-        console.log('readJson: ' + file_path);
+    ipcMain.handle('operate:readJson', async ({ file_path }) => {
         if (!fse.pathExistsSync(file_path)) {
-            event.returnValue = false;
+            return false;
         } else {
             let json_str = fse.readFileSync(file_path);
-            event.returnValue = CSON.parseJSONString(json_str);
+            return CSON.parseJSONString(json_str);
         }
     });
 
-    ipcMain.on('readCss', (event, { file_name }) => {
+    ipcMain.handle('operate:readCss', async ({ file_name }) => {
         let file_path = path.join(__dirname, '/src/resources/css/' + file_name);
         if (app.isPackaged) {
             let cssFilePath = path.join(__dirname, '../extraResources/css/');
             file_path = path.join(cssFilePath, file_name);
         }
         if (!fse.pathExistsSync(file_path)) {
-            event.returnValue = false;
+            return false;
         } else {
             let css_str = fse.readFileSync(file_path, 'utf-8');
-            event.returnValue = css_str;
+            return css_str;
         }
     });
 
-    ipcMain.on('copy', (event, { src_file_path, dest_dir_path, dest_file_name }) => {
+    ipcMain.handle('operate:copy', async ({ src_file_path, dest_dir_path, dest_file_name }) => {
         const dest_file_path = path.join(dest_dir_path, dest_file_name);
         console.log('copy: ' + src_file_path + ' to ' + dest_file_path);
         fse.ensureDirSync(dest_dir_path);
         fse.copyFileSync(src_file_path, dest_file_path);
-        event.returnValue = true;
+        return true;
     });
 
-    ipcMain.on('move', (event, { src_file_path, dest_file_path }) => {
+    ipcMain.handle('operate:move', async ({ src_file_path, dest_file_path }) => {
         console.log('move: ' + src_file_path + ' to ' + dest_file_path);
         fse.moveSync(src_file_path, dest_file_path);
-        event.returnValue = true;
+        return true;
     });
 
-    ipcMain.on('remove', (event, { file_path }) => {
+    ipcMain.handle('operate:remove', async ({ file_path }) => {
         console.log('remove: ' + file_path);
         fse.removeSync(file_path);
-        event.returnValue = true;
+        return true;
     });
 
-    ipcMain.on('open-directory-dialog', (event, { response_event_name }) => {
-        dialog
-            .showOpenDialog({
-                properties: ['openDirectory'],
-            })
-            .then((files) => {
-                if (files && !files.canceled && files.filePaths.length > 0) {
-                    event.sender.send(response_event_name, files.filePaths[0]);
-                }
-            });
+    ipcMain.handle('dialog:openDirectoryDialog', async () => {
+        const { canceled, filePaths } = await dialog.showOpenDialog({
+            properties: ['openDirectory'],
+        });
+
+        if (!canceled && filePaths.length > 0) {
+            return files.filePaths[0];
+        } else {
+            return;
+        }
     });
 
-    ipcMain.on('open-save-dialog', (event, { file_name, file_types, response_event_name }) => {
-        dialog
-            .showSaveDialog({
-                title: 'Select the File Path to save',
-                buttonLabel: 'Save',
-                defaultPath: '*/' + file_name.replace('/', ' '),
-                filters: [
-                    {
-                        name: file_name,
-                        extensions: file_types,
-                    },
-                ],
-                properties: [],
-            })
-            .then((files) => {
-                if (files && !files.canceled) {
-                    event.sender.send(response_event_name, files.filePath);
-                }
-            });
+    ipcMain.handle('dialog:openSaveDialog', async ({ file_name, file_types }) => {
+        const { canceled, filePath } = await dialog.showSaveDialog({
+            title: 'Select the File Path to save',
+            buttonLabel: 'Save',
+            defaultPath: '*/' + file_name.replace('/', ' '),
+            filters: [
+                {
+                    name: file_name,
+                    extensions: file_types,
+                },
+            ],
+            properties: [],
+        });
+
+        if (!canceled) {
+            return filePath;
+        } else {
+            return;
+        }
     });
 
-    ipcMain.on('open-select-images-dialog', (event, { file_types, response_event_name }) => {
-        console.log(file_types);
-        dialog
-            .showOpenDialog({
-                title: 'Select images',
-                buttonLabel: 'Load',
-                defaultPath: '*/',
-                filters: [
-                    {
-                        name: 'Images',
-                        extensions: file_types,
-                    },
-                ],
-                properties: ['openFile', 'multiSelections'],
-            })
-            .then((files) => {
-                if (files && !files.canceled) {
-                    event.sender.send(response_event_name, files.filePaths);
-                }
-            });
+    ipcMain.handle('dialog:openSelectImagesDialog', async ({ file_types }) => {
+        const { canceled, filePaths } = await dialog.showOpenDialog({
+            title: 'Select images',
+            buttonLabel: 'Load',
+            defaultPath: '*/',
+            filters: [
+                {
+                    name: 'Images',
+                    extensions: file_types,
+                },
+            ],
+            properties: ['openFile', 'multiSelections'],
+        });
+
+        if (!canceled) {
+            return filePaths;
+        } else {
+            return;
+        }
     });
 
-    ipcMain.on('open-parent-folder', (event, { folder_path }) => {
+    ipcMain.handle('dialog:openParentFolder', async ({ folder_path }) => {
         shell.showItemInFolder(folder_path);
+        return;
     });
 
-    ipcMain.on('open-folder', (event, { folder_path }) => {
+    ipcMain.handle('dialog:openFolder', async ({ folder_path }) => {
         fse.ensureDirSync(folder_path);
         shell.openPath(folder_path);
+        return;
     });
 
-    ipcMain.on('nodejieba', (event, { word }) => {
+    ipcMain.handle('plugin:nodejieba', async ({ word }) => {
         let en_word = word.replace(/[^a-zA-Z]/g, ' ').replace(/\s+/g, ' ');
         let zh_word = word.replace(/[a-zA-Z]/g, ' ').replace(/\s+/g, ' ');
         let result = [...en_word.split(' '), ...nodejieba.cut(zh_word)];
         result = result.filter((w) => w !== ' ' && w !== '');
-        event.returnValue = result;
+        return result;
     });
 };
 
 app.whenReady().then(() => {
     createWindow();
-
     createMenu();
 
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) createWindow();
     });
-
     processIPC();
 });
 
 app.on('second-instance', () => {
-    if (win) {
-        if (win.isMinimized()) win.restore();
-        win.focus();
+    if (mainWindow) {
+        if (mainWindow.isMinimized()) mainWindow.restore();
+        mainWindow.focus();
     }
 });
 

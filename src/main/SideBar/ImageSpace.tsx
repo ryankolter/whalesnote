@@ -1,4 +1,3 @@
-const { ipcRenderer } = window.require('electron');
 import { useCallback, useContext, useEffect, useRef, useState, MouseEvent } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
@@ -35,8 +34,8 @@ const ImageSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssist
     const [loadSuccessCount, setLoadSuccessCount] = useState(0);
     const [loadFailCount, setLoadFailCount] = useState(0);
 
-    const openImagePath = useCallback((path: string) => {
-        ipcRenderer.send('open-folder', { folder_path: path });
+    const openImagePath = useCallback(async (path: string) => {
+        await window.electronAPI.openFolder({ folder_path: path });
     }, []);
 
     const addMultizero = useCallback((num: number, count: number) => {
@@ -73,58 +72,59 @@ const ImageSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssist
         navigator.clipboard.writeText(md_link);
     }, []);
 
-    const handleLoadImage = useCallback((e: MouseEvent<HTMLSpanElement>) => {
+    const handleLoadImage = useCallback(async (e: MouseEvent<HTMLSpanElement>) => {
         e.stopPropagation();
         e.preventDefault();
-        ipcRenderer.send('open-select-images-dialog', {
-            file_types: validImageFileType.current,
-            response_event_name: 'loadIamges',
-        });
+        await window.electronAPI.openSelectImagesDialog({ file_types: validImageFileType.current });
+        // ipcRenderer.send('open-select-images-dialog', {
+        //     file_types: validImageFileType.current,
+        //     response_event_name: 'loadIamges',
+        // });
     }, []);
 
-    useEffect(() => {
-        ipcRenderer.on('loadIamges', (event: any, paths: string) => {
-            const len = paths.length;
-            const timeStamp = generateTimeStamp();
-            let i = 0;
-            let success_count = 0;
-            let target_file_name = '';
-            for (const path of paths) {
-                const dest_file_name =
-                    timeStamp +
-                    (len > 1 ? '_' + addMultizero(i, String(len).length) : '') +
-                    '.' +
-                    path.substring(path.lastIndexOf('.') + 1);
-                const result = ipcRenderer.sendSync('copy', {
-                    src_file_path: path,
-                    dest_dir_path: curDataPath + '/images',
-                    dest_file_name: dest_file_name,
-                });
-                if (result) {
-                    success_count++;
-                    target_file_name = dest_file_name;
-                }
-                i++;
-            }
-            setLoadSuccessCount(success_count);
-            setLoadFailCount(len - success_count);
-            success_count === len
-                ? setLoadImageStatus('success')
-                : setLoadImageStatus('partial_success');
-            if (success_count >= 1) {
-                copyImageMdLink(target_file_name);
-            }
-            setTimeout(() => {
-                setLoadImageStatus('none');
-            }, 1500);
-        });
-        return () => {
-            ipcRenderer.removeAllListeners('loadIamges');
-        };
-    }, [curDataPath, copyImageMdLink]);
+    // useEffect(() => {
+    //     ipcRenderer.on('loadIamges', async (event: any, paths: string) => {
+    //         const len = paths.length;
+    //         const timeStamp = generateTimeStamp();
+    //         let i = 0;
+    //         let success_count = 0;
+    //         let target_file_name = '';
+    //         for (const path of paths) {
+    //             const dest_file_name =
+    //                 timeStamp +
+    //                 (len > 1 ? '_' + addMultizero(i, String(len).length) : '') +
+    //                 '.' +
+    //                 path.substring(path.lastIndexOf('.') + 1);
+    //             const result = await window.electronAPI.copy({
+    //                 src_file_path: path,
+    //                 dest_dir_path: curDataPath + '/images',
+    //                 dest_file_name: dest_file_name,
+    //             });
+    //             if (result) {
+    //                 success_count++;
+    //                 target_file_name = dest_file_name;
+    //             }
+    //             i++;
+    //         }
+    //         setLoadSuccessCount(success_count);
+    //         setLoadFailCount(len - success_count);
+    //         success_count === len
+    //             ? setLoadImageStatus('success')
+    //             : setLoadImageStatus('partial_success');
+    //         if (success_count >= 1) {
+    //             copyImageMdLink(target_file_name);
+    //         }
+    //         setTimeout(() => {
+    //             setLoadImageStatus('none');
+    //         }, 1500);
+    //     });
+    //     return () => {
+    //         ipcRenderer.removeAllListeners('loadIamges');
+    //     };
+    // }, [curDataPath, copyImageMdLink]);
 
     const handleZoneDrop = useCallback(
-        (acceptedFiles: any) => {
+        async (acceptedFiles: any) => {
             const file = acceptedFiles[0];
             if (!validImageMimeType.current.includes(file.type)) {
                 setLoadImageStatus('fail');
@@ -136,7 +136,7 @@ const ImageSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssist
 
             const dest_file_name =
                 generateTimeStamp() + '.' + file.name.split('.').pop().toLowerCase();
-            const result = ipcRenderer.sendSync('copy', {
+            const result = await window.electronAPI.copy({
                 src_file_path: file.path,
                 dest_dir_path: curDataPath + '/images',
                 dest_file_name: dest_file_name,

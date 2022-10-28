@@ -1,4 +1,3 @@
-const { ipcRenderer } = window.require('electron');
 import { useCallback, useContext, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
@@ -12,28 +11,43 @@ const TopIcons: React.FC<{}> = ({}) => {
     const [showSwitchExportPanel, setShowSwitchExportPanel] = useState(false);
 
     const ExportNote = useCallback(
-        (type: string) => {
+        async (type: string) => {
             switch (type) {
                 case 'html':
-                    ipcRenderer.send('open-save-dialog', {
+                    // ipcRenderer.send('open-save-dialog', {
+                    //     file_name: currentTitle,
+                    //     file_types: ['html'],
+                    //     response_event_name: 'saveNoteToHtml',
+                    // });
+                    const htmlFilePath = await window.electronAPI.openSaveDialog({
                         file_name: currentTitle,
                         file_types: ['html'],
-                        response_event_name: 'saveNoteToHtml',
                     });
+                    console.log(htmlFilePath);
                     break;
                 case 'md':
-                    ipcRenderer.send('open-save-dialog', {
+                    // ipcRenderer.send('open-save-dialog', {
+                    //     file_name: currentTitle,
+                    //     file_types: ['md'],
+                    //     response_event_name: 'saveNoteToMd',
+                    // });
+                    const mdFilePath = await window.electronAPI.openSaveDialog({
                         file_name: currentTitle,
                         file_types: ['md'],
-                        response_event_name: 'saveNoteToMd',
                     });
+                    console.log(mdFilePath);
                     break;
                 case 'png':
-                    ipcRenderer.send('open-save-dialog', {
+                    // ipcRenderer.send('open-save-dialog', {
+                    //     file_name: currentTitle,
+                    //     file_types: ['png'],
+                    //     response_event_name: 'saveNoteToPng',
+                    // });
+                    const pngFilePath = await window.electronAPI.openSaveDialog({
                         file_name: currentTitle,
                         file_types: ['png'],
-                        response_event_name: 'saveNoteToPng',
                     });
+                    console.log(pngFilePath);
                     break;
                 case 'default':
                     break;
@@ -42,12 +56,13 @@ const TopIcons: React.FC<{}> = ({}) => {
         [currentTitle]
     );
 
-    const ExportFolder = useCallback((type: string) => {
+    const ExportFolder = useCallback(async (type: string) => {
         switch (type) {
             case 'html':
-                ipcRenderer.send('open-directory-dialog', {
-                    response_event_name: 'saveFolderToHtml',
-                });
+                const filePath = await window.electronAPI.openDirectoryDialog();
+                // ipcRenderer.send('open-directory-dialog', {
+                //     response_event_name: 'saveFolderToHtml',
+                // });
                 break;
             case 'default':
                 break;

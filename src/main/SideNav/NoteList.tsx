@@ -1,4 +1,3 @@
-const { ipcRenderer } = window.require('electron');
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
@@ -22,8 +21,7 @@ const NoteList: React.FC<{
         currentRepoKey,
         currentFolderKey,
         currentNoteKey,
-        repos_obj,
-        updateRepos,
+        repos,
         reorderNote,
         changeNotesAfterNew,
         numArray,
@@ -33,8 +31,8 @@ const NoteList: React.FC<{
         setKeySelect,
     } = useContext(GlobalContext);
 
-    const notes_key = repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_key;
-    const notes_obj = repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj;
+    const notes_key = repos.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_key;
+    const notes_obj = repos.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj;
 
     const [activeId, setActiveId] = useState(null);
 
@@ -53,13 +51,13 @@ const NoteList: React.FC<{
         }
     };
 
-    const newNote = useCallback(() => {
+    const newNote = useCallback(async () => {
         const note_key = cryptoRandomString({
             length: 12,
             type: 'alphanumeric',
         });
 
-        const folder_info = ipcRenderer.sendSync('readJson', {
+        const folder_info = await window.electronAPI.readJson({
             file_path: `${curDataPath}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
         });
 
@@ -68,7 +66,7 @@ const NoteList: React.FC<{
             title: '新建文档',
         };
 
-        ipcRenderer.sendSync('writeJson', {
+        await window.electronAPI.writeJson({
             file_path: `${curDataPath}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
             obj: folder_info,
         });
@@ -80,23 +78,18 @@ const NoteList: React.FC<{
             content: '',
         };
 
-        ipcRenderer.sendSync('writeCson', {
+        await window.electronAPI.writeCson({
             file_path: `${curDataPath}/${currentRepoKey}/${currentFolderKey}/${note_key}.cson`,
             obj: note_info,
         });
 
-        updateRepos('note', {
-            data_path: curDataPath,
-            repo_key: currentRepoKey,
-            folder_key: currentFolderKey,
-        });
-        changeNotesAfterNew('note', {
+        await changeNotesAfterNew('note', {
             data_path: curDataPath,
             repo_key: currentRepoKey,
             folder_key: currentFolderKey,
             note_key,
         });
-        noteSwitch(note_key);
+        await noteSwitch(currentRepoKey, currentFolderKey, note_key);
         setTimeout(() => {
             setFocus(
                 cryptoRandomString({
@@ -118,20 +111,19 @@ const NoteList: React.FC<{
         setFocus,
         setKeySelect,
         scrollToBottom,
-        updateRepos,
     ]);
 
     const deleteNote = useCallback(
-        (note_key: string) => {
-            const folder_info = ipcRenderer.sendSync('readJson', {
+        async (note_key: string) => {
+            const folder_info = await window.electronAPI.readJson({
                 file_path: `${curDataPath}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
             });
 
-            const note_info = ipcRenderer.sendSync('readCson', {
+            const note_info = await window.electronAPI.readCson({
                 file_path: `${curDataPath}/${currentRepoKey}/${currentFolderKey}/${note_key}.cson`,
             });
 
-            let trash = ipcRenderer.sendSync('readCson', {
+            let trash = await window.electronAPI.readCson({
                 file_path: `${curDataPath}/trash.cson`,
             });
 
@@ -141,7 +133,7 @@ const NoteList: React.FC<{
                 `${currentRepoKey}-${currentFolderKey}-${note_key}-${folder_info.notes_obj[note_key].title}`
             ] = note_info.content;
 
-            ipcRenderer.sendSync('writeCson', {
+            await window.electronAPI.writeCson({
                 file_path: `${curDataPath}/trash.cson`,
                 obj: trash,
             });
@@ -166,24 +158,18 @@ const NoteList: React.FC<{
             folder_info.notes_key = new_notes_key;
             delete folder_info.notes_obj[note_key];
 
-            ipcRenderer.sendSync('writeJson', {
+            await window.electronAPI.writeJson({
                 file_path: `${curDataPath}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
                 obj: folder_info,
             });
 
-            ipcRenderer.sendSync('remove', {
+            await window.electronAPI.remove({
                 file_path: `${curDataPath}/${currentRepoKey}/${currentFolderKey}/${note_key}.cson`,
             });
 
-            updateRepos('note', {
-                data_path: curDataPath,
-                repo_key: currentRepoKey,
-                folder_key: currentFolderKey,
-            });
-
-            noteSwitch(other_note_key);
+            await noteSwitch(currentRepoKey, currentFolderKey, other_note_key);
         },
-        [curDataPath, currentRepoKey, currentFolderKey, noteSwitch, updateRepos]
+        [curDataPath, currentRepoKey, currentFolderKey, noteSwitch]
     );
 
     const preNotePage = useCallback(() => {
@@ -207,14 +193,14 @@ const NoteList: React.FC<{
     }, []);
 
     const noteSwitchByIndex = useCallback(
-        (index: number) => {
-            notes_key?.forEach((key: string, i: number) => {
+        async (index: number) => {
+            for (const [i, key] of notes_key.entries()) {
                 if (index === i) {
-                    noteSwitch(key);
+                    await noteSwitch(currentRepoKey, currentFolderKey, key);
                 }
-            });
+            }
         },
-        [curDataPath, notes_key, noteSwitch]
+        [curDataPath, currentRepoKey, currentFolderKey, notes_key, noteSwitch]
     );
 
     useEffect(() => {
@@ -381,9 +367,20 @@ const NoteList: React.FC<{
                                                           }
                                                         : {}
                                                 }
-                                                onClick={() => noteSwitch(key)}
+                                                onClick={() =>
+                                                    noteSwitch(
+                                                        currentRepoKey,
+                                                        currentFolderKey,
+                                                        key
+                                                    )
+                                                }
                                                 onContextMenu={() => {
-                                                    if (currentNoteKey !== key) noteSwitch(key);
+                                                    if (currentNoteKey !== key)
+                                                        noteSwitch(
+                                                            currentRepoKey,
+                                                            currentFolderKey,
+                                                            key
+                                                        );
                                                 }}
                                             >
                                                 {notes_obj[key].title}
@@ -474,9 +471,12 @@ const NoteList: React.FC<{
                                             ? { backgroundColor: 'var(--main-selected-bg-color)' }
                                             : {}
                                     }
-                                    onClick={() => noteSwitch(activeId)}
+                                    onClick={() =>
+                                        noteSwitch(currentRepoKey, currentFolderKey, activeId)
+                                    }
                                     onContextMenu={() => {
-                                        if (currentNoteKey !== activeId) noteSwitch(activeId);
+                                        if (currentNoteKey !== activeId)
+                                            noteSwitch(currentRepoKey, currentFolderKey, activeId);
                                     }}
                                 >
                                     {notes_obj[activeId].title}

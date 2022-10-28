@@ -54,12 +54,14 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
     }, [word, showSearchPanel, setShowSearchPanel, setSearchResults, searchNote]);
 
     const resultSwitch = useCallback(
-        (id: string) => {
+        async (id: string) => {
             setShowResultHighlight(true);
             const arr = id.split('-');
-            repoSwitch(arr[0]);
-            folderSwitch(arr[0], arr[1]);
-            noteSwitch(arr[2]);
+            (async function func() {
+                await repoSwitch(arr[0]);
+                await folderSwitch(arr[0], arr[1]);
+                await noteSwitch(arr[0], arr[1], arr[2]);
+            })();
         },
         [setShowResultHighlight, repoSwitch, folderSwitch, noteSwitch]
     );

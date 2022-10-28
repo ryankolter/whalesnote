@@ -1,4 +1,3 @@
-const { ipcRenderer } = window.require('electron');
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
@@ -30,8 +29,8 @@ const TrashList: React.FC<{ theme: string; closeAssistantPanel: () => void }> = 
 
     const fullDeleteNote = useCallback((trash_key: string) => {}, []);
 
-    const handleEmptyTrash = useCallback(() => {
-        const result = ipcRenderer.sendSync('remove', {
+    const handleEmptyTrash = useCallback(async () => {
+        const result = await window.electronAPI.remove({
             file_path: `${curDataPath}/trash.cson`,
         });
 
@@ -42,15 +41,17 @@ const TrashList: React.FC<{ theme: string; closeAssistantPanel: () => void }> = 
     }, [curDataPath, setCurTrashKey]);
 
     useEffect(() => {
-        const read_trash = ipcRenderer.sendSync('readCson', {
-            file_path: `${curDataPath}/trash.cson`,
-        });
+        (async function func() {
+            const read_trash = await window.electronAPI.readCson({
+                file_path: `${curDataPath}/trash.cson`,
+            });
 
-        trash.current = read_trash ? read_trash : {};
-        const len = Object.keys(trash.current).length;
-        if (len > 0) {
-            setCurTrashKey(Object.keys(trash.current)[len - 1]);
-        }
+            trash.current = read_trash ? read_trash : {};
+            const len = Object.keys(trash.current).length;
+            if (len > 0) {
+                setCurTrashKey(Object.keys(trash.current)[len - 1]);
+            }
+        })();
     }, []);
 
     const getExtensions = [
