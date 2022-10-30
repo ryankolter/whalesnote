@@ -12,6 +12,7 @@
         "extends": null,
         "files": [
             "main.js",
+            "preload.js",
             "build/**/*"
         ],
         "extraResources": [
