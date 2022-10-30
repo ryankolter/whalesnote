@@ -2,10 +2,10 @@ import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { GlobalContext } from '../GlobalProvider';
 import cryptoRandomString from 'crypto-random-string';
 import MiniSearch, { SearchResult } from 'minisearch';
+import { notes, fetchNotesInAllRepo } from './notes';
 
 const useSearch = () => {
-    const { curDataPath, whalenote, notes, allRepoNotesFetch, setFocus } =
-        useContext(GlobalContext);
+    const { curDataPath, whalenote, setFocus } = useContext(GlobalContext);
 
     const miniSearch = useRef<MiniSearch | null>();
     const [showUpdateIndexTips, setShowUpdateIndexTips] = useState(true);
@@ -61,7 +61,7 @@ const useSearch = () => {
         setShowWaitingMask(true);
 
         setTimeout(async () => {
-            await allRepoNotesFetch(curDataPath, whalenote);
+            await fetchNotesInAllRepo(curDataPath, whalenote);
 
             const documents: {
                 id: string;
@@ -135,7 +135,7 @@ const useSearch = () => {
         notes,
         setShowUpdateIndexTips,
         setShowWaitingMask,
-        allRepoNotesFetch,
+        fetchNotesInAllRepo,
     ]);
 
     const searchNote = (word: string) => {

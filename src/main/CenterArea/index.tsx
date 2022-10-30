@@ -3,6 +3,7 @@ import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 import cryptoRandomString from 'crypto-random-string';
 
+import { useRecordValue } from '../../lib/useRecordValue';
 import { MarkdownEditor } from './MarkdownEditor';
 import { MarkdownRender } from './MarkdownRender';
 import RepoPanel from './RepoPanel';
@@ -12,6 +13,7 @@ const CenterArea: React.FC<{
 }> = ({ theme }) => {
     const {
         dataPathChangeFlag,
+        curDataPath,
         currentRepoKey,
         currentFolderKey,
         currentNoteKey,
@@ -45,6 +47,22 @@ const CenterArea: React.FC<{
     const [cursorInRender, setCursorInRender] = useState(false);
     const [editorScrollRatio, setEditorScrollRatio] = useState(0);
     const [renderScrollRatio, setRenderScrollRatio] = useState(0);
+    const [renderNoteStr, setRenderNoteStr] = useState<string>('');
+    const [renderScrollTops, { updateRecordValue: updateRenderScrollTop }] =
+        useRecordValue<number>();
+
+    const renderScrollTop = useMemo(
+        () =>
+            currentRepoKey &&
+            currentFolderKey &&
+            currentNoteKey &&
+            renderScrollTops[currentRepoKey] &&
+            renderScrollTops[currentRepoKey][currentFolderKey] &&
+            renderScrollTops[currentRepoKey][currentFolderKey][currentNoteKey]
+                ? renderScrollTops[currentRepoKey][currentFolderKey][currentNoteKey]
+                : 0,
+        [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, renderScrollTops]
+    );
 
     const repoNameClickHandler = useCallback(() => {
         setShowAllRepo((_showAllRepo) => !_showAllRepo);
@@ -179,6 +197,7 @@ const CenterArea: React.FC<{
                         renderScrollRatio={renderScrollRatio}
                         renderPanelState={renderPanelState}
                         setEditorScrollRatio={setEditorScrollRatio}
+                        setRenderNoteStr={setRenderNoteStr}
                     />
                 </EditorPanel>
                 <RenderPanel leftValue={renderLeft} widthValue={renderWidth}>
@@ -188,8 +207,11 @@ const CenterArea: React.FC<{
                             setCursorInRender={setCursorInRender}
                             editorScrollRatio={editorScrollRatio}
                             theme={theme}
+                            renderNoteStr={renderNoteStr}
                             renderPanelState={renderPanelState}
                             setRenderScrollRatio={setRenderScrollRatio}
+                            renderScrollTop={renderScrollTop}
+                            updateRenderScrollTop={updateRenderScrollTop}
                         />
                     ) : (
                         <></>

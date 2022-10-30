@@ -30,21 +30,33 @@ import markdownItTable from 'markdown-it-multimd-table';
 import markdownItTocDoneRight from 'markdown-it-toc-done-right';
 
 import useContextMenu from '../../lib/useContextMenu';
+import { notes } from '../../lib/notes';
 
 export const MarkdownRender: React.FC<{
     theme: string;
     editorScrollRatio: number;
     renderPanelState: string;
     cursorInRender: boolean;
+    renderNoteStr: string;
     setCursorInRender: React.Dispatch<React.SetStateAction<boolean>>;
     setRenderScrollRatio: React.Dispatch<React.SetStateAction<number>>;
+    renderScrollTop: number;
+    updateRenderScrollTop: (
+        repo_key: string,
+        folder_key: string,
+        note_key: string,
+        render_scroll_value: number
+    ) => void;
 }> = ({
     editorScrollRatio,
     renderPanelState,
     theme,
     cursorInRender,
+    renderNoteStr,
     setCursorInRender,
     setRenderScrollRatio,
+    renderScrollTop,
+    updateRenderScrollTop,
 }) => {
     const {
         curDataPath,
@@ -52,10 +64,6 @@ export const MarkdownRender: React.FC<{
         currentFolderKey,
         currentNoteKey,
         whalenote,
-        notes,
-        currentNoteStr,
-        renderTop,
-        updateRenderTop,
         renderFontSize,
         platformName,
     } = useContext(GlobalContext);
@@ -198,7 +206,7 @@ export const MarkdownRender: React.FC<{
 
     // useEffect(() => {
     //     ipcRenderer.on('saveNoteToHtml', async (event: any, path: string) => {
-    //         const bodyContent = mdPrint.current.render(currentNoteStr);
+    //         const bodyContent = mdPrint.current.render(renderNoteStr);
     //         const colorStyle =
     //         await window.electronAPI.readCss({
     //                 file_name: '/theme/color_variable.css',
@@ -239,19 +247,19 @@ export const MarkdownRender: React.FC<{
     //     return () => {
     //         ipcRenderer.removeAllListeners('saveNoteToHtml');
     //     };
-    // }, [currentNoteStr, theme]);
+    // }, [renderNoteStr, theme]);
 
     // useEffect(() => {
     //     ipcRenderer.on('saveNoteToMd', async (event: any, path: string) => {
     //         await window.electronAPI.writeStr({
     //             file_path: path,
-    //             str: currentNoteStr,
+    //             str: renderNoteStr,
     //         });
     //     });
     //     return () => {
     //         ipcRenderer.removeAllListeners('saveNoteToPng');
     //     };
-    // }, [currentNoteStr, theme]);
+    // }, [renderNoteStr, theme]);
 
     // useEffect(() => {
     //     ipcRenderer.on('saveNoteToPng', (event: any, path: string) => {
@@ -328,7 +336,7 @@ export const MarkdownRender: React.FC<{
     // }, [whalenote, notes, currentRepoKey, currentFolderKey, theme]);
 
     useEffect(() => {
-        setResult(md.current.render(currentNoteStr));
+        setResult(md.current.render(renderNoteStr));
         clipboard.current = new ClipboardJS('.copy-btn');
         clipboard.current.on('success', (e: any) => {
             e.trigger.innerHTML = '成功';
@@ -345,14 +353,14 @@ export const MarkdownRender: React.FC<{
 
             clipboard.current.off('error');
         };
-    }, [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, currentNoteStr]);
+    }, [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, renderNoteStr]);
 
     useEffect(() => {
         if (renderRef.current) {
             autoScroll.current = true;
             renderRef.current.scrollTop = 0;
             setShowRenderScrollPos(false);
-            if (renderTop > renderRef.current.offsetHeight) setShowRenderScrollPos(true);
+            if (renderScrollTop > renderRef.current.offsetHeight) setShowRenderScrollPos(true);
         }
     }, [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey]);
 
@@ -369,11 +377,10 @@ export const MarkdownRender: React.FC<{
 
     const autoScrollToLine = useCallback(() => {
         if (renderRef.current) {
-            renderRef.current.scrollTop = renderTop;
+            renderRef.current.scrollTop = renderScrollTop;
         }
-
         setShowRenderScrollPos(false);
-    }, [renderTop]);
+    }, [renderScrollTop]);
 
     const copySelection = useCallback(() => {
         const sel = window.getSelection();
@@ -437,7 +444,7 @@ export const MarkdownRender: React.FC<{
                 setShowRenderScrollPos(false);
                 if (renderRef.current) {
                     const renderScrollValue = renderRef.current.scrollTop;
-                    updateRenderTop(
+                    updateRenderScrollTop(
                         currentRepoKey,
                         currentFolderKey,
                         currentNoteKey,
@@ -446,7 +453,13 @@ export const MarkdownRender: React.FC<{
                 }
             }, 100);
         },
-        [renderRef, editorScrollRatio, setShowRenderScrollPos, updateRenderTop, cursorInRender]
+        [
+            renderRef,
+            editorScrollRatio,
+            setShowRenderScrollPos,
+            updateRenderScrollTop,
+            cursorInRender,
+        ]
     );
 
     const handleMouseEnter = useCallback(() => {

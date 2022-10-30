@@ -399,12 +399,12 @@ const processIPC = () => {
         return;
     });
 
-    ipcMain.handle('plugin:nodejieba', async (event, { word }) => {
+    ipcMain.on('plugin:nodejieba', async (event, { word }) => {
         let en_word = word.replace(/[^a-zA-Z]/g, ' ').replace(/\s+/g, ' ');
         let zh_word = word.replace(/[a-zA-Z]/g, ' ').replace(/\s+/g, ' ');
         let result = [...en_word.split(' '), ...nodejieba.cut(zh_word)];
         result = result.filter((w) => w !== ' ' && w !== '');
-        return result;
+        event.returnValue = result;
     });
 };
 

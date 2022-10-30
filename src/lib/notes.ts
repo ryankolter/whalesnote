@@ -4,7 +4,10 @@ export let notes = {};
 
 const saveTimerObj = new Map();
 
-export const allRepoNotesFetch = async (data_path: string | null, whalenote: whalenoteObjType) => {
+export const fetchNotesInAllRepo = async (
+    data_path: string | null,
+    whalenote: whalenoteObjType
+) => {
     for (const repo_key of whalenote.repos_key) {
         if (whalenote.repos_obj[repo_key]) {
             if (!notes[repo_key]) {
@@ -32,7 +35,7 @@ export const allRepoNotesFetch = async (data_path: string | null, whalenote: wha
     }
 };
 
-export const repoNotesFetch = async (
+export const fetchNotesInRepo = async (
     data_path: string | null,
     history: historyTypes,
     whalenote: whalenoteObjType,
@@ -62,7 +65,7 @@ export const repoNotesFetch = async (
     }
 };
 
-export const folderNotesFetch = async (
+export const fetchNotesInfolder = async (
     data_path: string | null,
     repo_key: string | undefined,
     folder_key: string | undefined
@@ -175,15 +178,15 @@ const addSaveTask = (
     );
 };
 
-export const updateNoteHandler = (
+export const updateNote = (
     data_path: string,
     repo_key: string,
     folder_key: string,
     note_key: string,
-    note_content: string
+    new_note_str: string
 ) => {
     if (repo_key && folder_key && note_key) {
-        notes[repo_key][folder_key][note_key] = note_content;
+        notes[repo_key][folder_key][note_key] = new_note_str;
         addSaveTask(data_path, repo_key, folder_key, note_key, 800);
     }
 };

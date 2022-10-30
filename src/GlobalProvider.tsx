@@ -6,7 +6,6 @@ import {
     useState,
     useMemo,
     useEffect,
-    useRef,
 } from 'react';
 import { historyTypes, whalenoteObjType, notesTypes } from './commonType';
 
@@ -14,16 +13,13 @@ import useData from './lib/useData';
 import useDataList from './lib/useDataList';
 import { useHistory } from './lib/useHistory';
 import { useWhalenote } from './lib/useWhalenote';
-import { useRecordValue } from './lib/useRecordValue';
 
 import {
-    notes,
-    allRepoNotesFetch,
-    repoNotesFetch,
-    folderNotesFetch,
+    fetchNotesInRepo,
+    fetchNotesInfolder,
     changeNotesAfterNew,
     initNotes,
-    updateNoteHandler,
+    updateNote,
 } from './lib/notes';
 
 const initContext: {
@@ -100,23 +96,21 @@ const initContext: {
         folder_key: string,
         note_key: string
     ) => any;
-    notes: notesTypes;
     initNotes: (_notes: notesTypes) => void;
     updateNote: (
         data_path: string,
         repo_key: string,
         folder_key: string,
         note_key: string,
-        currentContent: string
+        new_note_str: string
     ) => void;
-    allRepoNotesFetch: (data_path: string | null, repos_obj: whalenoteObjType) => any;
-    repoNotesFetch: (
+    fetchNotesInRepo: (
         data_path: string | null,
         history: historyTypes,
         repos_obj: whalenoteObjType,
         repo_key: string | undefined
     ) => void;
-    folderNotesFetch: (
+    fetchNotesInfolder: (
         data_path: string | null,
         repo_key: string | undefined,
         folder_key: string | undefined
@@ -131,15 +125,6 @@ const initContext: {
         }
     ) => void;
     currentTitle: string;
-    currentContent: string;
-    currentNoteStr: string;
-    renderTop: number;
-    updateRenderTop: (
-        repo_key: string,
-        folder_key: string,
-        note_key: string,
-        render_scroll_value: number
-    ) => void;
     numArray: number[];
     setNumArray: Dispatch<SetStateAction<number[]>>;
     focus: string;
@@ -190,18 +175,12 @@ const initContext: {
     deleteNote: () => {
         return '';
     },
-    notes: {},
     initNotes: () => {},
     updateNote: () => {},
-    allRepoNotesFetch: () => {},
-    repoNotesFetch: () => {},
-    folderNotesFetch: () => {},
+    fetchNotesInRepo: () => {},
+    fetchNotesInfolder: () => {},
     changeNotesAfterNew: () => {},
     currentTitle: '',
-    currentContent: '',
-    currentNoteStr: '',
-    renderTop: 0,
-    updateRenderTop: () => {},
     numArray: [],
     setNumArray: () => {},
     focus: '',
@@ -263,8 +242,6 @@ export const GlobalProvider = ({ children }: { children: any }) => {
     ] = useWhalenote();
 
     useEffect(() => {
-        console.log('dataPathChangeFlag');
-        console.log(data.current);
         if (data.current) {
             addDataPathToList(curDataPath);
             initHistory(data.current.history);
@@ -273,9 +250,6 @@ export const GlobalProvider = ({ children }: { children: any }) => {
         }
     }, [dataPathChangeFlag]);
 
-    const [renderTops, { updateRecordValue: updateRenderTop }] = useRecordValue<number>();
-
-    const [currentNoteStr, setCurrentNoteStr] = useState<string>('');
     const [focus, setFocus] = useState<string>('');
     const [blur, setBlur] = useState<string>('');
     const [keySelect, setKeySelect] = useState<boolean>(false);
@@ -296,7 +270,7 @@ export const GlobalProvider = ({ children }: { children: any }) => {
 
     const repoSwitch = useCallback(
         async (repo_key: string | undefined) => {
-            await repoNotesFetch(curDataPath, history, whalenote, repo_key);
+            await fetchNotesInRepo(curDataPath, history, whalenote, repo_key);
             await switchRepo(curDataPath, repo_key);
         },
         [curDataPath, history, whalenote]
@@ -304,7 +278,7 @@ export const GlobalProvider = ({ children }: { children: any }) => {
 
     const folderSwitch = useCallback(
         async (repo_key: string | undefined, folder_key: string | undefined) => {
-            await folderNotesFetch(curDataPath, repo_key, folder_key);
+            await fetchNotesInfolder(curDataPath, repo_key, folder_key);
             await switchFolder(curDataPath, repo_key, folder_key);
         },
         [curDataPath]
@@ -321,20 +295,6 @@ export const GlobalProvider = ({ children }: { children: any }) => {
         [curDataPath]
     );
 
-    const updateNote = useCallback(
-        (
-            data_path: string,
-            repo_key: string,
-            folder_key: string,
-            note_key: string,
-            note_content: string
-        ) => {
-            setCurrentNoteStr(note_content);
-            updateNoteHandler(data_path, repo_key, folder_key, note_key, note_content);
-        },
-        [updateNoteHandler]
-    );
-
     const currentTitle = useMemo(
         () =>
             currentRepoKey &&
@@ -348,36 +308,6 @@ export const GlobalProvider = ({ children }: { children: any }) => {
                   ].title
                 : '新建文档',
         [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, whalenote]
-    );
-
-    const currentContent = useMemo(
-        () =>
-            currentRepoKey &&
-            currentFolderKey &&
-            currentNoteKey &&
-            notes[currentRepoKey] &&
-            notes[currentRepoKey][currentFolderKey] &&
-            notes[currentRepoKey][currentFolderKey][currentNoteKey]
-                ? notes[currentRepoKey][currentFolderKey][currentNoteKey]
-                : '',
-        [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey]
-    );
-
-    useEffect(() => {
-        setCurrentNoteStr(currentContent);
-    }, [currentContent]);
-
-    const renderTop = useMemo(
-        () =>
-            currentRepoKey &&
-            currentFolderKey &&
-            currentNoteKey &&
-            renderTops[currentRepoKey] &&
-            renderTops[currentRepoKey][currentFolderKey] &&
-            renderTops[currentRepoKey][currentFolderKey][currentNoteKey]
-                ? renderTops[currentRepoKey][currentFolderKey][currentNoteKey]
-                : 0,
-        [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, renderTops]
     );
 
     return (
@@ -413,18 +343,12 @@ export const GlobalProvider = ({ children }: { children: any }) => {
                 renameNote,
                 reorderNote,
                 deleteNote,
-                notes,
                 initNotes,
                 updateNote,
-                allRepoNotesFetch,
-                repoNotesFetch,
-                folderNotesFetch,
+                fetchNotesInRepo,
+                fetchNotesInfolder,
                 changeNotesAfterNew,
                 currentTitle,
-                currentContent,
-                currentNoteStr,
-                renderTop,
-                updateRenderTop,
                 numArray,
                 setNumArray,
                 focus,

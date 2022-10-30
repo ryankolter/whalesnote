@@ -1,12 +1,11 @@
-import { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
-
 import { EditorView, ViewUpdate } from '@codemirror/view';
-
 import useCodeMirror from '../../lib/useCodeMirror';
 import useContextMenu from '../../lib/useContextMenu';
 import useEditorPosition from '../../lib/useEditorPosition';
+import { notes } from '../../lib/notes';
 
 export const MarkdownEditor: React.FC<{
     theme: string;
@@ -14,7 +13,15 @@ export const MarkdownEditor: React.FC<{
     renderPanelState: string;
     renderScrollRatio: number;
     setEditorScrollRatio: React.Dispatch<React.SetStateAction<number>>;
-}> = ({ theme, cursorInRender, renderPanelState, renderScrollRatio, setEditorScrollRatio }) => {
+    setRenderNoteStr: React.Dispatch<React.SetStateAction<string>>;
+}> = ({
+    theme,
+    cursorInRender,
+    renderPanelState,
+    renderScrollRatio,
+    setEditorScrollRatio,
+    setRenderNoteStr,
+}) => {
     const {
         curDataPath,
         currentRepoKey,
@@ -22,7 +29,6 @@ export const MarkdownEditor: React.FC<{
         currentNoteKey,
         renameNote,
         updateNote,
-        currentContent,
         focus,
         blur,
         setKeySelect,
@@ -37,6 +43,23 @@ export const MarkdownEditor: React.FC<{
         currentNoteKey
     );
 
+    const initialNoteStr = useMemo(
+        () =>
+            currentRepoKey &&
+            currentFolderKey &&
+            currentNoteKey &&
+            notes[currentRepoKey] &&
+            notes[currentRepoKey][currentFolderKey] &&
+            notes[currentRepoKey][currentFolderKey][currentNoteKey]
+                ? notes[currentRepoKey][currentFolderKey][currentNoteKey]
+                : '',
+        [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey]
+    );
+
+    useEffect(() => {
+        setRenderNoteStr(initialNoteStr);
+    }, [initialNoteStr]);
+
     const [showEditorScrollPos, setShowEditorScrollPos] = useState(false);
     const [cursorInEditor, setCursorInEditor] = useState(false);
 
@@ -50,6 +73,7 @@ export const MarkdownEditor: React.FC<{
     const onDocChange = useCallback(
         async (new_value: string, viewUpdate: ViewUpdate) => {
             updateNote(curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, new_value);
+            setRenderNoteStr(new_value);
             const doc = view.current?.state.doc;
             if (doc) {
                 const first_line_content = doc.lineAt(0).text.replace(/^[#\-\_*>\s]+/g, '');
@@ -63,7 +87,15 @@ export const MarkdownEditor: React.FC<{
                 );
             }
         },
-        [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, renameNote, updateNote]
+        [
+            curDataPath,
+            currentRepoKey,
+            currentFolderKey,
+            currentNoteKey,
+            renameNote,
+            updateNote,
+            setRenderNoteStr,
+        ]
     );
 
     const onSelectionSet = useCallback(
@@ -83,7 +115,7 @@ export const MarkdownEditor: React.FC<{
     );
 
     const [editor, view] = useCodeMirror<HTMLDivElement>({
-        value: currentContent,
+        value: initialNoteStr,
         onDocChange,
         onSelectionSet,
     });
