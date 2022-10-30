@@ -27,7 +27,7 @@ const FolderList: React.FC<{
         repoSwitch,
         folderSwitch,
         noteSwitch,
-        repos,
+        whalenote,
         newFolder,
         renameFolder,
         deleteFolder,
@@ -39,14 +39,15 @@ const FolderList: React.FC<{
         setNumArray,
         setFocus,
         keySelect,
+        platformName,
     } = useContext(GlobalContext);
 
     const folders_key = useMemo(() => {
-        return repos.repos_obj ? repos.repos_obj[currentRepoKey]?.folders_key : undefined;
-    }, [repos, currentRepoKey, currentFolderKey]);
+        return whalenote.repos_obj ? whalenote.repos_obj[currentRepoKey]?.folders_key : undefined;
+    }, [whalenote, currentRepoKey, currentFolderKey]);
     const folders_obj = useMemo(() => {
-        return repos.repos_obj ? repos.repos_obj[currentRepoKey]?.folders_obj : undefined;
-    }, [repos, currentRepoKey, currentFolderKey]);
+        return whalenote.repos_obj ? whalenote.repos_obj[currentRepoKey]?.folders_obj : undefined;
+    }, [whalenote, currentRepoKey, currentFolderKey]);
 
     const [activeId, setActiveId] = useState(null);
     const [newFolderKey, setNewFolderKey] = useState('');
@@ -89,7 +90,7 @@ const FolderList: React.FC<{
                 type: 'alphanumeric',
             });
 
-            await newFolder(curDataPath, currentRepoKey, newFolderKey, e.target.value, note_key);
+            await newFolder(curDataPath, currentRepoKey, folder_key, e.target.value, note_key);
 
             await changeNotesAfterNew('folder', {
                 data_path: curDataPath,
@@ -168,18 +169,17 @@ const FolderList: React.FC<{
 
     const deleteFolderConfirm = useCallback(async () => {
         if (currentRepoKey && currentFolderKey) {
-            const remain_folder_key = await deleteFolder(
+            const next_folder_key = await deleteFolder(
                 curDataPath,
                 currentRepoKey,
                 currentFolderKey
             );
-            repoSwitch(currentRepoKey);
-            folderSwitch(currentRepoKey, remain_folder_key);
+            await folderSwitch(currentRepoKey, next_folder_key);
             setDeletePopUp(false);
         }
     }, [
         curDataPath,
-        repos,
+        whalenote,
         currentRepoKey,
         currentFolderKey,
         repoSwitch,
@@ -272,13 +272,8 @@ const FolderList: React.FC<{
     // part5 : key event
     const handleKeyDown = useCallback(
         async (e: any) => {
-            const process_platform = await window.electronAPI.getPlatform();
-            if (
-                process_platform === 'darwin' ||
-                process_platform === 'win32' ||
-                process_platform === 'linux'
-            ) {
-                const modKey = process_platform === 'darwin' ? e.metaKey : e.ctrlKey;
+            if (platformName === 'darwin' || platformName === 'win32' || platformName === 'linux') {
+                const modKey = platformName === 'darwin' ? e.metaKey : e.ctrlKey;
 
                 if (e.keyCode === 78 && modKey && e.shiftKey) {
                     handleNewFolder();

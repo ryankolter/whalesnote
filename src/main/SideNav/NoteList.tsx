@@ -21,26 +21,29 @@ const NoteList: React.FC<{
         currentRepoKey,
         currentFolderKey,
         currentNoteKey,
-        repos,
+        whalenote,
+        newNote,
         reorderNote,
+        deleteNote,
         changeNotesAfterNew,
         numArray,
         setNumArray,
         setFocus,
         keySelect,
         setKeySelect,
+        platformName,
     } = useContext(GlobalContext);
 
     const notes_key = useMemo(() => {
-        return repos.repos_obj
-            ? repos.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_key
+        return whalenote.repos_obj
+            ? whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_key
             : undefined;
-    }, [repos, currentRepoKey, currentFolderKey]);
+    }, [whalenote, currentRepoKey, currentFolderKey]);
     const notes_obj = useMemo(() => {
-        return repos.repos_obj
-            ? repos.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj
+        return whalenote.repos_obj
+            ? whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj
             : undefined;
-    }, [repos, currentRepoKey, currentFolderKey]);
+    }, [whalenote, currentRepoKey, currentFolderKey]);
 
     const [activeId, setActiveId] = useState(null);
 
@@ -59,45 +62,22 @@ const NoteList: React.FC<{
         }
     };
 
-    const newNote = useCallback(async () => {
-        const note_key = cryptoRandomString({
+    const handleNewNote = useCallback(async () => {
+        const new_note_key = cryptoRandomString({
             length: 12,
             type: 'alphanumeric',
         });
+        const new_note_title = '新建文档';
 
-        const folder_info = await window.electronAPI.readJson({
-            file_path: `${curDataPath}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
-        });
-
-        folder_info.notes_key.push(note_key);
-        folder_info.notes_obj[note_key] = {
-            title: '新建文档',
-        };
-
-        await window.electronAPI.writeJson({
-            file_path: `${curDataPath}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
-            obj: folder_info,
-        });
-
-        const note_info = {
-            createAt: new Date(),
-            updatedAt: new Date(),
-            type: 'markdown',
-            content: '',
-        };
-
-        await window.electronAPI.writeCson({
-            file_path: `${curDataPath}/${currentRepoKey}/${currentFolderKey}/${note_key}.cson`,
-            obj: note_info,
-        });
+        await newNote(curDataPath, currentRepoKey, currentFolderKey, new_note_key, new_note_title);
 
         await changeNotesAfterNew('note', {
             data_path: curDataPath,
             repo_key: currentRepoKey,
             folder_key: currentFolderKey,
-            note_key,
+            note_key: new_note_key,
         });
-        await noteSwitch(currentRepoKey, currentFolderKey, note_key);
+        await noteSwitch(currentRepoKey, currentFolderKey, new_note_key);
         setTimeout(() => {
             setFocus(
                 cryptoRandomString({
@@ -121,61 +101,15 @@ const NoteList: React.FC<{
         scrollToBottom,
     ]);
 
-    const deleteNote = useCallback(
+    const handleDeleteNote = useCallback(
         async (note_key: string) => {
-            const folder_info = await window.electronAPI.readJson({
-                file_path: `${curDataPath}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
-            });
-
-            const note_info = await window.electronAPI.readCson({
-                file_path: `${curDataPath}/${currentRepoKey}/${currentFolderKey}/${note_key}.cson`,
-            });
-
-            let trash = await window.electronAPI.readCson({
-                file_path: `${curDataPath}/trash.cson`,
-            });
-
-            trash = trash ? trash : {};
-
-            trash[
-                `${currentRepoKey}-${currentFolderKey}-${note_key}-${folder_info.notes_obj[note_key].title}`
-            ] = note_info.content;
-
-            await window.electronAPI.writeCson({
-                file_path: `${curDataPath}/trash.cson`,
-                obj: trash,
-            });
-
-            const new_notes_key: string[] = [];
-            let other_note_key = undefined;
-
-            folder_info.notes_key.forEach((key: string, index: number) => {
-                if (key === note_key) {
-                    if (folder_info.notes_key.length > 1) {
-                        if (index === folder_info.notes_key.length - 1) {
-                            other_note_key = folder_info.notes_key[index - 1];
-                        } else {
-                            other_note_key = folder_info.notes_key[index + 1];
-                        }
-                    }
-                } else {
-                    new_notes_key.push(key);
-                }
-            });
-
-            folder_info.notes_key = new_notes_key;
-            delete folder_info.notes_obj[note_key];
-
-            await window.electronAPI.writeJson({
-                file_path: `${curDataPath}/${currentRepoKey}/${currentFolderKey}/folder_info.json`,
-                obj: folder_info,
-            });
-
-            await window.electronAPI.remove({
-                file_path: `${curDataPath}/${currentRepoKey}/${currentFolderKey}/${note_key}.cson`,
-            });
-
-            await noteSwitch(currentRepoKey, currentFolderKey, other_note_key);
+            const next_note_key = await deleteNote(
+                curDataPath,
+                currentRepoKey,
+                currentFolderKey,
+                note_key
+            );
+            await noteSwitch(currentRepoKey, currentFolderKey, next_note_key);
         },
         [curDataPath, currentRepoKey, currentFolderKey, noteSwitch]
     );
@@ -265,16 +199,11 @@ const NoteList: React.FC<{
 
     const handleKeyDown = useCallback(
         async (e: any) => {
-            const process_platform = await window.electronAPI.getPlatform();
-            if (
-                process_platform === 'darwin' ||
-                process_platform === 'win32' ||
-                process_platform === 'linux'
-            ) {
-                const modKey = process_platform === 'darwin' ? e.metaKey : e.ctrlKey;
+            if (platformName === 'darwin' || platformName === 'win32' || platformName === 'linux') {
+                const modKey = platformName === 'darwin' ? e.metaKey : e.ctrlKey;
 
                 if (e.keyCode === 78 && modKey && !e.shiftKey) {
-                    newNote();
+                    handleNewNote();
                 }
 
                 // arrow bottom 40 or K 75
@@ -288,7 +217,7 @@ const NoteList: React.FC<{
                 }
             }
         },
-        [keySelect, newNote, nextNotePage, preNotePage]
+        [keySelect, handleNewNote, nextNotePage, preNotePage]
     );
 
     useEffect(() => {
@@ -345,7 +274,7 @@ const NoteList: React.FC<{
         <NoteListContainer width={width}>
             {dataPathChangeFlag > 0 ? (
                 <NoteAddFloat>
-                    <NoteAddBtn onKeyDown={(e) => handleKeyDown(e)} onClick={() => newNote()}>
+                    <NoteAddBtn onKeyDown={(e) => handleKeyDown(e)} onClick={() => handleNewNote()}>
                         <NewNoteIconImg src={newNoteIcon} alt="" />
                     </NoteAddBtn>
                 </NoteAddFloat>
@@ -460,7 +389,7 @@ const NoteList: React.FC<{
                                 <MenuUl top={yPos} left={xPos}>
                                     <MenuLi
                                         className="menu-li-color"
-                                        onClick={() => deleteNote(currentNoteKey)}
+                                        onClick={() => handleDeleteNote(currentNoteKey)}
                                     >
                                         扔到废纸篓
                                     </MenuLi>

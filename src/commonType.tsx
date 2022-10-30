@@ -1,7 +1,3 @@
-export type whalenoteTypes = {
-    id: string;
-};
-
 export type historyTypes = {
     cur_repo_key: string;
     repos_record:
@@ -18,7 +14,7 @@ export type historyTypes = {
         | {};
 };
 
-export type reposObjTypes = {
+export type whalenoteObjType = {
     repos_key: string[];
     repos_obj:
         | {
@@ -54,8 +50,8 @@ export type notesTypes = {
 };
 
 export type DataTypes = {
-    whalenote: whalenoteTypes;
+    id: string;
     history: historyTypes;
-    repos: reposObjTypes;
+    whalenote: whalenoteObjType;
     notes: notesTypes;
 };

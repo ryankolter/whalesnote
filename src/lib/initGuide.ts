@@ -3,7 +3,7 @@ import { DataTypes } from '../commonType';
 
 const initGuide = () => {
     const guide_data: DataTypes = {
-        repos: {
+        whalenote: {
             repos_key: ['DEFAULTREPO1'],
             repos_obj: {
                 DEFAULTREPO1: {
@@ -75,9 +75,7 @@ const initGuide = () => {
                 },
             },
         },
-        whalenote: {
-            id: cryptoRandomString({ length: 36, type: 'alphanumeric' }),
-        },
+        id: cryptoRandomString({ length: 36, type: 'alphanumeric' }),
         history: {
             cur_repo_key: 'DEFAULTREPO1',
             repos_record: {

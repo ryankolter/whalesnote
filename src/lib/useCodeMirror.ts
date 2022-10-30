@@ -50,8 +50,6 @@ const useCodeMirror = <T extends Element>({
     const myCompletions = useCallback((CompletionContext: any) => {
         const word = CompletionContext.matchBefore(/\s*```[a-z]*/);
         const assistant_word = CompletionContext.matchBefore(/```[a-z]*/);
-        console.log(word);
-        console.log(assistant_word);
 
         if (!word || (word.from == word.to && !CompletionContext.explicit)) return null;
 

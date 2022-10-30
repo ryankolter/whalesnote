@@ -12,24 +12,24 @@ const CenterArea: React.FC<{
 }> = ({ theme }) => {
     const {
         dataPathChangeFlag,
-        whalenote,
         currentRepoKey,
         currentFolderKey,
         currentNoteKey,
-        repos,
+        whalenote,
         setNumArray,
         setFocus,
         setBlur,
         keySelect,
         setKeySelect,
+        platformName,
     } = useContext(GlobalContext);
 
     const repos_key = useMemo(() => {
-        return repos.repos_obj ? repos.repos_key : undefined;
-    }, [repos, currentRepoKey, currentFolderKey]);
+        return whalenote.repos_obj ? whalenote.repos_key : undefined;
+    }, [whalenote, currentRepoKey, currentFolderKey]);
     const folders_obj = useMemo(() => {
-        return repos.repos_obj ? repos.repos_obj[currentRepoKey]?.folders_obj : undefined;
-    }, [repos, currentRepoKey, currentFolderKey]);
+        return whalenote.repos_obj ? whalenote.repos_obj[currentRepoKey]?.folders_obj : undefined;
+    }, [whalenote, currentRepoKey, currentFolderKey]);
 
     const [editorWidth, setEditorWidth] = useState('100%');
     const [renderWidth, setRenderWidth] = useState('0');
@@ -73,13 +73,8 @@ const CenterArea: React.FC<{
 
     const handleKeyDown = useCallback(
         async (e: any) => {
-            const process_platform = await window.electronAPI.getPlatform();
-            if (
-                process_platform === 'darwin' ||
-                process_platform === 'win32' ||
-                process_platform === 'linux'
-            ) {
-                const modKey = process_platform === 'darwin' ? e.metaKey : e.ctrlKey;
+            if (platformName === 'darwin' || platformName === 'win32' || platformName === 'linux') {
+                const modKey = platformName === 'darwin' ? e.metaKey : e.ctrlKey;
 
                 // normal number 0 and extra number 0
                 if ((e.keyCode === 48 || e.keyCode === 96) && modKey) {
@@ -212,10 +207,10 @@ const CenterArea: React.FC<{
                             }}
                         >
                             <RepoNameLabel>
-                                {repos.repos_obj &&
+                                {whalenote.repos_obj &&
                                 currentRepoKey &&
-                                repos.repos_obj[currentRepoKey]
-                                    ? repos.repos_obj[currentRepoKey].repo_name
+                                whalenote.repos_obj[currentRepoKey]
+                                    ? whalenote.repos_obj[currentRepoKey].repo_name
                                     : ''}
                             </RepoNameLabel>
                             {keySelect ? <RepoPanelKeyTab>Z</RepoPanelKeyTab> : <></>}

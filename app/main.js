@@ -76,7 +76,7 @@ const installExtensions = async () => {
 };
 
 const createMenu = async () => {
-    const isMac = process_platform === 'darwin';
+    const isMac = process.platform === 'darwin';
 
     const template = [
         // { role: 'appMenu' }
@@ -245,12 +245,14 @@ const processIPC = () => {
     });
 
     ipcMain.handle('operate:writeCson', async (event, { file_path, obj }) => {
+        console.log('writeCson: ' + file_path);
         fse.ensureFileSync(file_path);
         fse.writeFileSync(file_path, CSON.createCSONString(obj));
         return true;
     });
 
     ipcMain.handle('operate:writeJson', async (event, { file_path, obj }) => {
+        console.log('writeJson: ' + file_path);
         fse.ensureFileSync(file_path);
         fse.writeFileSync(file_path, CSON.createJSONString(obj));
         return true;
@@ -276,6 +278,7 @@ const processIPC = () => {
     });
 
     ipcMain.handle('operate:readCson', async (event, { file_path }) => {
+        console.log('readCson: ' + file_path);
         if (!fse.pathExistsSync(file_path)) {
             return false;
         } else {
@@ -285,6 +288,7 @@ const processIPC = () => {
     });
 
     ipcMain.handle('operate:readJson', async (event, { file_path }) => {
+        console.log('readJson: ' + file_path);
         if (!fse.pathExistsSync(file_path)) {
             return false;
         } else {
@@ -422,7 +426,7 @@ app.on('second-instance', () => {
 });
 
 app.on('window-all-closed', () => {
-    if (process_platform !== 'darwin') {
+    if (process.platform !== 'darwin') {
         app.quit();
     }
 });

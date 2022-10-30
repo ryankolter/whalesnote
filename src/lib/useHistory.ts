@@ -15,7 +15,7 @@ const historyReducer = produce((state: historyTypes, action: any) => {
             return state;
         }
         case 'switch_folder': {
-            if (action.repo_key && action.folder_key) {
+            if (action.repo_key) {
                 !state.repos_record && (state.repos_record = {});
                 if (!state.repos_record[action.repo_key]) {
                     state.repos_record[action.repo_key] = {
@@ -83,14 +83,14 @@ export const useHistory = () => {
             repoKey: string | undefined,
             folderKey: string | undefined
         ) => {
-            dispatch({
-                type: 'switch_folder',
-                data_path: curDataPath,
-                repo_key: repoKey,
-                folder_key: folderKey,
-            });
+            if (curDataPath && repoKey) {
+                dispatch({
+                    type: 'switch_folder',
+                    data_path: curDataPath,
+                    repo_key: repoKey,
+                    folder_key: folderKey,
+                });
 
-            if (curDataPath && repoKey && folderKey) {
                 const history = await window.electronAPI.readJson({
                     file_path: `${curDataPath}/history_info.json`,
                 });

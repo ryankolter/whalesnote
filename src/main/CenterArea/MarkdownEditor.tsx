@@ -30,6 +30,7 @@ export const MarkdownEditor: React.FC<{
         blur,
         setKeySelect,
         editorFontSize,
+        platformName,
     } = useContext(GlobalContext);
 
     const [showEditorScrollPos, setShowEditorScrollPos] = useState(false);
@@ -43,13 +44,19 @@ export const MarkdownEditor: React.FC<{
     const { xPos, yPos, menu } = useContextMenu(editorContainerRef);
 
     const onDocChange = useCallback(
-        (new_value: string, viewUpdate: ViewUpdate) => {
+        async (new_value: string, viewUpdate: ViewUpdate) => {
             updateNote(curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, new_value);
             const doc = view.current?.state.doc;
             if (doc) {
                 const first_line_content = doc.lineAt(0).text.replace(/^[#\-\_*>\s]+/g, '');
                 const new_name: string = first_line_content || '新建文档';
-                renameNote(curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, new_name);
+                await renameNote(
+                    curDataPath,
+                    currentRepoKey,
+                    currentFolderKey,
+                    currentNoteKey,
+                    new_name
+                );
             }
         },
         [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, renameNote, updateNote]
@@ -183,13 +190,12 @@ export const MarkdownEditor: React.FC<{
 
     const handleKeyDown = useCallback(
         async (e: any) => {
-            const process_platform = await window.electronAPI.getPlatform();
-            if (process_platform === 'darwin') {
+            if (platformName === 'darwin') {
                 if (e.keyCode === 74 && e.metaKey && !e.shiftKey && renderPanelState !== 'all') {
                     autoScrollToLine();
                 }
             }
-            if (process_platform === 'win32' || process_platform === 'linux') {
+            if (platformName === 'win32' || platformName === 'linux') {
                 if (e.keyCode === 74 && e.crtlKey && !e.shiftKey && renderPanelState !== 'all') {
                     autoScrollToLine();
                 }

@@ -4,7 +4,7 @@ import cryptoRandomString from 'crypto-random-string';
 import MiniSearch, { SearchResult } from 'minisearch';
 
 const useSearch = () => {
-    const { curDataPath, whalenote, repos, notes, allRepoNotesFetch, setFocus } =
+    const { curDataPath, whalenote, notes, allRepoNotesFetch, setFocus } =
         useContext(GlobalContext);
 
     const miniSearch = useRef<MiniSearch | null>();
@@ -61,7 +61,7 @@ const useSearch = () => {
         setShowWaitingMask(true);
 
         setTimeout(async () => {
-            await allRepoNotesFetch(curDataPath, repos);
+            await allRepoNotesFetch(curDataPath, whalenote);
 
             const documents: {
                 id: string;
@@ -71,15 +71,15 @@ const useSearch = () => {
                 content: string;
             }[] = [];
             Object.keys(notes).forEach((repo_key: string) => {
-                const folders_obj = repos.repos_obj[repo_key].folders_obj;
+                const folders_obj = whalenote.repos_obj[repo_key].folders_obj;
                 Object.keys(notes[repo_key]).forEach((folder_key: string) => {
                     const folder_name = folders_obj[folder_key].folder_name;
                     Object.keys(notes[repo_key][folder_key]).forEach((note_key: string) => {
                         const id = `${repo_key}-${folder_key}-${note_key}`;
                         let title =
-                            repos.repos_obj[repo_key]?.folders_obj &&
-                            repos.repos_obj[repo_key]?.folders_obj[folder_key]?.notes_obj
-                                ? repos.repos_obj[repo_key]?.folders_obj[folder_key]?.notes_obj[
+                            whalenote.repos_obj[repo_key]?.folders_obj &&
+                            whalenote.repos_obj[repo_key]?.folders_obj[folder_key]?.notes_obj
+                                ? whalenote.repos_obj[repo_key]?.folders_obj[folder_key]?.notes_obj[
                                       note_key
                                   ]?.title || ''
                                 : '';
@@ -132,7 +132,6 @@ const useSearch = () => {
     }, [
         curDataPath,
         whalenote,
-        repos,
         notes,
         setShowUpdateIndexTips,
         setShowWaitingMask,

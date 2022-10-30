@@ -51,12 +51,13 @@ export const MarkdownRender: React.FC<{
         currentRepoKey,
         currentFolderKey,
         currentNoteKey,
-        repos,
+        whalenote,
         notes,
         currentNoteStr,
         renderTop,
         updateRenderTop,
         renderFontSize,
+        platformName,
     } = useContext(GlobalContext);
 
     const [result, setResult] = useState('');
@@ -288,9 +289,9 @@ export const MarkdownRender: React.FC<{
     //             }) || '';
     //         for (const note_key of Object.keys(notes[currentRepoKey][currentFolderKey])) {
     //             let title =
-    //                 repos.repos_obj[currentRepoKey]?.folders_obj &&
-    //                 repos.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj
-    //                     ? repos.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj[
+    //                 whalenote.repos_obj[currentRepoKey]?.folders_obj &&
+    //                 whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj
+    //                     ? whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj[
     //                           note_key
     //                       ]?.title || ''
     //                     : '';
@@ -324,7 +325,7 @@ export const MarkdownRender: React.FC<{
     //     return () => {
     //         ipcRenderer.removeAllListeners('saveFolderToHtml');
     //     };
-    // }, [repos, notes, currentRepoKey, currentFolderKey, theme]);
+    // }, [whalenote, notes, currentRepoKey, currentFolderKey, theme]);
 
     useEffect(() => {
         setResult(md.current.render(currentNoteStr));
@@ -383,8 +384,7 @@ export const MarkdownRender: React.FC<{
 
     const handleKeyDown = useCallback(
         async (e: any) => {
-            const process_platform = await window.electronAPI.getPlatform();
-            if (process_platform === 'darwin') {
+            if (platformName === 'darwin') {
                 if (e.keyCode === 74 && e.metaKey && !e.shiftKey && renderPanelState === 'all') {
                     autoScrollToLine();
                 }
@@ -392,7 +392,7 @@ export const MarkdownRender: React.FC<{
                     setShowTocFlag((showTocFlag) => 1 - showTocFlag);
                 }
             }
-            if (process_platform === 'win32' || process_platform === 'linux') {
+            if (platformName === 'win32' || platformName === 'linux') {
                 if (e.keyCode === 74 && e.crtlKey && !e.shiftKey && renderPanelState === 'all') {
                     autoScrollToLine();
                 }

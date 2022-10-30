@@ -7,7 +7,7 @@ import FolderList from './FolderList';
 import NoteList from './NoteList';
 
 const SideNav: React.FC<Record<string, unknown>> = ({}) => {
-    const { numArray, setNumArray, keySelect } = useContext(GlobalContext);
+    const { numArray, setNumArray, keySelect, platformName } = useContext(GlobalContext);
 
     const resizeFolderOffsetX = useRef<number>(0);
     const resizeNoteOffsetX = useRef<number>(0);
@@ -22,13 +22,8 @@ const SideNav: React.FC<Record<string, unknown>> = ({}) => {
 
     const handleKeyDown = useCallback(
         async (e: any) => {
-            const process_platform = await window.electronAPI.getPlatform();
-            if (
-                process_platform === 'darwin' ||
-                process_platform === 'win32' ||
-                process_platform === 'linux'
-            ) {
-                const modKey = process_platform === 'darwin' ? e.metaKey : e.ctrlKey;
+            if (platformName === 'darwin' || platformName === 'win32' || platformName === 'linux') {
+                const modKey = platformName === 'darwin' ? e.metaKey : e.ctrlKey;
 
                 if (
                     ((e.keyCode >= 65 && e.keyCode <= 72) ||

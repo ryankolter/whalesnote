@@ -8,8 +8,15 @@ import WaitingMaskStatic from '../../components/WaitingMaskStatic';
 import searchIcon from '../../resources/icon/searchIcon.svg';
 
 const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
-    const { repoSwitch, folderSwitch, noteSwitch, currentNoteKey, keySelect, setKeySelect } =
-        useContext(GlobalContext);
+    const {
+        repoSwitch,
+        folderSwitch,
+        noteSwitch,
+        currentNoteKey,
+        keySelect,
+        setKeySelect,
+        platformName,
+    } = useContext(GlobalContext);
 
     const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -99,13 +106,8 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
 
     const handleKeyDown = useCallback(
         async (e: any) => {
-            const process_platform = await window.electronAPI.getPlatform();
-            if (
-                process_platform === 'darwin' ||
-                process_platform === 'win32' ||
-                process_platform === 'linux'
-            ) {
-                const modKey = process_platform === 'darwin' ? e.metaKey : e.ctrlKey;
+            if (platformName === 'darwin' || platformName === 'win32' || platformName === 'linux') {
+                const modKey = platformName === 'darwin' ? e.metaKey : e.ctrlKey;
 
                 if (e.keyCode === 70 && modKey && e.shiftKey) {
                     searchInputRef.current?.focus();

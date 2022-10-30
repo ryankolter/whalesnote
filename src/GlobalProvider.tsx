@@ -6,14 +6,14 @@ import {
     useState,
     useMemo,
     useEffect,
+    useRef,
 } from 'react';
-import { whalenoteTypes, historyTypes, reposObjTypes, notesTypes } from './commonType';
+import { historyTypes, whalenoteObjType, notesTypes } from './commonType';
 
 import useData from './lib/useData';
 import useDataList from './lib/useDataList';
-import { useWhalenote } from './lib/useWhalenote';
 import { useHistory } from './lib/useHistory';
-import { useRepos } from './lib/useRepos';
+import { useWhalenote } from './lib/useWhalenote';
 import { useRecordValue } from './lib/useRecordValue';
 
 import {
@@ -36,10 +36,7 @@ const initContext: {
     setSwitchingData: Dispatch<SetStateAction<boolean>>;
     dataPathList: string[];
     removeDataPathFromList: (data_path: string) => void;
-    whalenote: whalenoteTypes;
     history: historyTypes;
-    initWhalenote: (new_whalenote: whalenoteTypes) => void;
-    updateWhalenote: (data_path: string) => void;
     repoSwitch: (repo_key: string | undefined) => void;
     folderSwitch: (repo_key: string | undefined, folderKey: string | undefined) => void;
     noteSwitch: (
@@ -50,7 +47,8 @@ const initContext: {
     currentRepoKey: string;
     currentFolderKey: string;
     currentNoteKey: string;
-    repos: reposObjTypes;
+    whalenote: whalenoteObjType;
+    initWhalenote: (newRepos: whalenoteObjType) => void;
     newRepo: (
         curDataPath: string,
         repo_key: string,
@@ -59,6 +57,7 @@ const initContext: {
         default_note_key: string
     ) => void;
     renameRepo: (curDataPath: string, repo_key: string, new_repo_name: string) => void;
+    reorderRepo: (data_path: string, repo_key: string, new_repos_key: string[]) => void;
     deleteRepo: (curDataPath: string, repo_key: string) => any;
     newFolder: (
         curDataPath: string,
@@ -73,8 +72,15 @@ const initContext: {
         folder_key: string,
         new_folder_name: string
     ) => void;
+    reorderFolder: (data_path: string, repo_key: string, new_folders_key: string[]) => void;
     deleteFolder: (curDataPath: string, repo_key: string, folder_key: string) => any;
-    initRepos: (newRepos: reposObjTypes) => void;
+    newNote: (
+        curDataPath: string,
+        repo_key: string,
+        folder_key: string,
+        new_note_key: string,
+        note_title: string
+    ) => void;
     renameNote: (
         data_path: string,
         repo_key: string,
@@ -82,14 +88,18 @@ const initContext: {
         note_key: string,
         new_title: string
     ) => void;
-    reorderRepo: (data_path: string, repo_key: string, new_repos_key: string[]) => void;
-    reorderFolder: (data_path: string, repo_key: string, new_folders_key: string[]) => void;
     reorderNote: (
         data_path: string,
         repo_key: string,
         folder_key: string,
         new_notes_key: string[]
     ) => void;
+    deleteNote: (
+        curDataPath: string,
+        repo_key: string,
+        folder_key: string,
+        note_key: string
+    ) => any;
     notes: notesTypes;
     initNotes: (_notes: notesTypes) => void;
     updateNote: (
@@ -99,11 +109,11 @@ const initContext: {
         note_key: string,
         currentContent: string
     ) => void;
-    allRepoNotesFetch: (data_path: string | null, repos_obj: reposObjTypes) => any;
+    allRepoNotesFetch: (data_path: string | null, repos_obj: whalenoteObjType) => any;
     repoNotesFetch: (
         data_path: string | null,
         history: historyTypes,
-        repos_obj: reposObjTypes,
+        repos_obj: whalenoteObjType,
         repo_key: string | undefined
     ) => void;
     folderNotesFetch: (
@@ -156,6 +166,7 @@ const initContext: {
     setEditorFontSize: Dispatch<SetStateAction<number>>;
     renderFontSize: number;
     setRenderFontSize: Dispatch<SetStateAction<number>>;
+    platformName: string;
 } = {
     curDataPath: '',
     setCurDataPath: () => {},
@@ -166,10 +177,6 @@ const initContext: {
     setSwitchingData: () => {},
     dataPathList: [],
     removeDataPathFromList: () => {},
-    whalenote: { id: '' },
-    initWhalenote: () => {},
-    updateWhalenote: () => {},
-    reorderRepo: () => {},
     history: { cur_repo_key: '', repos_record: {} },
     repoSwitch: () => {},
     folderSwitch: () => {},
@@ -177,21 +184,26 @@ const initContext: {
     currentRepoKey: '',
     currentFolderKey: '',
     currentNoteKey: '',
-    repos: { repos_key: [], repos_obj: {} },
+    whalenote: { repos_key: [], repos_obj: {} },
+    initWhalenote: () => {},
     newRepo: () => {},
     renameRepo: () => {},
+    reorderRepo: () => {},
     deleteRepo: () => {
         return '';
     },
     newFolder: () => {},
     renameFolder: () => {},
+    reorderFolder: () => {},
     deleteFolder: () => {
         return '';
     },
-    initRepos: () => {},
+    newNote: () => {},
     renameNote: () => {},
-    reorderFolder: () => {},
     reorderNote: () => {},
+    deleteNote: () => {
+        return '';
+    },
     notes: {},
     initNotes: () => {},
     updateNote: () => {},
@@ -220,6 +232,7 @@ const initContext: {
     setEditorFontSize: () => {},
     renderFontSize: 15,
     setRenderFontSize: () => {},
+    platformName: '',
 };
 export const GlobalContext = createContext(initContext);
 
@@ -236,7 +249,6 @@ export const GlobalProvider = ({ children }: { children: any }) => {
         setSwitchingData,
     ] = useData();
     const [dataPathList, addDataPathToList, removeDataPathFromList] = useDataList();
-    const [whalenote, { initWhalenote, updateWhalenote }] = useWhalenote();
     const [
         history,
         {
@@ -250,30 +262,31 @@ export const GlobalProvider = ({ children }: { children: any }) => {
         },
     ] = useHistory();
     const [
-        repos,
+        whalenote,
         {
+            initWhalenote,
             newRepo,
             renameRepo,
+            reorderRepo,
             deleteRepo,
             newFolder,
             renameFolder,
-            deleteFolder,
-            initRepos,
-            renameNote,
-            reorderRepo,
             reorderFolder,
+            deleteFolder,
+            newNote,
+            renameNote,
             reorderNote,
+            deleteNote,
         },
-    ] = useRepos();
+    ] = useWhalenote();
 
     useEffect(() => {
         console.log('dataPathChangeFlag');
         console.log(data.current);
         if (data.current) {
             addDataPathToList(curDataPath);
-            initWhalenote(data.current.whalenote);
             initHistory(data.current.history);
-            initRepos(data.current.repos);
+            initWhalenote(data.current.whalenote);
             initNotes(data.current.notes);
         }
     }, [dataPathChangeFlag]);
@@ -294,12 +307,19 @@ export const GlobalProvider = ({ children }: { children: any }) => {
         Number(window.localStorage.getItem('render_font_size')) || 15
     );
 
+    const [platformName, setPlatformName] = useState<string>('');
+    useEffect(() => {
+        (async () => {
+            setPlatformName(await window.electronAPI.getPlatform());
+        })();
+    }, []);
+
     const repoSwitch = useCallback(
         async (repo_key: string | undefined) => {
-            await repoNotesFetch(curDataPath, history, repos, repo_key);
+            await repoNotesFetch(curDataPath, history, whalenote, repo_key);
             await switchRepo(curDataPath, repo_key);
         },
-        [curDataPath, history, repos]
+        [curDataPath, history, whalenote]
     );
 
     const folderSwitch = useCallback(
@@ -340,14 +360,14 @@ export const GlobalProvider = ({ children }: { children: any }) => {
             currentRepoKey &&
             currentFolderKey &&
             currentNoteKey &&
-            repos.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj[
+            whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj[
                 currentNoteKey
             ]?.title
-                ? repos.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj[
+                ? whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj[
                       currentNoteKey
                   ].title
                 : '新建文档',
-        [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, repos]
+        [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, whalenote]
     );
 
     const currentContent = useMemo(
@@ -418,28 +438,27 @@ export const GlobalProvider = ({ children }: { children: any }) => {
                 setSwitchingData,
                 dataPathList,
                 removeDataPathFromList,
-                whalenote,
                 history,
-                initWhalenote,
-                updateWhalenote,
-                reorderRepo,
                 repoSwitch,
                 folderSwitch,
                 noteSwitch,
                 currentRepoKey,
                 currentFolderKey,
                 currentNoteKey,
-                repos,
+                whalenote,
+                initWhalenote,
                 newRepo,
                 renameRepo,
+                reorderRepo,
                 deleteRepo,
                 newFolder,
                 renameFolder,
-                deleteFolder,
-                initRepos,
-                renameNote,
                 reorderFolder,
+                deleteFolder,
+                newNote,
+                renameNote,
                 reorderNote,
+                deleteNote,
                 notes,
                 initNotes,
                 updateNote,
@@ -468,6 +487,7 @@ export const GlobalProvider = ({ children }: { children: any }) => {
                 setEditorFontSize,
                 renderFontSize,
                 setRenderFontSize,
+                platformName,
             }}
         >
             {children}

@@ -1,21 +1,21 @@
-import { historyTypes, reposObjTypes } from '../commonType';
+import { historyTypes, whalenoteObjType } from '../commonType';
 
 export let notes = {};
 
 const saveTimerObj = new Map();
 
-export const allRepoNotesFetch = async (data_path: string | null, repos: reposObjTypes) => {
-    for (const repo_key of repos.repos_key) {
-        if (repos.repos_obj[repo_key]) {
+export const allRepoNotesFetch = async (data_path: string | null, whalenote: whalenoteObjType) => {
+    for (const repo_key of whalenote.repos_key) {
+        if (whalenote.repos_obj[repo_key]) {
             if (!notes[repo_key]) {
                 notes[repo_key] = {};
             }
-            for (const folder_key of repos.repos_obj[repo_key].folders_key) {
-                if (repos.repos_obj[repo_key].folders_obj[folder_key]) {
+            for (const folder_key of whalenote.repos_obj[repo_key].folders_key) {
+                if (whalenote.repos_obj[repo_key].folders_obj[folder_key]) {
                     if (!notes[repo_key][folder_key]) {
                         notes[repo_key][folder_key] = {};
                     }
-                    for (const note_key of repos.repos_obj[repo_key].folders_obj[folder_key]
+                    for (const note_key of whalenote.repos_obj[repo_key].folders_obj[folder_key]
                         .notes_key) {
                         if (notes[repo_key][folder_key][note_key] === undefined) {
                             const note_info = await window.electronAPI.readCson({
@@ -35,12 +35,12 @@ export const allRepoNotesFetch = async (data_path: string | null, repos: reposOb
 export const repoNotesFetch = async (
     data_path: string | null,
     history: historyTypes,
-    repos: reposObjTypes,
+    whalenote: whalenoteObjType,
     repo_key: string | undefined
 ) => {
     if (repo_key && !notes[repo_key]) {
         notes[repo_key] = {};
-        const folders_key = repos.repos_obj[repo_key].folders_key;
+        const folders_key = whalenote.repos_obj[repo_key].folders_key;
         for (const [index, folder_key] of folders_key.entries()) {
             if (index === 0 || folder_key === history.repos_record[repo_key].cur_folder_key) {
                 const folder_info = await window.electronAPI.readJson({
