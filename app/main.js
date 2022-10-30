@@ -340,7 +340,7 @@ const processIPC = () => {
         });
 
         if (!canceled && filePaths.length > 0) {
-            return files.filePaths[0];
+            return filePaths[0];
         } else {
             return;
         }

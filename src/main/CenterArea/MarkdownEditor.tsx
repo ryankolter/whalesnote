@@ -6,6 +6,7 @@ import { EditorView, ViewUpdate } from '@codemirror/view';
 
 import useCodeMirror from '../../lib/useCodeMirror';
 import useContextMenu from '../../lib/useContextMenu';
+import useEditorPosition from '../../lib/useEditorPosition';
 
 export const MarkdownEditor: React.FC<{
     theme: string;
@@ -22,16 +23,19 @@ export const MarkdownEditor: React.FC<{
         renameNote,
         updateNote,
         currentContent,
-        cursorHead,
-        fromPos,
-        updateCursorHead,
-        updateFromPos,
         focus,
         blur,
         setKeySelect,
         editorFontSize,
         platformName,
     } = useContext(GlobalContext);
+
+    const [topLinePos, cursorHeadPos, updateTopLinePos, updateCursorHeadPos] = useEditorPosition(
+        curDataPath,
+        currentRepoKey,
+        currentFolderKey,
+        currentNoteKey
+    );
 
     const [showEditorScrollPos, setShowEditorScrollPos] = useState(false);
     const [cursorInEditor, setCursorInEditor] = useState(false);
@@ -66,8 +70,13 @@ export const MarkdownEditor: React.FC<{
         (vu: ViewUpdate) => {
             if (view.current) {
                 setKeySelect(false);
-                const cursorHead = view.current.state.selection.main.head;
-                updateCursorHead(currentRepoKey, currentFolderKey, currentNoteKey, cursorHead);
+                const cursorHeadPos = view.current.state.selection.main.head;
+                updateCursorHeadPos(
+                    currentRepoKey,
+                    currentFolderKey,
+                    currentNoteKey,
+                    cursorHeadPos
+                );
             }
         },
         [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey]
@@ -91,7 +100,9 @@ export const MarkdownEditor: React.FC<{
 
     useEffect(() => {
         autoScroll.current = true;
-        fromPos && fromPos > 10 ? setShowEditorScrollPos(true) : setShowEditorScrollPos(false);
+        topLinePos && topLinePos > 10
+            ? setShowEditorScrollPos(true)
+            : setShowEditorScrollPos(false);
     }, [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey]);
 
     useEffect(() => {
@@ -111,7 +122,7 @@ export const MarkdownEditor: React.FC<{
     const autoScrollToLine = useCallback(() => {
         if (view.current) {
             const max_height = view.current.contentDOM.getBoundingClientRect().height;
-            const start_line = fromPos <= max_height && fromPos > 0 ? fromPos : max_height;
+            const start_line = topLinePos <= max_height && topLinePos > 0 ? topLinePos : max_height;
 
             view.current?.dispatch({
                 effects: EditorView.scrollIntoView(start_line, {
@@ -119,16 +130,16 @@ export const MarkdownEditor: React.FC<{
                 }),
             });
 
-            if (cursorHead !== -1) {
+            if (cursorHeadPos !== -1) {
                 view.current?.focus();
                 view.current?.dispatch({
-                    selection: { anchor: cursorHead },
+                    selection: { anchor: cursorHeadPos },
                 });
             }
         }
 
         setShowEditorScrollPos(false);
-    }, [cursorHead, fromPos]);
+    }, [cursorHeadPos, topLinePos]);
 
     const copySelection = useCallback(() => {
         if (view.current) {
@@ -242,7 +253,7 @@ export const MarkdownEditor: React.FC<{
                     ).from;
 
                     setShowEditorScrollPos(false);
-                    updateFromPos(currentRepoKey, currentFolderKey, currentNoteKey, fromPos);
+                    updateTopLinePos(currentRepoKey, currentFolderKey, currentNoteKey, fromPos);
                 }
             }, 100);
         },

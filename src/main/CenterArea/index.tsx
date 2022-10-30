@@ -46,8 +46,6 @@ const CenterArea: React.FC<{
     const [editorScrollRatio, setEditorScrollRatio] = useState(0);
     const [renderScrollRatio, setRenderScrollRatio] = useState(0);
 
-    const outerRef = useRef<HTMLDivElement>(null);
-
     const repoNameClickHandler = useCallback(() => {
         setShowAllRepo((_showAllRepo) => !_showAllRepo);
     }, [showAllRepo, keySelect]);

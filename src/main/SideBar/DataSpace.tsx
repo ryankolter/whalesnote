@@ -18,29 +18,18 @@ const DataSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssista
 
     const addDataPath = useCallback(async () => {
         const filePath = await window.electronAPI.openDirectoryDialog();
-        // ipcRenderer.send('open-directory-dialog', {
-        //     response_event_name: 'checkoutDataPath',
-        // });
+        setShowPathUl(false);
+        if (filePath !== curDataPath) {
+            setSwitchingData(true);
+            setTimeout(() => {
+                setCurDataPath(filePath);
+            }, 50);
+        }
     }, []);
 
     const openDataPath = useCallback(async (data_path: string) => {
         await window.electronAPI.openParentFolder({ folder_path: data_path });
     }, []);
-
-    // useEffect(() => {
-    //     ipcRenderer.on('checkoutDataPath', (event: any, path: string) => {
-    //         setShowPathUl(false);
-    //         if (path !== curDataPath) {
-    //             setSwitchingData(true);
-    //             setTimeout(() => {
-    //                 setCurDataPath(path);
-    //             }, 50);
-    //         }
-    //     });
-    //     return () => {
-    //         ipcRenderer.removeAllListeners('checkoutDataPath');
-    //     };
-    // }, [curDataPath, setSwitchingData, setCurDataPath]);
 
     const handleClick = useCallback(
         (event: MouseEvent) => {

@@ -133,20 +133,6 @@ const initContext: {
     currentTitle: string;
     currentContent: string;
     currentNoteStr: string;
-    cursorHead: number;
-    updateCursorHead: (
-        repo_key: string,
-        folder_key: string,
-        note_key: string,
-        cursor_head: number
-    ) => void;
-    fromPos: number;
-    updateFromPos: (
-        repo_key: string,
-        folder_key: string,
-        note_key: string,
-        from_pos: number
-    ) => void;
     renderTop: number;
     updateRenderTop: (
         repo_key: string,
@@ -214,10 +200,6 @@ const initContext: {
     currentTitle: '',
     currentContent: '',
     currentNoteStr: '',
-    cursorHead: 0,
-    updateCursorHead: () => {},
-    fromPos: 0,
-    updateFromPos: () => {},
     renderTop: 0,
     updateRenderTop: () => {},
     numArray: [],
@@ -291,8 +273,6 @@ export const GlobalProvider = ({ children }: { children: any }) => {
         }
     }, [dataPathChangeFlag]);
 
-    const [cursorHeads, { updateRecordValue: updateCursorHead }] = useRecordValue<number>();
-    const [fromPoses, { updateRecordValue: updateFromPos }] = useRecordValue<number>();
     const [renderTops, { updateRecordValue: updateRenderTop }] = useRecordValue<number>();
 
     const [currentNoteStr, setCurrentNoteStr] = useState<string>('');
@@ -387,32 +367,6 @@ export const GlobalProvider = ({ children }: { children: any }) => {
         setCurrentNoteStr(currentContent);
     }, [currentContent]);
 
-    const cursorHead = useMemo(
-        () =>
-            currentRepoKey &&
-            currentFolderKey &&
-            currentNoteKey &&
-            cursorHeads[currentRepoKey] &&
-            cursorHeads[currentRepoKey][currentFolderKey] &&
-            cursorHeads[currentRepoKey][currentFolderKey][currentNoteKey]
-                ? cursorHeads[currentRepoKey][currentFolderKey][currentNoteKey]
-                : -1,
-        [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, cursorHeads]
-    );
-
-    const fromPos = useMemo(
-        () =>
-            currentRepoKey &&
-            currentFolderKey &&
-            currentNoteKey &&
-            fromPoses[currentRepoKey] &&
-            fromPoses[currentRepoKey][currentFolderKey] &&
-            fromPoses[currentRepoKey][currentFolderKey][currentNoteKey]
-                ? fromPoses[currentRepoKey][currentFolderKey][currentNoteKey]
-                : 0,
-        [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, fromPoses]
-    );
-
     const renderTop = useMemo(
         () =>
             currentRepoKey &&
@@ -469,10 +423,6 @@ export const GlobalProvider = ({ children }: { children: any }) => {
                 currentTitle,
                 currentContent,
                 currentNoteStr,
-                cursorHead,
-                updateCursorHead,
-                fromPos,
-                updateFromPos,
                 renderTop,
                 updateRenderTop,
                 numArray,
