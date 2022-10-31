@@ -1,19 +1,3 @@
-export type historyTypes = {
-    cur_repo_key: string;
-    repos_record:
-        | {
-              [key: string]:
-                  | {
-                        cur_folder_key: string;
-                        folders: {
-                            [key: string]: string;
-                        };
-                    }
-                  | {};
-          }
-        | {};
-};
-
 export type whalenoteObjType = {
     repos_key: string[];
     repos_obj:
@@ -37,6 +21,22 @@ export type whalenoteObjType = {
                         }
                       | {};
               };
+          }
+        | {};
+};
+
+export type historyTypes = {
+    cur_repo_key: string;
+    repos_record:
+        | {
+              [key: string]:
+                  | {
+                        cur_folder_key: string;
+                        folders: {
+                            [key: string]: string;
+                        };
+                    }
+                  | {};
           }
         | {};
 };

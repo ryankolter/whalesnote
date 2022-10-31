@@ -33,7 +33,6 @@ import useContextMenu from '../../lib/useContextMenu';
 import { notes } from '../../lib/notes';
 
 export const MarkdownRender: React.FC<{
-    theme: string;
     editorScrollRatio: number;
     renderPanelState: string;
     cursorInRender: boolean;
@@ -50,7 +49,6 @@ export const MarkdownRender: React.FC<{
 }> = ({
     editorScrollRatio,
     renderPanelState,
-    theme,
     cursorInRender,
     renderNoteStr,
     setCursorInRender,
@@ -64,6 +62,7 @@ export const MarkdownRender: React.FC<{
         currentFolderKey,
         currentNoteKey,
         whalenote,
+        theme,
         renderFontSize,
         platformName,
     } = useContext(GlobalContext);

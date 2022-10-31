@@ -7,20 +7,13 @@ import {
     useMemo,
     useEffect,
 } from 'react';
-import { historyTypes, whalenoteObjType, notesTypes } from './commonType';
-
+import { whalenoteObjType, historyTypes, notesTypes } from './commonType';
 import useData from './lib/useData';
 import useDataList from './lib/useDataList';
-import { useHistory } from './lib/useHistory';
-import { useWhalenote } from './lib/useWhalenote';
+import useHistory from './lib/useHistory';
+import useWhalenote from './lib/useWhalenote';
 
-import {
-    fetchNotesInRepo,
-    fetchNotesInfolder,
-    changeNotesAfterNew,
-    initNotes,
-    updateNote,
-} from './lib/notes';
+import { fetchNotesInRepo, fetchNotesInfolder, changeNotesAfterNew, initNotes } from './lib/notes';
 
 const initContext: {
     curDataPath: string;
@@ -32,17 +25,6 @@ const initContext: {
     setSwitchingData: Dispatch<SetStateAction<boolean>>;
     dataPathList: string[];
     removeDataPathFromList: (data_path: string) => void;
-    history: historyTypes;
-    repoSwitch: (repo_key: string | undefined) => void;
-    folderSwitch: (repo_key: string | undefined, folderKey: string | undefined) => void;
-    noteSwitch: (
-        repo_key: string | undefined,
-        folder_key: string | undefined,
-        note_key: string | undefined
-    ) => void;
-    currentRepoKey: string;
-    currentFolderKey: string;
-    currentNoteKey: string;
     whalenote: whalenoteObjType;
     initWhalenote: (newRepos: whalenoteObjType) => void;
     newRepo: (
@@ -96,14 +78,17 @@ const initContext: {
         folder_key: string,
         note_key: string
     ) => any;
-    initNotes: (_notes: notesTypes) => void;
-    updateNote: (
-        data_path: string,
-        repo_key: string,
-        folder_key: string,
-        note_key: string,
-        new_note_str: string
+    history: historyTypes;
+    repoSwitch: (repo_key: string | undefined) => void;
+    folderSwitch: (repo_key: string | undefined, folderKey: string | undefined) => void;
+    noteSwitch: (
+        repo_key: string | undefined,
+        folder_key: string | undefined,
+        note_key: string | undefined
     ) => void;
+    currentRepoKey: string;
+    currentFolderKey: string;
+    currentNoteKey: string;
     fetchNotesInRepo: (
         data_path: string | null,
         history: historyTypes,
@@ -124,9 +109,13 @@ const initContext: {
             note_key?: string;
         }
     ) => void;
+    whalenoteId: string;
+    platformName: string;
     currentTitle: string;
     numArray: number[];
     setNumArray: Dispatch<SetStateAction<number[]>>;
+    theme: string;
+    setTheme: Dispatch<SetStateAction<string>>;
     focus: string;
     setFocus: Dispatch<SetStateAction<string>>;
     blur: string;
@@ -137,7 +126,6 @@ const initContext: {
     setEditorFontSize: Dispatch<SetStateAction<number>>;
     renderFontSize: number;
     setRenderFontSize: Dispatch<SetStateAction<number>>;
-    platformName: string;
 } = {
     curDataPath: '',
     setCurDataPath: () => {},
@@ -148,13 +136,6 @@ const initContext: {
     setSwitchingData: () => {},
     dataPathList: [],
     removeDataPathFromList: () => {},
-    history: { cur_repo_key: '', repos_record: {} },
-    repoSwitch: () => {},
-    folderSwitch: () => {},
-    noteSwitch: () => {},
-    currentRepoKey: '',
-    currentFolderKey: '',
-    currentNoteKey: '',
     whalenote: { repos_key: [], repos_obj: {} },
     initWhalenote: () => {},
     newRepo: () => {},
@@ -175,14 +156,23 @@ const initContext: {
     deleteNote: () => {
         return '';
     },
-    initNotes: () => {},
-    updateNote: () => {},
+    history: { cur_repo_key: '', repos_record: {} },
+    repoSwitch: () => {},
+    folderSwitch: () => {},
+    noteSwitch: () => {},
+    currentRepoKey: '',
+    currentFolderKey: '',
+    currentNoteKey: '',
     fetchNotesInRepo: () => {},
     fetchNotesInfolder: () => {},
     changeNotesAfterNew: () => {},
+    whalenoteId: '',
+    platformName: '',
     currentTitle: '',
     numArray: [],
     setNumArray: () => {},
+    theme: '',
+    setTheme: () => {},
     focus: '',
     setFocus: () => {},
     blur: '',
@@ -193,7 +183,6 @@ const initContext: {
     setEditorFontSize: () => {},
     renderFontSize: 15,
     setRenderFontSize: () => {},
-    platformName: '',
 };
 export const GlobalContext = createContext(initContext);
 
@@ -241,15 +230,9 @@ export const GlobalProvider = ({ children }: { children: any }) => {
         },
     ] = useWhalenote();
 
-    useEffect(() => {
-        if (data.current) {
-            addDataPathToList(curDataPath);
-            initHistory(data.current.history);
-            initWhalenote(data.current.whalenote);
-            initNotes(data.current.notes);
-        }
-    }, [dataPathChangeFlag]);
-
+    const [whalenoteId, setWhaltenoteId] = useState<string>('');
+    const [platformName, setPlatformName] = useState<string>('');
+    const [theme, setTheme] = useState('grey');
     const [focus, setFocus] = useState<string>('');
     const [blur, setBlur] = useState<string>('');
     const [keySelect, setKeySelect] = useState<boolean>(false);
@@ -261,7 +244,16 @@ export const GlobalProvider = ({ children }: { children: any }) => {
         Number(window.localStorage.getItem('render_font_size')) || 15
     );
 
-    const [platformName, setPlatformName] = useState<string>('');
+    useEffect(() => {
+        if (data.current) {
+            addDataPathToList(curDataPath);
+            setWhaltenoteId(data.current.id);
+            initHistory(data.current.history);
+            initWhalenote(data.current.whalenote);
+            initNotes(data.current.notes);
+        }
+    }, [dataPathChangeFlag]);
+
     useEffect(() => {
         (async () => {
             setPlatformName(await window.electronAPI.getPlatform());
@@ -322,13 +314,6 @@ export const GlobalProvider = ({ children }: { children: any }) => {
                 setSwitchingData,
                 dataPathList,
                 removeDataPathFromList,
-                history,
-                repoSwitch,
-                folderSwitch,
-                noteSwitch,
-                currentRepoKey,
-                currentFolderKey,
-                currentNoteKey,
                 whalenote,
                 initWhalenote,
                 newRepo,
@@ -343,14 +328,23 @@ export const GlobalProvider = ({ children }: { children: any }) => {
                 renameNote,
                 reorderNote,
                 deleteNote,
-                initNotes,
-                updateNote,
+                history,
+                repoSwitch,
+                folderSwitch,
+                noteSwitch,
+                currentRepoKey,
+                currentFolderKey,
+                currentNoteKey,
                 fetchNotesInRepo,
                 fetchNotesInfolder,
                 changeNotesAfterNew,
+                whalenoteId,
+                platformName,
                 currentTitle,
                 numArray,
                 setNumArray,
+                theme,
+                setTheme,
                 focus,
                 setFocus,
                 blur,
@@ -361,7 +355,6 @@ export const GlobalProvider = ({ children }: { children: any }) => {
                 setEditorFontSize,
                 renderFontSize,
                 setRenderFontSize,
-                platformName,
             }}
         >
             {children}

@@ -6,10 +6,7 @@ import AssistantPanel from './AssistantPanel';
 import TopIcons from './TopIcons';
 import BottomIcons from './BottomIcons';
 
-const SideBar: React.FC<{
-    theme: string;
-    setTheme: React.Dispatch<React.SetStateAction<string>>;
-}> = ({ theme, setTheme }) => {
+const SideBar: React.FC<{}> = ({}) => {
     const { currentTitle } = useContext(GlobalContext);
     const [curAssistantPanelName, setCurAssistantPanelName] = useState('none');
 
@@ -19,8 +16,6 @@ const SideBar: React.FC<{
                 <AssistantPanel
                     curAssistantPanelName={curAssistantPanelName}
                     setCurAssistantPanelName={setCurAssistantPanelName}
-                    theme={theme}
-                    setTheme={setTheme}
                 />
             ) : (
                 <></>

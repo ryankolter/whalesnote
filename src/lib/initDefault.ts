@@ -33,7 +33,7 @@ const initDefault = () => {
                 },
             },
         },
-        id: cryptoRandomString({ length: 36, type: 'alphanumeric' }),
+        id: cryptoRandomString({ length: 24, type: 'alphanumeric' }),
         history: {
             cur_repo_key: repo_id,
             repos_record: {

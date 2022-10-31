@@ -229,7 +229,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
 const SearchBarContainer = styled.div({
     position: 'relative',
     display: 'flex',
-    padding: '5px 30px 5px 90px',
+    padding: '5px 30px 5px 100px',
     borderBottom: '1px solid var(--main-border-color)',
 });
 
@@ -244,7 +244,6 @@ const Search = styled.div({
 const SearchIcon = styled.div({
     width: '14px',
     height: '14px',
-    marginBottom: '6px',
 });
 
 const SearchIconImg = styled.img({
@@ -262,7 +261,7 @@ const SearchInput = styled.input(
         lineHeight: '20px',
         letterSpacing: '1px',
         width: '100%',
-        padding: '9px 0 9px 20px',
+        padding: '12px 0 6px 16px',
         boxSizing: 'border-box',
         color: 'var(--input-text-color) !important',
         backgroundColor: 'var(--main-bg-color) !important',

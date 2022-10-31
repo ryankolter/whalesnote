@@ -8,9 +8,7 @@ import { MarkdownEditor } from './MarkdownEditor';
 import { MarkdownRender } from './MarkdownRender';
 import RepoPanel from './RepoPanel';
 
-const CenterArea: React.FC<{
-    theme: string;
-}> = ({ theme }) => {
+const CenterArea: React.FC<{}> = ({}) => {
     const {
         dataPathChangeFlag,
         curDataPath,
@@ -18,12 +16,13 @@ const CenterArea: React.FC<{
         currentFolderKey,
         currentNoteKey,
         whalenote,
+        theme,
+        platformName,
         setNumArray,
         setFocus,
         setBlur,
         keySelect,
         setKeySelect,
-        platformName,
     } = useContext(GlobalContext);
 
     const repos_key = useMemo(() => {
@@ -192,10 +191,9 @@ const CenterArea: React.FC<{
             <MarkdownArea>
                 <EditorPanel widthValue={editorWidth}>
                     <MarkdownEditor
-                        theme={theme}
                         cursorInRender={cursorInRender}
-                        renderScrollRatio={renderScrollRatio}
                         renderPanelState={renderPanelState}
+                        renderScrollRatio={renderScrollRatio}
                         setEditorScrollRatio={setEditorScrollRatio}
                         setRenderNoteStr={setRenderNoteStr}
                     />
@@ -205,13 +203,12 @@ const CenterArea: React.FC<{
                         <MarkdownRender
                             cursorInRender={cursorInRender}
                             setCursorInRender={setCursorInRender}
-                            editorScrollRatio={editorScrollRatio}
-                            theme={theme}
-                            renderNoteStr={renderNoteStr}
                             renderPanelState={renderPanelState}
+                            editorScrollRatio={editorScrollRatio}
                             setRenderScrollRatio={setRenderScrollRatio}
                             renderScrollTop={renderScrollTop}
                             updateRenderScrollTop={updateRenderScrollTop}
+                            renderNoteStr={renderNoteStr}
                         />
                     ) : (
                         <></>

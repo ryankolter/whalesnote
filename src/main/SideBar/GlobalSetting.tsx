@@ -3,11 +3,9 @@ import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 
 const GlobalSetting: React.FC<{
-    theme: string;
-    setTheme: React.Dispatch<React.SetStateAction<string>>;
     closeAssistantPanel: () => void;
-}> = ({ theme, setTheme, closeAssistantPanel }) => {
-    const { curDataPath } = useContext(GlobalContext);
+}> = ({ closeAssistantPanel }) => {
+    const { curDataPath, theme, setTheme } = useContext(GlobalContext);
 
     return (
         <DataSpaceContainer>
@@ -23,16 +21,6 @@ const GlobalSetting: React.FC<{
             <ChildPart>
                 <PartTitle>主题</PartTitle>
                 <SelectArea>
-                    {/* <SelectLabel>
-                        <RadioBtn type='radio' name='theme' value='white' 
-                        checked={ theme === 'white'} onChange={(e: any) => {setTheme(e.target.value);}}/>
-                        明亮
-                    </SelectLabel>
-                    <SelectLabel>
-                        <RadioBtn type='radio' name='theme' value='grey' 
-                        checked={ theme === 'grey'} onChange={(e: any) => {setTheme(e.target.value);}}/>
-                        黑夜
-                    </SelectLabel> */}
                     <div className="radio-beauty-container">
                         <input
                             type="radio"

@@ -11,10 +11,7 @@ import { indentUnit } from '@codemirror/language';
 
 import useContextMenu from '../../lib/useContextMenu';
 
-const TrashList: React.FC<{ theme: string; closeAssistantPanel: () => void }> = ({
-    theme,
-    closeAssistantPanel,
-}) => {
+const TrashList: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssistantPanel }) => {
     const { curDataPath } = useContext(GlobalContext);
 
     const editor = useRef<HTMLDivElement>(null);

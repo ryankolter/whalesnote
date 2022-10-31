@@ -91,7 +91,7 @@ const whalenoteReducer = produce((state: whalenoteObjType, action: any) => {
     }
 });
 
-export const useWhalenote = () => {
+const useWhalenote = () => {
     const lastState = useRef<whalenoteObjType>({
         repos_key: [],
         repos_obj: {},
@@ -660,3 +660,5 @@ export const useWhalenote = () => {
         },
     ] as const;
 };
+
+export default useWhalenote;

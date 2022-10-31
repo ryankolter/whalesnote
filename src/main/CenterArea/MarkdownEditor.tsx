@@ -5,17 +5,15 @@ import { EditorView, ViewUpdate } from '@codemirror/view';
 import useCodeMirror from '../../lib/useCodeMirror';
 import useContextMenu from '../../lib/useContextMenu';
 import useEditorPosition from '../../lib/useEditorPosition';
-import { notes } from '../../lib/notes';
+import { notes, updateNote } from '../../lib/notes';
 
 export const MarkdownEditor: React.FC<{
-    theme: string;
     cursorInRender: boolean;
     renderPanelState: string;
     renderScrollRatio: number;
     setEditorScrollRatio: React.Dispatch<React.SetStateAction<number>>;
     setRenderNoteStr: React.Dispatch<React.SetStateAction<string>>;
 }> = ({
-    theme,
     cursorInRender,
     renderPanelState,
     renderScrollRatio,
@@ -28,7 +26,6 @@ export const MarkdownEditor: React.FC<{
         currentFolderKey,
         currentNoteKey,
         renameNote,
-        updateNote,
         focus,
         blur,
         setKeySelect,

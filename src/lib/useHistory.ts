@@ -46,7 +46,7 @@ const historyReducer = produce((state: historyTypes, action: any) => {
     }
 });
 
-export const useHistory = () => {
+const useHistory = () => {
     const [state, dispatch] = useReducer(historyReducer, {
         cur_repo_key: '',
         repos_record: {},
@@ -186,3 +186,5 @@ export const useHistory = () => {
         },
     ] as const;
 };
+
+export default useHistory;

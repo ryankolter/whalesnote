@@ -1,7 +1,7 @@
-import { useContext, useState, useMemo, useCallback, useRef, useEffect } from 'react';
+import { useContext } from 'react';
 import styled from '@emotion/styled';
-import { GlobalProvider, GlobalContext } from './GlobalProvider';
 
+import { GlobalContext } from './GlobalProvider';
 import InitingDataMask from './main/Mask/InitingDataMask';
 import SideNav from './main/SideNav';
 import CenterArea from './main/CenterArea';
@@ -11,21 +11,19 @@ import SocketServerBtn from './components/socketServerBtn';
 import SocketClientBtn from './socketClientBtn';
 
 const App = () => {
-    const [theme, setTheme] = useState('grey');
+    const { theme } = useContext(GlobalContext);
 
     return (
-        <GlobalProvider>
-            <AppContainer className={`${theme}-theme-global`}>
-                <InitingDataMask />
-                <AppUI>
-                    <SideNav />
-                    <CenterArea theme={theme} />
-                    <SideBar theme={theme} setTheme={setTheme} />
-                </AppUI>
-                {/* <SocketClientBtn/>
-                <SocketServerBtn/> */}
-            </AppContainer>
-        </GlobalProvider>
+        <AppContainer className={`${theme}-theme-global`}>
+            <InitingDataMask />
+            <AppUI>
+                <SideNav />
+                <CenterArea />
+                <SideBar />
+            </AppUI>
+            {/* <SocketClientBtn/>
+            <SocketServerBtn/> */}
+        </AppContainer>
     );
 };
 
