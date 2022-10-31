@@ -11,7 +11,7 @@
 .grey-theme-global .ͼo.cm-focused .cm-selectionBackground, 
 .ͼo .cm-selectionBackground, 
 .ͼo .cm-content ::selection {
-    background-color: #3f4859 !important;
+    background-color: #3f4859;
 }
 
 /* #657b83 */
@@ -103,9 +103,6 @@
 .grey-theme-global .hljs-meta,
 .hljs-meta .hljs-keyword,
 .hljs-meta .hljs-string {
-    color: #6a8759;
-}
-.grey-theme-global .ͼ13 {
     color: #6a8759;
 }
 

@@ -95,6 +95,15 @@
     margin-block-end: 1em !important;
 }
 
+.wn-theme-rd em {
+    margin: 0 4px;
+    font-weight: 500;
+}
+
+.wn-theme-rd strong {
+    margin: 0 4px;
+}
+
 .wn-theme-rd blockquote {
     margin-left: 1.3em !important;
 }

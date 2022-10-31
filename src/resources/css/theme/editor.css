@@ -24,9 +24,17 @@
     color: var(--editor-main-text-color) !important;
 }
 
+.wn-theme-cm .ͼ13 {
+    color: var(--render-code-text-color) !important;
+}
+
 .wn-theme-cm .ͼ11.ͼ13 {
     letter-spacing: 0.04em;
     color: var(--editor-htag-text-color) !important;
+}
+
+.wn-theme-cm .ͼy {
+    font-weight: 500;
 }
 
 /* gutter */

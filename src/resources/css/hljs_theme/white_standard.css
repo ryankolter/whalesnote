@@ -17,7 +17,7 @@
 .white-theme-global .ͼo.cm-focused .cm-selectionBackground, 
 .ͼo .cm-selectionBackground, 
 .ͼo .cm-content ::selection {
-    background-color: #c5c8c6 !important;
+    background-color: #c5c8c6;
 }
 
 
@@ -51,7 +51,7 @@
 .hljs-selector-tag,
 .hljs-template-variable,
 .hljs-variable {
-    color: #cc342b !important;
+    color: #cc342b;
 }
 .white-theme-global .ͼu,.ͼr {
     color: #cc342b;
@@ -104,12 +104,12 @@
 .hljs-code,
 .hljs-string,
 .hljs-title.class_.inherited__ {
-    color: #198844 !important;
+    color: #198844;
 }
 .white-theme-global .hljs-meta,
 .hljs-meta .hljs-keyword,
 .hljs-meta .hljs-string {
-    color: #198844!important;
+    color: #198844;
 }
 .white-theme-global .ͼ13 {
     color: #198844;
