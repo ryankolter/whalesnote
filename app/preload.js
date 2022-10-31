@@ -1,7 +1,5 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
-console.log('add preload.js');
-
 contextBridge.exposeInMainWorld('electronAPI', {
     checkFolderExist: (params) => ipcRenderer.invoke('operate:checkFolderExist', params),
     checkFileExist: (params) => ipcRenderer.invoke('operate:checkFileExist', params),
