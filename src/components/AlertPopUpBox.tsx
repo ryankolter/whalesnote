@@ -9,9 +9,9 @@ export const AlertPopUpBox: React.FC<{
     onKeyDown: (e: Event) => void;
 }> = ({ title, content, onCancel, onConfirm, onKeyDown }) => {
     useEffect(() => {
-        document.addEventListener('keydown', onKeyDown);
+        document.addEventListener('keydown', onKeyDown, true);
         return () => {
-            document.removeEventListener('keydown', onKeyDown);
+            document.removeEventListener('keydown', onKeyDown, true);
         };
     }, [onKeyDown]);
 

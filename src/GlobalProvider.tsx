@@ -192,18 +192,7 @@ export const GlobalProvider = ({ children }: { children: any }) => {
         setSwitchingData,
     ] = useData();
     const [dataPathList, addDataPathToList, removeDataPathFromList] = useDataList();
-    const [
-        history,
-        {
-            initHistory,
-            switchRepo,
-            switchFolder,
-            switchNote,
-            currentRepoKey,
-            currentFolderKey,
-            currentNoteKey,
-        },
-    ] = useHistory();
+    const [history, { initHistory, switchRepo, switchFolder, switchNote }] = useHistory();
     const [
         whalenote,
         {
@@ -252,6 +241,29 @@ export const GlobalProvider = ({ children }: { children: any }) => {
             setPlatformName(await window.electronAPI.getPlatform());
         })();
     }, []);
+
+    useEffect(() => {
+        console.log(history);
+    }, [history]);
+
+    const currentRepoKey = useMemo(() => {
+        const cur_repo_key = history.cur_repo_key;
+        console.log('cur_repo_key: ' + cur_repo_key);
+        return history.cur_repo_key;
+    }, [history]);
+
+    const currentFolderKey = useMemo(() => {
+        const cur_folder_key = history.repos_record[history.cur_repo_key]?.cur_folder_key;
+        console.log('cur_folder_key: ' + cur_folder_key);
+        return cur_folder_key;
+    }, [history]);
+
+    const currentNoteKey = useMemo(() => {
+        const cur_folder_key = history.repos_record[history.cur_repo_key]?.cur_folder_key;
+        const cur_note_key = history.repos_record[history.cur_repo_key]?.folders[cur_folder_key];
+        console.log('cur_note_key: ' + cur_note_key);
+        return cur_note_key;
+    }, [history]);
 
     const repoSwitch = useCallback(
         async (repo_key: string | undefined) => {

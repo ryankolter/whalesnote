@@ -1,4 +1,4 @@
-import { MutableRefObject, useCallback, useEffect, useRef } from 'react';
+import { MutableRefObject, useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { basicSetup } from 'codemirror';
 import { EditorState, StateEffect } from '@codemirror/state';
@@ -31,21 +31,29 @@ const useCodeMirror = <T extends Element>({
         },
     });
 
-    const updateListener = EditorView.updateListener.of((vu: ViewUpdate) => {
-        if (vu.docChanged && onDocChange && typeof onDocChange === 'function') {
-            if (!forbidUpdate.current) {
-                const doc = vu.state.doc;
-                const value = doc.toString();
-                onDocChange(value, vu);
-            }
-        }
-    });
+    const docUpdateListener = useMemo(
+        () =>
+            EditorView.updateListener.of((vu: ViewUpdate) => {
+                if (vu.docChanged && onDocChange && typeof onDocChange === 'function') {
+                    if (!forbidUpdate.current) {
+                        const doc = vu.state.doc;
+                        const value = doc.toString();
+                        onDocChange(value, vu);
+                    }
+                }
+            }),
+        [onDocChange]
+    );
 
-    const cursorActiveListener = EditorView.updateListener.of((vu: ViewUpdate) => {
-        if (vu.selectionSet && onSelectionSet && typeof onSelectionSet === 'function') {
-            onSelectionSet(vu);
-        }
-    });
+    const cursorActiveListener = useMemo(
+        () =>
+            EditorView.updateListener.of((vu: ViewUpdate) => {
+                if (vu.selectionSet && onSelectionSet && typeof onSelectionSet === 'function') {
+                    onSelectionSet(vu);
+                }
+            }),
+        [onSelectionSet]
+    );
 
     const myCompletions = useCallback((CompletionContext: any) => {
         const word = CompletionContext.matchBefore(/\s*```[a-z]*/);
@@ -116,7 +124,8 @@ const useCodeMirror = <T extends Element>({
 
     const getExtensions = [
         basicSetup,
-        updateListener,
+        docUpdateListener,
+        cursorActiveListener,
         defaultThemeOption,
         keymap.of([indentWithTab]),
         EditorView.lineWrapping,
@@ -135,7 +144,7 @@ const useCodeMirror = <T extends Element>({
         if (editor.current) {
             const defaultState = EditorState.create({
                 doc: value,
-                extensions: [...getExtensions, cursorActiveListener],
+                extensions: [...getExtensions],
             });
             view.current = new EditorView({
                 state: defaultState,
@@ -151,9 +160,9 @@ const useCodeMirror = <T extends Element>({
 
     useEffect(() => {
         view.current?.dispatch({
-            effects: StateEffect.reconfigure.of([...getExtensions, cursorActiveListener]),
+            effects: StateEffect.reconfigure.of([...getExtensions]),
         });
-    }, [onSelectionSet]);
+    }, [onDocChange, onSelectionSet]);
 
     useEffect(() => {
         forbidUpdate.current = true;
@@ -180,7 +189,6 @@ const useCodeMirror = <T extends Element>({
                 effects: StateEffect.reconfigure.of([
                     ...getExtensions,
                     EditorView.editable.of(true),
-                    cursorActiveListener,
                 ]),
             });
         }, 250);

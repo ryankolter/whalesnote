@@ -187,6 +187,7 @@ export const updateNote = (
 ) => {
     if (repo_key && folder_key && note_key) {
         notes[repo_key][folder_key][note_key] = new_note_str;
+        console.log(new_note_str);
         addSaveTask(data_path, repo_key, folder_key, note_key, 800);
     }
 };

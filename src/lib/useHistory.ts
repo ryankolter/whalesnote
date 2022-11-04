@@ -34,7 +34,9 @@ const historyReducer = produce((state: historyTypes, action: any) => {
                 if (!state.repos_record[action.repo_key]) {
                     state.repos_record[action.repo_key] = {
                         cur_folder_key: action.folder_key,
-                        folders: {},
+                        folders: {
+                            [action.folder_key]: action.note_key,
+                        },
                     };
                 } else {
                     state.repos_record[action.repo_key].folders[action.folder_key] =
@@ -154,25 +156,6 @@ const useHistory = () => {
         []
     );
 
-    const currentRepoKey = useMemo(() => {
-        const cur_repo_key = state.cur_repo_key;
-        console.log('cur_repo_key: ' + cur_repo_key);
-        return state.cur_repo_key;
-    }, [state]);
-
-    const currentFolderKey = useMemo(() => {
-        const cur_folder_key = state.repos_record[state.cur_repo_key]?.cur_folder_key;
-        console.log('cur_folder_key: ' + cur_folder_key);
-        return cur_folder_key;
-    }, [state]);
-
-    const currentNoteKey = useMemo(() => {
-        const cur_folder_key = state.repos_record[state.cur_repo_key]?.cur_folder_key;
-        const cur_note_key = state.repos_record[state.cur_repo_key]?.folders[cur_folder_key];
-        console.log('cur_note_key: ' + cur_note_key);
-        return cur_note_key;
-    }, [state]);
-
     return [
         state,
         {
@@ -180,9 +163,6 @@ const useHistory = () => {
             switchRepo,
             switchFolder,
             switchNote,
-            currentRepoKey,
-            currentFolderKey,
-            currentNoteKey,
         },
     ] as const;
 };

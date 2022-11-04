@@ -23,6 +23,17 @@
     --editor-main-bg-color: #2D3033;
     --editor-htag-text-color: #A9B7C6;
     --editor-lastpos-bg-color: #3A404C;
+    --editor-line-active-bg-color: #6699FF0B;
+    --editor-line-select-bg-color: #3F4859;
+    --editor-cursor-color: #528BFF;
+    
+    /* editor search */
+    --search-panel-bg-color: #21252B;
+    --search-panel-text-color: #ABB2BF;
+    --search-panel-button-border-color: #888888;
+    --search-panel-button-bg-start-color: #393939;
+    --search-panel-button-bg-end-color: #111111;
+    --search-panel-textfield-border-color: #555555;
 
     /* render */
     --render-main-bg-color: #2D3033;
@@ -88,6 +99,17 @@
     --editor-main-bg-color: #F7F7FA;
     --editor-htag-text-color: #000000;
     --editor-lastpos-bg-color: #F7F7FA;
+    --editor-line-active-bg-color: #6699FF0B;
+    --editor-line-select-bg-color: #3F4859;
+    --editor-cursor-color: #528BFF;
+    
+    /* editor search */
+    --search-panel-bg-color: #21252B;
+    --search-panel-text-color: #ABB2BF;
+    --search-panel-button-border-color: #888888;
+    --search-panel-button-bg-start-color: #393939;
+    --search-panel-button-bg-end-color: #111111;
+    --search-panel-textfield-border-color: #555555;
 
     /* render */
     --render-main-bg-color: #FAFAFC;

@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import styled from '@emotion/styled';
 
 import { GlobalContext } from './GlobalProvider';
-import InitingDataMask from './main/Mask/InitingDataMask';
+import WaitingMask from './components/WaitingMask';
 import SideNav from './main/SideNav';
 import CenterArea from './main/CenterArea';
 import SideBar from './main/SideBar';
@@ -11,11 +11,11 @@ import SocketServerBtn from './components/socketServerBtn';
 import SocketClientBtn from './socketClientBtn';
 
 const App = () => {
-    const { theme } = useContext(GlobalContext);
+    const { theme, initingData } = useContext(GlobalContext);
 
     return (
         <AppContainer className={`${theme}-theme-global`}>
-            <InitingDataMask />
+            <WaitingMask in={initingData} timeout={300}></WaitingMask>
             <AppUI>
                 <SideNav />
                 <CenterArea />

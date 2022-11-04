@@ -11,7 +11,10 @@ const whalenoteReducer = produce((state: whalenoteObjType, action: any) => {
 
         case 'new_repo': {
             state.repos_key = [...state.repos_key, action.repo_key];
-            state.repos_obj[action.repo_key] = action.repo_info;
+            state.repos_obj[action.repo_key] = {
+                ...action.repo_info,
+                folders_obj: {},
+            };
             return state;
         }
         case 'rename_repo': {
@@ -121,7 +124,6 @@ const useWhalenote = () => {
             const repo_info = {
                 repo_name: repo_name,
                 folders_key: [],
-                folders_obj: {},
             };
             await window.electronAPI.writeJson({
                 file_path: `${cur_data_path}/${repo_key}/repo_info.json`,

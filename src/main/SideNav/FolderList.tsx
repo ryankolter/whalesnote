@@ -53,6 +53,7 @@ const FolderList: React.FC<{
     const [activeId, setActiveId] = useState(null);
     const [newFolderKey, setNewFolderKey] = useState('');
     const [newFolderName, setNewFolderName] = useState('');
+    const allowNewFolder = useRef(true);
 
     const [curFolderName, setCurFolderName] = useState('');
 
@@ -83,6 +84,8 @@ const FolderList: React.FC<{
                 setNewFolderName('');
                 return;
             }
+            if (!allowNewFolder.current) return;
+            allowNewFolder.current = false;
 
             if (!currentRepoKey) return;
 
@@ -139,6 +142,7 @@ const FolderList: React.FC<{
                     })
                 );
             }, 0);
+            allowNewFolder.current = true;
         },
         [
             curDataPath,
@@ -149,6 +153,19 @@ const FolderList: React.FC<{
             repoSwitch,
             setFocus,
         ]
+    );
+
+    const handleNewFolderKeyDown = useCallback(
+        (e: React.KeyboardEvent) => {
+            e.stopPropagation();
+            if (e.key === 'Escape') {
+                setNewFolderKey('');
+                setNewFolderName('');
+            } else if (e.key === 'Enter') {
+                newFolderConfirm(e, newFolderKey);
+            }
+        },
+        [setNewFolderKey, setNewFolderName, newFolderConfirm]
     );
 
     // part2 : rename folder
@@ -475,11 +492,7 @@ const FolderList: React.FC<{
                                     onChange={(e: any) => {
                                         setNewFolderName(e.target.value);
                                     }}
-                                    onKeyDown={(e: any) => {
-                                        if (e.key === 'Enter') {
-                                            newFolderConfirm(e, newFolderKey);
-                                        }
-                                    }}
+                                    onKeyDown={handleNewFolderKeyDown}
                                 />
                             ) : (
                                 <div></div>

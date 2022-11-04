@@ -42,6 +42,7 @@ const RepoPanel: React.FC<{
     const [newRepoKey, setNewRepoKey] = useState('');
     const [newRepoName, setNewRepoName] = useState('');
     const [curRepoName, setCurRepoName] = useState('');
+    const allowNewRepo = useRef(true);
     const [repoScrollPage, setRepoScrollPage] = useState(() => {
         let page = 0;
         whalenote.repos_key
@@ -104,6 +105,9 @@ const RepoPanel: React.FC<{
                 return;
             }
 
+            if (!allowNewRepo.current) return;
+            allowNewRepo.current = false;
+
             const default_folder_key = cryptoRandomString({
                 length: 12,
                 type: 'alphanumeric',
@@ -131,9 +135,11 @@ const RepoPanel: React.FC<{
                 note_key: default_note_key,
             });
 
-            await repoSwitchInPanel(repo_key);
-            await folderSwitch(repo_key, default_folder_key);
-            await noteSwitch(repo_key, default_folder_key, default_note_key);
+            setTimeout(() => {
+                repoSwitchInPanel(repo_key);
+                folderSwitch(repo_key, default_folder_key);
+                noteSwitch(repo_key, default_folder_key, default_note_key);
+            }, 0);
 
             setNewRepoKey('');
             setNewRepoName('');
@@ -150,7 +156,8 @@ const RepoPanel: React.FC<{
                         type: 'alphanumeric',
                     })
                 );
-            }, 0);
+            }, 500);
+            allowNewRepo.current = true;
         },
         [
             curDataPath,
@@ -240,6 +247,7 @@ const RepoPanel: React.FC<{
 
     const handleDeleteRepoKeyDown = useCallback(
         (e: any) => {
+            console.log(e.target);
             e.stopPropagation();
             if (e.key === 'Escape') {
                 setDeletePopUp(false);
@@ -311,6 +319,10 @@ const RepoPanel: React.FC<{
                 // arrow left 37 change to J 74
                 if ((e.keyCode === 37 || e.keyCode === 74) && !modKey) {
                     preRepoPage();
+                }
+
+                if (e.key === 'Enter') {
+                    setShowAllRepo(false);
                 }
             }
         },

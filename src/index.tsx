@@ -6,8 +6,8 @@ import './resources/css/theme/global.scss';
 import './resources/css/theme/editor.css';
 import './resources/css/theme/render.css';
 
-import './resources/css/hljs_theme/white_standard.css';
-import './resources/css/hljs_theme/grey_standard.css';
+import './resources/css/hljs_theme/white_standard.scss';
+import './resources/css/hljs_theme/grey_standard.scss';
 
 import App from './App';
 import reportWebVitals from './reportWebVitals';
@@ -23,4 +23,4 @@ root.render(
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+// reportWebVitals();

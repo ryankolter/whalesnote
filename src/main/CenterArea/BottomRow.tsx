@@ -55,10 +55,6 @@ const BottomRow: React.FC<{
                     }
                 }
 
-                if (e.key === 'Enter') {
-                    setShowAllRepo(false);
-                }
-
                 // esc
                 if (e.key === 'Escape') {
                     if (keySelect) {

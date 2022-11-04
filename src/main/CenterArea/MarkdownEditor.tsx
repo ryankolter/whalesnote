@@ -20,6 +20,7 @@ export const MarkdownEditor: React.FC<{
     setEditorScrollRatio,
     setRenderNoteStr,
 }) => {
+    console.log('editor render');
     const {
         curDataPath,
         currentRepoKey,
@@ -69,7 +70,17 @@ export const MarkdownEditor: React.FC<{
 
     const onDocChange = useCallback(
         async (new_value: string, viewUpdate: ViewUpdate) => {
-            updateNote(curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, new_value);
+            console.log(new_value);
+            console.log(currentRepoKey);
+            console.log(currentFolderKey);
+            console.log(currentNoteKey);
+            await updateNote(
+                curDataPath,
+                currentRepoKey,
+                currentFolderKey,
+                currentNoteKey,
+                new_value
+            );
             setRenderNoteStr(new_value);
             const doc = view.current?.state.doc;
             if (doc) {
