@@ -70,10 +70,6 @@ export const MarkdownEditor: React.FC<{
 
     const onDocChange = useCallback(
         async (new_value: string, viewUpdate: ViewUpdate) => {
-            console.log(new_value);
-            console.log(currentRepoKey);
-            console.log(currentFolderKey);
-            console.log(currentNoteKey);
             await updateNote(
                 curDataPath,
                 currentRepoKey,
