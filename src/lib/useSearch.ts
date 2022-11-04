@@ -12,7 +12,7 @@ const useSearch = () => {
     const [showWaitingMask, setShowWaitingMask] = useState(false);
 
     useEffect(() => {
-        (async function func() {
+        (async () => {
             if (curDataPath) {
                 const search = await window.electronAPI.readJson({
                     file_path: `${curDataPath}/search.json`,

@@ -43,7 +43,7 @@ const useDataList = () => {
     );
 
     useEffect(() => {
-        (async function func() {
+        (async () => {
             let data_path_list: string[] = [];
             try {
                 data_path_list = JSON.parse(

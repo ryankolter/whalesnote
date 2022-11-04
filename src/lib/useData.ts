@@ -190,7 +190,7 @@ const useData = () => {
     }, []);
 
     useEffect(() => {
-        (async function func() {
+        (async () => {
             let init_data_path = window.localStorage.getItem('whalenote_current_data_path') || '';
             if (
                 !init_data_path ||
@@ -206,7 +206,7 @@ const useData = () => {
     }, []);
 
     useEffect(() => {
-        (async function func() {
+        (async () => {
             const startTimeStamp = new Date().getTime();
             if (
                 curDataPath &&

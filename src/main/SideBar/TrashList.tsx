@@ -38,7 +38,7 @@ const TrashList: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssista
     }, [curDataPath, setCurTrashKey]);
 
     useEffect(() => {
-        (async function func() {
+        (async () => {
             const read_trash = await window.electronAPI.readCson({
                 file_path: `${curDataPath}/trash.cson`,
             });

@@ -64,11 +64,9 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
         async (id: string) => {
             setShowResultHighlight(true);
             const arr = id.split('-');
-            (async function func() {
-                await repoSwitch(arr[0]);
-                await folderSwitch(arr[0], arr[1]);
-                await noteSwitch(arr[0], arr[1], arr[2]);
-            })();
+            await repoSwitch(arr[0]);
+            await folderSwitch(arr[0], arr[1]);
+            await noteSwitch(arr[0], arr[1], arr[2]);
         },
         [setShowResultHighlight, repoSwitch, folderSwitch, noteSwitch]
     );
