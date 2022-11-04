@@ -34,7 +34,7 @@ import { notes } from '../../lib/notes';
 
 export const MarkdownRender: React.FC<{
     editorScrollRatio: number;
-    renderPanelState: string;
+    mdRenderState: string;
     cursorInRender: boolean;
     renderNoteStr: string;
     setCursorInRender: React.Dispatch<React.SetStateAction<boolean>>;
@@ -48,7 +48,7 @@ export const MarkdownRender: React.FC<{
     ) => void;
 }> = ({
     editorScrollRatio,
-    renderPanelState,
+    mdRenderState,
     cursorInRender,
     renderNoteStr,
     setCursorInRender,
@@ -147,8 +147,9 @@ export const MarkdownRender: React.FC<{
                 },
             })
             .use(markwodnItReplaceLink, {
-                replaceLink: function (link: string, env: string) {
-                    return curDataPath + '/images/' + link;
+                replaceLink: function (link: string, env: string, token: any) {
+                    if (token.type === 'image') return curDataPath + '/images/' + link;
+                    else return link;
                 },
             })
             .use(implicitFigures, {
@@ -391,7 +392,7 @@ export const MarkdownRender: React.FC<{
     const handleKeyDown = useCallback(
         async (e: any) => {
             if (platformName === 'darwin') {
-                if (e.keyCode === 74 && e.metaKey && !e.shiftKey && renderPanelState === 'all') {
+                if (e.keyCode === 74 && e.metaKey && !e.shiftKey && mdRenderState === 'all') {
                     autoScrollToLine();
                 }
                 if (e.key === '.' && e.metaKey && !e.shiftKey) {
@@ -399,7 +400,7 @@ export const MarkdownRender: React.FC<{
                 }
             }
             if (platformName === 'win32' || platformName === 'linux') {
-                if (e.keyCode === 74 && e.crtlKey && !e.shiftKey && renderPanelState === 'all') {
+                if (e.keyCode === 74 && e.crtlKey && !e.shiftKey && mdRenderState === 'all') {
                     autoScrollToLine();
                 }
                 if (e.key === '.' && e.crtlKey && !e.shiftKey) {
@@ -407,7 +408,7 @@ export const MarkdownRender: React.FC<{
                 }
             }
         },
-        [renderPanelState, autoScrollToLine, setShowTocFlag]
+        [mdRenderState, autoScrollToLine, setShowTocFlag]
     );
 
     const handleScroll = useCallback(
@@ -484,7 +485,7 @@ export const MarkdownRender: React.FC<{
 
     return (
         <MarkdownRenderContainer ref={renderContainerRef} fontSizeValue={renderFontSize}>
-            {showRenderScrollPos && renderPanelState === 'all' ? (
+            {showRenderScrollPos && mdRenderState === 'all' ? (
                 <LastScrollPos onClick={autoScrollToLine}>上次在</LastScrollPos>
             ) : (
                 <></>
@@ -494,7 +495,7 @@ export const MarkdownRender: React.FC<{
                 className={'wn-theme-rd'}
                 style={{
                     overflowX: 'hidden',
-                    scrollBehavior: renderPanelState === 'all' ? 'auto' : 'smooth',
+                    scrollBehavior: mdRenderState === 'all' ? 'auto' : 'smooth',
                 }}
                 dangerouslySetInnerHTML={{ __html: result }}
             ></div>

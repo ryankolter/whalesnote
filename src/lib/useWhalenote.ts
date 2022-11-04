@@ -11,12 +11,7 @@ const whalenoteReducer = produce((state: whalenoteObjType, action: any) => {
 
         case 'new_repo': {
             state.repos_key = [...state.repos_key, action.repo_key];
-            state.repos_obj[action.repo_key] = {
-                ...action.repo_info,
-                folders_obj: {
-                    [action.default_folder_key]: action.folder_info,
-                },
-            };
+            state.repos_obj[action.repo_key] = action.repo_info;
             return state;
         }
         case 'rename_repo': {
@@ -113,13 +108,7 @@ const useWhalenote = () => {
     );
 
     const newRepo = useCallback(
-        async (
-            cur_data_path: string,
-            repo_key: string,
-            repo_name: string,
-            default_folder_key: string,
-            default_note_key: string
-        ) => {
+        async (cur_data_path: string, repo_key: string, repo_name: string) => {
             const whalenote_info = await window.electronAPI.readJson({
                 file_path: `${cur_data_path}/whalenote_info.json`,
             });
@@ -131,34 +120,18 @@ const useWhalenote = () => {
 
             const repo_info = {
                 repo_name: repo_name,
-                folders_key: [default_folder_key],
+                folders_key: [],
+                folders_obj: {},
             };
             await window.electronAPI.writeJson({
                 file_path: `${cur_data_path}/${repo_key}/repo_info.json`,
                 obj: repo_info,
             });
 
-            // default folder
-            const folder_info = {
-                folder_name: '默认分类',
-                notes_key: [default_note_key],
-                notes_obj: {
-                    [default_note_key]: {
-                        title: '新建文档',
-                    },
-                },
-            };
-            await window.electronAPI.writeJson({
-                file_path: `${cur_data_path}/${repo_key}/${default_folder_key}/folder_info.json`,
-                obj: folder_info,
-            });
-
             dispatch({
                 type: 'new_repo',
                 repo_info,
-                folder_info,
                 repo_key,
-                default_folder_key,
             });
         },
         []
@@ -207,16 +180,14 @@ const useWhalenote = () => {
     );
 
     const deleteRepo = useCallback(async (cur_data_path: string, repo_key: string) => {
-        const repo_info = await window.electronAPI.readJson({
-            file_path: `${cur_data_path}/${repo_key}/repo_info.json`,
-        });
-
         let trash = await window.electronAPI.readCson({
             file_path: `${cur_data_path}/trash.cson`,
         });
-
         trash = trash ? trash : {};
 
+        const repo_info = await window.electronAPI.readJson({
+            file_path: `${cur_data_path}/${repo_key}/repo_info.json`,
+        });
         for (const folder_key of repo_info.folders_key) {
             const folder_info = await window.electronAPI.readJson({
                 file_path: `${cur_data_path}/${repo_key}/${folder_key}/folder_info.json`,
@@ -231,7 +202,6 @@ const useWhalenote = () => {
                 ] = note_info.content;
             }
         }
-
         await window.electronAPI.writeCson({
             file_path: `${cur_data_path}/trash.cson`,
             obj: trash,
@@ -240,10 +210,8 @@ const useWhalenote = () => {
         const whalenote_info = await window.electronAPI.readJson({
             file_path: `${cur_data_path}/whalenote_info.json`,
         });
-
         const remain_repos_key: string[] = [];
         let other_repo_key = undefined;
-
         whalenote_info.repos_key.forEach((key: string, index: number) => {
             if (key === repo_key) {
                 if (whalenote_info.repos_key.length > 1) {
@@ -257,15 +225,21 @@ const useWhalenote = () => {
                 remain_repos_key.push(key);
             }
         });
-
         whalenote_info.repos_key = remain_repos_key;
-        if (whalenote_info.whalenote[repo_key]) {
-            delete whalenote_info.whalenote[repo_key];
-        }
-
         await window.electronAPI.writeJson({
             file_path: `${cur_data_path}/whalenote_info.json`,
             obj: whalenote_info,
+        });
+
+        const history_info = await window.electronAPI.readJson({
+            file_path: `${cur_data_path}/history_info.json`,
+        });
+        if (history_info.repos_record[repo_key]) {
+            delete history_info.repos_record[repo_key];
+        }
+        await window.electronAPI.writeJson({
+            file_path: `${cur_data_path}/history_info.json`,
+            obj: history_info,
         });
 
         await window.electronAPI.remove({
@@ -286,8 +260,7 @@ const useWhalenote = () => {
             cur_data_path: string,
             repo_key: string,
             new_folder_key: string,
-            new_folder_name: string,
-            new_note_key: string
+            new_folder_name: string
         ) => {
             const repo_info = await window.electronAPI.readJson({
                 file_path: `${cur_data_path}/${repo_key}/repo_info.json`,
@@ -300,14 +273,9 @@ const useWhalenote = () => {
 
             const folder_info = {
                 folder_name: new_folder_name,
-                notes_key: [new_note_key],
-                notes_obj: {
-                    [new_note_key]: {
-                        title: '新建文档',
-                    },
-                },
+                notes_key: [],
+                notes_obj: {},
             };
-
             await window.electronAPI.writeJson({
                 file_path: `${cur_data_path}/${repo_key}/${new_folder_key}/folder_info.json`,
                 obj: folder_info,

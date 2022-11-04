@@ -35,12 +35,18 @@ const NoteList: React.FC<{
     } = useContext(GlobalContext);
 
     const notes_key = useMemo(() => {
-        return whalenote.repos_obj
+        return whalenote.repos_obj &&
+            whalenote.repos_key.length > 0 &&
+            whalenote.repos_obj[currentRepoKey]?.folders_obj &&
+            whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_key
             ? whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_key
             : undefined;
     }, [whalenote, currentRepoKey, currentFolderKey]);
     const notes_obj = useMemo(() => {
-        return whalenote.repos_obj
+        return whalenote.repos_obj &&
+            whalenote.repos_key.length > 0 &&
+            whalenote.repos_obj[currentRepoKey]?.folders_obj &&
+            whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj
             ? whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj
             : undefined;
     }, [whalenote, currentRepoKey, currentFolderKey]);

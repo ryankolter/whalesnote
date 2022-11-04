@@ -64,12 +64,17 @@ const ImageSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssist
         );
     }, []);
 
-    const copyImageMdLink = useCallback((file_name: string) => {
+    const copyImageMdLink = useCallback(async (file_name: string) => {
         const md_link = `![w500](${file_name} "${file_name.substring(
             0,
             file_name.lastIndexOf('.')
         )}")`;
-        navigator.clipboard.writeText(md_link);
+        try {
+            await navigator.clipboard.writeText(md_link);
+            console.log('success');
+        } catch (err) {
+            console.log(err);
+        }
     }, []);
 
     const handleLoadImage = useCallback(async (e: MouseEvent<HTMLSpanElement>) => {
@@ -143,9 +148,9 @@ const ImageSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssist
             });
 
             if (result) {
+                await copyImageMdLink(dest_file_name);
                 setLoadSuccessCount(1);
                 setLoadImageStatus('success');
-                copyImageMdLink(dest_file_name);
             } else {
                 setLoadSuccessCount(0);
                 setLoadFailCount(1);

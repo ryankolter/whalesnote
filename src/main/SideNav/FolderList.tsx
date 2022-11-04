@@ -29,6 +29,7 @@ const FolderList: React.FC<{
         noteSwitch,
         whalenote,
         newFolder,
+        newNote,
         renameFolder,
         deleteFolder,
         currentRepoKey,
@@ -90,15 +91,23 @@ const FolderList: React.FC<{
                 type: 'alphanumeric',
             });
 
-            await newFolder(curDataPath, currentRepoKey, folder_key, e.target.value, note_key);
-
+            await newFolder(curDataPath, currentRepoKey, folder_key, e.target.value);
             await changeNotesAfterNew('folder', {
                 data_path: curDataPath,
                 repo_key: currentRepoKey,
                 folder_key,
             });
 
+            await newNote(curDataPath, currentRepoKey, folder_key, note_key, '新建文档');
+            await changeNotesAfterNew('note', {
+                data_path: curDataPath,
+                repo_key: currentRepoKey,
+                folder_key,
+                note_key,
+            });
+
             await folderSwitch(currentRepoKey, folder_key);
+            await noteSwitch(currentRepoKey, folder_key, note_key);
 
             const note_info = {
                 createAt: new Date(),

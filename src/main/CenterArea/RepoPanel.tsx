@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 import cryptoRandomString from 'crypto-random-string';
@@ -14,22 +14,21 @@ import { usePopUp } from '../../lib/usePopUp';
 import useContextMenu from '../../lib/useContextMenu';
 
 const RepoPanel: React.FC<{
-    repos_key: string[] | undefined;
-    showAllRepo: boolean;
     setShowAllRepo: React.Dispatch<React.SetStateAction<boolean>>;
-    setAllowHiddenAllRepoViaEnter: React.Dispatch<React.SetStateAction<boolean>>;
-}> = ({ repos_key, showAllRepo, setShowAllRepo, setAllowHiddenAllRepoViaEnter }) => {
+}> = ({ setShowAllRepo }) => {
     const {
         curDataPath,
-        reorderRepo,
+        currentRepoKey,
+        currentFolderKey,
         repoSwitch,
         folderSwitch,
         noteSwitch,
-        currentRepoKey,
-        currentFolderKey,
         whalenote,
         newRepo,
+        newFolder,
+        newNote,
         renameRepo,
+        reorderRepo,
         deleteRepo,
         changeNotesAfterNew,
         numArray,
@@ -42,40 +41,29 @@ const RepoPanel: React.FC<{
     const [activeId, setActiveId] = useState<string>('');
     const [newRepoKey, setNewRepoKey] = useState('');
     const [newRepoName, setNewRepoName] = useState('');
-
     const [curRepoName, setCurRepoName] = useState('');
-
-    const sensors = useSensors(useSensor(MouseSensor, { activationConstraint: { distance: 5 } }));
-
     const [repoScrollPage, setRepoScrollPage] = useState(() => {
         let page = 0;
-        repos_key
-            ?.filter((key) => whalenote && whalenote.repos_obj && whalenote.repos_obj[key])
+        whalenote.repos_key
+            .filter((key) => whalenote && whalenote.repos_obj && whalenote.repos_obj[key])
             .forEach((key, index) => {
                 if (key === currentRepoKey) page = Math.floor(index / 9.0);
             });
         return page;
     });
-
+    const [renamePopup, setRenamePopUp, renameMask] = usePopUp(500);
     const [deletePopup, setDeletePopUp, deleteMask] = usePopUp(500);
 
-    const [renamePopup, setRenamePopUp, renameMask] = usePopUp(500);
-
+    const repoScrollRef = useRef<HTMLDivElement>(null);
     const outerRef = useRef(null);
     const { xPos, yPos, menu } = useContextMenu(outerRef);
-    const [folderMenu, setFolderMenu] = useState(false);
+    const sensors = useSensors(useSensor(MouseSensor, { activationConstraint: { distance: 5 } }));
 
-    const repoScrollRef = useRef<HTMLDivElement>(null);
-
-    const closeRepoList = useCallback(() => {
-        setShowAllRepo(false);
-    }, [keySelect, setKeySelect, setShowAllRepo]);
-
-    const handleKeySelectShow = useCallback(() => {
+    useEffect(() => {
         if (keySelect) {
             let page = 0;
-            repos_key
-                ?.filter((key) => whalenote && whalenote.repos_obj && whalenote.repos_obj[key])
+            whalenote.repos_key
+                .filter((key) => whalenote && whalenote.repos_obj && whalenote.repos_obj[key])
                 .forEach((key, index) => {
                     if (key === currentRepoKey) page = Math.floor(index / 9.0);
                 });
@@ -84,35 +72,28 @@ const RepoPanel: React.FC<{
                     Math.floor(page / 5.0) * repoScrollRef.current.offsetWidth;
             }
         }
-    }, [keySelect, whalenote, currentRepoKey, repos_key]);
-
-    useEffect(() => {
-        if (showAllRepo) {
-            handleKeySelectShow();
-        }
-    }, [showAllRepo, handleKeySelectShow]);
+    }, []);
 
     //part1: switch repo in panel
     const repoSwitchInPanel = useCallback(
         async (repo_key: string) => {
             await repoSwitch(repo_key);
-            repos_key
-                ?.filter((key) => whalenote && whalenote.repos_obj && whalenote.repos_obj[key])
+            whalenote.repos_key
+                .filter((key) => whalenote && whalenote.repos_obj && whalenote.repos_obj[key])
                 .forEach((key, index) => {
                     if (key === repo_key) setRepoScrollPage(Math.floor(index / 9.0));
                 });
         },
-        [curDataPath, repos_key, repoSwitch]
+        [whalenote, repoSwitch]
     );
 
     // part2 : new repo
-    const handleNewRepo = () => {
+    const handleAddRepoBtnClick = () => {
         const repo_key = cryptoRandomString({
             length: 12,
             type: 'alphanumeric',
         });
         setNewRepoKey(repo_key);
-        setAllowHiddenAllRepoViaEnter(false);
     };
 
     const newRepoSubmit = useCallback(
@@ -127,27 +108,37 @@ const RepoPanel: React.FC<{
                 length: 12,
                 type: 'alphanumeric',
             });
-
             const default_note_key = cryptoRandomString({
                 length: 12,
                 type: 'alphanumeric',
             });
 
-            newRepo(curDataPath, repo_key, e.target.value, default_folder_key, default_note_key);
+            await newRepo(curDataPath, repo_key, e.target.value);
             await changeNotesAfterNew('repo', { data_path: curDataPath, repo_key });
+
+            await newFolder(curDataPath, repo_key, default_folder_key, '默认分类');
             await changeNotesAfterNew('folder', {
                 data_path: curDataPath,
                 repo_key,
                 folder_key: default_folder_key,
             });
-            setNewRepoKey('');
-            setNewRepoName('');
-            repoSwitchInPanel(repo_key);
-            setRepoScrollPage(Math.ceil(whalenote.repos_key.length / 9) - 1);
-            await repoSwitch(repo_key);
+
+            await newNote(curDataPath, repo_key, default_folder_key, default_note_key, '新建文档');
+            await changeNotesAfterNew('note', {
+                data_path: curDataPath,
+                repo_key,
+                folder_key: default_folder_key,
+                note_key: default_note_key,
+            });
+
+            await repoSwitchInPanel(repo_key);
             await folderSwitch(repo_key, default_folder_key);
             await noteSwitch(repo_key, default_folder_key, default_note_key);
-            setAllowHiddenAllRepoViaEnter(true);
+
+            setNewRepoKey('');
+            setNewRepoName('');
+
+            setRepoScrollPage(Math.ceil(whalenote.repos_key.length / 9) - 1);
             if (repoScrollRef && repoScrollRef.current) {
                 repoScrollRef.current.scrollLeft = repoScrollRef.current.scrollWidth;
             }
@@ -164,12 +155,28 @@ const RepoPanel: React.FC<{
         [
             curDataPath,
             changeNotesAfterNew,
-            folderSwitch,
             repoSwitchInPanel,
+            folderSwitch,
+            noteSwitch,
             repoScrollRef,
-            setAllowHiddenAllRepoViaEnter,
             setFocus,
+            newRepo,
+            newFolder,
+            newNote,
         ]
+    );
+
+    const handleNewRepoKeyDown = useCallback(
+        (e: React.KeyboardEvent) => {
+            e.stopPropagation();
+            if (e.key === 'Escape') {
+                setNewRepoKey('');
+                setNewRepoName('');
+            } else if (e.key === 'Enter' && newRepoKey) {
+                newRepoSubmit(e, newRepoKey);
+            }
+        },
+        [setNewRepoKey, setNewRepoName, newRepoKey, newRepoSubmit]
     );
 
     // part3 : rename repo
@@ -186,26 +193,18 @@ const RepoPanel: React.FC<{
 
     const handleRenameRepo = () => {
         setRenamePopUp(true);
-        setAllowHiddenAllRepoViaEnter(false);
     };
 
     const renameRepoConfirm = useCallback(async () => {
         if (currentRepoKey) {
             await renameRepo(curDataPath, currentRepoKey, curRepoName);
             setRenamePopUp(false);
-            setAllowHiddenAllRepoViaEnter(true);
         }
-    }, [
-        curDataPath,
-        currentRepoKey,
-        curRepoName,
-        renameRepo,
-        setRenamePopUp,
-        setAllowHiddenAllRepoViaEnter,
-    ]);
+    }, [curDataPath, currentRepoKey, curRepoName, renameRepo, setRenamePopUp]);
 
     const handleRenameRepoKeyDown = useCallback(
-        (e: any) => {
+        (e: React.KeyboardEvent) => {
+            e.stopPropagation();
             if (e.key === 'Escape') {
                 setRenamePopUp(false);
                 setCurRepoName(
@@ -220,13 +219,12 @@ const RepoPanel: React.FC<{
                 renameRepoConfirm();
             }
         },
-        [setRenamePopUp, setCurRepoName, whalenote, currentRepoKey, renameRepoConfirm]
+        [setRenamePopUp, setCurRepoName, whalenote, currentRepoKey, newRepoKey, renameRepoConfirm]
     );
 
     // part4 : delete repo
     const handleDeleteRepo = () => {
         setDeletePopUp(true);
-        setAllowHiddenAllRepoViaEnter(false);
     };
 
     const deleteRepoConfirm = useCallback(async () => {
@@ -237,18 +235,12 @@ const RepoPanel: React.FC<{
             }
             setRepoScrollPage(Math.ceil(whalenote.repos_key.length / 9) - 1);
             setDeletePopUp(false);
-            setAllowHiddenAllRepoViaEnter(true);
         }
-    }, [
-        curDataPath,
-        currentRepoKey,
-        setDeletePopUp,
-        repoSwitchInPanel,
-        setAllowHiddenAllRepoViaEnter,
-    ]);
+    }, [curDataPath, currentRepoKey, setDeletePopUp, repoSwitchInPanel]);
 
     const handleDeleteRepoKeyDown = useCallback(
         (e: any) => {
+            e.stopPropagation();
             if (e.key === 'Escape') {
                 setDeletePopUp(false);
             } else if (e.key === 'Enter') {
@@ -269,8 +261,8 @@ const RepoPanel: React.FC<{
     }, [repoScrollPage]);
 
     const nextRepoPage = useCallback(() => {
-        if (repos_key && repos_key.length > 9) {
-            if (repoScrollPage <= (repos_key.length - 1) / 9.0 - 1) {
+        if (whalenote.repos_key && whalenote.repos_key.length > 9) {
+            if (repoScrollPage <= (whalenote.repos_key.length - 1) / 9.0 - 1) {
                 if (repoScrollRef && repoScrollRef.current) {
                     repoScrollRef.current.scrollLeft =
                         Math.floor((repoScrollPage + 1) / 5.0) * repoScrollRef.current.offsetWidth;
@@ -278,13 +270,13 @@ const RepoPanel: React.FC<{
                 setRepoScrollPage((repoScrollPage) => repoScrollPage + 1);
             }
         }
-    }, [repos_key, repoScrollPage]);
+    }, [whalenote, repoScrollPage]);
 
     useEffect(() => {
-        if (repos_key && repos_key.length <= 9) {
+        if (whalenote.repos_key && whalenote.repos_key.length <= 9) {
             setRepoScrollPage(0);
         }
-    }, [repos_key]);
+    }, [whalenote]);
 
     const handleKeyDown = useCallback(
         async (e: any) => {
@@ -295,8 +287,8 @@ const RepoPanel: React.FC<{
                 if (e.keyCode >= 49 && e.keyCode <= 57 && !modKey && numArray.length === 0) {
                     const num = parseInt(e.keyCode) - 48;
                     const index = num + 9 * repoScrollPage - 1;
-                    if (repos_key && index < repos_key.length) {
-                        repoSwitchInPanel(repos_key[index]);
+                    if (whalenote.repos_key && index < whalenote.repos_key.length) {
+                        repoSwitchInPanel(whalenote.repos_key[index]);
                         setKeySelect(true);
                     }
                 }
@@ -305,8 +297,8 @@ const RepoPanel: React.FC<{
                 if (e.keyCode >= 97 && e.keyCode <= 105 && !modKey && numArray.length === 0) {
                     const num = parseInt(e.keyCode) - 96;
                     const index = num + 9 * repoScrollPage - 1;
-                    if (repos_key && index < repos_key.length) {
-                        repoSwitchInPanel(repos_key[index]);
+                    if (whalenote.repos_key && index < whalenote.repos_key.length) {
+                        repoSwitchInPanel(whalenote.repos_key[index]);
                         setKeySelect(true);
                     }
                 }
@@ -323,7 +315,7 @@ const RepoPanel: React.FC<{
             }
         },
         [
-            repos_key,
+            whalenote,
             repoScrollPage,
             repoSwitchInPanel,
             nextRepoPage,
@@ -368,28 +360,33 @@ const RepoPanel: React.FC<{
 
             if (!over) return;
 
-            if (active.id !== over.id && repos_key && currentRepoKey && currentFolderKey) {
-                const oldIndex = repos_key.indexOf(active.id);
-                const newIndex = repos_key.indexOf(over.id);
-                const new_repos_key = arrayMove(repos_key, oldIndex, newIndex);
+            if (
+                active.id !== over.id &&
+                whalenote.repos_key &&
+                currentRepoKey &&
+                currentFolderKey
+            ) {
+                const oldIndex = whalenote.repos_key.indexOf(active.id);
+                const newIndex = whalenote.repos_key.indexOf(over.id);
+                const new_repos_key = arrayMove(whalenote.repos_key, oldIndex, newIndex);
                 reorderRepo(curDataPath, currentRepoKey, new_repos_key);
             }
         },
-        [curDataPath, currentRepoKey, currentFolderKey, repos_key, reorderRepo]
+        [curDataPath, currentRepoKey, currentFolderKey, whalenote, reorderRepo]
     );
 
     return (
         <RepoListContainer>
             <CloseRepoListBtn
                 onClick={() => {
-                    closeRepoList();
+                    setShowAllRepo(false);
                 }}
             >
                 x
             </CloseRepoListBtn>
             <ReposScroll ref={repoScrollRef}>
                 <Repos ref={outerRef}>
-                    {repos_key && whalenote ? (
+                    {whalenote.repos_key ? (
                         <DndContext
                             sensors={sensors}
                             // modifiers={[restrictToVerticalAxis, restrictToFirstScrollableAncestor]}
@@ -397,10 +394,10 @@ const RepoPanel: React.FC<{
                             onDragEnd={handleDragEnd}
                         >
                             <SortableContext
-                                items={repos_key}
+                                items={whalenote.repos_key}
                                 strategy={verticalListSortingStrategy}
                             >
-                                {repos_key
+                                {whalenote.repos_key
                                     .filter(
                                         (key) =>
                                             whalenote &&
@@ -531,7 +528,7 @@ const RepoPanel: React.FC<{
                                         }
                                         // }
                                     })}
-                                {menu && currentRepoKey && !folderMenu ? (
+                                {menu && currentRepoKey ? (
                                     <MenuUl top={yPos} left={xPos}>
                                         <MenuLi
                                             className="menu-li-color"
@@ -574,10 +571,9 @@ const RepoPanel: React.FC<{
                     )}
                     {curDataPath && !newRepoKey ? (
                         <RepoAdd>
-                            <RepoAddBtn onClick={handleNewRepo}>
+                            <RepoAddBtn onClick={handleAddRepoBtnClick}>
                                 +
-                                {repos_key &&
-                                repos_key.filter(
+                                {whalenote.repos_key.filter(
                                     (key) =>
                                         whalenote && whalenote.repos_obj && whalenote.repos_obj[key]
                                 ).length == 1 ? (
@@ -604,11 +600,7 @@ const RepoPanel: React.FC<{
                             onChange={(e: any) => {
                                 setNewRepoName(e.target.value);
                             }}
-                            onKeyDown={(e: any) => {
-                                if (e.key === 'Enter') {
-                                    newRepoSubmit(e, newRepoKey);
-                                }
-                            }}
+                            onKeyDown={handleNewRepoKeyDown}
                         />
                     ) : (
                         <div></div>

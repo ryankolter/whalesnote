@@ -27,13 +27,7 @@ const initContext: {
     removeDataPathFromList: (data_path: string) => void;
     whalenote: whalenoteObjType;
     initWhalenote: (newRepos: whalenoteObjType) => void;
-    newRepo: (
-        curDataPath: string,
-        repo_key: string,
-        repo_name: string,
-        default_folder_key: string,
-        default_note_key: string
-    ) => void;
+    newRepo: (curDataPath: string, repo_key: string, repo_name: string) => void;
     renameRepo: (curDataPath: string, repo_key: string, new_repo_name: string) => void;
     reorderRepo: (data_path: string, repo_key: string, new_repos_key: string[]) => void;
     deleteRepo: (curDataPath: string, repo_key: string) => any;
@@ -41,8 +35,7 @@ const initContext: {
         curDataPath: string,
         repo_key: string,
         new_folder_key: string,
-        new_folder_name: string,
-        new_note_key: string
+        new_folder_name: string
     ) => void;
     renameFolder: (
         curDataPath: string,
@@ -292,7 +285,10 @@ export const GlobalProvider = ({ children }: { children: any }) => {
             currentRepoKey &&
             currentFolderKey &&
             currentNoteKey &&
-            whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj[
+            whalenote.repos_key.length > 0 &&
+            whalenote.repos_obj[currentRepoKey]?.folders_obj &&
+            whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj &&
+            whalenote.repos_obj[currentRepoKey].folders_obj[currentFolderKey].notes_obj[
                 currentNoteKey
             ]?.title
                 ? whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj[

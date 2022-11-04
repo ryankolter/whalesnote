@@ -9,13 +9,13 @@ import { notes, updateNote } from '../../lib/notes';
 
 export const MarkdownEditor: React.FC<{
     cursorInRender: boolean;
-    renderPanelState: string;
+    mdRenderState: string;
     renderScrollRatio: number;
     setEditorScrollRatio: React.Dispatch<React.SetStateAction<number>>;
     setRenderNoteStr: React.Dispatch<React.SetStateAction<string>>;
 }> = ({
     cursorInRender,
-    renderPanelState,
+    mdRenderState,
     renderScrollRatio,
     setEditorScrollRatio,
     setRenderNoteStr,
@@ -231,17 +231,17 @@ export const MarkdownEditor: React.FC<{
     const handleKeyDown = useCallback(
         async (e: any) => {
             if (platformName === 'darwin') {
-                if (e.keyCode === 74 && e.metaKey && !e.shiftKey && renderPanelState !== 'all') {
+                if (e.keyCode === 74 && e.metaKey && !e.shiftKey && mdRenderState !== 'all') {
                     autoScrollToLine();
                 }
             }
             if (platformName === 'win32' || platformName === 'linux') {
-                if (e.keyCode === 74 && e.crtlKey && !e.shiftKey && renderPanelState !== 'all') {
+                if (e.keyCode === 74 && e.crtlKey && !e.shiftKey && mdRenderState !== 'all') {
                     autoScrollToLine();
                 }
             }
         },
-        [renderPanelState, autoScrollToLine]
+        [mdRenderState, autoScrollToLine]
     );
 
     const handleScroll = useCallback(
@@ -319,7 +319,7 @@ export const MarkdownEditor: React.FC<{
 
     return (
         <MarkdownEditorContainer ref={editorContainerRef} fontSizeValue={editorFontSize}>
-            {showEditorScrollPos && renderPanelState !== 'all' ? (
+            {showEditorScrollPos && mdRenderState !== 'all' ? (
                 <LastScrollPos onClick={autoScrollToLine}>上次在</LastScrollPos>
             ) : (
                 <></>
