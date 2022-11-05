@@ -165,7 +165,7 @@ const FolderList: React.FC<{
                 newFolderConfirm(e, newFolderKey);
             }
         },
-        [setNewFolderKey, setNewFolderName, newFolderConfirm]
+        [setNewFolderKey, setNewFolderName, newFolderConfirm, newFolderKey]
     );
 
     // part2 : rename folder

@@ -76,13 +76,6 @@ const NoteList: React.FC<{
         const new_note_title = '新建文档';
 
         await newNote(curDataPath, currentRepoKey, currentFolderKey, new_note_key, new_note_title);
-
-        await changeNotesAfterNew('note', {
-            data_path: curDataPath,
-            repo_key: currentRepoKey,
-            folder_key: currentFolderKey,
-            note_key: new_note_key,
-        });
         await noteSwitch(currentRepoKey, currentFolderKey, new_note_key);
         setTimeout(() => {
             setFocus(
@@ -94,7 +87,7 @@ const NoteList: React.FC<{
         }, 500);
         setTimeout(() => {
             scrollToBottom();
-        }, 0);
+        }, 50);
         setKeySelect(false);
     }, [
         curDataPath,

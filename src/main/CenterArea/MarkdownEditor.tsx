@@ -21,6 +21,7 @@ export const MarkdownEditor: React.FC<{
     setRenderNoteStr,
 }) => {
     console.log('editor render');
+
     const {
         curDataPath,
         currentRepoKey,
@@ -41,8 +42,8 @@ export const MarkdownEditor: React.FC<{
         currentNoteKey
     );
 
-    const initialNoteStr = useMemo(
-        () =>
+    useEffect(() => {
+        const str =
             currentRepoKey &&
             currentFolderKey &&
             currentNoteKey &&
@@ -50,13 +51,9 @@ export const MarkdownEditor: React.FC<{
             notes[currentRepoKey][currentFolderKey] &&
             notes[currentRepoKey][currentFolderKey][currentNoteKey]
                 ? notes[currentRepoKey][currentFolderKey][currentNoteKey]
-                : '',
-        [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey]
-    );
-
-    useEffect(() => {
-        setRenderNoteStr(initialNoteStr);
-    }, [initialNoteStr]);
+                : '';
+        setRenderNoteStr(str);
+    }, [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey]);
 
     const [showEditorScrollPos, setShowEditorScrollPos] = useState(false);
     const [cursorInEditor, setCursorInEditor] = useState(false);
@@ -103,11 +100,11 @@ export const MarkdownEditor: React.FC<{
     );
 
     const onSelectionSet = useCallback(
-        (vu: ViewUpdate) => {
+        async (vu: ViewUpdate) => {
             if (view.current) {
                 setKeySelect(false);
                 const cursorHeadPos = view.current.state.selection.main.head;
-                updateCursorHeadPos(
+                await updateCursorHeadPos(
                     currentRepoKey,
                     currentFolderKey,
                     currentNoteKey,
@@ -119,7 +116,10 @@ export const MarkdownEditor: React.FC<{
     );
 
     const [editor, view] = useCodeMirror<HTMLDivElement>({
-        value: initialNoteStr,
+        curDataPath,
+        currentRepoKey,
+        currentFolderKey,
+        currentNoteKey,
         onDocChange,
         onSelectionSet,
     });

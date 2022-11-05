@@ -242,10 +242,6 @@ export const GlobalProvider = ({ children }: { children: any }) => {
         })();
     }, []);
 
-    useEffect(() => {
-        console.log(history);
-    }, [history]);
-
     const currentRepoKey = useMemo(() => {
         const cur_repo_key = history.cur_repo_key;
         console.log('cur_repo_key: ' + cur_repo_key);

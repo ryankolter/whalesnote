@@ -10,14 +10,22 @@ import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
 import { languages } from '@codemirror/language-data';
 import { Completion, autocompletion } from '@codemirror/autocomplete';
 
+import { notes } from './notes';
+
 interface Props {
-    value: string;
+    curDataPath: string;
+    currentRepoKey: string;
+    currentFolderKey: string;
+    currentNoteKey: string;
     onDocChange?: (new_value: string, viewUpdate: ViewUpdate) => void;
     onSelectionSet?: (vu: ViewUpdate) => void;
 }
 
 const useCodeMirror = <T extends Element>({
-    value,
+    curDataPath,
+    currentRepoKey,
+    currentFolderKey,
+    currentNoteKey,
     onDocChange,
     onSelectionSet,
 }: Props): [MutableRefObject<T | null>, MutableRefObject<EditorView | null>] => {
@@ -25,11 +33,15 @@ const useCodeMirror = <T extends Element>({
     const view = useRef<EditorView | null>(null);
     const forbidUpdate = useRef<boolean>(false);
 
-    const defaultThemeOption = EditorView.theme({
-        '&': {
-            height: '100%',
-        },
-    });
+    const defaultThemeOption = useMemo(
+        () =>
+            EditorView.theme({
+                '&': {
+                    height: '100%',
+                },
+            }),
+        []
+    );
 
     const docUpdateListener = useMemo(
         () =>
@@ -122,26 +134,37 @@ const useCodeMirror = <T extends Element>({
         };
     }, []);
 
-    const getExtensions = [
-        basicSetup,
-        docUpdateListener,
-        cursorActiveListener,
-        defaultThemeOption,
-        keymap.of([indentWithTab]),
-        EditorView.lineWrapping,
-        markdown({ base: markdownLanguage, addKeymap: false, codeLanguages: languages }),
-        indentUnit.of('    '),
-        autocompletion({
-            activateOnTyping: true,
-            aboveCursor: true,
-            override: [myCompletions],
-        }),
-    ];
-
-    getExtensions.push(oneDark);
+    const getExtensions = useMemo(
+        () => [
+            basicSetup,
+            defaultThemeOption,
+            oneDark,
+            docUpdateListener,
+            cursorActiveListener,
+            keymap.of([indentWithTab]),
+            EditorView.lineWrapping,
+            markdown({ base: markdownLanguage, addKeymap: false, codeLanguages: languages }),
+            indentUnit.of('    '),
+            autocompletion({
+                activateOnTyping: true,
+                aboveCursor: true,
+                override: [myCompletions],
+            }),
+        ],
+        [docUpdateListener, cursorActiveListener, myCompletions]
+    );
 
     useEffect(() => {
         if (editor.current) {
+            const value =
+                currentRepoKey &&
+                currentFolderKey &&
+                currentNoteKey &&
+                notes[currentRepoKey] &&
+                notes[currentRepoKey][currentFolderKey] &&
+                notes[currentRepoKey][currentFolderKey][currentNoteKey]
+                    ? notes[currentRepoKey][currentFolderKey][currentNoteKey]
+                    : '';
             const defaultState = EditorState.create({
                 doc: value,
                 extensions: [...getExtensions],
@@ -162,13 +185,23 @@ const useCodeMirror = <T extends Element>({
         view.current?.dispatch({
             effects: StateEffect.reconfigure.of([...getExtensions]),
         });
-    }, [onDocChange, onSelectionSet]);
+    }, [getExtensions]);
 
     useEffect(() => {
         forbidUpdate.current = true;
         setTimeout(() => {
             forbidUpdate.current = false;
         }, 500);
+
+        const value =
+            currentRepoKey &&
+            currentFolderKey &&
+            currentNoteKey &&
+            notes[currentRepoKey] &&
+            notes[currentRepoKey][currentFolderKey] &&
+            notes[currentRepoKey][currentFolderKey][currentNoteKey]
+                ? notes[currentRepoKey][currentFolderKey][currentNoteKey]
+                : '';
 
         const newState = EditorState.create({
             doc: value,
@@ -192,7 +225,7 @@ const useCodeMirror = <T extends Element>({
                 ]),
             });
         }, 250);
-    }, [value]);
+    }, [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey]);
 
     return [editor, view];
 };

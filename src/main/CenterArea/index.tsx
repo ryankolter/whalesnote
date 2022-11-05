@@ -16,7 +16,6 @@ const CenterArea: React.FC<{}> = ({}) => {
         currentRepoKey,
         currentFolderKey,
         currentNoteKey,
-        whalenote,
         theme,
         platformName,
         setNumArray,

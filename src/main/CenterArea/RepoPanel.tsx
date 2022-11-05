@@ -247,7 +247,6 @@ const RepoPanel: React.FC<{
 
     const handleDeleteRepoKeyDown = useCallback(
         (e: any) => {
-            console.log(e.target);
             e.stopPropagation();
             if (e.key === 'Escape') {
                 setDeletePopUp(false);
