@@ -43,12 +43,12 @@ const RepoPanel: React.FC<{
     const [newRepoName, setNewRepoName] = useState('');
     const [curRepoName, setCurRepoName] = useState('');
     const allowNewRepo = useRef(true);
-    const [repoScrollPage, setRepoScrollPage] = useState(() => {
+    const [repoSelectedList, setRepoSelectedList] = useState(() => {
         let page = 0;
         whalenote.repos_key
             .filter((key) => whalenote && whalenote.repos_obj && whalenote.repos_obj[key])
             .forEach((key, index) => {
-                if (key === currentRepoKey) page = Math.floor(index / 9.0);
+                if (key === currentRepoKey) page = Math.floor(index / 6.0);
             });
         return page;
     });
@@ -66,7 +66,7 @@ const RepoPanel: React.FC<{
             whalenote.repos_key
                 .filter((key) => whalenote && whalenote.repos_obj && whalenote.repos_obj[key])
                 .forEach((key, index) => {
-                    if (key === currentRepoKey) page = Math.floor(index / 9.0);
+                    if (key === currentRepoKey) page = Math.floor(index / 6.0);
                 });
             if (page && repoScrollRef && repoScrollRef.current) {
                 repoScrollRef.current.scrollLeft =
@@ -82,7 +82,7 @@ const RepoPanel: React.FC<{
             whalenote.repos_key
                 .filter((key) => whalenote && whalenote.repos_obj && whalenote.repos_obj[key])
                 .forEach((key, index) => {
-                    if (key === repo_key) setRepoScrollPage(Math.floor(index / 9.0));
+                    if (key === repo_key) setRepoSelectedList(Math.floor(index / 6.0));
                 });
         },
         [whalenote, repoSwitch]
@@ -144,7 +144,7 @@ const RepoPanel: React.FC<{
             setNewRepoKey('');
             setNewRepoName('');
 
-            setRepoScrollPage(Math.ceil(whalenote.repos_key.length / 9) - 1);
+            setRepoSelectedList(Math.ceil(whalenote.repos_key.length / 6) - 1);
             if (repoScrollRef && repoScrollRef.current) {
                 repoScrollRef.current.scrollLeft = repoScrollRef.current.scrollWidth;
             }
@@ -240,7 +240,7 @@ const RepoPanel: React.FC<{
             if (other_repo_key) {
                 repoSwitchInPanel(other_repo_key);
             }
-            setRepoScrollPage(Math.ceil(whalenote.repos_key.length / 9) - 1);
+            setRepoSelectedList(Math.ceil(whalenote.repos_key.length / 6) - 1);
             setDeletePopUp(false);
         }
     }, [curDataPath, currentRepoKey, setDeletePopUp, repoSwitchInPanel]);
@@ -257,31 +257,59 @@ const RepoPanel: React.FC<{
         [setDeletePopUp, deleteRepoConfirm]
     );
 
-    const preRepoPage = useCallback(() => {
-        if (repoScrollPage > 0) {
+    const prevRepoList = useCallback(() => {
+        const prevSelectedList = repoSelectedList - 1;
+        if (prevSelectedList >= 0) {
             if (repoScrollRef && repoScrollRef.current) {
                 repoScrollRef.current.scrollLeft =
-                    Math.floor((repoScrollPage - 1) / 5.0) * repoScrollRef.current.offsetWidth;
+                    Math.floor(prevSelectedList / 5.0) * repoScrollRef.current.offsetWidth;
             }
-            setRepoScrollPage((repoScrollPage) => repoScrollPage - 1);
+            setRepoSelectedList((repoSelectedList) => repoSelectedList - 1);
         }
-    }, [repoScrollPage]);
+    }, [repoSelectedList]);
 
-    const nextRepoPage = useCallback(() => {
-        if (whalenote.repos_key && whalenote.repos_key.length > 9) {
-            if (repoScrollPage <= (whalenote.repos_key.length - 1) / 9.0 - 1) {
+    const nextRepoList = useCallback(() => {
+        if (whalenote.repos_key && whalenote.repos_key.length > 6) {
+            const nextSelectedList = repoSelectedList + 1;
+            if (nextSelectedList <= (whalenote.repos_key.length - 1) / 6.0) {
                 if (repoScrollRef && repoScrollRef.current) {
                     repoScrollRef.current.scrollLeft =
-                        Math.floor((repoScrollPage + 1) / 5.0) * repoScrollRef.current.offsetWidth;
+                        Math.floor(nextSelectedList / 5.0) * repoScrollRef.current.offsetWidth;
                 }
-                setRepoScrollPage((repoScrollPage) => repoScrollPage + 1);
+                setRepoSelectedList((repoSelectedList) => repoSelectedList + 1);
             }
         }
-    }, [whalenote, repoScrollPage]);
+    }, [whalenote, repoSelectedList]);
+
+    const prevRepoPage = useCallback(() => {
+        const prevSelectedList = (Math.floor(repoSelectedList / 5) - 1) * 5;
+        if (prevSelectedList >= 0) {
+            if (repoScrollRef && repoScrollRef.current) {
+                repoScrollRef.current.scrollLeft =
+                    Math.floor(prevSelectedList / 5.0) * repoScrollRef.current.offsetWidth;
+            }
+            setRepoSelectedList((repoSelectedList) => (Math.floor(repoSelectedList / 5) - 1) * 5);
+        }
+    }, [repoSelectedList]);
+
+    const nextRepoPage = useCallback(() => {
+        if (whalenote.repos_key && whalenote.repos_key.length > 6) {
+            const nextSelectedList = (Math.floor(repoSelectedList / 5) + 1) * 5;
+            if (nextSelectedList <= (whalenote.repos_key.length - 1) / 6.0) {
+                if (repoScrollRef && repoScrollRef.current) {
+                    repoScrollRef.current.scrollLeft =
+                        Math.floor(nextSelectedList / 5.0) * repoScrollRef.current.offsetWidth;
+                }
+                setRepoSelectedList(
+                    (repoSelectedList) => (Math.floor(repoSelectedList / 5) + 1) * 5
+                );
+            }
+        }
+    }, [whalenote, repoSelectedList]);
 
     useEffect(() => {
-        if (whalenote.repos_key && whalenote.repos_key.length <= 9) {
-            setRepoScrollPage(0);
+        if (whalenote.repos_key && whalenote.repos_key.length <= 6) {
+            setRepoSelectedList(0);
         }
     }, [whalenote]);
 
@@ -290,34 +318,44 @@ const RepoPanel: React.FC<{
             if (platformName === 'darwin' || platformName === 'win32' || platformName === 'linux') {
                 const modKey = platformName === 'darwin' ? e.metaKey : e.ctrlKey;
 
-                // normal number 1-9
+                // normal number 1-6
                 if (e.keyCode >= 49 && e.keyCode <= 57 && !modKey && numArray.length === 0) {
                     const num = parseInt(e.keyCode) - 48;
-                    const index = num + 9 * repoScrollPage - 1;
+                    const index = num + 6 * repoSelectedList - 1;
                     if (whalenote.repos_key && index < whalenote.repos_key.length) {
                         repoSwitchInPanel(whalenote.repos_key[index]);
                         setKeySelect(true);
                     }
                 }
 
-                // extra number 1-9
+                // extra number 1-6
                 if (e.keyCode >= 97 && e.keyCode <= 105 && !modKey && numArray.length === 0) {
                     const num = parseInt(e.keyCode) - 96;
-                    const index = num + 9 * repoScrollPage - 1;
+                    const index = num + 6 * repoSelectedList - 1;
                     if (whalenote.repos_key && index < whalenote.repos_key.length) {
                         repoSwitchInPanel(whalenote.repos_key[index]);
                         setKeySelect(true);
                     }
-                }
-
-                // arrow right 39 change to L 76
-                if ((e.keyCode === 39 || e.keyCode === 76) && !modKey) {
-                    nextRepoPage();
                 }
 
                 // arrow left 37 change to J 74
                 if ((e.keyCode === 37 || e.keyCode === 74) && !modKey) {
-                    preRepoPage();
+                    prevRepoList();
+                }
+
+                // arrow right 39 change to L 76
+                if ((e.keyCode === 39 || e.keyCode === 76) && !modKey) {
+                    nextRepoList();
+                }
+
+                // arrow left 37 change to J 74
+                if ((e.keyCode === 37 || e.keyCode === 74) && modKey) {
+                    prevRepoPage();
+                }
+
+                // arrow right 39 change to L 76
+                if ((e.keyCode === 39 || e.keyCode === 76) && modKey) {
+                    nextRepoPage();
                 }
 
                 if (e.key === 'Enter') {
@@ -327,10 +365,10 @@ const RepoPanel: React.FC<{
         },
         [
             whalenote,
-            repoScrollPage,
+            repoSelectedList,
             repoSwitchInPanel,
-            nextRepoPage,
-            preRepoPage,
+            nextRepoList,
+            prevRepoList,
             setKeySelect,
             numArray,
         ]
@@ -416,7 +454,7 @@ const RepoPanel: React.FC<{
                                             whalenote.repos_obj[key]
                                     )
                                     .map((key, index) => {
-                                        if (index === repoScrollPage * 9) {
+                                        if (index === repoSelectedList * 6) {
                                             return (
                                                 <Sortable
                                                     key={key}
@@ -464,8 +502,8 @@ const RepoPanel: React.FC<{
                                                 </Sortable>
                                             );
                                         } else if (
-                                            index > repoScrollPage * 9 &&
-                                            index < (repoScrollPage + 1) * 9
+                                            index > repoSelectedList * 6 &&
+                                            index < (repoSelectedList + 1) * 6
                                         ) {
                                             return (
                                                 <Sortable
@@ -499,7 +537,7 @@ const RepoPanel: React.FC<{
                                                                                 : '#939395',
                                                                     }}
                                                                 >
-                                                                    {(index % 9) + 1}
+                                                                    {(index % 6) + 1}
                                                                 </RepoGroupItem>
                                                             ) : (
                                                                 <></>
@@ -688,7 +726,7 @@ const Repos = styled.div({
     flexDirection: 'column',
     flexWrap: 'wrap',
     margin: '8px 0',
-    height: 'calc(9 * (28px + 4px) + 5px)',
+    height: 'calc(6 * (28px + 4px) + 5px)',
 });
 
 const RepoItem = styled.div({
@@ -713,7 +751,7 @@ const RepoGroupSelect = styled.div({
     position: 'absolute',
     top: '-7px',
     left: '-5px',
-    height: 'calc(9 * (28px + 4px) + 5px)',
+    height: 'calc(6 * (28px + 4px) + 5px)',
     width: 'calc(100% + 6px)',
     border: '2px dotted rgb(58, 64, 76)',
     borderRadius: '5px',

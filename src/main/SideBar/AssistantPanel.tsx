@@ -13,7 +13,7 @@ const AssistantPanel: React.FC<{
     const resizeAssistantPanelOffsetX = useRef<number>(0);
     const lastPageX = useRef<number>(0);
     const [assistantPanelWidth, setAssistantPanelWidth] = useState(
-        Number(window.localStorage.getItem('assistant_panel_width')) || 400
+        Number(window.localStorage.getItem('assistant_panel_width')) || 360
     );
 
     const closeAssistantPanel = useCallback(() => {
