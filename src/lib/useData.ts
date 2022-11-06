@@ -11,11 +11,11 @@ const useData = () => {
     const [switchingData, setSwitchingData] = useState<boolean>(false);
 
     const initExistRepo = useCallback(async (data_path: string) => {
-        let whalenote_info = await window.electronAPI.readJson({
+        const whalenote_info = await window.electronAPI.readJson({
             file_path: `${data_path}/whalenote_info.json`,
         });
 
-        let history: historyTypes = await window.electronAPI.readJson({
+        let history_info: historyTypes = await window.electronAPI.readJson({
             file_path: `${data_path}/history_info.json`,
         });
 
@@ -74,17 +74,16 @@ const useData = () => {
             let init_repo_key = '';
             let folders_key = [];
 
-            if (whalenote.repos_obj[history.cur_repo_key]) {
-                init_repo_key = history.cur_repo_key;
-                folders_key = whalenote.repos_obj[init_repo_key].folders_key;
+            if (history_info.cur_repo_key && whalenote.repos_obj[history_info.cur_repo_key]) {
+                init_repo_key = history_info.cur_repo_key;
+                folders_key = whalenote.repos_obj[history_info.cur_repo_key].folders_key;
             } else {
                 init_repo_key = first_repo_key;
                 folders_key = whalenote.repos_obj[first_repo_key].folders_key;
-
-                history = {
-                    cur_repo_key: 'DEFAULTREPO1',
+                history_info = {
+                    cur_repo_key: first_repo_key,
                     repos_record: {
-                        DEFAULTREPO1: {
+                        [first_repo_key]: {
                             cur_folder_key: '',
                             folders: {},
                         },
@@ -110,8 +109,7 @@ const useData = () => {
                 }
             }
         } else {
-            whalenote_info = {};
-            history = {
+            history_info = {
                 cur_repo_key: '',
                 repos_record: {},
             };
@@ -121,7 +119,7 @@ const useData = () => {
             whalenote: whalenote,
             notes: notes,
             id: whalenote_info.id,
-            history: history,
+            history: history_info,
         };
 
         return data;
