@@ -283,6 +283,7 @@ export const GlobalProvider = ({ children }: { children: any }) => {
             folder_key: string | undefined,
             note_key: string | undefined
         ) => {
+            await fetchNotesInfolder(curDataPath, repo_key, folder_key);
             await switchNote(curDataPath, repo_key, folder_key, note_key);
         },
         [curDataPath]
