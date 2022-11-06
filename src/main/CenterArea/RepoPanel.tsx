@@ -483,8 +483,8 @@ const RepoPanel: React.FC<{
                                                                     style={{
                                                                         color:
                                                                             currentRepoKey === key
-                                                                                ? '#E9E9E9'
-                                                                                : '#939395',
+                                                                                ? 'var(--main-text-selected-color)'
+                                                                                : 'var(--main-text-color)',
                                                                     }}
                                                                 >
                                                                     1
@@ -533,8 +533,8 @@ const RepoPanel: React.FC<{
                                                                     style={{
                                                                         color:
                                                                             currentRepoKey === key
-                                                                                ? '#E9E9E9'
-                                                                                : '#939395',
+                                                                                ? 'var(--main-text-selected-color)'
+                                                                                : 'var(--main-text-color)',
                                                                     }}
                                                                 >
                                                                     {(index % 6) + 1}
@@ -753,7 +753,7 @@ const RepoGroupSelect = styled.div({
     left: '-5px',
     height: 'calc(6 * (28px + 4px) + 5px)',
     width: 'calc(100% + 6px)',
-    border: '2px dotted rgb(58, 64, 76)',
+    border: '2px dotted var(--float-panel-border-color)',
     borderRadius: '5px',
     color: 'transparent',
 });

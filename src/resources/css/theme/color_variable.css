@@ -5,6 +5,7 @@
     --main-text-color: #A0A0A0;
     --main-text-hover-color: #D5D5D5;
     --main-text-title-color: #D5D5D5;
+    --main-text-selected-color: #E9E9E9;
 
     /* border */
     --main-border-color: #3A404C;
@@ -16,7 +17,7 @@
     --main-btn-bg-color: #3A404C;
     --main-selected-bg-color: #3A404C;
     --main-scroller-bg-color: #C7C7C733;
-    --main-tips-bg-color: #2F3338;
+    --main-tips-bg-color: #3A404C88;
 
     /* editor */
     --editor-main-text-color: #999183;
@@ -60,7 +61,7 @@
     /* float panel */
     --float-panel-bg-color: #2D3033;
     --float-panel-bg-color-no-border: #2D3033;
-    --float-panel-border-color: #3A404C;
+    --float-panel-border-color: #6F7374;
 
     /* menu panel */
     --menu-text-color: #CDCDCD;
@@ -81,11 +82,12 @@
     --main-text-color: #666666;
     --main-text-hover-color: #000000;
     --main-text-title-color: #000000;
+    --main-text-selected-color: #E9E9E9;
 
     /* border */
     --main-border-color: rgba(0, 0, 0, 0.3);
     --main-dashed-border-color: #FFFFFF4D;
-    --main-tips-border-color: rgba(0, 0, 0, 0.3);
+    --main-tips-border-color: #0059FFB3;
 
     /* background */
     --main-bg-color: #FFFFFF;

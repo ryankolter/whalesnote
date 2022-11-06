@@ -426,7 +426,7 @@ const FolderList: React.FC<{
                                                                     numArray.length >= 1 &&
                                                                     numArray[0] ===
                                                                         genAlphaCode1(index + 1)
-                                                                        ? '#E9E9E9'
+                                                                        ? 'var(--main-text-selected-color)'
                                                                         : '',
                                                             }}
                                                         >
@@ -440,7 +440,7 @@ const FolderList: React.FC<{
                                                                     numArray.length === 2 &&
                                                                     numArray[1] ===
                                                                         genNumberCode2(index + 1)
-                                                                        ? '#E9E9E9'
+                                                                        ? 'var(--main-text-selected-color)'
                                                                         : '',
                                                             }}
                                                         >

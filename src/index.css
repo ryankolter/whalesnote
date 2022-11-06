@@ -7,7 +7,7 @@
     height: 28px;
     line-height: 28px;
     margin: 0 10px 4px 10px;
-    color: #939395;
+    color: var(--main-text-color);
     cursor: pointer;
 }
 
@@ -34,7 +34,7 @@
     font-size: 16px;
     padding: 0 12px 0 6px;
     z-index: 1000;
-    color: #939395;
+    color: var(--main-text-color);
     background-color: #3a404c;
     cursor: pointer;
 }

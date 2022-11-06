@@ -45,7 +45,7 @@ const WaitingMask: React.FC<{
                                         left: 50%;
                                         display: inline-block;
                                         border: 4px solid #2c3033;
-                                        border-left-color: #939395;
+                                        border-left-color: var(--main-text-color);
                                         border-radius: 50%;
                                         width: 30px;
                                         height: 30px;
