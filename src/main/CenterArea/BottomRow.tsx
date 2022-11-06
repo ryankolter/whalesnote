@@ -65,7 +65,7 @@ const BottomRow: React.FC<{
                 }
             }
         },
-        [currentNoteKey, keySelect, setBlur, setFocus, setKeySelect]
+        [currentNoteKey, keySelect, setBlur, setFocus, setKeySelect, setNumArray]
     );
 
     useEffect(() => {

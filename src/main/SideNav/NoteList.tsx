@@ -157,22 +157,22 @@ const NoteList: React.FC<{
                 if (
                     numArray[0] >= 65 &&
                     numArray[0] <= 72 &&
-                    numArray[0] < Math.ceil(notes_key.length / 22) + 65
+                    numArray[0] < Math.ceil(notes_key.length / 21) + 65
                 ) {
                     if (numArray[1] <= 72 && numArray[0] >= 65) {
-                        new_index = (numArray[0] - 65) * 22 + (numArray[1] - 65);
+                        new_index = (numArray[0] - 65) * 21 + (numArray[1] - 65);
                     } else if (numArray[1] >= 75 && numArray[1] <= 89) {
-                        new_index = (numArray[0] - 65) * 22 + (numArray[1] - 65) - 4;
+                        new_index = (numArray[0] - 65) * 21 + (numArray[1] - 65) - 4;
                     }
                 } else if (
                     numArray[0] >= 75 &&
                     numArray[0] <= 89 &&
-                    numArray[0] < Math.ceil(notes_key.length / 22) + 65 + 4
+                    numArray[0] < Math.ceil(notes_key.length / 21) + 65 + 4
                 ) {
                     if (numArray[1] <= 72 && numArray[1] >= 65) {
-                        new_index = (numArray[0] - 65 - 4) * 22 + (numArray[1] - 65);
+                        new_index = (numArray[0] - 65 - 4) * 21 + (numArray[1] - 65);
                     } else if (numArray[1] >= 75 && numArray[1] <= 89) {
-                        new_index = (numArray[0] - 65 - 4) * 22 + (numArray[1] - 65) - 4;
+                        new_index = (numArray[0] - 65 - 4) * 21 + (numArray[1] - 65) - 4;
                     }
                 }
             }
@@ -254,18 +254,18 @@ const NoteList: React.FC<{
     );
 
     const genAlphaCode1 = (order: number): number => {
-        if (order <= 8 * 22) {
-            return Math.ceil(order / 22) + 64;
+        if (order <= 8 * 21) {
+            return Math.ceil(order / 21) + 64;
         } else {
-            return 4 + Math.ceil(order / 22) + 64;
+            return 4 + Math.ceil(order / 21) + 64;
         }
     };
 
     const genAlphaCode2 = (order: number): number => {
-        if (order % 22 <= 8) {
-            return (order % 22 === 0 ? 26 : order % 22) + 64;
+        if (order % 21 <= 8) {
+            return (order % 21 === 0 ? 25 : order % 21) + 64;
         } else {
-            return (order % 22) + 4 + 64;
+            return (order % 21) + 4 + 64;
         }
     };
 
@@ -323,7 +323,7 @@ const NoteList: React.FC<{
                                                 {notes_obj[key].title}
                                                 {keySelect &&
                                                 currentNoteKey !== key &&
-                                                index < 22 * 21 ? (
+                                                index < 21 * 21 ? (
                                                     <NoteKeyTab>
                                                         <span
                                                             style={{
