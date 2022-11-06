@@ -16,7 +16,9 @@ const historyReducer = produce((state: historyTypes, action: any) => {
         }
         case 'switch_folder': {
             if (action.repo_key) {
-                !state.repos_record && (state.repos_record = {});
+                if (!state.repos_record) {
+                    state.repos_record = {};
+                }
                 if (!state.repos_record[action.repo_key]) {
                     state.repos_record[action.repo_key] = {
                         cur_folder_key: action.folder_key,
@@ -30,7 +32,10 @@ const historyReducer = produce((state: historyTypes, action: any) => {
         }
         case 'switch_note': {
             if (action.repo_key && action.folder_key) {
-                !state.repos_record && (state.repos_record = {});
+                state.cur_repo_key = action.repo_key;
+                if (!state.repos_record) {
+                    state.repos_record = {};
+                }
                 if (!state.repos_record[action.repo_key]) {
                     state.repos_record[action.repo_key] = {
                         cur_folder_key: action.folder_key,
@@ -39,6 +44,7 @@ const historyReducer = produce((state: historyTypes, action: any) => {
                         },
                     };
                 } else {
+                    state.repos_record[action.repo_key].cur_folder_key = action.folder_key;
                     state.repos_record[action.repo_key].folders[action.folder_key] =
                         action.note_key;
                 }
@@ -97,7 +103,9 @@ const useHistory = () => {
                     file_path: `${curDataPath}/history_info.json`,
                 });
 
-                !history.repos_record && (history.repos_record = {});
+                if (!history.repos_record) {
+                    history.repos_record = {};
+                }
                 if (!history.repos_record[repoKey]) {
                     history.repos_record[repoKey] = {
                         cur_folder_key: folderKey,
@@ -136,14 +144,17 @@ const useHistory = () => {
                     file_path: `${curDataPath}/history_info.json`,
                 });
 
-                !history.repos_record && (history.repos_record = {});
-
+                history.cur_repo_key = repoKey;
+                if (!history.repos_record) {
+                    history.repos_record = {};
+                }
                 if (!history.repos_record[repoKey]) {
                     history.repos_record[repoKey] = {
                         cur_folder_key: folderKey,
                         folders: {},
                     };
                 } else {
+                    history.repos_record[repoKey].cur_folder_key = folderKey;
                     history.repos_record[repoKey].folders[folderKey] = noteKey;
                 }
 

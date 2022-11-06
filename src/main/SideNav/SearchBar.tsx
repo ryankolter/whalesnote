@@ -64,8 +64,6 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
         async (id: string) => {
             setShowResultHighlight(true);
             const arr = id.split('-');
-            await repoSwitch(arr[0]);
-            await folderSwitch(arr[0], arr[1]);
             await noteSwitch(arr[0], arr[1], arr[2]);
         },
         [setShowResultHighlight, repoSwitch, folderSwitch, noteSwitch]
@@ -83,7 +81,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
     }, [word]);
 
     const nextSearchResult = useCallback(() => {
-        if (curResultIndex < searchResults.length) {
+        if (curResultIndex < searchResults.length - 1) {
             setCurResultIndex((curResultIndex) => curResultIndex + 1);
         }
     }, [curResultIndex, searchResults]);
@@ -95,7 +93,8 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
     }, [curResultIndex, searchResults]);
 
     useEffect(() => {
-        if (curResultIndex >= 0 && curResultIndex <= searchResults.length) {
+        console.log(curResultIndex);
+        if (curResultIndex >= 0 && curResultIndex < searchResults.length) {
             /* eslint-disable */
             resultSwitch(searchResults[curResultIndex]['id']);
             /* eslint-enable */

@@ -109,7 +109,6 @@ const FolderList: React.FC<{
                 note_key,
             });
 
-            await folderSwitch(currentRepoKey, folder_key);
             await noteSwitch(currentRepoKey, folder_key, note_key);
 
             const note_info = {
@@ -124,14 +123,6 @@ const FolderList: React.FC<{
                 obj: note_info,
             });
 
-            await changeNotesAfterNew('note', {
-                data_path: curDataPath,
-                repo_key: currentRepoKey,
-                folder_key: folder_key,
-                note_key,
-            });
-            await noteSwitch(currentRepoKey, folder_key, note_key);
-
             setNewFolderKey('');
             setNewFolderName('');
             setTimeout(() => {
@@ -141,7 +132,7 @@ const FolderList: React.FC<{
                         type: 'alphanumeric',
                     })
                 );
-            }, 0);
+            }, 500);
             allowNewFolder.current = true;
         },
         [
