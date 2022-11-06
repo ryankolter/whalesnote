@@ -47,6 +47,7 @@
 .wn-theme-rd p {
     margin: 1.2em 0;
     line-height: 1.6em;
+    word-break: break-word;
 }
 
 .wn-theme-rd pre code {

@@ -391,24 +391,18 @@ export const MarkdownRender: React.FC<{
 
     const handleKeyDown = useCallback(
         async (e: any) => {
-            if (platformName === 'darwin') {
-                if (e.keyCode === 74 && e.metaKey && !e.shiftKey && mdRenderState === 'all') {
+            if (platformName === 'darwin' || platformName === 'win32' || platformName === 'linux') {
+                const modKey = platformName === 'darwin' ? e.metaKey : e.ctrlKey;
+
+                if (e.keyCode === 74 && modKey && !e.shiftKey && mdRenderState === 'all') {
                     autoScrollToLine();
                 }
-                if (e.key === '.' && e.metaKey && !e.shiftKey) {
-                    setShowTocFlag((showTocFlag) => 1 - showTocFlag);
-                }
-            }
-            if (platformName === 'win32' || platformName === 'linux') {
-                if (e.keyCode === 74 && e.crtlKey && !e.shiftKey && mdRenderState === 'all') {
-                    autoScrollToLine();
-                }
-                if (e.key === '.' && e.crtlKey && !e.shiftKey) {
+                if (e.key === '.' && modKey && !e.shiftKey) {
                     setShowTocFlag((showTocFlag) => 1 - showTocFlag);
                 }
             }
         },
-        [mdRenderState, autoScrollToLine, setShowTocFlag]
+        [platformName, mdRenderState, autoScrollToLine, setShowTocFlag]
     );
 
     const handleScroll = useCallback(
@@ -499,9 +493,28 @@ export const MarkdownRender: React.FC<{
                 }}
                 dangerouslySetInnerHTML={{ __html: result }}
             ></div>
-            <TocToggleBtn
-                onClick={() => setShowTocFlag((showTocFlag) => 1 - showTocFlag)}
-            ></TocToggleBtn>
+            <TocToggleBtn onClick={() => setShowTocFlag((showTocFlag) => 1 - showTocFlag)}>
+                <svg width="9.5px" height="11.5px">
+                    <path
+                        fill-rule="evenodd"
+                        stroke="var(--main-text-title-color)"
+                        stroke-width="1px"
+                        stroke-linecap="round"
+                        stroke-linejoin="miter"
+                        fill="none"
+                        d="M7.716,1.232 C7.960,1.458 7.941,1.808 7.673,2.13 L4.764,4.246 C4.497,4.452 4.82,4.436 3.838,4.210 L1.188,1.759 C0.944,1.534 0.963,1.184 1.231,0.978 "
+                    />
+                    <path
+                        fill-rule="evenodd"
+                        stroke="var(--main-text-title-color)"
+                        stroke-width="1px"
+                        stroke-linecap="round"
+                        stroke-linejoin="miter"
+                        fill="none"
+                        d="M7.716,6.422 C7.960,6.648 7.941,6.997 7.673,7.203 L4.764,9.436 C4.497,9.642 4.82,9.626 3.838,9.400 L1.188,6.949 C0.944,6.723 0.963,6.374 1.231,6.168 "
+                    />
+                </svg>
+            </TocToggleBtn>
             <TocDirectory
                 ref={TocRef}
                 className="toc-scroller"
@@ -564,9 +577,12 @@ const LastScrollPos = styled.div(
 const TocToggleBtn = styled.div({
     position: 'absolute',
     top: '0',
-    right: '18px',
+    right: '8px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     width: '30%',
-    height: '16px',
+    height: '14px',
     paddingRight: '6px',
     zIndex: 10000,
     borderBottom: '1px solid var(--main-border-color)',
@@ -576,10 +592,11 @@ const TocToggleBtn = styled.div({
 const TocDirectory = styled.div(
     {
         position: 'absolute',
-        top: '17px',
-        right: '18px',
+        top: '15px',
+        right: '8px',
         width: '30%',
-        borderRadius: '10px',
+        borderBottomLeftRadius: '10px',
+        borderBottomRightRadius: '10px',
         paddingRight: '6px',
         overflowY: 'auto',
         zIndex: 1000,

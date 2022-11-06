@@ -41,7 +41,6 @@ export const fetchNotesInRepo = async (
     whalenote: whalenoteObjType,
     repo_key: string | undefined
 ) => {
-    console.log('fetchNotesInRepo');
     if (repo_key && !notes[repo_key]) {
         notes[repo_key] = {};
         const folders_key = whalenote.repos_obj[repo_key].folders_key;

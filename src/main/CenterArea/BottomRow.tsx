@@ -43,7 +43,7 @@ const BottomRow: React.FC<{
                 if (e.key === 'Enter' && keySelect) {
                     setKeySelect(false);
                     setNumArray([]);
-                    if (currentNoteKey) {
+                    if (currentNoteKey && mdRenderState !== 'all') {
                         setTimeout(() => {
                             setFocus(
                                 cryptoRandomString({
@@ -65,7 +65,7 @@ const BottomRow: React.FC<{
                 }
             }
         },
-        [currentNoteKey, keySelect, setBlur, setFocus, setKeySelect, setNumArray]
+        [currentNoteKey, keySelect, mdRenderState, setBlur, setFocus, setKeySelect, setNumArray]
     );
 
     useEffect(() => {

@@ -86,7 +86,6 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
     }, [curResultIndex, searchResults]);
 
     useEffect(() => {
-        console.log(curResultIndex);
         if (curResultIndex >= 0 && curResultIndex < searchResults.length) {
             /* eslint-disable */
             resultSwitch(searchResults[curResultIndex]['id']);
