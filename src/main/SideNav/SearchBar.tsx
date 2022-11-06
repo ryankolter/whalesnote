@@ -8,15 +8,8 @@ import WaitingMaskStatic from '../../components/WaitingMaskStatic';
 import searchIcon from '../../resources/icon/searchIcon.svg';
 
 const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
-    const {
-        repoSwitch,
-        folderSwitch,
-        noteSwitch,
-        currentNoteKey,
-        keySelect,
-        setKeySelect,
-        platformName,
-    } = useContext(GlobalContext);
+    const { noteSwitch, currentNoteKey, keySelect, setKeySelect, platformName } =
+        useContext(GlobalContext);
 
     const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -66,7 +59,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
             const arr = id.split('-');
             await noteSwitch(arr[0], arr[1], arr[2]);
         },
-        [setShowResultHighlight, repoSwitch, folderSwitch, noteSwitch]
+        [setShowResultHighlight, noteSwitch]
     );
 
     useEffect(() => {

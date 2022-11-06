@@ -24,7 +24,6 @@ const FolderList: React.FC<{
     const {
         curDataPath,
         dataPathChangeFlag,
-        repoSwitch,
         folderSwitch,
         noteSwitch,
         whalenote,
@@ -135,15 +134,7 @@ const FolderList: React.FC<{
             }, 500);
             allowNewFolder.current = true;
         },
-        [
-            curDataPath,
-            currentRepoKey,
-            newFolder,
-            changeNotesAfterNew,
-            folderSwitch,
-            repoSwitch,
-            setFocus,
-        ]
+        [curDataPath, currentRepoKey, newFolder, changeNotesAfterNew, folderSwitch, setFocus]
     );
 
     const handleNewFolderKeyDown = useCallback(
@@ -194,15 +185,7 @@ const FolderList: React.FC<{
             await folderSwitch(currentRepoKey, next_folder_key);
             setDeletePopUp(false);
         }
-    }, [
-        curDataPath,
-        whalenote,
-        currentRepoKey,
-        currentFolderKey,
-        repoSwitch,
-        folderSwitch,
-        setDeletePopUp,
-    ]);
+    }, [curDataPath, whalenote, currentRepoKey, currentFolderKey, folderSwitch, setDeletePopUp]);
 
     const handleDeleteFolderKeyDown = useCallback(
         (e: any) => {

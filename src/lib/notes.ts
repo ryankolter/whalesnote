@@ -70,18 +70,21 @@ export const fetchNotesInfolder = async (
     repo_key: string | undefined,
     folder_key: string | undefined
 ) => {
-    if (repo_key && folder_key && !notes[repo_key][folder_key]) {
-        const folder_info = await window.electronAPI.readJson({
-            file_path: `${data_path}/${repo_key}/${folder_key}/folder_info.json`,
-        });
-        if (folder_info && folder_info.notes_obj) {
-            notes[repo_key][folder_key] = {};
-            for (const note_key of Object.keys(folder_info.notes_obj)) {
-                const note_info = await window.electronAPI.readCson({
-                    file_path: `${data_path}/${repo_key}/${folder_key}/${note_key}.cson`,
-                });
-                if (note_info) {
-                    notes[repo_key][folder_key][note_key] = note_info.content;
+    if (repo_key && folder_key) {
+        if (!notes[repo_key]) notes[repo_key] = {};
+        if (!notes[repo_key][folder_key]) {
+            const folder_info = await window.electronAPI.readJson({
+                file_path: `${data_path}/${repo_key}/${folder_key}/folder_info.json`,
+            });
+            if (folder_info && folder_info.notes_obj) {
+                notes[repo_key][folder_key] = {};
+                for (const note_key of Object.keys(folder_info.notes_obj)) {
+                    const note_info = await window.electronAPI.readCson({
+                        file_path: `${data_path}/${repo_key}/${folder_key}/${note_key}.cson`,
+                    });
+                    if (note_info) {
+                        notes[repo_key][folder_key][note_key] = note_info.content;
+                    }
                 }
             }
         }
