@@ -11,11 +11,11 @@ const useData = () => {
     const [switchingData, setSwitchingData] = useState<boolean>(false);
 
     const initExistRepo = useCallback(async (data_path: string) => {
-        const whalenote_info = await window.electronAPI.readJson({
+        const whalenote_info = await window.electronAPI.readJsonSync({
             file_path: `${data_path}/whalenote_info.json`,
         });
 
-        let history_info: historyTypes = await window.electronAPI.readJson({
+        let history_info: historyTypes = await window.electronAPI.readJsonSync({
             file_path: `${data_path}/history_info.json`,
         });
 
@@ -28,7 +28,7 @@ const useData = () => {
         const valid_repos_key: string[] = [];
 
         for (const repo_key of whalenote_info.repos_key) {
-            const repo_info = await window.electronAPI.readJson({
+            const repo_info = await window.electronAPI.readJsonSync({
                 file_path: `${data_path}/${repo_key}/repo_info.json`,
             });
             if (repo_info) {
@@ -41,7 +41,7 @@ const useData = () => {
                 };
                 const valid_folders_key: string[] = [];
                 for (const folder_key of repo_info.folders_key) {
-                    const folder_info = await window.electronAPI.readJson({
+                    const folder_info = await window.electronAPI.readJsonSync({
                         file_path: `${data_path}/${repo_key}/${folder_key}/folder_info.json`,
                     });
                     if (folder_info) {
@@ -99,13 +99,13 @@ const useData = () => {
                     }
                 }
                 notes[init_repo_key] = {};
-                const folder_info = await window.electronAPI.readJson({
+                const folder_info = await window.electronAPI.readJsonSync({
                     file_path: `${data_path}/${init_repo_key}/${fetch_folder_key}/folder_info.json`,
                 });
                 if (folder_info && folder_info.notes_obj) {
                     notes[init_repo_key][fetch_folder_key] = {};
                     for (const note_key of Object.keys(folder_info.notes_obj)) {
-                        const note_info = await window.electronAPI.readCson({
+                        const note_info = await window.electronAPI.readCsonSync({
                             file_path: `${data_path}/${init_repo_key}/${fetch_folder_key}/${note_key}.cson`,
                         });
                         if (note_info) {

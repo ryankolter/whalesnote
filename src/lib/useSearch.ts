@@ -14,7 +14,7 @@ const useSearch = () => {
     useEffect(() => {
         (async () => {
             if (curDataPath) {
-                const search = await window.electronAPI.readJson({
+                const search = await window.electronAPI.readJsonSync({
                     file_path: `${curDataPath}/search.json`,
                 });
                 if (search) {

@@ -277,8 +277,8 @@ const processIPC = () => {
         return true;
     });
 
-    ipcMain.handle('operate:readCson', async (event, { file_path }) => {
-        console.log('readCson: ' + file_path);
+    ipcMain.handle('operate:readCsonSync', async (event, { file_path }) => {
+        console.log('readCsonSync: ' + file_path);
         if (!fse.pathExistsSync(file_path)) {
             return false;
         } else {
@@ -287,8 +287,8 @@ const processIPC = () => {
         }
     });
 
-    ipcMain.handle('operate:readJson', async (event, { file_path }) => {
-        console.log('readJson: ' + file_path);
+    ipcMain.handle('operate:readJsonSync', async (event, { file_path }) => {
+        console.log('readJsonSync: ' + file_path);
         if (!fse.pathExistsSync(file_path)) {
             return false;
         } else {

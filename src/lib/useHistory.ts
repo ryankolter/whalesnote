@@ -72,7 +72,7 @@ const useHistory = () => {
         });
 
         if (curDataPath && repoKey) {
-            const history = await window.electronAPI.readJson({
+            const history = await window.electronAPI.readJsonSync({
                 file_path: `${curDataPath}/history_info.json`,
             });
 
@@ -99,7 +99,7 @@ const useHistory = () => {
                     folder_key: folderKey,
                 });
 
-                const history = await window.electronAPI.readJson({
+                const history = await window.electronAPI.readJsonSync({
                     file_path: `${curDataPath}/history_info.json`,
                 });
 
@@ -140,7 +140,7 @@ const useHistory = () => {
             });
 
             if (curDataPath && repoKey && folderKey && noteKey) {
-                const history = await window.electronAPI.readJson({
+                const history = await window.electronAPI.readJsonSync({
                     file_path: `${curDataPath}/history_info.json`,
                 });
 
