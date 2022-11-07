@@ -1,15 +1,17 @@
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { GlobalContext } from '../GlobalProvider';
 import cryptoRandomString from 'crypto-random-string';
-import MiniSearch, { SearchResult } from 'minisearch';
+import MiniSearch, { AsPlainObject, SearchResult } from 'minisearch';
 import { notes, fetchNotesInAllRepo } from './notes';
 
 const useSearch = () => {
     const { curDataPath, whalenote, setFocus } = useContext(GlobalContext);
 
+    const searchFileJson = useRef<AsPlainObject | false>(false);
     const miniSearch = useRef<MiniSearch | null>();
     const [showUpdateIndexTips, setShowUpdateIndexTips] = useState(true);
     const [showWaitingMask, setShowWaitingMask] = useState(false);
+    const [showLoadingSearch, setShowLoadingSearch] = useState(false);
 
     useEffect(() => {
         if (curDataPath) {
@@ -17,46 +19,50 @@ const useSearch = () => {
                 .readJsonAsync({
                     file_path: `${curDataPath}/search.json`,
                 })
-                .then((search: any) => {
-                    // console.log(search);
-                    if (search) {
-                        setShowUpdateIndexTips(false);
-                        miniSearch.current = MiniSearch.loadJS(search, {
-                            fields: ['title', 'content'],
-                            storeFields: ['id', 'type', 'title', 'folder_name'],
-                            tokenize: (string, _fieldName) => {
-                                const result = window.electronAPI.nodejieba({
-                                    word: string,
-                                });
-                                return result;
-                            },
-                            searchOptions: {
-                                boost: { title: 2 },
-                                fuzzy: 0.2,
-                                tokenize: (string: string) => {
-                                    let result = window.electronAPI.nodejieba({
-                                        word: string,
-                                    });
-                                    result = result.filter((w: string) => w !== ' ');
-                                    return result;
-                                },
-                            },
-                        });
-                    } else {
-                        setShowUpdateIndexTips(true);
-                        miniSearch.current = null;
-                    }
-                    setTimeout(() => {
-                        setFocus(
-                            cryptoRandomString({
-                                length: 24,
-                                type: 'alphanumeric',
-                            })
-                        );
-                    }, 0);
+                .then((search: AsPlainObject) => {
+                    searchFileJson.current = search;
+                    setShowUpdateIndexTips(false);
+                })
+                .catch((err: false) => {
+                    setShowUpdateIndexTips(true);
+                    miniSearch.current = null;
                 });
         }
     }, [curDataPath]);
+
+    const loadSearchFileJson = useCallback(() => {
+        if (searchFileJson.current) {
+            setShowUpdateIndexTips(false);
+            setShowLoadingSearch(true);
+            setTimeout(() => {
+                if (searchFileJson.current) {
+                    miniSearch.current = MiniSearch.loadJS(searchFileJson.current, {
+                        fields: ['title', 'content'],
+                        storeFields: ['id', 'type', 'title', 'folder_name'],
+                        tokenize: (string, _fieldName) => {
+                            const result = window.electronAPI.nodejieba({
+                                word: string,
+                            });
+                            return result;
+                        },
+                        searchOptions: {
+                            boost: { title: 2 },
+                            fuzzy: 0.2,
+                            tokenize: (string: string) => {
+                                let result = window.electronAPI.nodejieba({
+                                    word: string,
+                                });
+                                result = result.filter((w: string) => w !== ' ');
+                                return result;
+                            },
+                        },
+                    });
+                    searchFileJson.current = false;
+                    setShowLoadingSearch(false);
+                }
+            }, 200);
+        }
+    }, []);
 
     const updateMiniSearch = useCallback(() => {
         console.log('updateMiniSearch begin');
@@ -147,7 +153,14 @@ const useSearch = () => {
         });
     };
 
-    return [showUpdateIndexTips, showWaitingMask, updateMiniSearch, searchNote] as const;
+    return [
+        showUpdateIndexTips,
+        showWaitingMask,
+        showLoadingSearch,
+        loadSearchFileJson,
+        updateMiniSearch,
+        searchNote,
+    ] as const;
 };
 
 export default useSearch;

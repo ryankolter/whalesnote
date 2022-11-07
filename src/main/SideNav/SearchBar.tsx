@@ -19,7 +19,14 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
     const [showResultHighlight, setShowResultHighlight] = useState(false);
     const [showSearchPanel, setShowSearchPanel] = useState(false);
 
-    const [showUpdateIndexTips, showWaitingMask, updateMiniSearch, searchNote] = useSearch();
+    const [
+        showUpdateIndexTips,
+        showWaitingMask,
+        showLoadingSearch,
+        loadSearchFileJson,
+        updateMiniSearch,
+        searchNote,
+    ] = useSearch();
 
     const handleSearchInputChange = useCallback(
         (e: any) => {
@@ -40,7 +47,9 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
     );
 
     const handleSearchInputFocus = useCallback(() => {
-        if (!showSearchPanel) setShowSearchPanel(true);
+        if (!showSearchPanel) {
+            setShowSearchPanel(true);
+        }
     }, [showSearchPanel, setShowSearchPanel]);
 
     const search = useCallback(() => {
@@ -72,6 +81,12 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
         }
         search();
     }, [word]);
+
+    useEffect(() => {
+        if (showSearchPanel) {
+            loadSearchFileJson();
+        }
+    }, [showSearchPanel]);
 
     const nextSearchResult = useCallback(() => {
         if (curResultIndex < searchResults.length - 1) {
@@ -207,6 +222,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                             <></>
                         )}
                     </SearchResultList>
+                    {showLoadingSearch ? <LoadingSearch>载入索引中...</LoadingSearch> : <></>}
                 </SearchPanel>
             ) : (
                 <></>
@@ -261,6 +277,13 @@ const SearchInput = styled.input(
     }
 `
 );
+
+const LoadingSearch = styled.div({
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+});
 
 const SearchPanel = styled.div({
     position: 'absolute',
