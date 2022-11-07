@@ -70,10 +70,9 @@ const useSearch = () => {
                 }
             }, 200);
         }
-    }, []);
+    }, [setShowUpdateIndexTips, setShowLoadingSearch]);
 
     const updateMiniSearch = useCallback(() => {
-        console.log('updateMiniSearch begin');
         setShowWaitingMask(true);
 
         setTimeout(async () => {
@@ -142,8 +141,6 @@ const useSearch = () => {
 
             setShowUpdateIndexTips(false);
             setShowWaitingMask(false);
-
-            console.log('updateMiniSearch success');
         }, 200);
     }, [
         curDataPath,

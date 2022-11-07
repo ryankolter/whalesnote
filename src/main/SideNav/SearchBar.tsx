@@ -33,7 +33,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
             setWord(e.target.value);
             if (!showSearchPanel) setShowSearchPanel(true);
         },
-        [setWord, showSearchPanel, setShowSearchPanel, showLoadingSearch]
+        [setWord, showSearchPanel, setShowSearchPanel]
     );
 
     const handleSearchInputEnter = useCallback(
