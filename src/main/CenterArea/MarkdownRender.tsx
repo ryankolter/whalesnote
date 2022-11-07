@@ -6,7 +6,7 @@ import ClipboardJS from 'clipboard';
 import { toPng } from 'html-to-image';
 
 import markdownIt from 'markdown-it';
-import hljs from 'highlight.js';
+import hljs from 'highlight.js/lib/common';
 /* eslint-disable */
 //@ts-ignore
 import markdownItEmoji from 'markdown-it-emoji';

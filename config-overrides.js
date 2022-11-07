@@ -1,4 +1,5 @@
 const { override } = require('customize-cra');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const path = require('path');
 
 const ignoreWarnings = (value) => (config) => {
@@ -23,8 +24,14 @@ const publicPathPlugin = (value) => (config) => {
     return config;
 };
 
+const bundleAnalyzerPlugin = (value) => (config) => {
+    config.plugins = [...config.plugins, new BundleAnalyzerPlugin()];
+    return config;
+};
+
 module.exports = override(
     ignoreWarnings([/Failed to parse source map/]),
     addFallback(),
-    publicPathPlugin()
+    publicPathPlugin(),
+    bundleAnalyzerPlugin()
 );

@@ -13,7 +13,8 @@
         "files": [
             "main.js",
             "preload.js",
-            "build/**/*"
+            "build/**/*",
+            "!node_modules/nodejieba/dict/*"
         ],
         "extraResources": [
             {
@@ -61,10 +62,7 @@
         ]
     },
     "devDependencies": {
-        "@types/cson": "^7.20.1",
-        "@types/fs-extra": "^9.0.13",
         "electron": "^21.2.0",
-        "electron-builder": "^23.6.0",
-        "electron-devtools-installer": "^3.2.0"
+        "electron-builder": "^23.6.0"
     }
 }

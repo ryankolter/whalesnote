@@ -42,9 +42,7 @@ const createWindow = async () => {
         mainWindow.loadFile(path.join(__dirname, '/build/index.html'));
     } else {
         mainWindow.loadURL('http://localhost:3005');
-        // mainWindow.loadFile(path.join(__dirname, '/build/index.html'));
         mainWindow.webContents.openDevTools();
-        //await installExtensions();
     }
 
     mainWindow.on('ready-to-show', () => {
@@ -52,16 +50,6 @@ const createWindow = async () => {
             mainWindow?.show();
         }
     });
-};
-
-const installExtensions = async () => {
-    const installer = require('electron-devtools-installer');
-    const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
-    const extensions = ['REACT_DEVELOPER_TOOLS', 'REDUX_DEVTOOLS', 'DEVTRON'];
-
-    return Promise.all(
-        extensions.map((name) => installer.default(installer[name], forceDownload))
-    ).catch(console.log);
 };
 
 const createMenu = async () => {
