@@ -13,6 +13,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     readCsonSync: (params) => ipcRenderer.invoke('operate:readCsonSync', params),
     readJsonSync: (params) => ipcRenderer.invoke('operate:readJsonSync', params),
     readCssSync: (params) => ipcRenderer.invoke('operate:readCssSync', params),
+    readJsonAsync: (params) => ipcRenderer.invoke('operate:readJsonAsync', params),
     remove: (params) => ipcRenderer.invoke('operate:remove', params),
     copy: (params) => ipcRenderer.invoke('operate:copy', params),
     move: (params) => ipcRenderer.invoke('operate:move', params),

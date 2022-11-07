@@ -12,48 +12,50 @@ const useSearch = () => {
     const [showWaitingMask, setShowWaitingMask] = useState(false);
 
     useEffect(() => {
-        (async () => {
-            if (curDataPath) {
-                const search = await window.electronAPI.readJsonSync({
+        if (curDataPath) {
+            window.electronAPI
+                .readJsonAsync({
                     file_path: `${curDataPath}/search.json`,
-                });
-                if (search) {
-                    setShowUpdateIndexTips(false);
-                    miniSearch.current = MiniSearch.loadJS(search, {
-                        fields: ['title', 'content'],
-                        storeFields: ['id', 'type', 'title', 'folder_name'],
-                        tokenize: (string, _fieldName) => {
-                            const result = window.electronAPI.nodejieba({
-                                word: string,
-                            });
-                            return result;
-                        },
-                        searchOptions: {
-                            boost: { title: 2 },
-                            fuzzy: 0.2,
-                            tokenize: (string: string) => {
-                                let result = window.electronAPI.nodejieba({
+                })
+                .then((search: any) => {
+                    // console.log(search);
+                    if (search) {
+                        setShowUpdateIndexTips(false);
+                        miniSearch.current = MiniSearch.loadJS(search, {
+                            fields: ['title', 'content'],
+                            storeFields: ['id', 'type', 'title', 'folder_name'],
+                            tokenize: (string, _fieldName) => {
+                                const result = window.electronAPI.nodejieba({
                                     word: string,
                                 });
-                                result = result.filter((w: string) => w !== ' ');
                                 return result;
                             },
-                        },
-                    });
-                } else {
-                    setShowUpdateIndexTips(true);
-                    miniSearch.current = null;
-                }
-                setTimeout(() => {
-                    setFocus(
-                        cryptoRandomString({
-                            length: 24,
-                            type: 'alphanumeric',
-                        })
-                    );
-                }, 0);
-            }
-        })();
+                            searchOptions: {
+                                boost: { title: 2 },
+                                fuzzy: 0.2,
+                                tokenize: (string: string) => {
+                                    let result = window.electronAPI.nodejieba({
+                                        word: string,
+                                    });
+                                    result = result.filter((w: string) => w !== ' ');
+                                    return result;
+                                },
+                            },
+                        });
+                    } else {
+                        setShowUpdateIndexTips(true);
+                        miniSearch.current = null;
+                    }
+                    setTimeout(() => {
+                        setFocus(
+                            cryptoRandomString({
+                                length: 24,
+                                type: 'alphanumeric',
+                            })
+                        );
+                    }, 0);
+                });
+        }
     }, [curDataPath]);
 
     const updateMiniSearch = useCallback(() => {

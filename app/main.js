@@ -311,6 +311,22 @@ const processIPC = () => {
         }
     });
 
+    ipcMain.handle('operate:readJsonAsync', async (event, { file_path }) => {
+        console.log('readJsonAsync: ' + file_path);
+        return new Promise((resolve, reject) => {
+            if (!fse.pathExistsSync(file_path)) {
+                reject(false);
+            }
+            fse.readFile(file_path, (err, json_str) => {
+                if (err) {
+                    reject(false);
+                } else {
+                    resolve(CSON.parseJSONString(json_str));
+                }
+            });
+        });
+    });
+
     ipcMain.handle(
         'operate:copy',
         async (event, { src_file_path, dest_dir_path, dest_file_name }) => {
