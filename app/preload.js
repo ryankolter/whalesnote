@@ -22,5 +22,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
     openSelectImagesDialog: (params) => ipcRenderer.invoke('dialog:openSelectImagesDialog', params),
     openParentFolder: (params) => ipcRenderer.invoke('dialog:openParentFolder', params),
     openFolder: (params) => ipcRenderer.invoke('dialog:openFolder', params),
+    loadNodejiebaDict: (params) => ipcRenderer.invoke('plugin:loadNodejiebaDict', params),
     nodejieba: (params) => ipcRenderer.sendSync('plugin:nodejieba', params),
 });

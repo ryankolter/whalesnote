@@ -8,7 +8,7 @@ import WaitingMaskStatic from '../../components/WaitingMaskStatic';
 import searchIcon from '../../resources/icon/searchIcon.svg';
 
 const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
-    const { noteSwitch, currentNoteKey, keySelect, setKeySelect, platformName } =
+    const { noteSwitch, currentNoteKey, keySelect, setKeySelect, platformName, curDataPath } =
         useContext(GlobalContext);
 
     const searchInputRef = useRef<HTMLInputElement>(null);
@@ -33,7 +33,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
             setWord(e.target.value);
             if (!showSearchPanel) setShowSearchPanel(true);
         },
-        [setWord, showSearchPanel, setShowSearchPanel]
+        [setWord, showSearchPanel, setShowSearchPanel, showLoadingSearch]
     );
 
     const handleSearchInputEnter = useCallback(
@@ -72,6 +72,10 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
     );
 
     useEffect(() => {
+        setShowSearchPanel(false);
+    }, [curDataPath]);
+
+    useEffect(() => {
         setShowResultHighlight(false);
         setCurResultIndex(-1);
         if (word === '') {
@@ -83,9 +87,11 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
     }, [word]);
 
     useEffect(() => {
-        if (showSearchPanel) {
-            loadSearchFileJson();
-        }
+        (async () => {
+            if (showSearchPanel) {
+                await loadSearchFileJson();
+            }
+        })();
     }, [showSearchPanel]);
 
     const nextSearchResult = useCallback(() => {
@@ -159,6 +165,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                     onKeyDown={handleSearchInputEnter}
                     onFocus={handleSearchInputFocus}
                     placeholder="搜索"
+                    readOnly={showLoadingSearch}
                 />
             </Search>
             {showSearchPanel ? (
@@ -222,7 +229,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                             <></>
                         )}
                     </SearchResultList>
-                    {showLoadingSearch ? <LoadingSearch>载入索引中...</LoadingSearch> : <></>}
+                    {showLoadingSearch ? <LoadingSearch>载入字典和索引...</LoadingSearch> : <></>}
                 </SearchPanel>
             ) : (
                 <></>
@@ -280,9 +287,13 @@ const SearchInput = styled.input(
 
 const LoadingSearch = styled.div({
     position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100%',
+    width: '100%',
+    transform: 'translate(-15px, -15px)',
+    backgroundColor: 'var(--main-waiting-bg-color)',
 });
 
 const SearchPanel = styled.div({

@@ -18,6 +18,7 @@
     --main-selected-bg-color: #3A404C;
     --main-scroller-bg-color: #C7C7C733;
     --main-tips-bg-color: #3A404C66;
+    --main-waiting-bg-color: rgba(0,0,0,0.4);
 
     /* editor */
     --editor-main-text-color: #999183;

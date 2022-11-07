@@ -17,7 +17,7 @@ const Mask = styled.div({
     left: '0',
     width: '100vw',
     height: '100vh',
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    backgroundColor: 'var(--main-waiting-bg-color)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',

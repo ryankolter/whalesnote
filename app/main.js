@@ -5,17 +5,6 @@ const CSON = require('cson');
 const fse = require('fs-extra');
 const nodejieba = require('nodejieba');
 
-if (app.isPackaged) {
-    let dictFilePath = path.join(__dirname, '../extraResources/dict');
-    nodejieba.load({
-        dict: path.join(dictFilePath, '/jieba.dict.utf8'),
-        hmmDict: path.join(dictFilePath, '/hmm_model.utf8'),
-        userDict: path.join(dictFilePath, '/user.dict.utf8'),
-        idfDict: path.join(dictFilePath, '/idf.utf8'),
-        stopWordDict: path.join(dictFilePath, '/stop_words.utf8'),
-    });
-}
-
 if (!app.requestSingleInstanceLock()) {
     app.quit();
     process.exit(0);
@@ -412,6 +401,20 @@ const processIPC = () => {
     ipcMain.handle('dialog:openFolder', async (event, { folder_path }) => {
         fse.ensureDirSync(folder_path);
         shell.openPath(folder_path);
+        return;
+    });
+
+    ipcMain.handle('plugin:loadNodejiebaDict', async (event) => {
+        let dictFilePath = app.isPackaged
+            ? path.join(__dirname, '../extraResources/dict')
+            : path.join(__dirname, '../src/resources/dict');
+        nodejieba.load({
+            dict: path.join(dictFilePath, '/jieba.dict.utf8'),
+            hmmDict: path.join(dictFilePath, '/hmm_model.utf8'),
+            userDict: path.join(dictFilePath, '/user.dict.utf8'),
+            idfDict: path.join(dictFilePath, '/idf.utf8'),
+            stopWordDict: path.join(dictFilePath, '/stop_words.utf8'),
+        });
         return;
     });
 

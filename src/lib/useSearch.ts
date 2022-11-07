@@ -1,14 +1,14 @@
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { GlobalContext } from '../GlobalProvider';
-import cryptoRandomString from 'crypto-random-string';
 import MiniSearch, { AsPlainObject, SearchResult } from 'minisearch';
 import { notes, fetchNotesInAllRepo } from './notes';
 
 const useSearch = () => {
-    const { curDataPath, whalenote, setFocus } = useContext(GlobalContext);
+    const { curDataPath, whalenote } = useContext(GlobalContext);
 
     const searchFileJson = useRef<AsPlainObject | false>(false);
     const miniSearch = useRef<MiniSearch | null>();
+    const loadDictFinish = useRef<boolean>(false);
     const [showUpdateIndexTips, setShowUpdateIndexTips] = useState(true);
     const [showWaitingMask, setShowWaitingMask] = useState(false);
     const [showLoadingSearch, setShowLoadingSearch] = useState(false);
@@ -30,12 +30,20 @@ const useSearch = () => {
         }
     }, [curDataPath]);
 
-    const loadSearchFileJson = useCallback(() => {
+    const loadDict = useCallback(async () => {
+        if (!loadDictFinish.current) {
+            await window.electronAPI.loadNodejiebaDict();
+            loadDictFinish.current = true;
+        }
+    }, []);
+
+    const loadSearchFileJson = useCallback(async () => {
         if (searchFileJson.current) {
             setShowUpdateIndexTips(false);
             setShowLoadingSearch(true);
-            setTimeout(() => {
+            setTimeout(async () => {
                 if (searchFileJson.current) {
+                    await loadDict();
                     miniSearch.current = MiniSearch.loadJS(searchFileJson.current, {
                         fields: ['title', 'content'],
                         storeFields: ['id', 'type', 'title', 'folder_name'],
@@ -103,7 +111,7 @@ const useSearch = () => {
                     });
                 });
             });
-
+            await loadDict();
             miniSearch.current = new MiniSearch({
                 fields: ['title', 'content'],
                 storeFields: ['id', 'type', 'title', 'folder_name'],

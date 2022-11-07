@@ -16,9 +16,9 @@ const defaultStyle = {
 };
 
 const transitionStyles = {
-    entering: { backgroundColor: 'rgba(0,0,0,0.4)', display: 'block' },
-    entered: { backgroundColor: 'rgba(0,0,0,0.4)', display: 'block' },
-    exiting: { backgroundColor: 'rgba(0,0,0,0)', display: 'none' },
+    entering: { backgroundColor: 'var(--main-waiting-bg-color)', display: 'block' },
+    entered: { backgroundColor: 'var(--main-waiting-bg-color)', display: 'block' },
+    exiting: { backgroundColor: 'var(--main-waiting-bg-color)', display: 'none' },
     exited: { backgroundColor: 'rgba(0,0,0,0)', display: 'none' },
 };
 
