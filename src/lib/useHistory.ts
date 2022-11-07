@@ -1,4 +1,4 @@
-import { useReducer, useMemo, useCallback } from 'react';
+import { useReducer, useRef, useMemo, useCallback } from 'react';
 import produce from 'immer';
 import { historyTypes } from '../commonType';
 
@@ -55,14 +55,42 @@ const historyReducer = produce((state: historyTypes, action: any) => {
 });
 
 const useHistory = () => {
-    const [state, dispatch] = useReducer(historyReducer, {
+    const lastState = useRef<historyTypes>({
         cur_repo_key: '',
         repos_record: {},
     });
+    const getState = useCallback(() => lastState.current, []);
+    const [state, dispatch] = useReducer(
+        (state: historyTypes, action: any) => (lastState.current = historyReducer(state, action)),
+        {
+            cur_repo_key: '',
+            repos_record: {},
+        }
+    );
+
+    const historySaveTimerObj = useRef<NodeJS.Timeout>();
 
     const initHistory = useCallback((new_history: historyTypes) => {
         dispatch({ type: 'init', new_state: new_history });
     }, []);
+
+    const saveTask = useCallback(async (curDataPath: string) => {
+        await window.electronAPI.writeJson({
+            file_path: `${curDataPath}/history_info.json`,
+            obj: getState(),
+        });
+    }, []);
+
+    const addSaveTask = (data_path: string, delay: number) => {
+        if (historySaveTimerObj.current) {
+            clearTimeout(historySaveTimerObj.current);
+        }
+
+        historySaveTimerObj.current = setTimeout(async () => {
+            await saveTask(data_path);
+            historySaveTimerObj.current = undefined;
+        }, delay);
+    };
 
     const switchRepo = useCallback(async (curDataPath: string, repoKey: string | undefined) => {
         dispatch({
@@ -71,62 +99,26 @@ const useHistory = () => {
             repo_key: repoKey,
         });
 
-        if (curDataPath && repoKey) {
-            const history = await window.electronAPI.readJsonSync({
-                file_path: `${curDataPath}/history_info.json`,
-            });
-
-            history.cur_repo_key = repoKey;
-
-            await window.electronAPI.writeJson({
-                file_path: `${curDataPath}/history_info.json`,
-                obj: history,
-            });
-        }
+        await addSaveTask(curDataPath, 1200);
     }, []);
 
     const switchFolder = useCallback(
-        async (
-            curDataPath: string | null,
-            repoKey: string | undefined,
-            folderKey: string | undefined
-        ) => {
-            if (curDataPath && repoKey) {
-                dispatch({
-                    type: 'switch_folder',
-                    data_path: curDataPath,
-                    repo_key: repoKey,
-                    folder_key: folderKey,
-                });
+        async (curDataPath: string, repoKey: string | undefined, folderKey: string | undefined) => {
+            dispatch({
+                type: 'switch_folder',
+                data_path: curDataPath,
+                repo_key: repoKey,
+                folder_key: folderKey,
+            });
 
-                const history = await window.electronAPI.readJsonSync({
-                    file_path: `${curDataPath}/history_info.json`,
-                });
-
-                if (!history.repos_record) {
-                    history.repos_record = {};
-                }
-                if (!history.repos_record[repoKey]) {
-                    history.repos_record[repoKey] = {
-                        cur_folder_key: folderKey,
-                        folders: {},
-                    };
-                } else {
-                    history.repos_record[repoKey].cur_folder_key = folderKey;
-                }
-
-                await window.electronAPI.writeJson({
-                    file_path: `${curDataPath}/history_info.json`,
-                    obj: history,
-                });
-            }
+            await addSaveTask(curDataPath, 1200);
         },
         []
     );
 
     const switchNote = useCallback(
         async (
-            curDataPath: string | null,
+            curDataPath: string,
             repoKey: string | undefined,
             folderKey: string | undefined,
             noteKey: string | undefined
@@ -139,32 +131,7 @@ const useHistory = () => {
                 note_key: noteKey,
             });
 
-            if (curDataPath && repoKey && folderKey && noteKey) {
-                const history = await window.electronAPI.readJsonSync({
-                    file_path: `${curDataPath}/history_info.json`,
-                });
-
-                history.cur_repo_key = repoKey;
-                if (!history.repos_record) {
-                    history.repos_record = {};
-                }
-                if (!history.repos_record[repoKey]) {
-                    history.repos_record[repoKey] = {
-                        cur_folder_key: folderKey,
-                        folders: {
-                            [folderKey]: noteKey,
-                        },
-                    };
-                } else {
-                    history.repos_record[repoKey].cur_folder_key = folderKey;
-                    history.repos_record[repoKey].folders[folderKey] = noteKey;
-                }
-
-                await window.electronAPI.writeJson({
-                    file_path: `${curDataPath}/history_info.json`,
-                    obj: history,
-                });
-            }
+            await addSaveTask(curDataPath, 1200);
         },
         []
     );
