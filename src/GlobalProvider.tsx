@@ -119,6 +119,8 @@ const initContext: {
     setEditorFontSize: Dispatch<SetStateAction<number>>;
     renderFontSize: number;
     setRenderFontSize: Dispatch<SetStateAction<number>>;
+    showSearchPanel: boolean;
+    setShowSearchPanel: Dispatch<SetStateAction<boolean>>;
 } = {
     curDataPath: '',
     setCurDataPath: () => {},
@@ -176,6 +178,8 @@ const initContext: {
     setEditorFontSize: () => {},
     renderFontSize: 15,
     setRenderFontSize: () => {},
+    showSearchPanel: false,
+    setShowSearchPanel: () => {},
 };
 export const GlobalContext = createContext(initContext);
 
@@ -225,6 +229,7 @@ export const GlobalProvider = ({ children }: { children: any }) => {
     const [renderFontSize, setRenderFontSize] = useState<number>(
         Number(window.localStorage.getItem('render_font_size')) || 15
     );
+    const [showSearchPanel, setShowSearchPanel] = useState(false);
 
     useEffect(() => {
         if (data.current) {
@@ -360,6 +365,8 @@ export const GlobalProvider = ({ children }: { children: any }) => {
                 setEditorFontSize,
                 renderFontSize,
                 setRenderFontSize,
+                showSearchPanel,
+                setShowSearchPanel,
             }}
         >
             {children}

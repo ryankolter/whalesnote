@@ -8,8 +8,16 @@ import WaitingMaskStatic from '../../components/WaitingMaskStatic';
 import searchIcon from '../../resources/icon/searchIcon.svg';
 
 const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
-    const { noteSwitch, currentNoteKey, keySelect, setKeySelect, platformName, curDataPath } =
-        useContext(GlobalContext);
+    const {
+        noteSwitch,
+        currentNoteKey,
+        keySelect,
+        setKeySelect,
+        platformName,
+        curDataPath,
+        showSearchPanel,
+        setShowSearchPanel,
+    } = useContext(GlobalContext);
 
     const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -17,7 +25,6 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
     const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
     const [curResultIndex, setCurResultIndex] = useState(-1);
     const [showResultHighlight, setShowResultHighlight] = useState(false);
-    const [showSearchPanel, setShowSearchPanel] = useState(false);
 
     const [
         showUpdateIndexTips,
@@ -36,19 +43,12 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
         [setWord, showSearchPanel, setShowSearchPanel]
     );
 
-    const handleSearchInputEnter = useCallback(
-        (e: any) => {
-            if (e.key === 'Enter') {
-                setWord(e.target.value);
-                if (!showSearchPanel) setShowSearchPanel(true);
-            }
-        },
-        [setWord, showSearchPanel, setShowSearchPanel]
-    );
-
     const handleSearchInputFocus = useCallback(() => {
         if (!showSearchPanel) {
             setShowSearchPanel(true);
+            if (searchInputRef.current) {
+                searchInputRef.current.setSelectionRange(0, searchInputRef.current.value.length);
+            }
         }
     }, [showSearchPanel, setShowSearchPanel]);
 
@@ -124,11 +124,13 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                     if (keySelect) setKeySelect(false);
                 }
 
-                if (e.key === 'Escape') {
+                if (e.key === 'Enter' || e.key === 'Escape') {
                     if (showSearchPanel) {
                         setShowSearchPanel(false);
+                        if (searchInputRef.current) {
+                            searchInputRef.current.blur();
+                        }
                     }
-                    searchInputRef.current?.blur();
                 }
 
                 // arrow bottom 40
@@ -142,7 +144,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                 }
             }
         },
-        [showSearchPanel, prevSearchResult, nextSearchResult]
+        [showSearchPanel, prevSearchResult, nextSearchResult, setWord]
     );
 
     useEffect(() => {
@@ -162,7 +164,6 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                 <SearchInput
                     ref={searchInputRef}
                     onChange={handleSearchInputChange}
-                    onKeyDown={handleSearchInputEnter}
                     onFocus={handleSearchInputFocus}
                     placeholder="搜索"
                     readOnly={showLoadingSearch}
@@ -293,6 +294,7 @@ const LoadingSearch = styled.div({
     height: '100%',
     width: '100%',
     transform: 'translate(-15px, -15px)',
+    borderRadius: '10px',
     backgroundColor: 'var(--main-waiting-bg-color)',
 });
 

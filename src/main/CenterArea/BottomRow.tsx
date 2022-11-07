@@ -21,6 +21,7 @@ const BottomRow: React.FC<{
         setBlur,
         keySelect,
         setKeySelect,
+        showSearchPanel,
     } = useContext(GlobalContext);
 
     const folders_obj = useMemo(() => {
@@ -40,10 +41,16 @@ const BottomRow: React.FC<{
                 }
 
                 //normal enter and extra enter
-                if (e.key === 'Enter' && keySelect) {
-                    setKeySelect(false);
-                    setNumArray([]);
-                    if (currentNoteKey && mdRenderState !== 'all') {
+                if (e.key === 'Enter') {
+                    if (keySelect) {
+                        setKeySelect(false);
+                        setNumArray([]);
+                    }
+                    if (
+                        (keySelect || showSearchPanel) &&
+                        currentNoteKey &&
+                        mdRenderState !== 'all'
+                    ) {
                         setTimeout(() => {
                             setFocus(
                                 cryptoRandomString({
