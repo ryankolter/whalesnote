@@ -496,20 +496,20 @@ export const MarkdownRender: React.FC<{
             <TocToggleBtn onClick={() => setShowTocFlag((showTocFlag) => 1 - showTocFlag)}>
                 <svg width="9.5px" height="11.5px">
                     <path
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         stroke="var(--main-text-title-color)"
-                        stroke-width="1px"
-                        stroke-linecap="round"
-                        stroke-linejoin="miter"
+                        strokeWidth="1px"
+                        strokeLinecap="round"
+                        strokeLinejoin="miter"
                         fill="none"
                         d="M7.716,1.232 C7.960,1.458 7.941,1.808 7.673,2.13 L4.764,4.246 C4.497,4.452 4.82,4.436 3.838,4.210 L1.188,1.759 C0.944,1.534 0.963,1.184 1.231,0.978 "
                     />
                     <path
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         stroke="var(--main-text-title-color)"
-                        stroke-width="1px"
-                        stroke-linecap="round"
-                        stroke-linejoin="miter"
+                        strokeWidth="1px"
+                        strokeLinecap="round"
+                        strokeLinejoin="miter"
                         fill="none"
                         d="M7.716,6.422 C7.960,6.648 7.941,6.997 7.673,7.203 L4.764,9.436 C4.497,9.642 4.82,9.626 3.838,9.400 L1.188,6.949 C0.944,6.723 0.963,6.374 1.231,6.168 "
                     />

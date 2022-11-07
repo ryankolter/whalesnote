@@ -91,19 +91,25 @@ const useData = () => {
                 };
             }
 
-            notes[init_repo_key] = {};
-            for (const folder_key of folders_key) {
+            if (folders_key.length > 0) {
+                let fetch_folder_key = folders_key[0];
+                for (const folder_key of folders_key) {
+                    if (folder_key === history_info.repos_record[init_repo_key].cur_folder_key) {
+                        fetch_folder_key = folder_key;
+                    }
+                }
+                notes[init_repo_key] = {};
                 const folder_info = await window.electronAPI.readJson({
-                    file_path: `${data_path}/${init_repo_key}/${folder_key}/folder_info.json`,
+                    file_path: `${data_path}/${init_repo_key}/${fetch_folder_key}/folder_info.json`,
                 });
                 if (folder_info && folder_info.notes_obj) {
-                    notes[init_repo_key][folder_key] = {};
+                    notes[init_repo_key][fetch_folder_key] = {};
                     for (const note_key of Object.keys(folder_info.notes_obj)) {
                         const note_info = await window.electronAPI.readCson({
-                            file_path: `${data_path}/${init_repo_key}/${folder_key}/${note_key}.cson`,
+                            file_path: `${data_path}/${init_repo_key}/${fetch_folder_key}/${note_key}.cson`,
                         });
                         if (note_info) {
-                            notes[init_repo_key][folder_key][note_key] = note_info.content;
+                            notes[init_repo_key][fetch_folder_key][note_key] = note_info.content;
                         }
                     }
                 }
