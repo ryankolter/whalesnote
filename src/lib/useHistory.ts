@@ -151,7 +151,9 @@ const useHistory = () => {
                 if (!history.repos_record[repoKey]) {
                     history.repos_record[repoKey] = {
                         cur_folder_key: folderKey,
-                        folders: {},
+                        folders: {
+                            [folderKey]: noteKey,
+                        },
                     };
                 } else {
                     history.repos_record[repoKey].cur_folder_key = folderKey;
