@@ -208,19 +208,19 @@ export const MarkdownRender: React.FC<{
     //     ipcRenderer.on('saveNoteToHtml', async (event: any, path: string) => {
     //         const bodyContent = mdPrint.current.render(renderNoteStr);
     //         const colorStyle =
-    //         await window.electronAPI.readCss({
+    //         await window.electronAPI.readCssSync({
     //                 file_name: '/theme/color_variable.css',
     //             }) || '';
     //         const globalStyle =
-    //             await window.electronAPI.readCss({
+    //             await window.electronAPI.readCssSync({
     //                 file_name: '/theme/global.css',
     //             }) || '';
     //         const hljsStyle =
-    //             await window.electronAPI.readCss({
+    //             await window.electronAPI.readCssSync({
     //                 file_name: `/hljs_theme/${theme}_standard.css`,
     //             }) || '';
     //         const renderStyle =
-    //             await window.electronAPI.readCss({
+    //             await window.electronAPI.readCssSync({
     //                 file_name: '/theme/render.css',
     //             }) || '';
     //         const outerHtml = `<!DOCTYPE html><html>
@@ -280,19 +280,19 @@ export const MarkdownRender: React.FC<{
     // useEffect(() => {
     //     ipcRenderer.on('saveFolderToHtml', async (event: any, path: string) => {
     //         const colorStyle =
-    //             await window.electronAPI.readCss({
+    //             await window.electronAPI.readCssSync({
     //                 file_name: '/theme/color_variable.css',
     //             }) || '';
     //         const globalStyle =
-    //             await window.electronAPI.readCss({
+    //             await window.electronAPI.readCssSync({
     //                 file_name: '/theme/global.css',
     //             }) || '';
     //         const hljsStyle =
-    //             await window.electronAPI.readCss({
+    //             await window.electronAPI.readCssSync({
     //                 file_name: `/hljs_theme/${theme}_standard.css`,
     //             }) || '';
     //         const renderStyle =
-    //             await window.electronAPI.readCss({
+    //             await window.electronAPI.readCssSync({
     //                 file_name: '/theme/render.css',
     //             }) || '';
     //         for (const note_key of Object.keys(notes[currentRepoKey][currentFolderKey])) {
