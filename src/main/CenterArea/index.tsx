@@ -18,11 +18,11 @@ const CenterArea: React.FC<{}> = ({}) => {
         currentNoteKey,
         theme,
         platformName,
-        setNumArray,
-        setFocus,
-        setBlur,
-        keySelect,
-        setKeySelect,
+        setKeySelectNumArray,
+        manualFocus,
+        manualBlur,
+        showKeySelect,
+        setShowKeySelect,
     } = useContext(GlobalContext);
 
     const [
@@ -60,29 +60,17 @@ const CenterArea: React.FC<{}> = ({}) => {
 
                 // normal number 0 and extra number 0
                 if ((e.keyCode === 48 || e.keyCode === 96) && modKey) {
-                    if (keySelect) {
-                        setKeySelect(false);
-                        setNumArray([]);
+                    if (showKeySelect) {
+                        setShowKeySelect(false);
+                        setKeySelectNumArray([]);
                         if (currentNoteKey) {
-                            setTimeout(() => {
-                                setFocus(
-                                    cryptoRandomString({
-                                        length: 24,
-                                        type: 'alphanumeric',
-                                    })
-                                );
-                            }, 0);
+                            manualFocus(0);
                         }
                     } else {
-                        setKeySelect(true);
-                        setNumArray([]);
+                        setShowKeySelect(true);
+                        setKeySelectNumArray([]);
                         //只有这里才会让它初始化为显示框框
-                        setBlur(
-                            cryptoRandomString({
-                                length: 24,
-                                type: 'alphanumeric',
-                            })
-                        );
+                        manualBlur(0);
                     }
                 }
 
@@ -92,7 +80,14 @@ const CenterArea: React.FC<{}> = ({}) => {
                 }
             }
         },
-        [currentNoteKey, keySelect, setBlur, setFocus, setKeySelect, nextMdRenderState]
+        [
+            currentNoteKey,
+            showKeySelect,
+            manualFocus,
+            manualBlur,
+            setShowKeySelect,
+            nextMdRenderState,
+        ]
     );
 
     useEffect(() => {

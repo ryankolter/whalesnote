@@ -29,12 +29,11 @@ const RepoPanel: React.FC<{}> = ({}) => {
         reorderRepo,
         deleteRepo,
         changeNotesAfterNew,
-        numArray,
-        setFocus,
-        keySelect,
-        setKeySelect,
+        keySelectNumArray,
+        showKeySelect,
+        setShowKeySelect,
         platformName,
-        setShowAllRepo,
+        setShowRepoPanel,
     } = useContext(GlobalContext);
 
     const [activeId, setActiveId] = useState<string>('');
@@ -62,7 +61,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
     const sensors = useSensors(useSensor(MouseSensor, { activationConstraint: { distance: 5 } }));
 
     useEffect(() => {
-        if (keySelect) {
+        if (showKeySelect) {
             let page = 0;
             whalenote.repos_key
                 .filter((key) => whalenote && whalenote.repos_obj && whalenote.repos_obj[key])
@@ -128,7 +127,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
                 folder_key: default_folder_key,
             });
 
-            await newNote(curDataPath, repo_key, default_folder_key, default_note_key, '新建文档');
+            await newNote(curDataPath, repo_key, default_folder_key, default_note_key, '空笔记');
             await changeNotesAfterNew('note', {
                 data_path: curDataPath,
                 repo_key,
@@ -158,7 +157,6 @@ const RepoPanel: React.FC<{}> = ({}) => {
             folderSwitch,
             noteSwitch,
             repoScrollRef,
-            setFocus,
             newRepo,
             newFolder,
             newNote,
@@ -311,22 +309,32 @@ const RepoPanel: React.FC<{}> = ({}) => {
                 const modKey = platformName === 'darwin' ? e.metaKey : e.ctrlKey;
 
                 // normal number 1-6
-                if (e.keyCode >= 49 && e.keyCode <= 54 && !modKey && numArray.length === 0) {
+                if (
+                    e.keyCode >= 49 &&
+                    e.keyCode <= 54 &&
+                    !modKey &&
+                    keySelectNumArray.length === 0
+                ) {
                     const num = parseInt(e.keyCode) - 48;
                     const index = num + 6 * repoSelectedList - 1;
                     if (whalenote.repos_key && index < whalenote.repos_key.length) {
                         repoSwitchInPanel(whalenote.repos_key[index]);
-                        setKeySelect(true);
+                        setShowKeySelect(true);
                     }
                 }
 
                 // extra number 1-6
-                if (e.keyCode >= 97 && e.keyCode <= 102 && !modKey && numArray.length === 0) {
+                if (
+                    e.keyCode >= 97 &&
+                    e.keyCode <= 102 &&
+                    !modKey &&
+                    keySelectNumArray.length === 0
+                ) {
                     const num = parseInt(e.keyCode) - 96;
                     const index = num + 6 * repoSelectedList - 1;
                     if (whalenote.repos_key && index < whalenote.repos_key.length) {
                         repoSwitchInPanel(whalenote.repos_key[index]);
-                        setKeySelect(true);
+                        setShowKeySelect(true);
                     }
                 }
 
@@ -357,8 +365,8 @@ const RepoPanel: React.FC<{}> = ({}) => {
             repoSwitchInPanel,
             nextRepoList,
             prevRepoList,
-            setKeySelect,
-            numArray,
+            setShowKeySelect,
+            keySelectNumArray,
         ]
     );
 
@@ -428,7 +436,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
         <RepoListContainer>
             <CloseRepoListBtn
                 onClick={() => {
-                    setShowAllRepo(false);
+                    setShowRepoPanel(false);
                 }}
             >
                 x
@@ -478,7 +486,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
                                                             }}
                                                         >
                                                             {whalenote.repos_obj[key].repo_name}
-                                                            {keySelect ? (
+                                                            {showKeySelect ? (
                                                                 <RepoGroupItem
                                                                     style={{
                                                                         color:
@@ -493,7 +501,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
                                                                 <></>
                                                             )}
                                                         </RepoItemName>
-                                                        {keySelect ? (
+                                                        {showKeySelect ? (
                                                             <RepoGroupSelect></RepoGroupSelect>
                                                         ) : (
                                                             <></>
@@ -528,7 +536,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
                                                             }}
                                                         >
                                                             {whalenote.repos_obj[key].repo_name}
-                                                            {keySelect ? (
+                                                            {showKeySelect ? (
                                                                 <RepoGroupItem
                                                                     style={{
                                                                         color:
@@ -645,7 +653,9 @@ const RepoPanel: React.FC<{}> = ({}) => {
                             className="repo-name-input"
                             placeholder="输入新的资料库名"
                             autoFocus={true}
-                            onBlur={(e) => newRepoSubmit(e, newRepoKey)}
+                            onBlur={(e) => {
+                                if (newRepoKey) newRepoSubmit(e, newRepoKey);
+                            }}
                             onChange={(e: any) => {
                                 setNewRepoName(e.target.value);
                             }}

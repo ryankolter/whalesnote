@@ -7,7 +7,8 @@ import FolderList from './FolderList';
 import NoteList from './NoteList';
 
 const SideNav: React.FC<Record<string, unknown>> = ({}) => {
-    const { numArray, setNumArray, keySelect, platformName } = useContext(GlobalContext);
+    const { keySelectNumArray, setKeySelectNumArray, showKeySelect, platformName } =
+        useContext(GlobalContext);
 
     const resizeFolderOffsetX = useRef<number>(0);
     const resizeNoteOffsetX = useRef<number>(0);
@@ -29,25 +30,25 @@ const SideNav: React.FC<Record<string, unknown>> = ({}) => {
                     ((e.keyCode >= 65 && e.keyCode <= 72) ||
                         (e.keyCode >= 77 && e.keyCode <= 89)) &&
                     !modKey &&
-                    keySelect
+                    showKeySelect
                 ) {
                     const num = parseInt(e.keyCode);
-                    if (numArray.length === 0) {
-                        setNumArray((state: any) => state.concat([num]));
+                    if (keySelectNumArray.length === 0) {
+                        setKeySelectNumArray((state: any) => state.concat([num]));
                     } else {
-                        setNumArray((state: any) => state.concat([num]));
+                        setKeySelectNumArray((state: any) => state.concat([num]));
                     }
                 }
 
-                if (e.keyCode >= 48 && e.keyCode <= 57 && !modKey && keySelect) {
+                if (e.keyCode >= 48 && e.keyCode <= 57 && !modKey && showKeySelect) {
                     const num = parseInt(e.keyCode);
-                    if (numArray.length === 1) {
-                        setNumArray((state: any) => state.concat([num]));
+                    if (keySelectNumArray.length === 1) {
+                        setKeySelectNumArray((state: any) => state.concat([num]));
                     }
                 }
             }
         },
-        [numArray, keySelect]
+        [keySelectNumArray, showKeySelect]
     );
 
     useEffect(() => {

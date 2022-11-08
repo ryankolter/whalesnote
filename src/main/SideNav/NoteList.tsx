@@ -26,11 +26,11 @@ const NoteList: React.FC<{
         reorderNote,
         deleteNote,
         changeNotesAfterNew,
-        numArray,
-        setNumArray,
-        setFocus,
-        keySelect,
-        setKeySelect,
+        keySelectNumArray,
+        setKeySelectNumArray,
+        manualFocus,
+        showKeySelect,
+        setShowKeySelect,
         platformName,
     } = useContext(GlobalContext);
 
@@ -73,30 +73,23 @@ const NoteList: React.FC<{
             length: 12,
             type: 'alphanumeric',
         });
-        const new_note_title = '新建文档';
+        const new_note_title = '空笔记';
 
         await newNote(curDataPath, currentRepoKey, currentFolderKey, new_note_key, new_note_title);
         await noteSwitch(currentRepoKey, currentFolderKey, new_note_key);
-        setTimeout(() => {
-            setFocus(
-                cryptoRandomString({
-                    length: 24,
-                    type: 'alphanumeric',
-                })
-            );
-        }, 500);
+        manualFocus(500);
         setTimeout(() => {
             scrollToBottom();
         }, 50);
-        setKeySelect(false);
+        setShowKeySelect(false);
     }, [
         curDataPath,
         currentRepoKey,
         currentFolderKey,
         changeNotesAfterNew,
         noteSwitch,
-        setFocus,
-        setKeySelect,
+        manualFocus,
+        setShowKeySelect,
         scrollToBottom,
     ]);
 
@@ -151,28 +144,31 @@ const NoteList: React.FC<{
     }, [noteScrollTop]);
 
     useEffect(() => {
-        if (numArray.length === 2) {
+        if (keySelectNumArray.length === 2) {
             let new_index = -1;
             if (notes_key) {
                 if (
-                    numArray[0] >= 65 &&
-                    numArray[0] <= 72 &&
-                    numArray[0] < Math.ceil(notes_key.length / 21) + 65
+                    keySelectNumArray[0] >= 65 &&
+                    keySelectNumArray[0] <= 72 &&
+                    keySelectNumArray[0] < Math.ceil(notes_key.length / 21) + 65
                 ) {
-                    if (numArray[1] <= 72 && numArray[0] >= 65) {
-                        new_index = (numArray[0] - 65) * 21 + (numArray[1] - 65);
-                    } else if (numArray[1] >= 75 && numArray[1] <= 89) {
-                        new_index = (numArray[0] - 65) * 21 + (numArray[1] - 65) - 4;
+                    if (keySelectNumArray[1] <= 72 && keySelectNumArray[0] >= 65) {
+                        new_index = (keySelectNumArray[0] - 65) * 21 + (keySelectNumArray[1] - 65);
+                    } else if (keySelectNumArray[1] >= 75 && keySelectNumArray[1] <= 89) {
+                        new_index =
+                            (keySelectNumArray[0] - 65) * 21 + (keySelectNumArray[1] - 65) - 4;
                     }
                 } else if (
-                    numArray[0] >= 75 &&
-                    numArray[0] <= 89 &&
-                    numArray[0] < Math.ceil(notes_key.length / 21) + 65 + 4
+                    keySelectNumArray[0] >= 75 &&
+                    keySelectNumArray[0] <= 89 &&
+                    keySelectNumArray[0] < Math.ceil(notes_key.length / 21) + 65 + 4
                 ) {
-                    if (numArray[1] <= 72 && numArray[1] >= 65) {
-                        new_index = (numArray[0] - 65 - 4) * 21 + (numArray[1] - 65);
-                    } else if (numArray[1] >= 75 && numArray[1] <= 89) {
-                        new_index = (numArray[0] - 65 - 4) * 21 + (numArray[1] - 65) - 4;
+                    if (keySelectNumArray[1] <= 72 && keySelectNumArray[1] >= 65) {
+                        new_index =
+                            (keySelectNumArray[0] - 65 - 4) * 21 + (keySelectNumArray[1] - 65);
+                    } else if (keySelectNumArray[1] >= 75 && keySelectNumArray[1] <= 89) {
+                        new_index =
+                            (keySelectNumArray[0] - 65 - 4) * 21 + (keySelectNumArray[1] - 65) - 4;
                     }
                 }
             }
@@ -186,13 +182,13 @@ const NoteList: React.FC<{
                     setNoteScrollTop(offset);
                 }
             }
-            setNumArray([]);
+            setKeySelectNumArray([]);
         }
-    }, [numArray, noteSwitchByIndex]);
+    }, [keySelectNumArray, noteSwitchByIndex]);
 
     useEffect(() => {
-        if (numArray.length === 1) {
-            setNumArray([]);
+        if (keySelectNumArray.length === 1) {
+            setKeySelectNumArray([]);
         }
     }, [currentRepoKey, currentFolderKey, currentNoteKey]);
 
@@ -206,17 +202,17 @@ const NoteList: React.FC<{
                 }
 
                 // arrow bottom 40 or K 75
-                if ((e.keyCode === 40 || e.keyCode === 75) && !modKey && keySelect) {
+                if ((e.keyCode === 40 || e.keyCode === 75) && !modKey && showKeySelect) {
                     nextNotePage();
                 }
 
                 // arrow bottom 38 or I 73
-                if ((e.keyCode === 38 || e.keyCode === 73) && !modKey && keySelect) {
+                if ((e.keyCode === 38 || e.keyCode === 73) && !modKey && showKeySelect) {
                     preNotePage();
                 }
             }
         },
-        [keySelect, handleNewNote, nextNotePage, preNotePage]
+        [showKeySelect, handleNewNote, nextNotePage, preNotePage]
     );
 
     useEffect(() => {
@@ -321,15 +317,15 @@ const NoteList: React.FC<{
                                                 }}
                                             >
                                                 {notes_obj[key].title}
-                                                {keySelect &&
+                                                {showKeySelect &&
                                                 currentNoteKey !== key &&
                                                 index < 21 * 21 ? (
                                                     <NoteKeyTab>
                                                         <span
                                                             style={{
                                                                 color:
-                                                                    numArray.length >= 1 &&
-                                                                    numArray[0] ===
+                                                                    keySelectNumArray.length >= 1 &&
+                                                                    keySelectNumArray[0] ===
                                                                         genAlphaCode1(index + 1)
                                                                         ? 'var(--main-text-selected-color)'
                                                                         : '',
@@ -345,8 +341,9 @@ const NoteList: React.FC<{
                                                         <span
                                                             style={{
                                                                 color:
-                                                                    numArray.length === 2 &&
-                                                                    numArray[1] ===
+                                                                    keySelectNumArray.length ===
+                                                                        2 &&
+                                                                    keySelectNumArray[1] ===
                                                                         genAlphaCode2(index + 1)
                                                                         ? 'var(--main-text-selected-color)'
                                                                         : '',

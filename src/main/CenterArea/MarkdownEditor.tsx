@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 import { EditorView, ViewUpdate } from '@codemirror/view';
@@ -30,10 +30,10 @@ export const MarkdownEditor: React.FC<{
         renameNote,
         focus,
         blur,
-        setKeySelect,
+        setShowKeySelect,
         editorFontSize,
         platformName,
-        showAllRepo,
+        showRepoPanel,
     } = useContext(GlobalContext);
 
     const [topLinePos, cursorHeadPos, updateTopLinePos, updateCursorHeadPos] = useEditorPosition(
@@ -79,7 +79,7 @@ export const MarkdownEditor: React.FC<{
             const doc = view.current?.state.doc;
             if (doc) {
                 const first_line_content = doc.lineAt(0).text.replace(/^[#\-\_*>\s]+/g, '');
-                const new_name: string = first_line_content || '新建文档';
+                const new_name: string = first_line_content || '空笔记';
                 await renameNote(
                     curDataPath,
                     currentRepoKey,
@@ -103,7 +103,7 @@ export const MarkdownEditor: React.FC<{
     const onSelectionSet = useCallback(
         async (vu: ViewUpdate) => {
             if (view.current) {
-                setKeySelect(false);
+                setShowKeySelect(false);
                 const cursorHeadPos = view.current.state.selection.main.head;
                 await updateCursorHeadPos(
                     currentRepoKey,
@@ -246,13 +246,13 @@ export const MarkdownEditor: React.FC<{
                     modKey &&
                     !e.shiftKey &&
                     mdRenderState !== 'all' &&
-                    !showAllRepo
+                    !showRepoPanel
                 ) {
                     autoScrollToLine();
                 }
             }
         },
-        [mdRenderState, showAllRepo, autoScrollToLine]
+        [mdRenderState, showRepoPanel, autoScrollToLine]
     );
 
     const handleScroll = useCallback(

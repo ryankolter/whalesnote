@@ -11,11 +11,11 @@ import SocketServerBtn from './components/socketServerBtn';
 import SocketClientBtn from './socketClientBtn';
 
 const App = () => {
-    const { theme, initingData } = useContext(GlobalContext);
+    const { theme, dataInitingFlag } = useContext(GlobalContext);
 
     return (
         <AppContainer className={`${theme}-theme-global`}>
-            <WaitingMask in={initingData} timeout={300}></WaitingMask>
+            <WaitingMask in={dataInitingFlag} timeout={300}></WaitingMask>
             <AppUI>
                 <SideNav />
                 <CenterArea />

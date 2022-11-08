@@ -16,14 +16,13 @@ const BottomRow: React.FC<{
         whalenote,
         theme,
         platformName,
-        setNumArray,
-        setFocus,
-        setBlur,
-        keySelect,
-        setKeySelect,
+        setKeySelectNumArray,
+        manualFocus,
+        showKeySelect,
+        setShowKeySelect,
         showSearchPanel,
-        showAllRepo,
-        setShowAllRepo,
+        showRepoPanel,
+        setShowRepoPanel,
     } = useContext(GlobalContext);
 
     const folders_obj = useMemo(() => {
@@ -38,52 +37,45 @@ const BottomRow: React.FC<{
             if (platformName === 'darwin' || platformName === 'win32' || platformName === 'linux') {
                 const modKey = platformName === 'darwin' ? e.metaKey : e.ctrlKey;
 
-                if (e.keyCode === 90 && !modKey && keySelect) {
-                    setShowAllRepo((_showAllRepo) => !_showAllRepo);
+                //alpha z
+                if (e.keyCode === 90 && !modKey && showKeySelect) {
+                    setShowRepoPanel((_showAllRepo) => !_showAllRepo);
                 }
 
                 //normal enter and extra enter
                 if (!composing.current && e.key === 'Enter') {
-                    if (keySelect) {
-                        setKeySelect(false);
-                        setNumArray([]);
+                    if (showKeySelect) {
+                        setShowKeySelect(false);
+                        setKeySelectNumArray([]);
                     }
                     if (
-                        (keySelect || showSearchPanel) &&
+                        (showKeySelect || showSearchPanel) &&
                         currentNoteKey &&
                         mdRenderState !== 'all'
                     ) {
-                        setTimeout(() => {
-                            setFocus(
-                                cryptoRandomString({
-                                    length: 24,
-                                    type: 'alphanumeric',
-                                })
-                            );
-                        }, 0);
+                        manualFocus(0);
                     }
-                    setShowAllRepo(false);
+                    setShowRepoPanel(false);
                 }
 
                 // esc
                 if (e.key === 'Escape') {
-                    if (keySelect) {
-                        setKeySelect(false);
-                        setNumArray([]);
+                    if (showKeySelect) {
+                        setShowKeySelect(false);
+                        setKeySelectNumArray([]);
                     }
-                    setShowAllRepo(false);
+                    setShowRepoPanel(false);
                 }
             }
         },
         [
             currentNoteKey,
-            keySelect,
+            showKeySelect,
             showSearchPanel,
             mdRenderState,
-            setBlur,
-            setFocus,
-            setKeySelect,
-            setNumArray,
+            manualFocus,
+            setShowKeySelect,
+            setKeySelectNumArray,
         ]
     );
 
@@ -111,7 +103,7 @@ const BottomRow: React.FC<{
             <BreakCrumb>
                 <CurRepoNameTag
                     onClick={() => {
-                        setShowAllRepo((_showAllRepo) => !_showAllRepo);
+                        setShowRepoPanel((_showAllRepo) => !_showAllRepo);
                     }}
                 >
                     <RepoNameLabel>
@@ -121,7 +113,7 @@ const BottomRow: React.FC<{
                             ? whalenote.repos_obj[currentRepoKey].repo_name
                             : ''}
                     </RepoNameLabel>
-                    {keySelect ? <RepoPanelKeyTab>Z</RepoPanelKeyTab> : <></>}
+                    {showKeySelect ? <RepoPanelKeyTab>Z</RepoPanelKeyTab> : <></>}
                 </CurRepoNameTag>
                 <GreaterTag>&gt;</GreaterTag>
                 <CurFolderNameTag>
@@ -131,7 +123,7 @@ const BottomRow: React.FC<{
                             : ''}
                     </FolderNameLabel>
                 </CurFolderNameTag>
-                {showAllRepo ? (
+                {showRepoPanel ? (
                     <AllRepo>
                         <RepoPanel />
                     </AllRepo>

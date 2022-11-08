@@ -8,8 +8,8 @@ const DataSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssista
     const {
         curDataPath,
         setCurDataPath,
-        switchingData,
-        setSwitchingData,
+        dataSwitchingFlag,
+        setDataSwitchingFlag,
         dataPathList,
         removeDataPathFromList,
     } = useContext(GlobalContext);
@@ -20,7 +20,7 @@ const DataSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssista
         const filePath = await window.electronAPI.openDirectoryDialog();
         setShowPathUl(false);
         if (filePath !== curDataPath) {
-            setSwitchingData(true);
+            setDataSwitchingFlag(true);
             setTimeout(() => {
                 setCurDataPath(filePath);
             }, 50);
@@ -84,7 +84,7 @@ const DataSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssista
                                                     key={index}
                                                     onClick={(e) => {
                                                         setShowPathUl(false);
-                                                        setSwitchingData(true);
+                                                        setDataSwitchingFlag(true);
                                                         setTimeout(() => {
                                                             setCurDataPath(dataPath);
                                                         }, 200);
@@ -131,7 +131,7 @@ const DataSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssista
             <ChildPart>
                 <PartTitle>同步</PartTitle>
             </ChildPart>
-            <WaitingMaskStatic show={switchingData} word={'载入中......'}></WaitingMaskStatic>
+            <WaitingMaskStatic show={dataSwitchingFlag} word={'载入中......'}></WaitingMaskStatic>
         </DataSpaceContainer>
     );
 };

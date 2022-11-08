@@ -11,8 +11,8 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
     const {
         noteSwitch,
         currentNoteKey,
-        keySelect,
-        setKeySelect,
+        showKeySelect,
+        setShowKeySelect,
         platformName,
         curDataPath,
         showSearchPanel,
@@ -128,7 +128,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
 
                 if (e.keyCode === 70 && modKey && e.shiftKey) {
                     searchInputRef.current?.focus();
-                    if (keySelect) setKeySelect(false);
+                    if (showKeySelect) setShowKeySelect(false);
                 }
 
                 if ((!composing.current && e.key === 'Enter') || e.key === 'Escape') {

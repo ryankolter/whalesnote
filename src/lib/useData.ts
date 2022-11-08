@@ -7,8 +7,8 @@ const useData = () => {
     const data = useRef<DataTypes>();
     const [curDataPath, setCurDataPath] = useState<string>('');
     const [dataPathChangeFlag, setDataPathChangeFlag] = useState<number>(0);
-    const [initingData, setInitingData] = useState<boolean>(true);
-    const [switchingData, setSwitchingData] = useState<boolean>(false);
+    const [dataInitingFlag, setDataInitingFlag] = useState<boolean>(true);
+    const [dataSwitchingFlag, setDataSwitchingFlag] = useState<boolean>(false);
 
     const initExistRepo = useCallback(async (data_path: string) => {
         const whalenote_info = await window.electronAPI.readJsonSync({
@@ -202,7 +202,7 @@ const useData = () => {
             ) {
                 init_data_path = await window.electronAPI.getDefaultDataPath();
             }
-            setInitingData(true);
+            setDataInitingFlag(true);
             setTimeout(() => {
                 setCurDataPath(init_data_path);
             }, 100);
@@ -231,12 +231,12 @@ const useData = () => {
             const diff = endTimeStamp - startTimeStamp;
             if (diff < 10) {
                 setTimeout(() => {
-                    setSwitchingData(false);
-                    setInitingData(false);
+                    setDataSwitchingFlag(false);
+                    setDataInitingFlag(false);
                 }, 500);
             } else {
-                setSwitchingData(false);
-                setInitingData(false);
+                setDataSwitchingFlag(false);
+                setDataInitingFlag(false);
             }
         })();
     }, [curDataPath]);
@@ -246,10 +246,9 @@ const useData = () => {
         curDataPath,
         setCurDataPath,
         dataPathChangeFlag,
-        initingData,
-        setInitingData,
-        switchingData,
-        setSwitchingData,
+        dataInitingFlag,
+        dataSwitchingFlag,
+        setDataSwitchingFlag,
     ] as const;
 };
 

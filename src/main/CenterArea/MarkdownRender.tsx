@@ -65,7 +65,7 @@ export const MarkdownRender: React.FC<{
         theme,
         renderFontSize,
         platformName,
-        showAllRepo,
+        showRepoPanel,
     } = useContext(GlobalContext);
 
     const [result, setResult] = useState('');
@@ -304,7 +304,7 @@ export const MarkdownRender: React.FC<{
     //                           note_key
     //                       ]?.title || ''
     //                     : '';
-    //             if (title === '' || title === '新建文档') title = note_key;
+    //             if (title === '' || title === '空笔记') title = note_key;
     //             const content = notes[currentRepoKey][currentFolderKey][note_key];
     //             const bodyContent = mdPrint.current.render(content);
     //             const outerHtml = `<!DOCTYPE html><html>
@@ -400,7 +400,7 @@ export const MarkdownRender: React.FC<{
                     modKey &&
                     !e.shiftKey &&
                     mdRenderState === 'all' &&
-                    !showAllRepo
+                    !showRepoPanel
                 ) {
                     autoScrollToLine();
                 }
@@ -409,7 +409,7 @@ export const MarkdownRender: React.FC<{
                 }
             }
         },
-        [platformName, mdRenderState, showAllRepo, autoScrollToLine, setShowTocFlag]
+        [platformName, mdRenderState, showRepoPanel, autoScrollToLine, setShowTocFlag]
     );
 
     const handleScroll = useCallback(

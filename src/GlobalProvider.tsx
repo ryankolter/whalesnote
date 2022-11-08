@@ -7,50 +7,46 @@ import {
     useMemo,
     useEffect,
 } from 'react';
+import cryptoRandomString from 'crypto-random-string';
 import { whalenoteObjType, historyTypes, notesTypes } from './commonType';
 import useData from './lib/useData';
 import useDataList from './lib/useDataList';
 import useHistory from './lib/useHistory';
 import useWhalenote from './lib/useWhalenote';
 
-import { fetchNotesInRepo, fetchNotesInfolder, changeNotesAfterNew, initNotes } from './lib/notes';
+import { fetchNotesInfolder, changeNotesAfterNew, initNotes } from './lib/notes';
 
 const initContext: {
     curDataPath: string;
     setCurDataPath: Dispatch<SetStateAction<string>>;
     dataPathChangeFlag: number;
-    initingData: boolean;
-    setInitingData: Dispatch<SetStateAction<boolean>>;
-    switchingData: boolean;
-    setSwitchingData: Dispatch<SetStateAction<boolean>>;
+    dataInitingFlag: boolean;
+    dataSwitchingFlag: boolean;
+    setDataSwitchingFlag: Dispatch<SetStateAction<boolean>>;
     dataPathList: string[];
     removeDataPathFromList: (data_path: string) => void;
     whalenote: whalenoteObjType;
     initWhalenote: (newRepos: whalenoteObjType) => void;
     newRepo: (curDataPath: string, repo_key: string, repo_name: string) => void;
-    renameRepo: (curDataPath: string, repo_key: string, new_repo_name: string) => void;
-    reorderRepo: (data_path: string, repo_key: string, new_repos_key: string[]) => void;
-    deleteRepo: (curDataPath: string, repo_key: string) => any;
     newFolder: (
         curDataPath: string,
         repo_key: string,
         new_folder_key: string,
         new_folder_name: string
     ) => void;
-    renameFolder: (
-        curDataPath: string,
-        repo_key: string,
-        folder_key: string,
-        new_folder_name: string
-    ) => void;
-    reorderFolder: (data_path: string, repo_key: string, new_folders_key: string[]) => void;
-    deleteFolder: (curDataPath: string, repo_key: string, folder_key: string) => any;
     newNote: (
         curDataPath: string,
         repo_key: string,
         folder_key: string,
         new_note_key: string,
         note_title: string
+    ) => void;
+    renameRepo: (curDataPath: string, repo_key: string, new_repo_name: string) => void;
+    renameFolder: (
+        curDataPath: string,
+        repo_key: string,
+        folder_key: string,
+        new_folder_name: string
     ) => void;
     renameNote: (
         data_path: string,
@@ -59,12 +55,16 @@ const initContext: {
         note_key: string,
         new_title: string
     ) => void;
+    reorderRepo: (data_path: string, repo_key: string, new_repos_key: string[]) => void;
+    reorderFolder: (data_path: string, repo_key: string, new_folders_key: string[]) => void;
     reorderNote: (
         data_path: string,
         repo_key: string,
         folder_key: string,
         new_notes_key: string[]
     ) => void;
+    deleteRepo: (curDataPath: string, repo_key: string) => any;
+    deleteFolder: (curDataPath: string, repo_key: string, folder_key: string) => any;
     deleteNote: (
         curDataPath: string,
         repo_key: string,
@@ -72,26 +72,16 @@ const initContext: {
         note_key: string
     ) => any;
     history: historyTypes;
-    repoSwitch: (repo_key: string | undefined) => void;
-    folderSwitch: (repo_key: string | undefined, folderKey: string | undefined) => void;
-    noteSwitch: (
-        repo_key: string | undefined,
-        folder_key: string | undefined,
-        note_key: string | undefined
-    ) => void;
     currentRepoKey: string;
     currentFolderKey: string;
     currentNoteKey: string;
-    fetchNotesInRepo: (
-        data_path: string | null,
-        history: historyTypes,
-        repos_obj: whalenoteObjType,
-        repo_key: string | undefined
-    ) => void;
-    fetchNotesInfolder: (
-        data_path: string | null,
-        repo_key: string | undefined,
-        folder_key: string | undefined
+    currentTitle: string;
+    repoSwitch: (repo_key: string) => void;
+    folderSwitch: (repo_key: string, folderKey: string | undefined) => void;
+    noteSwitch: (
+        repo_key: string,
+        folder_key: string | undefined,
+        note_key: string | undefined
     ) => void;
     changeNotesAfterNew: (
         action_name: string,
@@ -102,102 +92,97 @@ const initContext: {
             note_key?: string;
         }
     ) => void;
-    whalenoteId: string;
     platformName: string;
-    currentTitle: string;
-    numArray: number[];
-    setNumArray: Dispatch<SetStateAction<number[]>>;
+    whalenoteId: string;
+    focus: string;
+    manualFocus: (delay: number) => void;
+    blur: string;
+    manualBlur: (delay: number) => void;
+    showSearchPanel: boolean;
+    setShowSearchPanel: Dispatch<SetStateAction<boolean>>;
+    showRepoPanel: boolean;
+    setShowRepoPanel: Dispatch<SetStateAction<boolean>>;
+    showKeySelect: boolean;
+    setShowKeySelect: Dispatch<SetStateAction<boolean>>;
+    keySelectNumArray: number[];
+    setKeySelectNumArray: Dispatch<SetStateAction<number[]>>;
     theme: string;
     setTheme: Dispatch<SetStateAction<string>>;
-    focus: string;
-    setFocus: Dispatch<SetStateAction<string>>;
-    blur: string;
-    setBlur: Dispatch<SetStateAction<string>>;
-    keySelect: boolean;
-    setKeySelect: Dispatch<SetStateAction<boolean>>;
     editorFontSize: number;
     setEditorFontSize: Dispatch<SetStateAction<number>>;
     renderFontSize: number;
     setRenderFontSize: Dispatch<SetStateAction<number>>;
-    showSearchPanel: boolean;
-    setShowSearchPanel: Dispatch<SetStateAction<boolean>>;
-    showAllRepo: boolean;
-    setShowAllRepo: Dispatch<SetStateAction<boolean>>;
 } = {
     curDataPath: '',
     setCurDataPath: () => {},
     dataPathChangeFlag: 0,
-    initingData: false,
-    setInitingData: () => {},
-    switchingData: false,
-    setSwitchingData: () => {},
+    dataInitingFlag: false,
+    dataSwitchingFlag: false,
+    setDataSwitchingFlag: () => {},
     dataPathList: [],
     removeDataPathFromList: () => {},
     whalenote: { repos_key: [], repos_obj: {} },
     initWhalenote: () => {},
     newRepo: () => {},
+    newFolder: () => {},
+    newNote: () => {},
     renameRepo: () => {},
+    renameFolder: () => {},
+    renameNote: () => {},
     reorderRepo: () => {},
+    reorderFolder: () => {},
+    reorderNote: () => {},
     deleteRepo: () => {
         return '';
     },
-    newFolder: () => {},
-    renameFolder: () => {},
-    reorderFolder: () => {},
     deleteFolder: () => {
         return '';
     },
-    newNote: () => {},
-    renameNote: () => {},
-    reorderNote: () => {},
     deleteNote: () => {
         return '';
     },
     history: { cur_repo_key: '', repos_record: {} },
-    repoSwitch: () => {},
-    folderSwitch: () => {},
-    noteSwitch: () => {},
     currentRepoKey: '',
     currentFolderKey: '',
     currentNoteKey: '',
-    fetchNotesInRepo: () => {},
-    fetchNotesInfolder: () => {},
-    changeNotesAfterNew: () => {},
-    whalenoteId: '',
-    platformName: '',
     currentTitle: '',
-    numArray: [],
-    setNumArray: () => {},
-    theme: '',
-    setTheme: () => {},
+    repoSwitch: () => {},
+    folderSwitch: () => {},
+    noteSwitch: () => {},
+    changeNotesAfterNew: () => {},
+    platformName: '',
+    whalenoteId: '',
     focus: '',
-    setFocus: () => {},
+    manualFocus: () => {},
     blur: '',
-    setBlur: () => {},
-    keySelect: false,
-    setKeySelect: () => {},
-    editorFontSize: 15,
-    setEditorFontSize: () => {},
-    renderFontSize: 15,
+    manualBlur: () => {},
     setRenderFontSize: () => {},
     showSearchPanel: false,
     setShowSearchPanel: () => {},
-    showAllRepo: false,
-    setShowAllRepo: () => {},
+    showRepoPanel: false,
+    setShowRepoPanel: () => {},
+    showKeySelect: false,
+    setShowKeySelect: () => {},
+    keySelectNumArray: [],
+    setKeySelectNumArray: () => {},
+    theme: '',
+    setTheme: () => {},
+    editorFontSize: 15,
+    setEditorFontSize: () => {},
+    renderFontSize: 15,
 };
 export const GlobalContext = createContext(initContext);
 
-export const GlobalProvider = ({ children }: { children: any }) => {
+export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
     console.log('GlobalProvider render');
     const [
         data,
         curDataPath,
         setCurDataPath,
         dataPathChangeFlag,
-        initingData,
-        setInitingData,
-        switchingData,
-        setSwitchingData,
+        dataInitingFlag,
+        dataSwitchingFlag,
+        setDataSwitchingFlag,
     ] = useData();
     const [dataPathList, addDataPathToList, removeDataPathFromList] = useDataList();
     const [history, { initHistory, switchRepo, switchFolder, switchNote }] = useHistory();
@@ -206,35 +191,38 @@ export const GlobalProvider = ({ children }: { children: any }) => {
         {
             initWhalenote,
             newRepo,
-            renameRepo,
-            reorderRepo,
-            deleteRepo,
             newFolder,
-            renameFolder,
-            reorderFolder,
-            deleteFolder,
             newNote,
+            renameRepo,
+            renameFolder,
             renameNote,
+            reorderRepo,
+            reorderFolder,
             reorderNote,
+            deleteRepo,
+            deleteFolder,
             deleteNote,
         },
     ] = useWhalenote();
 
-    const [whalenoteId, setWhaltenoteId] = useState<string>('');
     const [platformName, setPlatformName] = useState<string>('');
-    const [theme, setTheme] = useState('grey');
+    const [whalenoteId, setWhaltenoteId] = useState<string>('');
+
     const [focus, setFocus] = useState<string>('');
     const [blur, setBlur] = useState<string>('');
-    const [keySelect, setKeySelect] = useState<boolean>(false);
-    const [numArray, setNumArray] = useState<number[]>([]);
+
+    const [showSearchPanel, setShowSearchPanel] = useState(false);
+    const [showRepoPanel, setShowRepoPanel] = useState(false);
+    const [showKeySelect, setShowKeySelect] = useState<boolean>(false);
+    const [keySelectNumArray, setKeySelectNumArray] = useState<number[]>([]);
+
+    const [theme, setTheme] = useState('grey');
     const [editorFontSize, setEditorFontSize] = useState<number>(
         Number(window.localStorage.getItem('editor_font_size')) || 15
     );
     const [renderFontSize, setRenderFontSize] = useState<number>(
         Number(window.localStorage.getItem('render_font_size')) || 15
     );
-    const [showSearchPanel, setShowSearchPanel] = useState(false);
-    const [showAllRepo, setShowAllRepo] = useState(false);
 
     useEffect(() => {
         if (data.current) {
@@ -254,33 +242,34 @@ export const GlobalProvider = ({ children }: { children: any }) => {
 
     const currentRepoKey = useMemo(() => {
         const cur_repo_key = history.cur_repo_key;
-        console.log('cur_repo_key: ' + cur_repo_key);
-        return history.cur_repo_key;
+        return cur_repo_key;
     }, [history]);
 
     const currentFolderKey = useMemo(() => {
         const cur_folder_key = history.repos_record[history.cur_repo_key]?.cur_folder_key;
-        console.log('cur_folder_key: ' + cur_folder_key);
         return cur_folder_key;
     }, [history]);
 
     const currentNoteKey = useMemo(() => {
         const cur_folder_key = history.repos_record[history.cur_repo_key]?.cur_folder_key;
         const cur_note_key = history.repos_record[history.cur_repo_key]?.folders[cur_folder_key];
-        console.log('cur_note_key: ' + cur_note_key);
         return cur_note_key;
     }, [history]);
 
     const repoSwitch = useCallback(
-        async (repo_key: string | undefined) => {
-            await fetchNotesInRepo(curDataPath, history, whalenote, repo_key);
+        async (repo_key: string) => {
+            const folders_key = whalenote.repos_obj[repo_key].folders_key;
+            const fetch_folder_key =
+                history.repos_record[repo_key]?.cur_folder_key ||
+                (folders_key.length > 0 ? folders_key[0] : undefined);
+            await fetchNotesInfolder(curDataPath, repo_key, fetch_folder_key);
             await switchRepo(curDataPath, repo_key);
         },
         [curDataPath, history, whalenote]
     );
 
     const folderSwitch = useCallback(
-        async (repo_key: string | undefined, folder_key: string | undefined) => {
+        async (repo_key: string, folder_key: string | undefined) => {
             await fetchNotesInfolder(curDataPath, repo_key, folder_key);
             await switchFolder(curDataPath, repo_key, folder_key);
         },
@@ -288,15 +277,39 @@ export const GlobalProvider = ({ children }: { children: any }) => {
     );
 
     const noteSwitch = useCallback(
-        async (
-            repo_key: string | undefined,
-            folder_key: string | undefined,
-            note_key: string | undefined
-        ) => {
+        async (repo_key: string, folder_key: string | undefined, note_key: string | undefined) => {
             await fetchNotesInfolder(curDataPath, repo_key, folder_key);
             await switchNote(curDataPath, repo_key, folder_key, note_key);
         },
         [curDataPath]
+    );
+
+    const manualFocus = useCallback(
+        (delay: number) => {
+            setTimeout(() => {
+                setFocus(
+                    cryptoRandomString({
+                        length: 24,
+                        type: 'alphanumeric',
+                    })
+                );
+            }, delay);
+        },
+        [setFocus]
+    );
+
+    const manualBlur = useCallback(
+        (delay: number) => {
+            setTimeout(() => {
+                setBlur(
+                    cryptoRandomString({
+                        length: 24,
+                        type: 'alphanumeric',
+                    })
+                );
+            }, delay);
+        },
+        [setBlur]
     );
 
     const currentTitle = useMemo(
@@ -313,7 +326,7 @@ export const GlobalProvider = ({ children }: { children: any }) => {
                 ? whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj[
                       currentNoteKey
                   ].title
-                : '新建文档',
+                : '空笔记',
         [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, whalenote]
     );
 
@@ -323,57 +336,54 @@ export const GlobalProvider = ({ children }: { children: any }) => {
                 curDataPath,
                 setCurDataPath,
                 dataPathChangeFlag,
-                initingData,
-                setInitingData,
-                switchingData,
-                setSwitchingData,
+                dataInitingFlag,
+                dataSwitchingFlag,
+                setDataSwitchingFlag,
                 dataPathList,
                 removeDataPathFromList,
                 whalenote,
                 initWhalenote,
                 newRepo,
-                renameRepo,
-                reorderRepo,
-                deleteRepo,
                 newFolder,
-                renameFolder,
-                reorderFolder,
-                deleteFolder,
                 newNote,
+                renameRepo,
+                renameFolder,
                 renameNote,
+                reorderRepo,
+                reorderFolder,
                 reorderNote,
+                deleteRepo,
+                deleteFolder,
                 deleteNote,
                 history,
-                repoSwitch,
-                folderSwitch,
-                noteSwitch,
                 currentRepoKey,
                 currentFolderKey,
                 currentNoteKey,
-                fetchNotesInRepo,
-                fetchNotesInfolder,
+                currentTitle,
+                repoSwitch,
+                folderSwitch,
+                noteSwitch,
                 changeNotesAfterNew,
                 whalenoteId,
                 platformName,
-                currentTitle,
-                numArray,
-                setNumArray,
-                theme,
-                setTheme,
                 focus,
-                setFocus,
+                manualFocus,
                 blur,
-                setBlur,
-                keySelect,
-                setKeySelect,
+                manualBlur,
+                showSearchPanel,
+                setShowSearchPanel,
+                showRepoPanel,
+                setShowRepoPanel,
+                showKeySelect,
+                setShowKeySelect,
+                keySelectNumArray,
+                setKeySelectNumArray,
                 editorFontSize,
                 setEditorFontSize,
                 renderFontSize,
                 setRenderFontSize,
-                showSearchPanel,
-                setShowSearchPanel,
-                showAllRepo,
-                setShowAllRepo,
+                theme,
+                setTheme,
             }}
         >
             {children}

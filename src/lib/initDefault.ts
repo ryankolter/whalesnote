@@ -18,7 +18,7 @@ const initDefault = () => {
                             notes_key: [note_id],
                             notes_obj: {
                                 [note_id]: {
-                                    title: '新建文档',
+                                    title: '空笔记',
                                 },
                             },
                         },
