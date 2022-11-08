@@ -7,15 +7,6 @@ const ignoreWarnings = (value) => (config) => {
     return config;
 };
 
-const addFallback = (value) => (config) => {
-    let loaders = config.resolve;
-    loaders.fallback = {
-        crypto: require.resolve('crypto-browserify'),
-        stream: require.resolve('stream-browserify'),
-    };
-    return config;
-};
-
 const publicPathPlugin = (value) => (config) => {
     config.output = {
         ...config.output,
@@ -31,7 +22,6 @@ const bundleAnalyzerPlugin = (value) => (config) => {
 
 module.exports = override(
     ignoreWarnings([/Failed to parse source map/]),
-    addFallback(),
     publicPathPlugin(),
     bundleAnalyzerPlugin()
 );
