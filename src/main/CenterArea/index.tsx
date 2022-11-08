@@ -4,24 +4,24 @@ import styled from '@emotion/styled';
 import cryptoRandomString from 'crypto-random-string';
 
 import { useRecordValue } from '../../lib/useRecordValue';
-import { MarkdownEditor } from './MarkdownEditor';
-import { MarkdownRender } from './MarkdownRender';
+import MarkdownEditor from './MarkdownEditor';
+import MarkdownRender from './MarkdownRender';
 import useRenderState from '../../lib/useRenderState';
 import BottomRow from './BottomRow';
 
 const CenterArea: React.FC<{}> = ({}) => {
     const {
-        dataPathChangeFlag,
         curDataPath,
         currentRepoKey,
         currentFolderKey,
         currentNoteKey,
-        theme,
+        dataPathChangeFlag,
         platformName,
-        setKeySelectNumArray,
-        manualFocus,
-        manualBlur,
+        theme,
         showKeySelect,
+        manualBlur,
+        manualFocus,
+        setKeySelectNumArray,
         setShowKeySelect,
     } = useContext(GlobalContext);
 
@@ -33,10 +33,10 @@ const CenterArea: React.FC<{}> = ({}) => {
         setMdRenderState,
         nextMdRenderState,
     ] = useRenderState();
-    const [cursorInRender, setCursorInRender] = useState(false);
+    const [cursorInRenderFlag, setCursorInRenderFlag] = useState(false);
     const [editorScrollRatio, setEditorScrollRatio] = useState(0);
     const [renderScrollRatio, setRenderScrollRatio] = useState(0);
-    const [renderNoteStr, setRenderNoteStr] = useState<string>('');
+    const [renderNoteStr, setRenderNoteStr] = useState('');
     const [renderScrollTops, { updateRecordValue: updateRenderScrollTop }] =
         useRecordValue<number>();
 
@@ -59,7 +59,7 @@ const CenterArea: React.FC<{}> = ({}) => {
                 const modKey = platformName === 'darwin' ? e.metaKey : e.ctrlKey;
 
                 // normal number 0 and extra number 0
-                if ((e.keyCode === 48 || e.keyCode === 96) && modKey) {
+                if (Number(e.key) === 0 && modKey) {
                     if (showKeySelect) {
                         setShowKeySelect(false);
                         setKeySelectNumArray([]);
@@ -105,7 +105,7 @@ const CenterArea: React.FC<{}> = ({}) => {
             <MarkdownArea>
                 <EditorPanel widthValue={editorWidth}>
                     <MarkdownEditor
-                        cursorInRender={cursorInRender}
+                        cursorInRenderFlag={cursorInRenderFlag}
                         mdRenderState={mdRenderState}
                         renderScrollRatio={renderScrollRatio}
                         setEditorScrollRatio={setEditorScrollRatio}
@@ -115,8 +115,8 @@ const CenterArea: React.FC<{}> = ({}) => {
                 <RenderPanel leftValue={renderLeft} widthValue={renderWidth}>
                     {mdRenderState !== 'hidden' ? (
                         <MarkdownRender
-                            cursorInRender={cursorInRender}
-                            setCursorInRender={setCursorInRender}
+                            cursorInRenderFlag={cursorInRenderFlag}
+                            setCursorInRenderFlag={setCursorInRenderFlag}
                             mdRenderState={mdRenderState}
                             editorScrollRatio={editorScrollRatio}
                             setRenderScrollRatio={setRenderScrollRatio}

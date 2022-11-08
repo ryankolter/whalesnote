@@ -3,7 +3,15 @@ import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 import cryptoRandomString from 'crypto-random-string';
 
-import { DndContext, MouseSensor, useSensor, useSensors, DragOverlay } from '@dnd-kit/core';
+import {
+    DndContext,
+    MouseSensor,
+    useSensor,
+    useSensors,
+    DragOverlay,
+    DragStartEvent,
+    DragEndEvent,
+} from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 
 import { Sortable } from '../../components/Sortable';
@@ -18,31 +26,28 @@ const RepoPanel: React.FC<{}> = ({}) => {
         curDataPath,
         currentRepoKey,
         currentFolderKey,
-        repoSwitch,
-        folderSwitch,
-        noteSwitch,
+        keySelectNumArray,
+        platformName,
+        showKeySelect,
         whalenote,
+        changeNotesAfterNew,
+        deleteRepo,
         newRepo,
         newFolder,
         newNote,
         renameRepo,
         reorderRepo,
-        deleteRepo,
-        changeNotesAfterNew,
-        keySelectNumArray,
-        showKeySelect,
         setShowKeySelect,
-        platformName,
         setShowRepoPanel,
+        switchRepo,
+        switchFolder,
+        switchNote,
     } = useContext(GlobalContext);
 
-    const [activeId, setActiveId] = useState<string>('');
+    const [dragActiveId, setDragActiveId] = useState<string | null>(null);
     const [newRepoKey, setNewRepoKey] = useState('');
     const [newRepoName, setNewRepoName] = useState('');
     const [curRepoName, setCurRepoName] = useState('');
-    const allowNewRepo = useRef(true);
-    const composing = useRef(false);
-
     const [repoSelectedList, setRepoSelectedList] = useState(() => {
         let page = 0;
         whalenote.repos_key
@@ -55,9 +60,12 @@ const RepoPanel: React.FC<{}> = ({}) => {
     const [renamePopup, setRenamePopUp, renameMask] = usePopUp(500);
     const [deletePopup, setDeletePopUp, deleteMask] = usePopUp(500);
 
+    const allowNewRepo = useRef(true);
+    const composing = useRef(false);
     const repoScrollRef = useRef<HTMLDivElement>(null);
     const outerRef = useRef(null);
     const { xPos, yPos, menu } = useContextMenu(outerRef);
+
     const sensors = useSensors(useSensor(MouseSensor, { activationConstraint: { distance: 5 } }));
 
     useEffect(() => {
@@ -76,16 +84,23 @@ const RepoPanel: React.FC<{}> = ({}) => {
     }, []);
 
     //part1: switch repo in panel
-    const repoSwitchInPanel = useCallback(
-        async (repo_key: string) => {
-            await repoSwitch(repo_key);
+    const changeRepoSelectedList = useCallback(
+        (repo_key: string) => {
             whalenote.repos_key
                 .filter((key) => whalenote && whalenote.repos_obj && whalenote.repos_obj[key])
                 .forEach((key, index) => {
                     if (key === repo_key) setRepoSelectedList(Math.floor(index / 6.0));
                 });
         },
-        [whalenote, repoSwitch]
+        [setRepoSelectedList]
+    );
+
+    const switchRepoInPanel = useCallback(
+        async (repo_key: string) => {
+            await switchRepo(repo_key);
+            changeRepoSelectedList(repo_key);
+        },
+        [whalenote, changeRepoSelectedList]
     );
 
     // part2 : new repo
@@ -136,30 +151,25 @@ const RepoPanel: React.FC<{}> = ({}) => {
             });
 
             setTimeout(() => {
-                repoSwitchInPanel(repo_key);
-                folderSwitch(repo_key, default_folder_key);
-                noteSwitch(repo_key, default_folder_key, default_note_key);
+                changeRepoSelectedList(repo_key);
+                switchNote(repo_key, default_folder_key, default_note_key);
             }, 0);
 
             setNewRepoKey('');
             setNewRepoName('');
-
             setRepoSelectedList(Math.ceil(whalenote.repos_key.length / 6) - 1);
-            if (repoScrollRef && repoScrollRef.current) {
-                repoScrollRef.current.scrollLeft = repoScrollRef.current.scrollWidth;
-            }
             allowNewRepo.current = true;
         },
         [
             curDataPath,
-            changeNotesAfterNew,
-            repoSwitchInPanel,
-            folderSwitch,
-            noteSwitch,
             repoScrollRef,
+            changeNotesAfterNew,
             newRepo,
             newFolder,
             newNote,
+            switchRepoInPanel,
+            switchFolder,
+            switchNote,
         ]
     );
 
@@ -173,7 +183,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
                 newRepoSubmit(e, newRepoKey);
             }
         },
-        [setNewRepoKey, setNewRepoName, newRepoKey, newRepoSubmit]
+        [newRepoKey, newRepoSubmit, setNewRepoKey, setNewRepoName]
     );
 
     // part3 : rename repo
@@ -186,11 +196,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
                 ? whalenote.repos_obj[currentRepoKey].repo_name
                 : ''
         );
-    }, [whalenote, currentRepoKey]);
-
-    const handleRenameRepo = () => {
-        setRenamePopUp(true);
-    };
+    }, [currentRepoKey, whalenote]);
 
     const renameRepoConfirm = useCallback(async () => {
         if (currentRepoKey) {
@@ -216,24 +222,20 @@ const RepoPanel: React.FC<{}> = ({}) => {
                 renameRepoConfirm();
             }
         },
-        [setRenamePopUp, setCurRepoName, whalenote, currentRepoKey, newRepoKey, renameRepoConfirm]
+        [currentRepoKey, whalenote, renameRepoConfirm, setRenamePopUp, setCurRepoName]
     );
 
     // part4 : delete repo
-    const handleDeleteRepo = () => {
-        setDeletePopUp(true);
-    };
-
     const deleteRepoConfirm = useCallback(async () => {
         if (currentRepoKey) {
             const other_repo_key = await deleteRepo(curDataPath, currentRepoKey);
             if (other_repo_key) {
-                repoSwitchInPanel(other_repo_key);
+                switchRepoInPanel(other_repo_key);
             }
             setRepoSelectedList(Math.ceil(whalenote.repos_key.length / 6) - 1);
             setDeletePopUp(false);
         }
-    }, [curDataPath, currentRepoKey, setDeletePopUp, repoSwitchInPanel]);
+    }, [curDataPath, currentRepoKey, setDeletePopUp, switchRepoInPanel]);
 
     const handleDeleteRepoKeyDown = useCallback(
         (e: any) => {
@@ -244,7 +246,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
                 deleteRepoConfirm();
             }
         },
-        [setDeletePopUp, deleteRepoConfirm]
+        [deleteRepoConfirm, setDeletePopUp]
     );
 
     const prevRepoList = useCallback(() => {
@@ -269,7 +271,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
                 setRepoSelectedList((repoSelectedList) => repoSelectedList + 1);
             }
         }
-    }, [whalenote, repoSelectedList]);
+    }, [repoSelectedList, whalenote]);
 
     const prevRepoPage = useCallback(() => {
         const prevSelectedList = (Math.floor(repoSelectedList / 5) - 1) * 5;
@@ -304,69 +306,53 @@ const RepoPanel: React.FC<{}> = ({}) => {
     }, [whalenote]);
 
     const handleKeyDown = useCallback(
-        async (e: any) => {
+        async (e: KeyboardEvent) => {
             if (platformName === 'darwin' || platformName === 'win32' || platformName === 'linux') {
                 const modKey = platformName === 'darwin' ? e.metaKey : e.ctrlKey;
 
                 // normal number 1-6
                 if (
-                    e.keyCode >= 49 &&
-                    e.keyCode <= 54 &&
+                    Number(e.key) >= 1 &&
+                    Number(e.key) <= 6 &&
                     !modKey &&
                     keySelectNumArray.length === 0
                 ) {
-                    const num = parseInt(e.keyCode) - 48;
-                    const index = num + 6 * repoSelectedList - 1;
+                    const index = Number(e.key) + 6 * repoSelectedList - 1;
                     if (whalenote.repos_key && index < whalenote.repos_key.length) {
-                        repoSwitchInPanel(whalenote.repos_key[index]);
+                        switchRepoInPanel(whalenote.repos_key[index]);
                         setShowKeySelect(true);
                     }
                 }
 
-                // extra number 1-6
-                if (
-                    e.keyCode >= 97 &&
-                    e.keyCode <= 102 &&
-                    !modKey &&
-                    keySelectNumArray.length === 0
-                ) {
-                    const num = parseInt(e.keyCode) - 96;
-                    const index = num + 6 * repoSelectedList - 1;
-                    if (whalenote.repos_key && index < whalenote.repos_key.length) {
-                        repoSwitchInPanel(whalenote.repos_key[index]);
-                        setShowKeySelect(true);
-                    }
-                }
-
-                // arrow left 37 change to J 74
-                if ((e.keyCode === 37 || e.keyCode === 74) && !modKey) {
+                // arrow left or J
+                if ((e.key === 'ArrowLeft' || e.key === 'j') && !modKey) {
                     prevRepoList();
                 }
 
-                // arrow right 39 change to L 76
-                if ((e.keyCode === 39 || e.keyCode === 76) && !modKey) {
+                // arrow right or L
+                if ((e.key === 'ArrowRight' || e.key === 'l') && !modKey) {
                     nextRepoList();
                 }
 
-                // arrow left 37 change to J 74
-                if ((e.keyCode === 37 || e.keyCode === 74) && modKey) {
-                    //prevRepoPage();
+                // arrow left or J with mod
+                if ((e.key === 'ArrowLeft' || e.key === 'j') && modKey) {
+                    prevRepoPage();
                 }
 
-                // arrow right 39 change to L 76
-                if ((e.keyCode === 39 || e.keyCode === 76) && modKey) {
+                // arrow right or L with mod
+                if ((e.key === 'ArrowRight' || e.key === 'l') && modKey) {
                     nextRepoPage();
                 }
             }
         },
         [
-            whalenote,
+            keySelectNumArray,
             repoSelectedList,
-            repoSwitchInPanel,
+            whalenote,
             nextRepoList,
             prevRepoList,
             setShowKeySelect,
-            keySelectNumArray,
+            switchRepoInPanel,
         ]
     );
 
@@ -389,7 +375,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
         };
     }, [handleKeyDown]);
 
-    const handleWhell = useCallback((e: any) => {
+    const handleWhell = useCallback((e: WheelEvent) => {
         e.preventDefault();
         const delta = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
         if (repoScrollRef && repoScrollRef.current) {
@@ -406,13 +392,16 @@ const RepoPanel: React.FC<{}> = ({}) => {
         }
     }, [handleWhell]);
 
-    const handleDragStart = (e: any) => {
-        setActiveId(e.active.id);
-    };
+    const handleDragStart = useCallback(
+        (e: DragStartEvent) => {
+            setDragActiveId(String(e.active.id));
+        },
+        [setDragActiveId]
+    );
 
     const handleDragEnd = useCallback(
-        (e: any) => {
-            setActiveId('');
+        (e: DragEndEvent) => {
+            setDragActiveId(null);
             const { active, over } = e;
 
             if (!over) return;
@@ -423,13 +412,13 @@ const RepoPanel: React.FC<{}> = ({}) => {
                 currentRepoKey &&
                 currentFolderKey
             ) {
-                const oldIndex = whalenote.repos_key.indexOf(active.id);
-                const newIndex = whalenote.repos_key.indexOf(over.id);
+                const oldIndex = whalenote.repos_key.indexOf(String(active.id));
+                const newIndex = whalenote.repos_key.indexOf(String(over.id));
                 const new_repos_key = arrayMove(whalenote.repos_key, oldIndex, newIndex);
                 reorderRepo(curDataPath, currentRepoKey, new_repos_key);
             }
         },
-        [curDataPath, currentRepoKey, currentFolderKey, whalenote, reorderRepo]
+        [curDataPath, currentRepoKey, currentFolderKey, whalenote, reorderRepo, setDragActiveId]
     );
 
     return (
@@ -446,7 +435,6 @@ const RepoPanel: React.FC<{}> = ({}) => {
                     {whalenote.repos_key ? (
                         <DndContext
                             sensors={sensors}
-                            // modifiers={[restrictToVerticalAxis, restrictToFirstScrollableAncestor]}
                             onDragStart={handleDragStart}
                             onDragEnd={handleDragEnd}
                         >
@@ -471,10 +459,10 @@ const RepoPanel: React.FC<{}> = ({}) => {
                                                 >
                                                     <RepoItem
                                                         key={key}
-                                                        onClick={() => repoSwitchInPanel(key)}
+                                                        onClick={() => switchRepoInPanel(key)}
                                                         onContextMenu={() => {
                                                             if (currentRepoKey !== key)
-                                                                repoSwitchInPanel(key);
+                                                                switchRepoInPanel(key);
                                                         }}
                                                     >
                                                         <RepoItemName
@@ -521,10 +509,10 @@ const RepoPanel: React.FC<{}> = ({}) => {
                                                 >
                                                     <RepoItem
                                                         key={key}
-                                                        onClick={() => repoSwitchInPanel(key)}
+                                                        onClick={() => switchRepoInPanel(key)}
                                                         onContextMenu={() => {
                                                             if (currentRepoKey !== key)
-                                                                repoSwitchInPanel(key);
+                                                                switchRepoInPanel(key);
                                                         }}
                                                     >
                                                         <RepoItemName
@@ -563,10 +551,10 @@ const RepoPanel: React.FC<{}> = ({}) => {
                                                 >
                                                     <RepoItem
                                                         key={key}
-                                                        onClick={() => repoSwitchInPanel(key)}
+                                                        onClick={() => switchRepoInPanel(key)}
                                                         onContextMenu={() => {
                                                             if (currentRepoKey !== key)
-                                                                repoSwitchInPanel(key);
+                                                                switchRepoInPanel(key);
                                                         }}
                                                     >
                                                         <RepoItemName
@@ -589,13 +577,13 @@ const RepoPanel: React.FC<{}> = ({}) => {
                                     <MenuUl top={yPos} left={xPos}>
                                         <MenuLi
                                             className="menu-li-color"
-                                            onClick={() => handleRenameRepo()}
+                                            onClick={() => setRenamePopUp(true)}
                                         >
                                             重命名
                                         </MenuLi>
                                         <MenuLi
                                             className="menu-li-color"
-                                            onClick={() => handleDeleteRepo()}
+                                            onClick={() => setDeletePopUp(true)}
                                         >
                                             删除仓库
                                         </MenuLi>
@@ -604,24 +592,28 @@ const RepoPanel: React.FC<{}> = ({}) => {
                                     <></>
                                 )}
                             </SortableContext>
-                            <DragOverlay>
-                                <div>
-                                    {activeId && whalenote && whalenote.repos_obj ? (
-                                        <RepoItem key={activeId}>
+                            {dragActiveId ? (
+                                <DragOverlay>
+                                    {whalenote && whalenote.repos_obj ? (
+                                        <RepoItem key={dragActiveId}>
                                             <RepoItemName
                                                 style={{
                                                     backgroundColor:
-                                                        currentRepoKey === activeId
+                                                        currentRepoKey === dragActiveId
                                                             ? 'var(--main-selected-bg-color)'
                                                             : '',
                                                 }}
                                             >
-                                                {whalenote.repos_obj[activeId].repo_name}
+                                                {whalenote.repos_obj[dragActiveId].repo_name}
                                             </RepoItemName>
                                         </RepoItem>
-                                    ) : null}
-                                </div>
-                            </DragOverlay>
+                                    ) : (
+                                        <></>
+                                    )}
+                                </DragOverlay>
+                            ) : (
+                                <></>
+                            )}
                         </DndContext>
                     ) : (
                         <></>

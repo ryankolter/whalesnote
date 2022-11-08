@@ -76,9 +76,9 @@ const initContext: {
     currentFolderKey: string;
     currentNoteKey: string;
     currentTitle: string;
-    repoSwitch: (repo_key: string) => void;
-    folderSwitch: (repo_key: string, folderKey: string | undefined) => void;
-    noteSwitch: (
+    switchRepo: (repo_key: string) => void;
+    switchFolder: (repo_key: string, folderKey: string | undefined) => void;
+    switchNote: (
         repo_key: string,
         folder_key: string | undefined,
         note_key: string | undefined
@@ -146,9 +146,9 @@ const initContext: {
     currentFolderKey: '',
     currentNoteKey: '',
     currentTitle: '',
-    repoSwitch: () => {},
-    folderSwitch: () => {},
-    noteSwitch: () => {},
+    switchRepo: () => {},
+    switchFolder: () => {},
+    switchNote: () => {},
     changeNotesAfterNew: () => {},
     platformName: '',
     whalenoteId: '',
@@ -185,7 +185,7 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
         setDataSwitchingFlag,
     ] = useData();
     const [dataPathList, addDataPathToList, removeDataPathFromList] = useDataList();
-    const [history, { initHistory, switchRepo, switchFolder, switchNote }] = useHistory();
+    const [history, { initHistory, repoSwitch, folderSwitch, noteSwitch }] = useHistory();
     const [
         whalenote,
         {
@@ -256,30 +256,30 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
         return cur_note_key;
     }, [history]);
 
-    const repoSwitch = useCallback(
+    const switchRepo = useCallback(
         async (repo_key: string) => {
             const folders_key = whalenote.repos_obj[repo_key].folders_key;
             const fetch_folder_key =
                 history.repos_record[repo_key]?.cur_folder_key ||
                 (folders_key.length > 0 ? folders_key[0] : undefined);
             await fetchNotesInfolder(curDataPath, repo_key, fetch_folder_key);
-            await switchRepo(curDataPath, repo_key);
+            await repoSwitch(curDataPath, repo_key);
         },
         [curDataPath, history, whalenote]
     );
 
-    const folderSwitch = useCallback(
+    const switchFolder = useCallback(
         async (repo_key: string, folder_key: string | undefined) => {
             await fetchNotesInfolder(curDataPath, repo_key, folder_key);
-            await switchFolder(curDataPath, repo_key, folder_key);
+            await folderSwitch(curDataPath, repo_key, folder_key);
         },
         [curDataPath]
     );
 
-    const noteSwitch = useCallback(
+    const switchNote = useCallback(
         async (repo_key: string, folder_key: string | undefined, note_key: string | undefined) => {
             await fetchNotesInfolder(curDataPath, repo_key, folder_key);
-            await switchNote(curDataPath, repo_key, folder_key, note_key);
+            await noteSwitch(curDataPath, repo_key, folder_key, note_key);
         },
         [curDataPath]
     );
@@ -360,9 +360,9 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
                 currentFolderKey,
                 currentNoteKey,
                 currentTitle,
-                repoSwitch,
-                folderSwitch,
-                noteSwitch,
+                switchRepo,
+                switchFolder,
+                switchNote,
                 changeNotesAfterNew,
                 whalenoteId,
                 platformName,

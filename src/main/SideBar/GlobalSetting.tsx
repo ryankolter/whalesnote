@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 const GlobalSetting: React.FC<{
     closeAssistantPanel: () => void;
 }> = ({ closeAssistantPanel }) => {
-    const { curDataPath, theme, setTheme } = useContext(GlobalContext);
+    const { theme, setTheme } = useContext(GlobalContext);
 
     return (
         <DataSpaceContainer>
@@ -105,18 +105,5 @@ const SelectArea = styled.div({
     justifyContent: 'space-between',
     padding: '0 50px',
 });
-
-const SelectLabel = styled.label({});
-
-const RadioBtn = styled.input(
-    {
-        paddingRight: '20px',
-    },
-    `
-    &[type='radio'] {
-        padding-right: 20px;
-    }
-`
-);
 
 export default GlobalSetting;

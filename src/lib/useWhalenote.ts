@@ -46,7 +46,7 @@ const whalenoteReducer = produce((state: whalenoteObjType, action: any) => {
             return state;
         }
         case 'reorder_folder': {
-            state[action.repo_key].folders_key = action.new_folders_key;
+            state.repos_obj[action.repo_key].folders_key = action.new_folders_key;
             return state;
         }
         case 'delete_folder': {
@@ -75,7 +75,8 @@ const whalenoteReducer = produce((state: whalenoteObjType, action: any) => {
             return state;
         }
         case 'reorder_note': {
-            state[action.repo_key].folders_obj[action.folder_key].notes_key = action.new_notes_key;
+            state.repos_obj[action.repo_key].folders_obj[action.folder_key].notes_key =
+                action.new_notes_key;
             return state;
         }
         case 'delete_note': {
@@ -319,13 +320,13 @@ const useWhalenote = () => {
     );
 
     const reorderFolder = useCallback(
-        (cur_data_path: string, repo_key: string, new_folders_key: string[]) => {
+        async (cur_data_path: string, repo_key: string, new_folders_key: string[]) => {
             if (repo_key) {
-                const repo_info = window.electronAPI.readJsonSync({
+                const repo_info = await window.electronAPI.readJsonSync({
                     file_path: `${cur_data_path}/${repo_key}/repo_info.json`,
                 });
                 repo_info.folders_key = new_folders_key;
-                window.electronAPI.writeJson({
+                await window.electronAPI.writeJson({
                     file_path: `${cur_data_path}/${repo_key}/repo_info.json`,
                     obj: repo_info,
                 });
@@ -521,13 +522,18 @@ const useWhalenote = () => {
     );
 
     const reorderNote = useCallback(
-        (cur_data_path: string, repo_key: string, folder_key: string, new_notes_key: string[]) => {
+        async (
+            cur_data_path: string,
+            repo_key: string,
+            folder_key: string,
+            new_notes_key: string[]
+        ) => {
             if (repo_key && folder_key) {
-                const folder_info = window.electronAPI.readJsonSync({
+                const folder_info = await window.electronAPI.readJsonSync({
                     file_path: `${cur_data_path}/${repo_key}/${folder_key}/folder_info.json`,
                 });
                 folder_info.notes_key = new_notes_key;
-                window.electronAPI.writeJson({
+                await window.electronAPI.writeJson({
                     file_path: `${cur_data_path}/${repo_key}/${folder_key}/folder_info.json`,
                     obj: folder_info,
                 });

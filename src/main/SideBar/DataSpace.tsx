@@ -7,11 +7,11 @@ import WaitingMaskStatic from '../../components/WaitingMaskStatic';
 const DataSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssistantPanel }) => {
     const {
         curDataPath,
-        setCurDataPath,
         dataSwitchingFlag,
-        setDataSwitchingFlag,
         dataPathList,
         removeDataPathFromList,
+        setCurDataPath,
+        setDataSwitchingFlag,
     } = useContext(GlobalContext);
     const [showPathUl, setShowPathUl] = useState(false);
     const pathUlRef = useRef<HTMLDivElement>(null);

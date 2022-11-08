@@ -6,17 +6,18 @@ import { SearchResult } from 'minisearch';
 import useSearch from '../../lib/useSearch';
 import WaitingMaskStatic from '../../components/WaitingMaskStatic';
 import searchIcon from '../../resources/icon/searchIcon.svg';
+import { keyboardKey } from '@testing-library/user-event';
 
 const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
     const {
-        noteSwitch,
-        currentNoteKey,
-        showKeySelect,
-        setShowKeySelect,
-        platformName,
         curDataPath,
+        currentNoteKey,
+        platformName,
+        showKeySelect,
         showSearchPanel,
+        setShowKeySelect,
         setShowSearchPanel,
+        switchNote,
     } = useContext(GlobalContext);
 
     const searchInputRef = useRef<HTMLInputElement>(null);
@@ -67,15 +68,15 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
         if (!showSearchPanel) setShowSearchPanel(true);
         const search_result = searchNote(word);
         setSearchResults(search_result);
-    }, [word, showSearchPanel, setShowSearchPanel, setSearchResults, searchNote]);
+    }, [word, showSearchPanel, searchNote, setShowSearchPanel, setSearchResults]);
 
     const resultSwitch = useCallback(
         async (id: string) => {
             setShowResultHighlight(true);
             const arr = id.split('-');
-            await noteSwitch(arr[0], arr[1], arr[2]);
+            await switchNote(arr[0], arr[1], arr[2]);
         },
-        [setShowResultHighlight, noteSwitch]
+        [setShowResultHighlight, switchNote]
     );
 
     useEffect(() => {
@@ -105,13 +106,13 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
         if (curResultIndex < searchResults.length - 1) {
             setCurResultIndex((curResultIndex) => curResultIndex + 1);
         }
-    }, [curResultIndex, searchResults]);
+    }, [curResultIndex, searchResults, setCurResultIndex]);
 
     const prevSearchResult = useCallback(() => {
         if (curResultIndex > 0) {
             setCurResultIndex((curResultIndex) => curResultIndex - 1);
         }
-    }, [curResultIndex, searchResults]);
+    }, [curResultIndex, setCurResultIndex]);
 
     useEffect(() => {
         if (curResultIndex >= 0 && curResultIndex < searchResults.length) {
@@ -122,11 +123,11 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
     }, [curResultIndex]);
 
     const handleKeyDown = useCallback(
-        async (e: any) => {
+        async (e: KeyboardEvent) => {
             if (platformName === 'darwin' || platformName === 'win32' || platformName === 'linux') {
                 const modKey = platformName === 'darwin' ? e.metaKey : e.ctrlKey;
 
-                if (e.keyCode === 70 && modKey && e.shiftKey) {
+                if ((e.key === 'f' || e.key === 'F') && modKey && e.shiftKey) {
                     searchInputRef.current?.focus();
                     if (showKeySelect) setShowKeySelect(false);
                 }
@@ -141,13 +142,13 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                 }
 
                 // arrow bottom 40
-                if (e.keyCode === 40 && showSearchPanel) {
+                if (e.key === 'ArrowDown' && showSearchPanel) {
                     e.preventDefault();
                     nextSearchResult();
                 }
 
                 // arrow top 38
-                if (e.keyCode === 38 && showSearchPanel) {
+                if (e.key === 'ArrowUp' && showSearchPanel) {
                     e.preventDefault();
                     prevSearchResult();
                 }
@@ -251,7 +252,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                             <></>
                         )}
                     </SearchResultList>
-                    {showLoadingSearch ? <LoadingSearch>载入字典和索引...</LoadingSearch> : <></>}
+                    {showLoadingSearch ? <LoadingSearch>搜索模块初始化中...</LoadingSearch> : <></>}
                 </SearchPanel>
             ) : (
                 <></>

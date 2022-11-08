@@ -92,7 +92,7 @@ const useHistory = () => {
         }, delay);
     };
 
-    const switchRepo = useCallback(async (curDataPath: string, repoKey: string | undefined) => {
+    const repoSwitch = useCallback(async (curDataPath: string, repoKey: string | undefined) => {
         dispatch({
             type: 'switch_repo',
             data_path: curDataPath,
@@ -102,7 +102,7 @@ const useHistory = () => {
         await addSaveTask(curDataPath, 1200);
     }, []);
 
-    const switchFolder = useCallback(
+    const folderSwitch = useCallback(
         async (curDataPath: string, repoKey: string | undefined, folderKey: string | undefined) => {
             dispatch({
                 type: 'switch_folder',
@@ -116,7 +116,7 @@ const useHistory = () => {
         []
     );
 
-    const switchNote = useCallback(
+    const noteSwitch = useCallback(
         async (
             curDataPath: string,
             repoKey: string | undefined,
@@ -140,9 +140,9 @@ const useHistory = () => {
         state,
         {
             initHistory,
-            switchRepo,
-            switchFolder,
-            switchNote,
+            repoSwitch,
+            folderSwitch,
+            noteSwitch,
         },
     ] as const;
 };

@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState, WheelEventHandler } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 
@@ -89,7 +89,7 @@ const TrashList: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssista
         }
     }, [curTrashKey]);
 
-    const handleWhell = useCallback((e: any) => {
+    const handleWhell = useCallback((e: WheelEvent) => {
         e.preventDefault();
         const delta = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
         if (noteScrollRef && noteScrollRef.current) {

@@ -13,15 +13,15 @@ const BottomRow: React.FC<{
         currentRepoKey,
         currentFolderKey,
         currentNoteKey,
-        whalenote,
-        theme,
         platformName,
-        setKeySelectNumArray,
-        manualFocus,
+        theme,
+        whalenote,
         showKeySelect,
-        setShowKeySelect,
-        showSearchPanel,
         showRepoPanel,
+        showSearchPanel,
+        manualFocus,
+        setKeySelectNumArray,
+        setShowKeySelect,
         setShowRepoPanel,
     } = useContext(GlobalContext);
 
@@ -33,12 +33,12 @@ const BottomRow: React.FC<{
     const [showSwitchMdRenderState, setShowSwitchMdRenderState] = useState(false);
 
     const handleKeyDown = useCallback(
-        async (e: any) => {
+        async (e: KeyboardEvent) => {
             if (platformName === 'darwin' || platformName === 'win32' || platformName === 'linux') {
                 const modKey = platformName === 'darwin' ? e.metaKey : e.ctrlKey;
 
                 //alpha z
-                if (e.keyCode === 90 && !modKey && showKeySelect) {
+                if (e.key === 'z' && !modKey && showKeySelect) {
                     setShowRepoPanel((_showAllRepo) => !_showAllRepo);
                 }
 
@@ -243,22 +243,6 @@ const CurFolderNameTag = styled.div({
 });
 
 const FolderNameLabel = styled.div({
-    flex: 1,
-    fontSize: '14px',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-});
-
-const CurNoteNameTag = styled.div({
-    height: '32px',
-    lineHeight: '32px',
-    overflow: 'hidden !important',
-    textOverflow: 'ellipsis',
-    wordBreak: 'break-all',
-});
-
-const NoteNameLabel = styled.div({
     flex: 1,
     fontSize: '14px',
     overflow: 'hidden',

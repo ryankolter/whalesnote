@@ -7,14 +7,14 @@ import useContextMenu from '../../lib/useContextMenu';
 import useEditorPosition from '../../lib/useEditorPosition';
 import { notes, updateNote } from '../../lib/notes';
 
-export const MarkdownEditor: React.FC<{
-    cursorInRender: boolean;
+const MarkdownEditor: React.FC<{
+    cursorInRenderFlag: boolean;
     mdRenderState: string;
     renderScrollRatio: number;
     setEditorScrollRatio: React.Dispatch<React.SetStateAction<number>>;
     setRenderNoteStr: React.Dispatch<React.SetStateAction<string>>;
 }> = ({
-    cursorInRender,
+    cursorInRenderFlag,
     mdRenderState,
     renderScrollRatio,
     setEditorScrollRatio,
@@ -23,17 +23,17 @@ export const MarkdownEditor: React.FC<{
     console.log('editor render');
 
     const {
+        blur,
         curDataPath,
         currentRepoKey,
         currentFolderKey,
         currentNoteKey,
-        renameNote,
-        focus,
-        blur,
-        setShowKeySelect,
         editorFontSize,
+        focus,
         platformName,
         showRepoPanel,
+        renameNote,
+        setShowKeySelect,
     } = useContext(GlobalContext);
 
     const [topLinePos, cursorHeadPos, updateTopLinePos, updateCursorHeadPos] = useEditorPosition(
@@ -58,16 +58,14 @@ export const MarkdownEditor: React.FC<{
 
     const [showEditorScrollPos, setShowEditorScrollPos] = useState(false);
     const [cursorInEditor, setCursorInEditor] = useState(false);
-
-    const autoScroll = useRef<boolean>(false);
+    const autoScroll = useRef(false);
     const scrollSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
     const scrollRatioSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
     const editorContainerRef = useRef<HTMLDivElement>(null);
-
     const { xPos, yPos, menu } = useContextMenu(editorContainerRef);
 
     const onDocChange = useCallback(
-        async (new_value: string, viewUpdate: ViewUpdate) => {
+        async (new_value: string, vu: ViewUpdate) => {
             await updateNote(
                 curDataPath,
                 currentRepoKey,
@@ -95,8 +93,8 @@ export const MarkdownEditor: React.FC<{
             currentFolderKey,
             currentNoteKey,
             renameNote,
-            updateNote,
             setRenderNoteStr,
+            updateNote,
         ]
     );
 
@@ -126,13 +124,11 @@ export const MarkdownEditor: React.FC<{
     });
 
     useEffect(() => {
-        if (focus === '') return;
-        view.current?.focus();
+        if (focus !== '') view.current?.focus();
     }, [focus]);
 
     useEffect(() => {
-        if (blur === '') return;
-        view.current?.contentDOM.blur();
+        if (blur !== '') view.current?.contentDOM.blur();
     }, [blur]);
 
     useEffect(() => {
@@ -147,7 +143,6 @@ export const MarkdownEditor: React.FC<{
             const offsetHeight = view.current.contentDOM.getBoundingClientRect().height;
             const scrollTop = offsetHeight * renderScrollRatio;
             const scrollPos = view.current.lineBlockAtHeight(scrollTop).from;
-
             view.current?.dispatch({
                 effects: EditorView.scrollIntoView(scrollPos, {
                     y: 'start',
@@ -237,12 +232,12 @@ export const MarkdownEditor: React.FC<{
     }, []);
 
     const handleKeyDown = useCallback(
-        async (e: any) => {
+        async (e: KeyboardEvent) => {
             if (platformName === 'darwin' || platformName === 'win32' || platformName === 'linux') {
                 const modKey = platformName === 'darwin' ? e.metaKey : e.ctrlKey;
 
                 if (
-                    e.keyCode === 74 &&
+                    e.key === 'j' &&
                     modKey &&
                     !e.shiftKey &&
                     mdRenderState !== 'all' &&
@@ -261,7 +256,6 @@ export const MarkdownEditor: React.FC<{
                 if (scrollRatioSaveTimerRef.current) {
                     clearTimeout(scrollRatioSaveTimerRef.current);
                 }
-
                 scrollRatioSaveTimerRef.current = setTimeout(() => {
                     if (e.target) {
                         const offsetHeight = (e.target as HTMLDivElement).offsetHeight;
@@ -281,7 +275,6 @@ export const MarkdownEditor: React.FC<{
                 }, 100);
                 return;
             }
-
             if (scrollSaveTimerRef.current) {
                 clearTimeout(scrollSaveTimerRef.current);
             }
@@ -336,7 +329,7 @@ export const MarkdownEditor: React.FC<{
             )}
             <div
                 ref={editor}
-                className={`wn-theme-cm ${cursorInRender ? 'editor-smooth' : 'editor-auto'}`}
+                className={`wn-theme-cm ${cursorInRenderFlag ? 'editor-smooth' : 'editor-auto'}`}
             />
             {menu ? (
                 <MenuUl top={yPos} left={xPos}>
@@ -432,3 +425,5 @@ const MenuLi = styled.li(
     }
 `
 );
+
+export default MarkdownEditor;

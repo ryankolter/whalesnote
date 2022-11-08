@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 
 import DataSpace from './DataSpace';
 import ImageSpace from './ImageSpace';
@@ -24,11 +24,11 @@ const AssistantPanel: React.FC<{
         <AssistantPanelContainer width={assistantPanelWidth}>
             <ResizeAssistantPanelWidth
                 left={0}
-                onDragStart={(e) => {
+                onDragStart={(e: React.DragEvent) => {
                     resizeAssistantPanelOffsetX.current =
                         document.body.clientWidth - assistantPanelWidth - 48 - e.pageX;
                 }}
-                onDrag={(e) => {
+                onDrag={(e: React.DragEvent) => {
                     if (Math.abs(e.pageX - lastPageX.current) < 5) return;
                     lastPageX.current = e.pageX;
                     if (e.pageX > 0 && e.pageX < document.body.clientWidth) {
@@ -42,7 +42,7 @@ const AssistantPanel: React.FC<{
                         }
                     }
                 }}
-                onDragEnd={(e) => {
+                onDragEnd={(e: React.DragEvent) => {
                     window.localStorage.setItem(
                         'assistant_panel_width',
                         assistantPanelWidth.toString()

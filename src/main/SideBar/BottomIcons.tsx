@@ -9,9 +9,8 @@ import trashPanelIcon from '../../resources/icon/sideBar/trashPanelIcon.svg';
 import settingPanelIcon from '../../resources/icon/sideBar/settingPanelIcon.svg';
 
 const BottomIcons: React.FC<{
-    curAssistantPanelName: string;
     setCurAssistantPanelName: React.Dispatch<React.SetStateAction<string>>;
-}> = ({ curAssistantPanelName, setCurAssistantPanelName }) => {
+}> = ({ setCurAssistantPanelName }) => {
     const handleSvgIconClick = useCallback((btn_type: string) => {
         setCurAssistantPanelName((curAssistantPanelName: string) => {
             if (curAssistantPanelName === btn_type) {

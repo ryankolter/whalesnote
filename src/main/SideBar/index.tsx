@@ -1,5 +1,4 @@
-import { useContext, useState } from 'react';
-import { GlobalContext } from '../../GlobalProvider';
+import { useState } from 'react';
 import styled from '@emotion/styled';
 
 import AssistantPanel from './AssistantPanel';
@@ -7,7 +6,6 @@ import TopIcons from './TopIcons';
 import BottomIcons from './BottomIcons';
 
 const SideBar: React.FC<{}> = ({}) => {
-    const { currentTitle } = useContext(GlobalContext);
     const [curAssistantPanelName, setCurAssistantPanelName] = useState('none');
 
     return (
@@ -22,10 +20,7 @@ const SideBar: React.FC<{}> = ({}) => {
             )}
             <SideBarColumn>
                 <TopIcons />
-                <BottomIcons
-                    curAssistantPanelName={curAssistantPanelName}
-                    setCurAssistantPanelName={setCurAssistantPanelName}
-                />
+                <BottomIcons setCurAssistantPanelName={setCurAssistantPanelName} />
             </SideBarColumn>
         </SideBarContainer>
     );
@@ -42,13 +37,6 @@ const SideBarColumn = styled.div({
     justifyContent: 'space-between',
     width: '48px',
     backgroundColor: 'var(--sidebar-bg-color)',
-});
-
-const SideBarTopIcons = styled.div({
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    marginTop: '30px',
 });
 
 export default SideBar;

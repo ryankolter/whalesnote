@@ -3,7 +3,15 @@ import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 import cryptoRandomString from 'crypto-random-string';
 
-import { DndContext, MouseSensor, useSensor, useSensors, DragOverlay } from '@dnd-kit/core';
+import {
+    DndContext,
+    MouseSensor,
+    useSensor,
+    useSensors,
+    DragOverlay,
+    DragStartEvent,
+    DragEndEvent,
+} from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { restrictToFirstScrollableAncestor, restrictToVerticalAxis } from '@dnd-kit/modifiers';
 
@@ -16,22 +24,22 @@ const NoteList: React.FC<{
 }> = ({ width }) => {
     const {
         curDataPath,
-        dataPathChangeFlag,
-        noteSwitch,
         currentRepoKey,
         currentFolderKey,
         currentNoteKey,
+        dataPathChangeFlag,
+        keySelectNumArray,
+        platformName,
+        showKeySelect,
         whalenote,
+        changeNotesAfterNew,
+        deleteNote,
+        manualFocus,
         newNote,
         reorderNote,
-        deleteNote,
-        changeNotesAfterNew,
-        keySelectNumArray,
         setKeySelectNumArray,
-        manualFocus,
-        showKeySelect,
         setShowKeySelect,
-        platformName,
+        switchNote,
     } = useContext(GlobalContext);
 
     const notes_key = useMemo(() => {
@@ -51,22 +59,18 @@ const NoteList: React.FC<{
             : undefined;
     }, [whalenote, currentRepoKey, currentFolderKey]);
 
-    const [activeId, setActiveId] = useState(null);
-
+    const [dragActiveId, setDragActiveId] = useState<string | null>(null);
     const [noteScrollTop, setNoteScrollTop] = useState(0);
-
+    const notesEnd = useRef<HTMLDivElement>(null);
     const outerRef = useRef<HTMLDivElement>(null);
     const { xPos, yPos, menu } = useContextMenu(outerRef);
-
     const sensors = useSensors(useSensor(MouseSensor, { activationConstraint: { distance: 5 } }));
 
-    const notesEnd = useRef<HTMLDivElement>(null);
-
-    const scrollToBottom = () => {
+    const scrollToBottom = useCallback(() => {
         if (notesEnd && notesEnd.current) {
             notesEnd.current.scrollIntoView({ behavior: 'smooth' });
         }
-    };
+    }, []);
 
     const handleNewNote = useCallback(async () => {
         const new_note_key = cryptoRandomString({
@@ -74,9 +78,8 @@ const NoteList: React.FC<{
             type: 'alphanumeric',
         });
         const new_note_title = '空笔记';
-
         await newNote(curDataPath, currentRepoKey, currentFolderKey, new_note_key, new_note_title);
-        await noteSwitch(currentRepoKey, currentFolderKey, new_note_key);
+        await switchNote(currentRepoKey, currentFolderKey, new_note_key);
         manualFocus(500);
         setTimeout(() => {
             scrollToBottom();
@@ -87,10 +90,11 @@ const NoteList: React.FC<{
         currentRepoKey,
         currentFolderKey,
         changeNotesAfterNew,
-        noteSwitch,
         manualFocus,
-        setShowKeySelect,
+        newNote,
         scrollToBottom,
+        setShowKeySelect,
+        switchNote,
     ]);
 
     const handleDeleteNote = useCallback(
@@ -101,9 +105,9 @@ const NoteList: React.FC<{
                 currentFolderKey,
                 note_key
             );
-            await noteSwitch(currentRepoKey, currentFolderKey, next_note_key);
+            await switchNote(currentRepoKey, currentFolderKey, next_note_key);
         },
-        [curDataPath, currentRepoKey, currentFolderKey, noteSwitch]
+        [curDataPath, currentRepoKey, currentFolderKey, switchNote]
     );
 
     const preNotePage = useCallback(() => {
@@ -116,7 +120,7 @@ const NoteList: React.FC<{
                 setNoteScrollTop(0);
             }
         }
-    }, []);
+    }, [setNoteScrollTop]);
 
     const nextNotePage = useCallback(() => {
         if (outerRef && outerRef.current) {
@@ -124,17 +128,17 @@ const NoteList: React.FC<{
             const top = outerRef.current.scrollTop;
             setNoteScrollTop(top + height - 28);
         }
-    }, []);
+    }, [setNoteScrollTop]);
 
     const noteSwitchByIndex = useCallback(
         async (index: number) => {
             for (const [i, key] of notes_key.entries()) {
                 if (index === i) {
-                    await noteSwitch(currentRepoKey, currentFolderKey, key);
+                    await switchNote(currentRepoKey, currentFolderKey, key);
                 }
             }
         },
-        [curDataPath, currentRepoKey, currentFolderKey, notes_key, noteSwitch]
+        [currentRepoKey, currentFolderKey, notes_key, switchNote]
     );
 
     useEffect(() => {
@@ -184,7 +188,7 @@ const NoteList: React.FC<{
             }
             setKeySelectNumArray([]);
         }
-    }, [keySelectNumArray, noteSwitchByIndex]);
+    }, [keySelectNumArray, noteSwitchByIndex, setKeySelectNumArray]);
 
     useEffect(() => {
         if (keySelectNumArray.length === 1) {
@@ -197,17 +201,17 @@ const NoteList: React.FC<{
             if (platformName === 'darwin' || platformName === 'win32' || platformName === 'linux') {
                 const modKey = platformName === 'darwin' ? e.metaKey : e.ctrlKey;
 
-                if (e.keyCode === 78 && modKey && !e.shiftKey) {
+                if (e.key === 'n' && modKey && !e.shiftKey) {
                     handleNewNote();
                 }
 
-                // arrow bottom 40 or K 75
-                if ((e.keyCode === 40 || e.keyCode === 75) && !modKey && showKeySelect) {
+                // arrow down or K
+                if ((e.key === 'ArrowDown' || e.key === 'k') && !modKey && showKeySelect) {
                     nextNotePage();
                 }
 
-                // arrow bottom 38 or I 73
-                if ((e.keyCode === 38 || e.keyCode === 73) && !modKey && showKeySelect) {
+                // arrow up or I
+                if ((e.key === 'ArrowUp' || e.key === 'i') && !modKey && showKeySelect) {
                     preNotePage();
                 }
             }
@@ -222,17 +226,18 @@ const NoteList: React.FC<{
         };
     }, [handleKeyDown]);
 
-    const handleDragStart = (event: any) => {
-        setActiveId(event.active.id);
-    };
+    const handleDragStart = useCallback(
+        (event: DragStartEvent) => {
+            setDragActiveId(String(event.active.id));
+        },
+        [setDragActiveId]
+    );
 
     const handleDragEnd = useCallback(
-        (event: any) => {
-            setActiveId(null);
+        (event: DragEndEvent) => {
+            setDragActiveId(null);
             const { active, over } = event;
-
             if (!over) return;
-
             if (
                 active.id !== over.id &&
                 notes_key &&
@@ -246,24 +251,32 @@ const NoteList: React.FC<{
                 reorderNote(curDataPath, currentRepoKey, currentFolderKey, new_notes_key);
             }
         },
-        [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, notes_key, reorderNote]
+        [
+            curDataPath,
+            currentRepoKey,
+            currentFolderKey,
+            currentNoteKey,
+            notes_key,
+            reorderNote,
+            setDragActiveId,
+        ]
     );
 
-    const genAlphaCode1 = (order: number): number => {
+    const genAlphaCode1 = useCallback((order: number): number => {
         if (order <= 8 * 21) {
             return Math.ceil(order / 21) + 64;
         } else {
             return 4 + Math.ceil(order / 21) + 64;
         }
-    };
+    }, []);
 
-    const genAlphaCode2 = (order: number): number => {
+    const genAlphaCode2 = useCallback((order: number): number => {
         if (order % 21 <= 8) {
             return (order % 21 === 0 ? 25 : order % 21) + 64;
         } else {
             return (order % 21) + 4 + 64;
         }
-    };
+    }, []);
 
     return (
         <NoteListContainer width={width}>
@@ -301,7 +314,7 @@ const NoteList: React.FC<{
                                                         : {}
                                                 }
                                                 onClick={() =>
-                                                    noteSwitch(
+                                                    switchNote(
                                                         currentRepoKey,
                                                         currentFolderKey,
                                                         key
@@ -309,7 +322,7 @@ const NoteList: React.FC<{
                                                 }
                                                 onContextMenu={() => {
                                                     if (currentNoteKey !== key)
-                                                        noteSwitch(
+                                                        switchNote(
                                                             currentRepoKey,
                                                             currentFolderKey,
                                                             key
@@ -395,36 +408,41 @@ const NoteList: React.FC<{
                             )}
                         </Notes>
                     </SortableContext>
-                    <DragOverlay>
-                        <div>
-                            {activeId && notes_obj ? (
+                    {dragActiveId ? (
+                        <DragOverlay>
+                            {notes_obj ? (
                                 <NoteItem
-                                    key={activeId}
+                                    key={dragActiveId}
                                     style={
-                                        currentNoteKey === activeId
+                                        currentNoteKey === dragActiveId
                                             ? { backgroundColor: 'var(--main-selected-bg-color)' }
                                             : {}
                                     }
                                     onClick={() =>
-                                        noteSwitch(currentRepoKey, currentFolderKey, activeId)
+                                        switchNote(currentRepoKey, currentFolderKey, dragActiveId)
                                     }
                                     onContextMenu={() => {
-                                        if (currentNoteKey !== activeId)
-                                            noteSwitch(currentRepoKey, currentFolderKey, activeId);
+                                        if (currentNoteKey !== dragActiveId)
+                                            switchNote(
+                                                currentRepoKey,
+                                                currentFolderKey,
+                                                dragActiveId
+                                            );
                                     }}
                                 >
-                                    {notes_obj[activeId].title}
+                                    {notes_obj[dragActiveId].title}
                                 </NoteItem>
-                            ) : null}
-                        </div>
-                    </DragOverlay>
+                            ) : (
+                                <></>
+                            )}
+                        </DragOverlay>
+                    ) : (
+                        <></>
+                    )}
                 </DndContext>
             ) : (
                 <></>
             )}
-            {/* <NoteBottomBar>
-                <MoreNote><img src={moreBtnIcon} alt='' /></MoreNote>
-            </NoteBottomBar> */}
         </NoteListContainer>
     );
 };

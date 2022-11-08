@@ -22,17 +22,16 @@ const SideNav: React.FC<Record<string, unknown>> = ({}) => {
     );
 
     const handleKeyDown = useCallback(
-        async (e: any) => {
+        async (e: KeyboardEvent) => {
             if (platformName === 'darwin' || platformName === 'win32' || platformName === 'linux') {
                 const modKey = platformName === 'darwin' ? e.metaKey : e.ctrlKey;
 
                 if (
-                    ((e.keyCode >= 65 && e.keyCode <= 72) ||
-                        (e.keyCode >= 77 && e.keyCode <= 89)) &&
+                    ((e.key >= 'a' && e.key <= 'h') || (e.key >= 'm' && e.key <= 'y')) &&
                     !modKey &&
                     showKeySelect
                 ) {
-                    const num = parseInt(e.keyCode);
+                    const num = e.key.charCodeAt(0) - 32;
                     if (keySelectNumArray.length === 0) {
                         setKeySelectNumArray((state: any) => state.concat([num]));
                     } else {
@@ -40,8 +39,21 @@ const SideNav: React.FC<Record<string, unknown>> = ({}) => {
                     }
                 }
 
-                if (e.keyCode >= 48 && e.keyCode <= 57 && !modKey && showKeySelect) {
-                    const num = parseInt(e.keyCode);
+                if (
+                    ((e.key >= 'A' && e.key <= 'H') || (e.key >= 'M' && e.key <= 'Y')) &&
+                    !modKey &&
+                    showKeySelect
+                ) {
+                    const num = e.key.charCodeAt(0);
+                    if (keySelectNumArray.length === 0) {
+                        setKeySelectNumArray((state: any) => state.concat([num]));
+                    } else {
+                        setKeySelectNumArray((state: any) => state.concat([num]));
+                    }
+                }
+
+                if (Number(e.key) >= 0 && Number(e.key) <= 9 && !modKey && showKeySelect) {
+                    const num = e.key.charCodeAt(0);
                     if (keySelectNumArray.length === 1) {
                         setKeySelectNumArray((state: any) => state.concat([num]));
                     }

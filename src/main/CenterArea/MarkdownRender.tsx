@@ -32,14 +32,14 @@ import markdownItTocDoneRight from 'markdown-it-toc-done-right';
 import useContextMenu from '../../lib/useContextMenu';
 import { notes } from '../../lib/notes';
 
-export const MarkdownRender: React.FC<{
+const MarkdownRender: React.FC<{
+    cursorInRenderFlag: boolean;
     editorScrollRatio: number;
     mdRenderState: string;
-    cursorInRender: boolean;
     renderNoteStr: string;
-    setCursorInRender: React.Dispatch<React.SetStateAction<boolean>>;
-    setRenderScrollRatio: React.Dispatch<React.SetStateAction<number>>;
     renderScrollTop: number;
+    setCursorInRenderFlag: React.Dispatch<React.SetStateAction<boolean>>;
+    setRenderScrollRatio: React.Dispatch<React.SetStateAction<number>>;
     updateRenderScrollTop: (
         repo_key: string,
         folder_key: string,
@@ -47,13 +47,13 @@ export const MarkdownRender: React.FC<{
         render_scroll_value: number
     ) => void;
 }> = ({
+    cursorInRenderFlag,
     editorScrollRatio,
     mdRenderState,
-    cursorInRender,
     renderNoteStr,
-    setCursorInRender,
-    setRenderScrollRatio,
     renderScrollTop,
+    setCursorInRenderFlag,
+    setRenderScrollRatio,
     updateRenderScrollTop,
 }) => {
     const {
@@ -61,11 +61,11 @@ export const MarkdownRender: React.FC<{
         currentRepoKey,
         currentFolderKey,
         currentNoteKey,
-        whalenote,
-        theme,
-        renderFontSize,
         platformName,
+        renderFontSize,
         showRepoPanel,
+        theme,
+        whalenote,
     } = useContext(GlobalContext);
 
     const [result, setResult] = useState('');
@@ -76,14 +76,13 @@ export const MarkdownRender: React.FC<{
 
     const md = useRef<markdownIt>(markdownIt());
     const mdPrint = useRef<markdownIt>(markdownIt());
-    const renderRef = useRef<HTMLDivElement>(null);
     const scrollSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
     const scrollRatioSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
     const TocRef = useRef<HTMLDivElement>(null);
-    const renderContainerRef = useRef<HTMLDivElement>(null);
     const autoScroll = useRef<boolean>(false);
     const clipboard: any = useRef<ClipboardJS>(null);
-
+    const renderContainerRef = useRef<HTMLDivElement>(null);
+    const renderRef = useRef<HTMLDivElement>(null);
     const { xPos, yPos, menu } = useContextMenu(renderRef);
 
     useEffect(() => {
@@ -391,12 +390,12 @@ export const MarkdownRender: React.FC<{
     }, []);
 
     const handleKeyDown = useCallback(
-        async (e: any) => {
+        async (e: KeyboardEvent) => {
             if (platformName === 'darwin' || platformName === 'win32' || platformName === 'linux') {
                 const modKey = platformName === 'darwin' ? e.metaKey : e.ctrlKey;
 
                 if (
-                    e.keyCode === 74 &&
+                    e.key === 'J' &&
                     modKey &&
                     !e.shiftKey &&
                     mdRenderState === 'all' &&
@@ -413,8 +412,8 @@ export const MarkdownRender: React.FC<{
     );
 
     const handleScroll = useCallback(
-        (e: any) => {
-            if (cursorInRender) {
+        (e: Event) => {
+            if (cursorInRenderFlag) {
                 if (scrollRatioSaveTimerRef.current) {
                     clearTimeout(scrollRatioSaveTimerRef.current);
                 }
@@ -459,17 +458,17 @@ export const MarkdownRender: React.FC<{
             editorScrollRatio,
             setShowRenderScrollPos,
             updateRenderScrollTop,
-            cursorInRender,
+            cursorInRenderFlag,
         ]
     );
 
     const handleMouseEnter = useCallback(() => {
-        setCursorInRender(true);
-    }, [setCursorInRender]);
+        setCursorInRenderFlag(true);
+    }, [setCursorInRenderFlag]);
 
     const handleMouseLeave = useCallback(() => {
-        setCursorInRender(false);
-    }, [setCursorInRender]);
+        setCursorInRenderFlag(false);
+    }, [setCursorInRenderFlag]);
 
     useEffect(() => {
         document.addEventListener('keydown', handleKeyDown);
@@ -653,3 +652,5 @@ const MenuLi = styled.li(
     }
 `
 );
+
+export default MarkdownRender;
