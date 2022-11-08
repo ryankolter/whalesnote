@@ -22,14 +22,16 @@ const BottomRow: React.FC<{
         keySelect,
         setKeySelect,
         showSearchPanel,
+        showAllRepo,
+        setShowAllRepo,
     } = useContext(GlobalContext);
 
     const folders_obj = useMemo(() => {
         return whalenote.repos_obj ? whalenote.repos_obj[currentRepoKey]?.folders_obj : undefined;
     }, [whalenote, currentRepoKey]);
 
+    const composing = useRef(false);
     const [showSwitchMdRenderState, setShowSwitchMdRenderState] = useState(false);
-    const [showAllRepo, setShowAllRepo] = useState(false);
 
     const handleKeyDown = useCallback(
         async (e: any) => {
@@ -41,7 +43,7 @@ const BottomRow: React.FC<{
                 }
 
                 //normal enter and extra enter
-                if (e.key === 'Enter') {
+                if (!composing.current && e.key === 'Enter') {
                     if (keySelect) {
                         setKeySelect(false);
                         setNumArray([]);
@@ -60,6 +62,7 @@ const BottomRow: React.FC<{
                             );
                         }, 0);
                     }
+                    setShowAllRepo(false);
                 }
 
                 // esc
@@ -72,13 +75,34 @@ const BottomRow: React.FC<{
                 }
             }
         },
-        [currentNoteKey, keySelect, mdRenderState, setBlur, setFocus, setKeySelect, setNumArray]
+        [
+            currentNoteKey,
+            keySelect,
+            showSearchPanel,
+            mdRenderState,
+            setBlur,
+            setFocus,
+            setKeySelect,
+            setNumArray,
+        ]
     );
 
     useEffect(() => {
         document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('compositionstart', () => {
+            composing.current = true;
+        });
+        document.addEventListener('compositionend', () => {
+            composing.current = false;
+        });
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
+            document.removeEventListener('compositionstart', () => {
+                composing.current = true;
+            });
+            document.removeEventListener('compositionend', () => {
+                composing.current = false;
+            });
         };
     }, [handleKeyDown]);
 
@@ -109,7 +133,7 @@ const BottomRow: React.FC<{
                 </CurFolderNameTag>
                 {showAllRepo ? (
                     <AllRepo>
-                        <RepoPanel setShowAllRepo={setShowAllRepo} />
+                        <RepoPanel />
                     </AllRepo>
                 ) : (
                     <></>

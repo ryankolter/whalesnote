@@ -33,6 +33,7 @@ export const MarkdownEditor: React.FC<{
         setKeySelect,
         editorFontSize,
         platformName,
+        showAllRepo,
     } = useContext(GlobalContext);
 
     const [topLinePos, cursorHeadPos, updateTopLinePos, updateCursorHeadPos] = useEditorPosition(
@@ -157,14 +158,14 @@ export const MarkdownEditor: React.FC<{
 
     const autoScrollToLine = useCallback(() => {
         if (view.current) {
-            const max_height = view.current.contentDOM.getBoundingClientRect().height;
-            const start_line = topLinePos <= max_height && topLinePos > 0 ? topLinePos : max_height;
-
-            view.current?.dispatch({
-                effects: EditorView.scrollIntoView(start_line, {
-                    y: 'start',
-                }),
-            });
+            if (topLinePos > 0) {
+                const start_line = Math.min(topLinePos, view.current.state.doc.length);
+                view.current?.dispatch({
+                    effects: EditorView.scrollIntoView(start_line, {
+                        y: 'start',
+                    }),
+                });
+            }
 
             if (cursorHeadPos !== -1) {
                 view.current?.focus();
@@ -237,18 +238,21 @@ export const MarkdownEditor: React.FC<{
 
     const handleKeyDown = useCallback(
         async (e: any) => {
-            if (platformName === 'darwin') {
-                if (e.keyCode === 74 && e.metaKey && !e.shiftKey && mdRenderState !== 'all') {
-                    autoScrollToLine();
-                }
-            }
-            if (platformName === 'win32' || platformName === 'linux') {
-                if (e.keyCode === 74 && e.crtlKey && !e.shiftKey && mdRenderState !== 'all') {
+            if (platformName === 'darwin' || platformName === 'win32' || platformName === 'linux') {
+                const modKey = platformName === 'darwin' ? e.metaKey : e.ctrlKey;
+
+                if (
+                    e.keyCode === 74 &&
+                    modKey &&
+                    !e.shiftKey &&
+                    mdRenderState !== 'all' &&
+                    !showAllRepo
+                ) {
                     autoScrollToLine();
                 }
             }
         },
-        [mdRenderState, autoScrollToLine]
+        [mdRenderState, showAllRepo, autoScrollToLine]
     );
 
     const handleScroll = useCallback(
@@ -283,9 +287,8 @@ export const MarkdownEditor: React.FC<{
             }
             scrollSaveTimerRef.current = setTimeout(() => {
                 if (view.current) {
-                    //add the margin 10px and 15px to the top value
                     const fromPos = view.current.elementAtHeight(
-                        Math.abs(view.current.contentDOM.getBoundingClientRect().top) + 10 + 15
+                        Math.abs(view.current.contentDOM.getBoundingClientRect().top) + 50
                     ).from;
 
                     setShowEditorScrollPos(false);

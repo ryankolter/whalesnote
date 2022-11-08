@@ -20,6 +20,8 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
     } = useContext(GlobalContext);
 
     const searchInputRef = useRef<HTMLInputElement>(null);
+    const setWordTimerObj = useRef<NodeJS.Timeout>();
+    const composing = useRef(false);
 
     const [word, setWord] = useState('');
     const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
@@ -37,7 +39,12 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
 
     const handleSearchInputChange = useCallback(
         (e: any) => {
-            setWord(e.target.value);
+            if (setWordTimerObj.current) {
+                clearTimeout(setWordTimerObj.current);
+            }
+            setWordTimerObj.current = setTimeout(() => {
+                setWord(e.target.value);
+            }, 300);
             if (!showSearchPanel) setShowSearchPanel(true);
         },
         [setWord, showSearchPanel, setShowSearchPanel]
@@ -124,7 +131,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                     if (keySelect) setKeySelect(false);
                 }
 
-                if (e.key === 'Enter' || e.key === 'Escape') {
+                if ((!composing.current && e.key === 'Enter') || e.key === 'Escape') {
                     if (showSearchPanel) {
                         setShowSearchPanel(false);
                         if (searchInputRef.current) {
@@ -135,11 +142,13 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
 
                 // arrow bottom 40
                 if (e.keyCode === 40 && showSearchPanel) {
+                    e.preventDefault();
                     nextSearchResult();
                 }
 
                 // arrow top 38
                 if (e.keyCode === 38 && showSearchPanel) {
+                    e.preventDefault();
                     prevSearchResult();
                 }
             }
@@ -149,8 +158,20 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
 
     useEffect(() => {
         document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('compositionstart', () => {
+            composing.current = true;
+        });
+        document.addEventListener('compositionend', () => {
+            composing.current = false;
+        });
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
+            document.removeEventListener('compositionstart', () => {
+                composing.current = true;
+            });
+            document.removeEventListener('compositionend', () => {
+                composing.current = false;
+            });
         };
     }, [handleKeyDown]);
 

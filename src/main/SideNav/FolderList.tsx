@@ -52,20 +52,17 @@ const FolderList: React.FC<{
     const [activeId, setActiveId] = useState(null);
     const [newFolderKey, setNewFolderKey] = useState('');
     const [newFolderName, setNewFolderName] = useState('');
-    const allowNewFolder = useRef(true);
-
     const [curFolderName, setCurFolderName] = useState('');
+    const [folderScrollTop, setFolderScrollTop] = useState(0);
+    const allowNewFolder = useRef(true);
+    const composing = useRef(false);
 
     const sensors = useSensors(useSensor(MouseSensor, { activationConstraint: { distance: 5 } }));
-
     const [deletePopup, setDeletePopUp, deleteMask] = usePopUp(500);
-
     const [renamePopup, setRenamePopUp, renameMask] = usePopUp(500);
 
     const innerRef = useRef<HTMLDivElement>(null);
     const { xPos, yPos, menu } = useContextMenu(innerRef);
-
-    const [folderScrollTop, setFolderScrollTop] = useState(0);
 
     // part1 : new folder
     const handleNewFolder = () => {
@@ -143,7 +140,7 @@ const FolderList: React.FC<{
             if (e.key === 'Escape') {
                 setNewFolderKey('');
                 setNewFolderName('');
-            } else if (e.key === 'Enter') {
+            } else if (!composing.current && e.key === 'Enter') {
                 newFolderConfirm(e, newFolderKey);
             }
         },
@@ -295,8 +292,20 @@ const FolderList: React.FC<{
 
     useEffect(() => {
         document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('compositionstart', () => {
+            composing.current = true;
+        });
+        document.addEventListener('compositionend', () => {
+            composing.current = false;
+        });
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
+            document.removeEventListener('compositionstart', () => {
+                composing.current = true;
+            });
+            document.removeEventListener('compositionend', () => {
+                composing.current = false;
+            });
         };
     }, [handleKeyDown]);
 
@@ -522,7 +531,7 @@ const FolderList: React.FC<{
                 onKeyDown={(e: any) => {
                     if (e.key === 'Escape') {
                         setRenamePopUp(false);
-                    } else if (e.key === 'Enter') {
+                    } else if (!composing.current && e.key === 'Enter') {
                         renameFolderConfirm();
                     }
                 }}

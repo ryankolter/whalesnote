@@ -65,6 +65,7 @@ export const MarkdownRender: React.FC<{
         theme,
         renderFontSize,
         platformName,
+        showAllRepo,
     } = useContext(GlobalContext);
 
     const [result, setResult] = useState('');
@@ -394,7 +395,13 @@ export const MarkdownRender: React.FC<{
             if (platformName === 'darwin' || platformName === 'win32' || platformName === 'linux') {
                 const modKey = platformName === 'darwin' ? e.metaKey : e.ctrlKey;
 
-                if (e.keyCode === 74 && modKey && !e.shiftKey && mdRenderState === 'all') {
+                if (
+                    e.keyCode === 74 &&
+                    modKey &&
+                    !e.shiftKey &&
+                    mdRenderState === 'all' &&
+                    !showAllRepo
+                ) {
                     autoScrollToLine();
                 }
                 if (e.key === '.' && modKey && !e.shiftKey) {
@@ -402,7 +409,7 @@ export const MarkdownRender: React.FC<{
                 }
             }
         },
-        [platformName, mdRenderState, autoScrollToLine, setShowTocFlag]
+        [platformName, mdRenderState, showAllRepo, autoScrollToLine, setShowTocFlag]
     );
 
     const handleScroll = useCallback(

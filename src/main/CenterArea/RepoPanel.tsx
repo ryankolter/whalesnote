@@ -13,9 +13,7 @@ import { InputPopUp } from '../../components/InputPopUp';
 import { usePopUp } from '../../lib/usePopUp';
 import useContextMenu from '../../lib/useContextMenu';
 
-const RepoPanel: React.FC<{
-    setShowAllRepo: React.Dispatch<React.SetStateAction<boolean>>;
-}> = ({ setShowAllRepo }) => {
+const RepoPanel: React.FC<{}> = ({}) => {
     const {
         curDataPath,
         currentRepoKey,
@@ -36,6 +34,7 @@ const RepoPanel: React.FC<{
         keySelect,
         setKeySelect,
         platformName,
+        setShowAllRepo,
     } = useContext(GlobalContext);
 
     const [activeId, setActiveId] = useState<string>('');
@@ -43,6 +42,8 @@ const RepoPanel: React.FC<{
     const [newRepoName, setNewRepoName] = useState('');
     const [curRepoName, setCurRepoName] = useState('');
     const allowNewRepo = useRef(true);
+    const composing = useRef(false);
+
     const [repoSelectedList, setRepoSelectedList] = useState(() => {
         let page = 0;
         whalenote.repos_key
@@ -148,15 +149,6 @@ const RepoPanel: React.FC<{
             if (repoScrollRef && repoScrollRef.current) {
                 repoScrollRef.current.scrollLeft = repoScrollRef.current.scrollWidth;
             }
-            setShowAllRepo(false);
-            setTimeout(() => {
-                setFocus(
-                    cryptoRandomString({
-                        length: 24,
-                        type: 'alphanumeric',
-                    })
-                );
-            }, 500);
             allowNewRepo.current = true;
         },
         [
@@ -179,7 +171,7 @@ const RepoPanel: React.FC<{
             if (e.key === 'Escape') {
                 setNewRepoKey('');
                 setNewRepoName('');
-            } else if (e.key === 'Enter' && newRepoKey) {
+            } else if (!composing.current && e.key === 'Enter' && newRepoKey) {
                 newRepoSubmit(e, newRepoKey);
             }
         },
@@ -222,7 +214,7 @@ const RepoPanel: React.FC<{
                         ? whalenote.repos_obj[currentRepoKey].repo_name
                         : ''
                 );
-            } else if (e.key === 'Enter') {
+            } else if (!composing.current && e.key === 'Enter') {
                 renameRepoConfirm();
             }
         },
@@ -319,7 +311,7 @@ const RepoPanel: React.FC<{
                 const modKey = platformName === 'darwin' ? e.metaKey : e.ctrlKey;
 
                 // normal number 1-6
-                if (e.keyCode >= 49 && e.keyCode <= 57 && !modKey && numArray.length === 0) {
+                if (e.keyCode >= 49 && e.keyCode <= 54 && !modKey && numArray.length === 0) {
                     const num = parseInt(e.keyCode) - 48;
                     const index = num + 6 * repoSelectedList - 1;
                     if (whalenote.repos_key && index < whalenote.repos_key.length) {
@@ -329,7 +321,7 @@ const RepoPanel: React.FC<{
                 }
 
                 // extra number 1-6
-                if (e.keyCode >= 97 && e.keyCode <= 105 && !modKey && numArray.length === 0) {
+                if (e.keyCode >= 97 && e.keyCode <= 102 && !modKey && numArray.length === 0) {
                     const num = parseInt(e.keyCode) - 96;
                     const index = num + 6 * repoSelectedList - 1;
                     if (whalenote.repos_key && index < whalenote.repos_key.length) {
@@ -350,16 +342,12 @@ const RepoPanel: React.FC<{
 
                 // arrow left 37 change to J 74
                 if ((e.keyCode === 37 || e.keyCode === 74) && modKey) {
-                    prevRepoPage();
+                    //prevRepoPage();
                 }
 
                 // arrow right 39 change to L 76
                 if ((e.keyCode === 39 || e.keyCode === 76) && modKey) {
                     nextRepoPage();
-                }
-
-                if (e.key === 'Enter') {
-                    setShowAllRepo(false);
                 }
             }
         },
@@ -376,8 +364,20 @@ const RepoPanel: React.FC<{
 
     useEffect(() => {
         document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('compositionstart', () => {
+            composing.current = true;
+        });
+        document.addEventListener('compositionend', () => {
+            composing.current = false;
+        });
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
+            document.removeEventListener('compositionstart', () => {
+                composing.current = true;
+            });
+            document.removeEventListener('compositionend', () => {
+                composing.current = false;
+            });
         };
     }, [handleKeyDown]);
 
