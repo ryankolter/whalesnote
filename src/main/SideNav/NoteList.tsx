@@ -381,7 +381,7 @@ const NoteList: React.FC<{
                                 .length <= 1 ? (
                                 <AddNotesTips>
                                     <div>点击按钮</div>
-                                    <div>添加新文档</div>
+                                    <div>添加新笔记</div>
                                 </AddNotesTips>
                             ) : (
                                 <></>
