@@ -1,7 +1,6 @@
 import { useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
-import { compileAsync } from 'sass';
 
 import markdownIt from 'markdown-it';
 import hljs from 'highlight.js/lib/common';
@@ -109,7 +108,7 @@ const TopIcons: React.FC<{}> = ({}) => {
                 })) || '';
             const hljsStyle =
                 (await window.electronAPI.readCssSync({
-                    file_name: `/hljs_theme/${theme}_standard.scss`,
+                    file_name: `/hljs_theme/${theme}_standard.css`,
                 })) || '';
             const renderStyle =
                 (await window.electronAPI.readCssSync({

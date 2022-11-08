@@ -1,0 +1,128 @@
+.grey-theme-global pre code.hljs {
+    display: block;
+    overflow-x: auto;
+}
+
+/* #3f4859 */
+.grey-theme-global .hljs ::selection,
+.grey-theme-global .hljs::selection {
+    background-color: #3f4859;
+}
+.grey-theme-global .ͼo.cm-focused .cm-selectionBackground, 
+.grey-theme-global .ͼo .cm-selectionBackground, 
+.grey-theme-global .ͼo .cm-content ::selection {
+    background-color: #3f4859;
+}
+
+/* #657b83 */
+.grey-theme-global .hljs-comment {
+    color: #657b83;
+}
+.grey-theme-global .ͼw {
+    color: #657b83;
+}
+
+/* #839496 */
+.grey-theme-global .hljs-tag {
+    color: #839496;
+}
+
+/* #93a1a1 */
+.grey-theme-global .hljs-operator,
+.grey-theme-global .hljs-punctuation,
+.grey-theme-global .hljs-subst {
+    color: #93a1a1;
+}
+.grey-theme-global .hljs-operator {
+    opacity: 0.7;
+}
+
+/* #a9b7c6 */
+.grey-theme-global .hljs-bullet,
+.grey-theme-global .hljs-deletion,
+.grey-theme-global .hljs-name,
+.grey-theme-global .hljs-selector-tag,
+.grey-theme-global .hljs-template-variable,
+.grey-theme-global .hljs-variable {
+    color: #a9b7c6;
+}
+
+.grey-theme-global .hljs-number,
+.grey-theme-global .ͼu,
+.grey-theme-global .ͼr {
+    color: #a9b7c6;
+}
+
+/* #cc7832 */
+.grey-theme-global .hljs-attr,
+.grey-theme-global .hljs-link,
+.grey-theme-global .hljs-literal,
+.grey-theme-global .hljs-symbol,
+.grey-theme-global .hljs-variable.constant_ {
+    color: #cc7832;
+}
+.grey-theme-global .hljs-built_in,
+.grey-theme-global .hljs-doctag,
+.grey-theme-global .hljs-keyword.hljs-atrule,
+.grey-theme-global .hljs-quote,
+.grey-theme-global .hljs-variable.language_{
+    color: #cc7832;
+}
+.grey-theme-global .hljs-attribute,
+.grey-theme-global .hljs-function .hljs-title,
+.grey-theme-global .hljs-section,
+.grey-theme-global .hljs-title.function_,
+.grey-theme-global .hljs-property {
+    color: #cc7832;
+}
+.grey-theme-global .ͼq,
+.grey-theme-global .ͼ12 {
+    color: #cc7832;
+}
+
+/* #b58900 */
+.grey-theme-global .hljs-class .hljs-title,
+.grey-theme-global .hljs-title,
+.grey-theme-global .hljs-title.class_ {
+    color: #b58900;
+}
+.grey-theme-global .hljs-strong {
+    font-weight: 700;
+    color: #b58900;
+}
+.grey-theme-global .ͼt {
+    color: #b58900;
+}
+
+/* #6a8759 */
+.grey-theme-global .hljs-addition,
+.grey-theme-global .hljs-code,
+.grey-theme-global .hljs-string,
+.grey-theme-global .hljs-title.class_.inherited__ {
+    color: #6a8759;
+}
+.grey-theme-global .hljs-meta,
+.grey-theme-global .hljs-meta .hljs-keyword,
+.grey-theme-global .hljs-meta .hljs-string {
+    color: #6a8759;
+}
+.grey-theme-global .ͼ13 {
+    color: #6a8759;
+}
+
+/* #6c71c4 */
+.grey-theme-global .diff .hljs-meta,
+.grey-theme-global .hljs-keyword,
+.grey-theme-global .hljs-template-tag,
+.grey-theme-global .hljs-type,
+.grey-theme-global .hljs-regexp {
+    color: #6c71c4;
+}
+.grey-theme-global .hljs-emphasis {
+    color: #6c71c4;
+    font-style: italic;
+}
+.grey-theme-global .ͼp,
+.grey-theme-global .ͼv {
+    color: #6c71c4;
+}

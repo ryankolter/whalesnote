@@ -5,8 +5,8 @@ import './index.css';
 import './resources/css/theme/global.css';
 import './resources/css/theme/editor.css';
 import './resources/css/theme/render.css';
-import './resources/css/hljs_theme/white_standard.scss';
-import './resources/css/hljs_theme/grey_standard.scss';
+import './resources/css/hljs_theme/white_standard.css';
+import './resources/css/hljs_theme/grey_standard.css';
 
 import App from './App';
 
