@@ -77,56 +77,56 @@ const ImageSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssist
         }
     }, []);
 
-    const handleLoadImage = useCallback(async (e: MouseEvent<HTMLSpanElement>) => {
-        e.stopPropagation();
-        e.preventDefault();
-        await window.electronAPI.openSelectImagesDialog({ file_types: validImageFileType.current });
-        // ipcRenderer.send('open-select-images-dialog', {
-        //     file_types: validImageFileType.current,
-        //     response_event_name: 'loadIamges',
-        // });
-    }, []);
+    const loadImages = useCallback(
+        async (paths: string[]) => {
+            const len = paths.length;
+            const timeStamp = generateTimeStamp();
+            let i = 0;
+            let success_count = 0;
+            let target_file_name = '';
+            for (const path of paths) {
+                const dest_file_name =
+                    timeStamp +
+                    (len > 1 ? '_' + addMultizero(i, String(len).length) : '') +
+                    '.' +
+                    path.substring(path.lastIndexOf('.') + 1);
+                const result = await window.electronAPI.copy({
+                    src_file_path: path,
+                    dest_dir_path: curDataPath + '/images',
+                    dest_file_name: dest_file_name,
+                });
+                if (result) {
+                    success_count++;
+                    target_file_name = dest_file_name;
+                }
+                i++;
+            }
+            setLoadSuccessCount(success_count);
+            setLoadFailCount(len - success_count);
+            success_count === len
+                ? setLoadImageStatus('success')
+                : setLoadImageStatus('partial_success');
+            if (success_count >= 1) {
+                copyImageMdLink(target_file_name);
+            }
+            setTimeout(() => {
+                setLoadImageStatus('none');
+            }, 1500);
+        },
+        [addMultizero, copyImageMdLink, setLoadFailCount, setLoadSuccessCount, setLoadImageStatus]
+    );
 
-    // useEffect(() => {
-    //     ipcRenderer.on('loadIamges', async (event: any, paths: string) => {
-    //         const len = paths.length;
-    //         const timeStamp = generateTimeStamp();
-    //         let i = 0;
-    //         let success_count = 0;
-    //         let target_file_name = '';
-    //         for (const path of paths) {
-    //             const dest_file_name =
-    //                 timeStamp +
-    //                 (len > 1 ? '_' + addMultizero(i, String(len).length) : '') +
-    //                 '.' +
-    //                 path.substring(path.lastIndexOf('.') + 1);
-    //             const result = await window.electronAPI.copy({
-    //                 src_file_path: path,
-    //                 dest_dir_path: curDataPath + '/images',
-    //                 dest_file_name: dest_file_name,
-    //             });
-    //             if (result) {
-    //                 success_count++;
-    //                 target_file_name = dest_file_name;
-    //             }
-    //             i++;
-    //         }
-    //         setLoadSuccessCount(success_count);
-    //         setLoadFailCount(len - success_count);
-    //         success_count === len
-    //             ? setLoadImageStatus('success')
-    //             : setLoadImageStatus('partial_success');
-    //         if (success_count >= 1) {
-    //             copyImageMdLink(target_file_name);
-    //         }
-    //         setTimeout(() => {
-    //             setLoadImageStatus('none');
-    //         }, 1500);
-    //     });
-    //     return () => {
-    //         ipcRenderer.removeAllListeners('loadIamges');
-    //     };
-    // }, [curDataPath, copyImageMdLink]);
+    const handleLoadImage = useCallback(
+        async (e: MouseEvent<HTMLSpanElement>) => {
+            e.stopPropagation();
+            e.preventDefault();
+            const paths = await window.electronAPI.openSelectImagesDialog({
+                file_types: validImageFileType.current,
+            });
+            await loadImages(paths);
+        },
+        [loadImages]
+    );
 
     const handleZoneDrop = useCallback(
         async (acceptedFiles: any) => {

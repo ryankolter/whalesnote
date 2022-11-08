@@ -51,41 +51,6 @@ body {
     cursor: pointer;
 }
 
-.radio-beauty-container {
-    font-size: 0;
-    $bgc: var(--main-text-color);
-    %common {
-        padding: 2px;
-        background-color: $bgc;
-        background-clip: content-box;
-    }
-    .radio-name {
-        vertical-align: middle;
-        font-size: 16px;
-    }
-    .radio-input {
-        display: none;
-    }
-    .radio-beauty {
-        width: 15px;
-        height: 15px;
-        box-sizing: border-box;
-        display: inline-block;
-        border: 1px solid $bgc;
-        border-radius: 50%;
-        vertical-align: middle;
-        margin: 0 15px 0 3px;
-        &:hover {
-            box-shadow: 0 0 7px $bgc;
-            @extend %common;
-        }
-    }
-    input[type="radio"]:checked+.radio-beauty {
-        @extend %common;
-    }
-}
-
-
 figure {
     display: flex;
     flex-direction: column;
@@ -96,26 +61,37 @@ figure {
     margin-block-end: 2em !important;
 }
 
-img[alt=w300] {
-    max-width: 300px !important;
+.radio-beauty-container {
+    font-size: 0;
 }
 
-img[alt=w400] {
-    max-width: 400px !important;
+.radio-beauty-container .radio-name {
+    vertical-align: middle;
+    font-size: 16px;
+}
+.radio-beauty-container .radio-input {
+    display: none;
+}
+.radio-beauty-container .radio-beauty {
+    width: 15px;
+    height: 15px;
+    box-sizing: border-box;
+    display: inline-block;
+    border: 1px solid var(--main-text-color);
+    border-radius: 50%;
+    vertical-align: middle;
+    margin: 0 15px 0 3px;
 }
 
-img[alt=w500] {
-    max-width: 500px !important;
+.radio-beauty-container .radio-beauty:hover {
+    box-shadow: 0 0 7px var(--main-text-color);
+    padding: 2px;
+    background-color: var(--main-text-color);
+    background-clip: content-box;
 }
 
-img[alt=w600] {
-    max-width: 600px !important;
-}
-
-img[alt=w700] {
-    max-width: 700px !important;
-}
-
-img[alt=w800] {
-    max-width: 800px !important;
+.radio-beauty-container input[type="radio"]:checked+.radio-beauty {
+    padding: 2px;
+    background-color: var(--main-text-color);
+    background-clip: content-box;
 }

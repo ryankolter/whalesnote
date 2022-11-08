@@ -64,8 +64,6 @@ const MarkdownRender: React.FC<{
         platformName,
         renderFontSize,
         showRepoPanel,
-        theme,
-        whalenote,
     } = useContext(GlobalContext);
 
     const [result, setResult] = useState('');
@@ -75,7 +73,6 @@ const MarkdownRender: React.FC<{
     );
 
     const md = useRef<markdownIt>(markdownIt());
-    const mdPrint = useRef<markdownIt>(markdownIt());
     const scrollSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
     const scrollRatioSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
     const TocRef = useRef<HTMLDivElement>(null);
@@ -156,184 +153,6 @@ const MarkdownRender: React.FC<{
                 figcaption: 'title',
             });
     }, [curDataPath]);
-
-    mdPrint.current = useMemo(() => {
-        return markdownIt({
-            breaks: true,
-            linkify: true,
-            typographer: true,
-            highlight: function (str, lang) {
-                if (lang && hljs.getLanguage(lang)) {
-                    try {
-                        return (
-                            '<pre><code class="hljs" style="position: relative;">' +
-                            hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
-                            '</code></pre>'
-                        );
-                    } catch (__) {}
-                }
-
-                return (
-                    '<pre><code class="hljs">' +
-                    mdPrint.current.utils.escapeHtml(str) +
-                    '</code></pre>'
-                );
-            },
-        })
-            .use(markdownItEmoji)
-            .use(markdownItFootnote)
-            .use(markdownItSub)
-            .use(markdownItSup)
-            .use(markdownItTaskLists)
-            .use(markdownItLinkAttributes, {
-                attrs: {
-                    target: '_blank',
-                },
-            })
-            .use(markdownItTable, {
-                multiline: false,
-                rowspan: true,
-                headerless: false,
-                multibody: true,
-                aotolabel: true,
-            })
-            .use(markwodnItReplaceLink, {
-                replaceLink: function (link: string, env: string) {
-                    return curDataPath + '/images/' + link;
-                },
-            });
-    }, [curDataPath]);
-
-    // useEffect(() => {
-    //     ipcRenderer.on('saveNoteToHtml', async (event: any, path: string) => {
-    //         const bodyContent = mdPrint.current.render(renderNoteStr);
-    //         const colorStyle =
-    //         await window.electronAPI.readCssSync({
-    //                 file_name: '/theme/color_variable.css',
-    //             }) || '';
-    //         const globalStyle =
-    //             await window.electronAPI.readCssSync({
-    //                 file_name: '/theme/global.css',
-    //             }) || '';
-    //         const hljsStyle =
-    //             await window.electronAPI.readCssSync({
-    //                 file_name: `/hljs_theme/${theme}_standard.css`,
-    //             }) || '';
-    //         const renderStyle =
-    //             await window.electronAPI.readCssSync({
-    //                 file_name: '/theme/render.css',
-    //             }) || '';
-    //         const outerHtml = `<!DOCTYPE html><html>
-    //         <head>
-    //         <meta charset="UTF-8">
-    //         <meta name = "viewport" content = "width = device-width, initial-scale = 1.5, maximum-scale = 1">
-    //         <style>
-    //         ${colorStyle}
-    //         ${globalStyle}
-    //         ${hljsStyle}
-    //         ${renderStyle}
-    //         </style>
-    //         </head>
-    //         <body>
-    //         <div class='${theme}-theme-global wn-theme-rd'>
-    //             ${bodyContent}
-    //         </div>
-    //         </body></html>`;
-    //         await window.electronAPI.writeStr({
-    //             file_path: path,
-    //             str: outerHtml,
-    //         });
-    //     });
-    //     return () => {
-    //         ipcRenderer.removeAllListeners('saveNoteToHtml');
-    //     };
-    // }, [renderNoteStr, theme]);
-
-    // useEffect(() => {
-    //     ipcRenderer.on('saveNoteToMd', async (event: any, path: string) => {
-    //         await window.electronAPI.writeStr({
-    //             file_path: path,
-    //             str: renderNoteStr,
-    //         });
-    //     });
-    //     return () => {
-    //         ipcRenderer.removeAllListeners('saveNoteToPng');
-    //     };
-    // }, [renderNoteStr, theme]);
-
-    // useEffect(() => {
-    //     ipcRenderer.on('saveNoteToPng', (event: any, path: string) => {
-    //         toPng(renderRef.current as HTMLElement, {
-    //             height: renderRef.current?.scrollHeight,
-    //         }).then(async (dataUrl) => {
-    //             await window.electronAPI.writePngBlob({
-    //                 file_path: path,
-    //                 url: dataUrl,
-    //             });
-    //         });
-    //     });
-    //     return () => {
-    //         ipcRenderer.removeAllListeners('saveNoteToPng');
-    //     };
-    // }, []);
-
-    // useEffect(() => {
-    //     ipcRenderer.on('saveFolderToHtml', async (event: any, path: string) => {
-    //         const colorStyle =
-    //             await window.electronAPI.readCssSync({
-    //                 file_name: '/theme/color_variable.css',
-    //             }) || '';
-    //         const globalStyle =
-    //             await window.electronAPI.readCssSync({
-    //                 file_name: '/theme/global.css',
-    //             }) || '';
-    //         const hljsStyle =
-    //             await window.electronAPI.readCssSync({
-    //                 file_name: `/hljs_theme/${theme}_standard.css`,
-    //             }) || '';
-    //         const renderStyle =
-    //             await window.electronAPI.readCssSync({
-    //                 file_name: '/theme/render.css',
-    //             }) || '';
-    //         for (const note_key of Object.keys(notes[currentRepoKey][currentFolderKey])) {
-    //             let title =
-    //                 whalenote.repos_obj[currentRepoKey]?.folders_obj &&
-    //                 whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj
-    //                     ? whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj[
-    //                           note_key
-    //                       ]?.title || ''
-    //                     : '';
-    //             if (title === '' || title === '空笔记') title = note_key;
-    //             const content = notes[currentRepoKey][currentFolderKey][note_key];
-    //             const bodyContent = mdPrint.current.render(content);
-    //             const outerHtml = `<!DOCTYPE html><html>
-    //             <head>
-    //             <meta charset="UTF-8">
-    //             <meta name = "viewport" content = "width = device-width, initial-scale = 1, maximum-scale = 1">
-    //             <style>
-    //             ${colorStyle}
-    //             ${globalStyle}
-    //             ${hljsStyle}
-    //             ${renderStyle}
-    //             </style>
-    //             </head>
-    //             <body>
-    //             <div class='${theme}-theme-global wn-theme-rd'>
-    //                 ${bodyContent}
-    //             </div>
-    //             </body></html>`;
-
-    //             await window.electronAPI.writeStrToFile({
-    //                 folder_path: path,
-    //                 file_name: title + '.html',
-    //                 str: outerHtml,
-    //             });
-    //         }
-    //     });
-    //     return () => {
-    //         ipcRenderer.removeAllListeners('saveFolderToHtml');
-    //     };
-    // }, [whalenote, notes, currentRepoKey, currentFolderKey, theme]);
 
     useEffect(() => {
         setResult(md.current.render(renderNoteStr));
@@ -543,7 +362,7 @@ const MarkdownRenderContainer = styled.div(
     {
         position: 'absolute',
         width: '100%',
-        height: '100%',
+        height: 'calc(100% - 2px)',
     },
     (props: { fontSizeValue: number }) => ({
         fontSize: props.fontSizeValue + 'px',
@@ -590,7 +409,7 @@ const TocToggleBtn = styled.div({
     width: '30%',
     height: '14px',
     paddingRight: '6px',
-    zIndex: 10000,
+    zIndex: 3000,
     borderBottom: '1px solid var(--main-border-color)',
     backgroundColor: 'var(--main-tips-bg-color)',
 });

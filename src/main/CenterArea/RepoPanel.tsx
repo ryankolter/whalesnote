@@ -571,7 +571,6 @@ const RepoPanel: React.FC<{}> = ({}) => {
                                                 </Sortable>
                                             );
                                         }
-                                        // }
                                     })}
                                 {menu && currentRepoKey ? (
                                     <MenuUl top={yPos} left={xPos}>

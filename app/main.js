@@ -275,7 +275,7 @@ const processIPC = () => {
     });
 
     ipcMain.handle('operate:readCssSync', async (event, { file_name }) => {
-        let file_path = path.join(__dirname, '/src/resources/css/' + file_name);
+        let file_path = path.join(__dirname, '../src/resources/css/' + file_name);
         if (app.isPackaged) {
             let cssFilePath = path.join(__dirname, '../extraResources/css/');
             file_path = path.join(cssFilePath, file_name);

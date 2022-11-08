@@ -35,39 +35,6 @@ export const fetchNotesInAllRepo = async (
     }
 };
 
-// export const fetchNotesInRepo = async (
-//     data_path: string | null,
-//     history: historyTypes,
-//     whalenote: whalenoteObjType,
-//     repo_key: string | undefined
-// ) => {
-//     if (repo_key && !notes[repo_key]) {
-//         notes[repo_key] = {};
-//         // const folders_key = whalenote.repos_obj[repo_key].folders_key;
-//         // if (folders_key.length === 0) return;
-//         // let fetch_folder_key = folders_key[0];
-//         // for (const folder_key of folders_key) {
-//         //     if (folder_key === history.repos_record[repo_key].cur_folder_key) {
-//         //         fetch_folder_key = folder_key;
-//         //     }
-//         // }
-//         const folder_info = await window.electronAPI.readJsonSync({
-//             file_path: `${data_path}/${repo_key}/${fetch_folder_key}/folder_info.json`,
-//         });
-//         if (folder_info && folder_info.notes_obj) {
-//             notes[repo_key][fetch_folder_key] = {};
-//             for (const note_key of Object.keys(folder_info.notes_obj)) {
-//                 const note_info = await window.electronAPI.readCsonSync({
-//                     file_path: `${data_path}/${repo_key}/${fetch_folder_key}/${note_key}.cson`,
-//                 });
-//                 if (note_info) {
-//                     notes[repo_key][fetch_folder_key][note_key] = note_info.content;
-//                 }
-//             }
-//         }
-//     }
-// };
-
 export const fetchNotesInfolder = async (
     data_path: string | null,
     repo_key: string | undefined,

@@ -1,7 +1,7 @@
 /* ---------- whalenote theme for render----------*/
 .wn-theme-rd {
     width: 100%;
-    height: calc(100% - 2px);
+    height: 100%;
     top: 50px;
     box-sizing: border-box;
     padding: 0 15px 0 10px;
@@ -340,4 +340,28 @@
 
 .copy-btn:hover{
     color: var(--render-copy-btn-hover-color) !important;
+}
+
+.wn-theme-rd img[alt=w300] {
+    max-width: 300px !important;
+}
+
+.wn-theme-rd img[alt=w400] {
+    max-width: 400px !important;
+}
+
+.wn-theme-rd img[alt=w500] {
+    max-width: 500px !important;
+}
+
+.wn-theme-rd img[alt=w600] {
+    max-width: 600px !important;
+}
+
+.wn-theme-rd img[alt=w700] {
+    max-width: 700px !important;
+}
+
+.wn-theme-rd img[alt=w800] {
+    max-width: 800px !important;
 }
