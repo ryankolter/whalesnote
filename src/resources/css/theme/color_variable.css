@@ -17,7 +17,7 @@
     --main-btn-bg-color: #3A404C;
     --main-selected-bg-color: #3A404C;
     --main-scroller-bg-color: #C7C7C733;
-    --main-tips-bg-color: #3A404C66;
+    --main-tips-bg-color: #21232C;
     --main-waiting-bg-color: rgba(0,0,0,0.4);
 
     /* editor */
@@ -51,24 +51,25 @@
     --render-copy-btn-hover-color: #D5D5D5;
 
     /* bottom bar */
-    --bottom-main-bg-color: #2D3033;
     --bottom-btn-text-color: #CDCDCD;
-    --bottom-btn-bg-color: #585B62;
-    --bottom-btn-border-color: #585B62;
+    --bottom-btn-bg-color: #21242D;
+    --bottom-btn-border-color: #21242D;
 
     /* side bar */
     --sidebar-bg-color: #3C3F42;
 
     /* float panel */
-    --float-panel-bg-color: #2D3033;
-    --float-panel-bg-color-no-border: #2D3033;
-    --float-panel-border-color: #6F7374;
+    --float-panel-bg-color: #21242D;
+    --float-panel-bg-color-no-border: #21242D;
+    --float-panel-border-color: #6F7374CC;
 
     /* menu panel */
     --menu-text-color: #CDCDCD;
     --menu-border-color: #585655;
     --menu-bg-color: #2E2A27;
     --menu-hover-color: #3A404C;
+
+    --toc-text-color: #A0A0A0;
 
     /* other */
     --input-text-color: rgba(255, 255, 255, 0.6);
@@ -128,7 +129,6 @@
     --render-copy-btn-hover-color: #000000;
 
     /* bottom bar */
-    --bottom-main-bg-color: #FFFFFF;
     --bottom-btn-text-color: #4C4C4C;
     --bottom-btn-bg-color: #FFFFFF;
     --bottom-btn-border-color: #0059FFB3;
@@ -146,6 +146,8 @@
     --menu-border-color: #585655;
     --menu-bg-color: #2E2A27;
     --menu-hover-color: #3A404C;
+
+    --toc-text-color: #CDCDCDAA;
 
     /* other */
     --input-text-color: #808080;

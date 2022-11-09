@@ -186,7 +186,7 @@ const BottomRowContainer = styled.div({
     alignItems: 'center',
     padding: '0 30px 0 30px',
     boxSizing: 'border-box',
-    backgroundColor: 'var(--bottom-main-bg-color)',
+    backgroundColor: 'var(--main-bg-color)',
     borderTop: '1px solid var(--main-border-color)',
 });
 

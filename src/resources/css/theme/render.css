@@ -320,7 +320,7 @@
 }
 
 #renderTocId a{
-    color: var(--editor-main-text-color) !important;
+    color: var(--toc-text-color) !important;
 }
 
 /* copy btn */
