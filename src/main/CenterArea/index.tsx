@@ -157,7 +157,6 @@ const TopRow = styled.div(
         display: 'flex',
         alignItems: 'center',
         height: '49px',
-        borderBottom: '1px solid var(--main-border-color)',
         paddingRight: '30px',
         boxSizing: 'border-box',
     },

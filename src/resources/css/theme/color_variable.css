@@ -14,6 +14,7 @@
 
     /* background */
     --main-bg-color: #2D3033;
+    --main-folder-list-bg-color: #2D3033; /*#21242D;*/
     --main-btn-bg-color: #3A404C;
     --main-selected-bg-color: #3A404C;
     --main-scroller-bg-color: #C7C7C733;
@@ -59,8 +60,8 @@
     --sidebar-bg-color: #3C3F42;
 
     /* float panel */
-    --float-panel-bg-color: #21242D;
-    --float-panel-bg-color-no-border: #21242D;
+    --float-panel-bg-color: #2D3033;
+    --float-panel-bg-color-no-border: #2D3033;
     --float-panel-border-color: #6F7374CC;
 
     /* menu panel */
@@ -93,10 +94,12 @@
 
     /* background */
     --main-bg-color: #FFFFFF;
+    --main-folder-list-bg-color: #FFFFFF;
     --main-btn-bg-color: #F7F7FA;
     --main-selected-bg-color: #E5EEFF;
     --main-scroller-bg-color: #94949666;
     --main-tips-bg-color: #E3F3ED; /*#72c4a4*/
+    --main-waiting-bg-color: rgba(0,0,0,0.4);
 
     /* editor */
     --editor-main-text-color: #000000F0;

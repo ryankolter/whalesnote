@@ -3,6 +3,8 @@ import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 import cryptoRandomString from 'crypto-random-string';
 
+import SearchBar from './SearchBar';
+
 import {
     DndContext,
     MouseSensor,
@@ -280,6 +282,7 @@ const NoteList: React.FC<{
 
     return (
         <NoteListContainer width={width}>
+            <SearchBar />
             {dataPathChangeFlag > 0 ? (
                 <NoteAddFloat>
                     <NoteAddBtn onKeyDown={(e) => handleKeyDown(e)} onClick={() => handleNewNote()}>
@@ -493,7 +496,6 @@ const Notes = styled.div(
         flex: '1',
         minHeight: '0',
         padding: '10px 0 70px 0',
-        borderLeft: '1px solid var(--main-border-color)',
         borderRight: '1px solid var(--main-border-color)',
         scrollBehavior: 'smooth',
     },
@@ -509,8 +511,7 @@ const NoteItem = styled.div(
         position: 'relative',
         height: '36px',
         lineHeight: '36px',
-        padding: '0 10px',
-        margin: '0 10px',
+        padding: '0 20px',
         fontSize: '15px',
         cursor: 'pointer',
         overflow: 'hidden',

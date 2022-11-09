@@ -264,8 +264,8 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
 const SearchBarContainer = styled.div({
     position: 'relative',
     display: 'flex',
-    padding: '5px 30px 5px 100px',
-    borderBottom: '1px solid var(--main-border-color)',
+    padding: '5px 30px 5px 30px',
+    borderRight: '1px solid var(--main-border-color)',
 });
 
 const Search = styled.div({
@@ -323,10 +323,10 @@ const LoadingSearch = styled.div({
 const SearchPanel = styled.div({
     position: 'absolute',
     top: '40px',
-    left: '16px',
+    left: '0',
     display: 'flex',
     flexDirection: 'column',
-    width: 'calc(100% - 16px)',
+    width: '100%',
     height: 'calc(100vh - 140px)',
     padding: '15px',
     boxSizing: 'border-box',

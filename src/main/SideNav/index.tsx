@@ -15,7 +15,7 @@ const SideNav: React.FC<Record<string, unknown>> = ({}) => {
     const lastFolderPageX = useRef<number>(0);
     const lastNotePageX = useRef<number>(0);
     const [folderWidth, setFolderWidth] = useState(
-        Number(window.localStorage.getItem('folder_width')) || 160
+        Number(window.localStorage.getItem('folder_width')) || 180
     );
     const [noteWidth, setNoteWidth] = useState(
         Number(window.localStorage.getItem('note_width')) || 240
@@ -72,7 +72,6 @@ const SideNav: React.FC<Record<string, unknown>> = ({}) => {
 
     return (
         <LeftPanel>
-            <SearchBar />
             <SelectArea className={'select-area-border'}>
                 <List>
                     <FolderList width={folderWidth} />

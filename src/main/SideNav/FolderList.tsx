@@ -555,8 +555,9 @@ const FolderListContainer = styled.div(
         flexDirection: 'column',
         height: '100%',
         minWidth: '60px',
-        padding: '0 0 20px 16px',
+        padding: '40px 0 20px 16px',
         boxSizing: 'border-box',
+        backgroundColor: 'var(--main-folder-list-bg-color)',
     },
     (props: { width: number }) => ({
         width: props.width,
