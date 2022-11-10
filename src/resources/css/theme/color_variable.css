@@ -13,8 +13,8 @@
     --main-tips-border-color: #3A404C;
 
     /* background */
-    --main-bg-color: #2D3033;
-    --main-folder-list-bg-color: #2D3033; /*#21242D;*/
+    --main-bg-color: #2A2C34;
+    --main-folder-list-bg-color: #21242D; /*#21242D;*/
     --main-btn-bg-color: #3A404C;
     --main-selected-bg-color: #3A404C;
     --main-scroller-bg-color: #C7C7C733;
@@ -23,7 +23,7 @@
 
     /* editor */
     --editor-main-text-color: #999183;
-    --editor-main-bg-color: #2D3033;
+    --editor-main-bg-color: #2A2C34;
     --editor-htag-text-color: #A9B7C6;
     --editor-lastpos-bg-color: #3A404C;
     --editor-line-active-bg-color: #6699FF0B;
@@ -39,7 +39,7 @@
     --search-panel-textfield-border-color: #555555;
 
     /* render */
-    --render-main-bg-color: #2D3033;
+    --render-main-bg-color: #2A2C34;
     --render-code-text-color: #A9B7C6;
     --render-code-line-bg-color: #363A3E;
     --render-code-block-bg-color: #212121;
@@ -60,8 +60,8 @@
     --sidebar-bg-color: #3C3F42;
 
     /* float panel */
-    --float-panel-bg-color: #2D3033;
-    --float-panel-bg-color-no-border: #2D3033;
+    --float-panel-bg-color: #21242D;
+    --float-panel-bg-color-no-border: #21242D;
     --float-panel-border-color: #6F7374CC;
 
     /* menu panel */

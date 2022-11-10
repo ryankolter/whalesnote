@@ -187,7 +187,6 @@ const BottomRowContainer = styled.div({
     padding: '0 30px 0 30px',
     boxSizing: 'border-box',
     backgroundColor: 'var(--main-bg-color)',
-    borderTop: '1px solid var(--main-border-color)',
 });
 
 const BreakCrumb = styled.div({
