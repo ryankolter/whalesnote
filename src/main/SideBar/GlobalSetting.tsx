@@ -42,7 +42,7 @@ const GlobalSetting: React.FC<{
                             type="radio"
                             name="theme"
                             value="dark"
-                            id="radioNameGrey"
+                            id="radioNameDark"
                             className="radio-input"
                             checked={theme === 'dark'}
                             onChange={(e: any) => {
@@ -50,7 +50,7 @@ const GlobalSetting: React.FC<{
                                 setTheme(e.target.value);
                             }}
                         />
-                        <label htmlFor="radioNameGrey" className="radio-beauty"></label>
+                        <label htmlFor="radioNameDark" className="radio-beauty"></label>
                         <span className="radio-name">黑夜</span>
                     </div>
                 </SelectArea>
