@@ -31,7 +31,6 @@ const FolderList: React.FC<{}> = ({}) => {
         curDataPath,
         currentRepoKey,
         currentFolderKey,
-        dataPathChangeFlag,
         keySelectNumArray,
         platformName,
         showKeySelect,
@@ -345,16 +344,12 @@ const FolderList: React.FC<{}> = ({}) => {
 
     return (
         <FolderListContainer>
-            {dataPathChangeFlag > 0 ? (
-                <FolderTopBar>
-                    <CategoryIcon>
-                        <CategoryIconImg src={categoryIcon} alt="" />
-                    </CategoryIcon>
-                    <FolderTopTitle>分类</FolderTopTitle>
-                </FolderTopBar>
-            ) : (
-                <></>
-            )}
+            <FolderTopBar>
+                <CategoryIcon>
+                    <CategoryIconImg src={categoryIcon} alt="" />
+                </CategoryIcon>
+                <FolderTopTitle>分类</FolderTopTitle>
+            </FolderTopBar>
             {folders_key && folders_obj ? (
                 <DndContext
                     sensors={sensors}

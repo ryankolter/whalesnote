@@ -25,7 +25,6 @@ const NoteList: React.FC<{}> = ({}) => {
         currentRepoKey,
         currentFolderKey,
         currentNoteKey,
-        dataPathChangeFlag,
         keySelectNumArray,
         platformName,
         showKeySelect,
@@ -278,15 +277,11 @@ const NoteList: React.FC<{}> = ({}) => {
 
     return (
         <NoteListContainer>
-            {dataPathChangeFlag > 0 ? (
-                <NoteAddFloat>
-                    <NoteAddBtn onKeyDown={(e) => handleKeyDown(e)} onClick={() => handleNewNote()}>
-                        <NewNoteIconImg src={newNoteIcon} alt="" />
-                    </NoteAddBtn>
-                </NoteAddFloat>
-            ) : (
-                <></>
-            )}
+            <NoteAddFloat>
+                <NoteAddBtn onKeyDown={(e) => handleKeyDown(e)} onClick={() => handleNewNote()}>
+                    <NewNoteIconImg src={newNoteIcon} alt="" />
+                </NoteAddBtn>
+            </NoteAddFloat>
             {notes_key && notes_obj ? (
                 <DndContext
                     sensors={sensors}

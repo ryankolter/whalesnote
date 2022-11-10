@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import { GlobalContext } from './GlobalProvider';
 import WaitingMask from './components/WaitingMask';
-import SideNav from './main/SideNav';
+import NavColumn from './main/NavColumn';
 import CenterArea from './main/CenterArea';
 import SideBar from './main/SideBar';
 
@@ -11,16 +11,20 @@ import SocketServerBtn from './components/socketServerBtn';
 import SocketClientBtn from './socketClientBtn';
 
 const App = () => {
-    const { dataInitingFlag, showRepoPanel, theme } = useContext(GlobalContext);
+    const { dataInitingFlag, dataPathChangeFlag, theme } = useContext(GlobalContext);
 
     return (
         <AppContainer className={`${theme}-theme-global`}>
             <WaitingMask in={dataInitingFlag} timeout={300}></WaitingMask>
-            <AppUI>
-                <SideNav />
-                <CenterArea />
-                <SideBar />
-            </AppUI>
+            {dataPathChangeFlag > 0 ? (
+                <AppUI>
+                    <NavColumn />
+                    <CenterArea />
+                    <SideBar />
+                </AppUI>
+            ) : (
+                <></>
+            )}
             {/* <SocketClientBtn/>
             <SocketServerBtn/> */}
         </AppContainer>

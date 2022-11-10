@@ -15,9 +15,7 @@ const CenterArea: React.FC<{}> = ({}) => {
         currentRepoKey,
         currentFolderKey,
         currentNoteKey,
-        dataPathChangeFlag,
         platformName,
-        theme,
         showKeySelect,
         showRepoPanel,
         showSearchPanel,
@@ -135,11 +133,7 @@ const CenterArea: React.FC<{}> = ({}) => {
 
     return (
         <CenterAreaContainer>
-            {dataPathChangeFlag > 0 ? (
-                <TopRow mdRenderState={mdRenderState} setMdRenderState={setMdRenderState}></TopRow>
-            ) : (
-                <></>
-            )}
+            <TopRow mdRenderState={mdRenderState} setMdRenderState={setMdRenderState}></TopRow>
             <MarkdownArea>
                 <EditorPanel widthValue={editorWidth}>
                     <MarkdownEditor

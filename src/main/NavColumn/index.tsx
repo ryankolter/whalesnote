@@ -7,7 +7,7 @@ import FolderList from './FolderList';
 import NoteList from './NoteList';
 import RepoPanel from './RepoPanel';
 
-const SideNav: React.FC<Record<string, unknown>> = ({}) => {
+const NavColumn: React.FC<Record<string, unknown>> = ({}) => {
     const {
         currentRepoKey,
         keySelectNumArray,
@@ -310,4 +310,4 @@ const ResizeNoteWidth = styled.div(
     })
 );
 
-export default SideNav;
+export default NavColumn;
