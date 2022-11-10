@@ -455,7 +455,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
                                                 <Sortable
                                                     key={key}
                                                     id={key}
-                                                    className="repoItemSort"
+                                                    className="repo-item-sort"
                                                 >
                                                     <RepoItem
                                                         key={key}
@@ -505,7 +505,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
                                                 <Sortable
                                                     key={key}
                                                     id={key}
-                                                    className="repoItemSort"
+                                                    className="repo-item-sort"
                                                 >
                                                     <RepoItem
                                                         key={key}
@@ -547,7 +547,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
                                                 <Sortable
                                                     key={key}
                                                     id={key}
-                                                    className="repoItemSort"
+                                                    className="repo-item-sort"
                                                 >
                                                     <RepoItem
                                                         key={key}
@@ -700,7 +700,6 @@ const CloseRepoListBtn = styled.div({
     lineHeight: '18px',
     fontSize: '20px',
     padding: '5px 10px',
-    margin: '0 0 2px 0',
     cursor: 'pointer',
 });
 
@@ -736,7 +735,6 @@ const RepoItem = styled.div({
     width: '100%',
     height: '28px',
     lineHeight: '28px',
-    margin: '0 10px 4px 10px',
     cursor: 'pointer',
 });
 

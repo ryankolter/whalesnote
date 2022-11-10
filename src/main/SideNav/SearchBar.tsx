@@ -6,7 +6,6 @@ import { SearchResult } from 'minisearch';
 import useSearch from '../../lib/useSearch';
 import WaitingMaskStatic from '../../components/WaitingMaskStatic';
 import searchIcon from '../../resources/icon/searchIcon.svg';
-import { keyboardKey } from '@testing-library/user-event';
 
 const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
     const {
@@ -180,7 +179,11 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
         <SearchBarContainer>
             <WaitingMaskStatic show={showWaitingMask} word={'请等待......'}></WaitingMaskStatic>
             <Search>
-                <SearchIcon>
+                <SearchIcon
+                    onClick={() => {
+                        searchInputRef.current?.focus();
+                    }}
+                >
                     <SearchIconImg src={searchIcon} alt="" />
                 </SearchIcon>
                 <SearchInput
@@ -242,8 +245,6 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                                                     : '',
                                         }}
                                     >
-                                        <FolderName>{result.folder_name}</FolderName>
-                                        <Seperator>&gt;</Seperator>
                                         <TitleName>{result.title}</TitleName>
                                     </SearchResultDiv>
                                 );
@@ -263,9 +264,10 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
 
 const SearchBarContainer = styled.div({
     position: 'relative',
+    width: '100%',
+    padding: '10px 30px 10px 30px',
+    boxSizing: 'border-box',
     display: 'flex',
-    padding: '10px 30px 20px 30px',
-    borderRight: '1px solid var(--main-border-color)',
 });
 
 const Search = styled.div({
@@ -412,19 +414,6 @@ const SearchResultDiv = styled.div({
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
-});
-
-const FolderName = styled.div({
-    width: '70px',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-});
-
-const Seperator = styled.div({
-    width: '25px',
-    marginLeft: '5px',
-    display: 'flex',
 });
 
 const TitleName = styled.div({

@@ -6,12 +6,13 @@ import WaitingMask from './components/WaitingMask';
 import SideNav from './main/SideNav';
 import CenterArea from './main/CenterArea';
 import SideBar from './main/SideBar';
+import RepoPanel from './main/SideNav/RepoPanel';
 
 import SocketServerBtn from './components/socketServerBtn';
 import SocketClientBtn from './socketClientBtn';
 
 const App = () => {
-    const { theme, dataInitingFlag } = useContext(GlobalContext);
+    const { dataInitingFlag, showRepoPanel, theme } = useContext(GlobalContext);
 
     return (
         <AppContainer className={`${theme}-theme-global`}>

@@ -3,8 +3,6 @@ import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 import cryptoRandomString from 'crypto-random-string';
 
-import SearchBar from './SearchBar';
-
 import {
     DndContext,
     MouseSensor,
@@ -21,9 +19,7 @@ import { Sortable } from '../../components/Sortable';
 import useContextMenu from '../../lib/useContextMenu';
 import newNoteIcon from '../../resources/icon/newNoteIcon.svg';
 
-const NoteList: React.FC<{
-    width: number;
-}> = ({ width }) => {
+const NoteList: React.FC<{}> = ({}) => {
     const {
         curDataPath,
         currentRepoKey,
@@ -281,8 +277,7 @@ const NoteList: React.FC<{
     }, []);
 
     return (
-        <NoteListContainer width={width}>
-            <SearchBar />
+        <NoteListContainer>
             {dataPathChangeFlag > 0 ? (
                 <NoteAddFloat>
                     <NoteAddBtn onKeyDown={(e) => handleKeyDown(e)} onClick={() => handleNewNote()}>
@@ -450,18 +445,13 @@ const NoteList: React.FC<{
     );
 };
 
-const NoteListContainer = styled.div(
-    {
-        position: 'relative',
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
-        minWidth: '100px',
-    },
-    (props: { width: number }) => ({
-        width: props.width,
-    })
-);
+const NoteListContainer = styled.div({
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%',
+    width: '100%',
+});
 
 const NoteAddFloat = styled.div({
     position: 'absolute',

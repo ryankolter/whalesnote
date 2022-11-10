@@ -26,9 +26,7 @@ import categoryIcon from '../../resources/icon/categoryIcon.svg';
 import folderIcon from '../../resources/icon/folderIcon.svg';
 import newFolderIcon from '../../resources/icon/newFolderIcon.svg';
 
-const FolderList: React.FC<{
-    width: number;
-}> = ({ width }) => {
+const FolderList: React.FC<{}> = ({}) => {
     const {
         curDataPath,
         currentRepoKey,
@@ -346,7 +344,7 @@ const FolderList: React.FC<{
     };
 
     return (
-        <FolderListContainer width={width}>
+        <FolderListContainer>
             {dataPathChangeFlag > 0 ? (
                 <FolderTopBar>
                     <CategoryIcon>
@@ -549,20 +547,15 @@ const FolderList: React.FC<{
     );
 };
 
-const FolderListContainer = styled.div(
-    {
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
-        minWidth: '60px',
-        padding: '40px 0 20px 16px',
-        boxSizing: 'border-box',
-        backgroundColor: 'var(--main-folder-list-bg-color)',
-    },
-    (props: { width: number }) => ({
-        width: props.width,
-    })
-);
+const FolderListContainer = styled.div({
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%',
+    width: '100%',
+    minWidth: '60px',
+    padding: '40px 0 20px 16px',
+    boxSizing: 'border-box',
+});
 
 const FolderTopBar = styled.div({
     display: 'flex',

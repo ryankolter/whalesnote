@@ -7,6 +7,17 @@ body {
     user-select: none;
 }
 
+.repo-item-sort {
+    position: relative;
+    display: flex;
+    width: calc(20% - 10px);
+    height: 28px;
+    line-height: 28px;
+    margin: 0 5px 4px 5px;
+    color: var(--main-text-color);
+    cursor: pointer;
+}
+
 .repo-name-input {
     width: 100px;
     height: 28px;
@@ -16,6 +27,7 @@ body {
     flex: 1;
     font-size: 14px;
     border-bottom: 1px solid #939395;
+    background-color: var(--float-panel-bg-color) !important;
     margin: 0 0 0 20px;
 }
 
@@ -30,6 +42,7 @@ body {
     font-size: 15px;
     font-weight: 500;
     border-bottom: 2px solid var(--main-border-color);
+    background-color: var(--float-panel-bg-color) !important;
     color: var(--input-text-color);
 }
 
@@ -49,6 +62,55 @@ body {
     border-style: solid;
     border-color: transparent transparent transparent var(--main-selected-bg-color);
     cursor: pointer;
+}
+
+.show-alert-mask {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 5000;
+    animation: show-alert-mask-ani ease-out 0.8s forwards;
+}
+
+@keyframes show-alert-mask-ani {
+    0% {
+        background-color: rgba(0, 0, 0, 0);
+    }
+
+    100% {
+        background-color: rgba(0, 0, 0, 0.6);
+    }
+}
+
+.hide-alert-mask {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 5000;
+    animation: hide-alert-mask-ani ease-out 0.5s forwards;
+}
+
+@keyframes hide-alert-mask-ani {
+    0% {
+        background-color: rgba(0, 0, 0, 0.6);
+    }
+
+    100% {
+        background-color: rgba(0, 0, 0, 0);
+    }
+}
+
+button {
+    color: #e8e6e3 !important;
+}
+
+input {
+    color: #a9b7c6 !important;
+    background-color: #2c3033 !important;
 }
 
 figure {

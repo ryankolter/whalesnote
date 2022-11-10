@@ -14,7 +14,7 @@
 
     /* background */
     --main-bg-color: #2A2C34;
-    --main-folder-list-bg-color: #21242D; /*#21242D;*/
+    --main-folder-and-repo-bg-color: #21242D; /*#21242D;*/
     --main-btn-bg-color: #3A404C;
     --main-selected-bg-color: #3A404C;
     --main-scroller-bg-color: #C7C7C733;
@@ -82,7 +82,7 @@
 
 .white-theme-global {
     /* text */
-    --main-text-color: #666666;
+    --main-text-color: #3F3F3F;
     --main-text-hover-color: #000000;
     --main-text-title-color: #000000;
     --main-text-selected-color: #E9E9E9;
@@ -94,7 +94,7 @@
 
     /* background */
     --main-bg-color: #FFFFFF;
-    --main-folder-list-bg-color: #FFFFFF;
+    --main-folder-and-repo-bg-color: #F7F7F7;
     --main-btn-bg-color: #F7F7FA;
     --main-selected-bg-color: #E5EEFF;
     --main-scroller-bg-color: #94949666;
@@ -140,8 +140,8 @@
     --sidebar-bg-color: #F0F0F2;
 
     /* float panel */
-    --float-panel-bg-color: #F7FAFF;
-    --float-panel-bg-color-no-border: #E5EEFFB0;
+    --float-panel-bg-color: #F7F7F7;
+    --float-panel-bg-color-no-border: #F7F7F7;
     --float-panel-border-color: #0059FFB3;
 
     /* menu panel */

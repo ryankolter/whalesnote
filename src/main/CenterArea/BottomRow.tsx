@@ -1,9 +1,6 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
-import cryptoRandomString from 'crypto-random-string';
-
-import RepoPanel from './RepoPanel';
 
 const BottomRow: React.FC<{
     mdRenderState: string;
@@ -100,37 +97,7 @@ const BottomRow: React.FC<{
 
     return (
         <BottomRowContainer>
-            <BreakCrumb>
-                <CurRepoNameTag
-                    onClick={() => {
-                        setShowRepoPanel((_showAllRepo) => !_showAllRepo);
-                    }}
-                >
-                    <RepoNameLabel>
-                        {whalenote.repos_obj &&
-                        currentRepoKey &&
-                        whalenote.repos_obj[currentRepoKey]
-                            ? whalenote.repos_obj[currentRepoKey].repo_name
-                            : ''}
-                    </RepoNameLabel>
-                    {showKeySelect ? <RepoPanelKeyTab>Z</RepoPanelKeyTab> : <></>}
-                </CurRepoNameTag>
-                <GreaterTag>&gt;</GreaterTag>
-                <CurFolderNameTag>
-                    <FolderNameLabel>
-                        {folders_obj && currentFolderKey && folders_obj[currentFolderKey]
-                            ? folders_obj[currentFolderKey].folder_name
-                            : ''}
-                    </FolderNameLabel>
-                </CurFolderNameTag>
-                {showRepoPanel ? (
-                    <AllRepo>
-                        <RepoPanel />
-                    </AllRepo>
-                ) : (
-                    <></>
-                )}
-            </BreakCrumb>
+            <BreakCrumb></BreakCrumb>
             <SwitchMode>
                 <SwitchModeBtn
                     onClick={() => {
@@ -196,75 +163,6 @@ const BreakCrumb = styled.div({
     display: 'flex',
     alignItems: 'center',
     zIndex: '1000',
-});
-
-const CurRepoNameTag = styled.div({
-    position: 'relative',
-    height: '32px',
-    minWidth: '60px',
-    lineHeight: '32px',
-    borderRadius: '5px',
-    cursor: 'pointer',
-    overflow: 'hidden !important',
-    textOverflow: 'ellipsis',
-    wordBreak: 'break-all',
-    color: 'var(--main-text-color)',
-    backgroundColor: 'var(--main-selected-bg-color)',
-});
-
-const RepoPanelKeyTab = styled.div({
-    position: 'absolute',
-    top: '4px',
-    right: '4px',
-    width: '12px',
-    height: '14px',
-    lineHeight: '14px',
-    fontSize: '14px',
-    letterSpacing: '1px',
-});
-
-const RepoNameLabel = styled.div({
-    flex: 1,
-    fontSize: '16px',
-    padding: '0 25px',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-});
-
-const CurFolderNameTag = styled.div({
-    height: '32px',
-    lineHeight: '32px',
-    overflow: 'hidden !important',
-    textOverflow: 'ellipsis',
-    wordBreak: 'break-all',
-    color: 'var(--main-text-color)',
-});
-
-const FolderNameLabel = styled.div({
-    flex: 1,
-    fontSize: '14px',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-});
-
-const GreaterTag = styled.div({
-    padding: '0 15px',
-    color: 'var(--main-text-color)',
-});
-
-const AllRepo = styled.div({
-    width: 'calc(100% - 52px)',
-    position: 'absolute',
-    left: '24px',
-    bottom: '65px',
-    padding: '10px',
-    boxSizing: 'border-box',
-    borderRadius: '8px',
-    zIndex: '3000',
-    border: '1px solid var(--float-panel-border-color)',
-    backgroundColor: 'var(--float-panel-bg-color)',
 });
 
 const SwitchMode = styled.div({
