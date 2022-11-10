@@ -27,7 +27,7 @@ import exportIcon from '../../resources/icon/sideBar/exportIcon.svg';
 
 import { notes } from '../../lib/notes';
 
-const TopIcons: React.FC<{}> = ({}) => {
+const ExportPanel: React.FC<{}> = ({}) => {
     const {
         curDataPath,
         currentRepoKey,
@@ -236,12 +236,12 @@ const TopIcons: React.FC<{}> = ({}) => {
     );
 
     return (
-        <TopIconsContainer>
+        <ExportPanelContainer>
             <SwitchExport>
                 <SvgIcon
-                    iconWidth={33}
-                    iconHeight={28}
-                    iconPadding={12}
+                    iconWidth={23}
+                    iconHeight={20}
+                    iconPadding={8}
                     iconSrc={exportIcon}
                     onClick={() => {
                         setShowSwitchExportPanel(
@@ -280,15 +280,14 @@ const TopIcons: React.FC<{}> = ({}) => {
                     <></>
                 )}
             </SwitchExport>
-        </TopIconsContainer>
+        </ExportPanelContainer>
     );
 };
 
-const TopIconsContainer = styled.div({
+const ExportPanelContainer = styled.div({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    marginTop: '15px',
 });
 
 const SwitchExport = styled.div({
@@ -300,8 +299,9 @@ const SwitchExport = styled.div({
 
 const SwitchExportPanel = styled.div({
     position: 'absolute',
-    top: '0',
-    right: '42px',
+    top: '31px',
+    left: '50%',
+    transform: 'translateX(-50%)',
     width: '140px',
     display: 'flex',
     flexDirection: 'column',
@@ -319,4 +319,4 @@ const ModeOption = styled.div({
     padding: '5px',
 });
 
-export default TopIcons;
+export default ExportPanel;

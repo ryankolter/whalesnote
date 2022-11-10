@@ -1,18 +1,14 @@
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
-const BottomRow: React.FC<{
+const SwitchModePanel: React.FC<{
     mdRenderState: string;
     setMdRenderState: React.Dispatch<React.SetStateAction<string>>;
 }> = ({ mdRenderState, setMdRenderState }) => {
-    const { currentRepoKey, currentFolderKey, currentNoteKey } = useContext(GlobalContext);
-
     const [showSwitchMdRenderState, setShowSwitchMdRenderState] = useState(false);
 
     return (
-        <TopRowContainer>
-            <BreakCrumb></BreakCrumb>
+        <SwitchmodePanelContainer>
             <SwitchMode>
                 <SwitchModeBtn
                     onClick={() => {
@@ -57,32 +53,14 @@ const BottomRow: React.FC<{
                     <></>
                 )}
             </SwitchMode>
-        </TopRowContainer>
+        </SwitchmodePanelContainer>
     );
 };
 
-const TopRowContainer = styled.div(
-    {
-        width: '100%',
-        height: '60px',
-        display: 'flex',
-        alignItems: 'center',
-        padding: '0 30px 0 30px',
-        boxSizing: 'border-box',
-        backgroundColor: 'var(--main-bg-color)',
-    },
-    `
-    -webkit-app-region: drag;
-`
-);
-
-const BreakCrumb = styled.div({
-    width: '100%',
-    flex: '1',
-    minWidth: '0',
+const SwitchmodePanelContainer = styled.div({
     display: 'flex',
+    flexDirection: 'column',
     alignItems: 'center',
-    zIndex: '1000',
 });
 
 const SwitchMode = styled.div({
@@ -152,4 +130,4 @@ const StateOption = styled.div({
     padding: '5px',
 });
 
-export default BottomRow;
+export default SwitchModePanel;

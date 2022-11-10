@@ -106,6 +106,10 @@ const initContext: {
     setShowKeySelect: Dispatch<SetStateAction<boolean>>;
     keySelectNumArray: number[];
     setKeySelectNumArray: Dispatch<SetStateAction<number[]>>;
+    curSettingPanelTab: string;
+    setCurSettingPanelTab: Dispatch<SetStateAction<string>>;
+    curAssistantPanelTab: string;
+    setCurAssistantPanelTab: Dispatch<SetStateAction<string>>;
     theme: any;
     setTheme: Dispatch<SetStateAction<any>>;
     editorFontSize: number;
@@ -165,6 +169,10 @@ const initContext: {
     setShowKeySelect: () => {},
     keySelectNumArray: [],
     setKeySelectNumArray: () => {},
+    curSettingPanelTab: 'none',
+    setCurSettingPanelTab: () => {},
+    curAssistantPanelTab: 'none',
+    setCurAssistantPanelTab: () => {},
     theme: '',
     setTheme: () => {},
     editorFontSize: 15,
@@ -215,6 +223,8 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
     const [showRepoPanel, setShowRepoPanel] = useState(false);
     const [showKeySelect, setShowKeySelect] = useState<boolean>(false);
     const [keySelectNumArray, setKeySelectNumArray] = useState<number[]>([]);
+    const [curSettingPanelTab, setCurSettingPanelTab] = useState('none');
+    const [curAssistantPanelTab, setCurAssistantPanelTab] = useState('none');
 
     const [theme, setTheme] = useState(() => {
         const whalenote_theme = window.localStorage.getItem('whalenote_theme');
@@ -385,6 +395,10 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
                 setShowKeySelect,
                 keySelectNumArray,
                 setKeySelectNumArray,
+                curSettingPanelTab,
+                setCurSettingPanelTab,
+                curAssistantPanelTab,
+                setCurAssistantPanelTab,
                 editorFontSize,
                 setEditorFontSize,
                 renderFontSize,

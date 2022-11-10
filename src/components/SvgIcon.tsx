@@ -25,7 +25,8 @@ const SvgIcon: React.FC<SvgIconProps> = ({
 const Icon = styled.div({}, (props: { width: number; height: number; padding: number }) => ({
     width: props.width + 'px',
     height: props.height + 'px',
-    padding: props.padding + 'px 0',
+    padding: '0 ' + props.padding + 'px',
+    cursor: 'pointer',
 }));
 
 const IconImg = styled.img({}, (props: { width: number; height: number }) => ({

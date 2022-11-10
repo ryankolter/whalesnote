@@ -11,7 +11,7 @@ import { indentUnit } from '@codemirror/language';
 
 import useContextMenu from '../../lib/useContextMenu';
 
-const TrashList: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssistantPanel }) => {
+const TrashList: React.FC<{}> = ({}) => {
     const { curDataPath } = useContext(GlobalContext);
 
     const editor = useRef<HTMLDivElement>(null);
@@ -108,18 +108,9 @@ const TrashList: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssista
 
     return (
         <NoteListContainer>
-            <TrashTool>
-                <CloseTrashListBtn
-                    onClick={() => {
-                        closeAssistantPanel();
-                    }}
-                >
-                    x
-                </CloseTrashListBtn>
-            </TrashTool>
             <ChildPart>
                 <PartTitle>
-                    <PartTitleName>已删除笔记</PartTitleName>
+                    <PartTitleName>已删除</PartTitleName>
                     <EmptyTrash>
                         <EmptyTrashBtn
                             onClick={() => {
@@ -184,22 +175,6 @@ const NoteListContainer = styled.div({
     flexDirection: 'column',
     height: '100%',
     padding: '5px',
-});
-
-const TrashTool = styled.div({
-    display: 'flex',
-    alignItem: 'center',
-    justifyContent: 'flex-end',
-});
-
-const CloseTrashListBtn = styled.div({
-    width: '20px',
-    height: '20px',
-    lineHeight: '18px',
-    fontSize: '20px',
-    padding: '5px 10px',
-    margin: '0 0 2px 0',
-    cursor: 'pointer',
 });
 
 const ChildPart = styled.div({

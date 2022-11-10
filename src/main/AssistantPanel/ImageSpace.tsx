@@ -3,7 +3,7 @@ import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 import { useDropzone } from 'react-dropzone';
 
-const ImageSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssistantPanel }) => {
+const ImageSpace: React.FC<{}> = ({}) => {
     const { curDataPath } = useContext(GlobalContext);
     const validImageFileType = useRef([
         'jpeg',
@@ -167,15 +167,6 @@ const ImageSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssist
 
     return (
         <ImageSpaceContainer>
-            <TopRow>
-                <CloseImageSpaceBtn
-                    onClick={() => {
-                        closeAssistantPanel();
-                    }}
-                >
-                    x
-                </CloseImageSpaceBtn>
-            </TopRow>
             <ChildPart>
                 <PartTitle>
                     <PartTitleName>本地图库</PartTitleName>
@@ -230,22 +221,6 @@ const ImageSpaceContainer = styled.div({
     flexDirection: 'column',
     height: '100%',
     padding: '5px',
-});
-
-const TopRow = styled.div({
-    display: 'flex',
-    alignItem: 'center',
-    justifyContent: 'flex-end',
-});
-
-const CloseImageSpaceBtn = styled.div({
-    width: '20px',
-    height: '20px',
-    lineHeight: '18px',
-    fontSize: '20px',
-    padding: '5px 10px',
-    margin: '0 0 2px 0',
-    cursor: 'pointer',
 });
 
 const ChildPart = styled.div({

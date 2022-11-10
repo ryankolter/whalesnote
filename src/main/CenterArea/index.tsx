@@ -7,7 +7,7 @@ import { useRecordValue } from '../../lib/useRecordValue';
 import MarkdownEditor from './MarkdownEditor';
 import MarkdownRender from './MarkdownRender';
 import useRenderState from '../../lib/useRenderState';
-import TopRow from './TopRow';
+import ToolBar from './ToolBar';
 
 const CenterArea: React.FC<{}> = ({}) => {
     const {
@@ -133,7 +133,7 @@ const CenterArea: React.FC<{}> = ({}) => {
 
     return (
         <CenterAreaContainer>
-            <TopRow mdRenderState={mdRenderState} setMdRenderState={setMdRenderState}></TopRow>
+            <ToolBar mdRenderState={mdRenderState} setMdRenderState={setMdRenderState} />
             <MarkdownArea>
                 <EditorPanel widthValue={editorWidth}>
                     <MarkdownEditor

@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 
 import WaitingMaskStatic from '../../components/WaitingMaskStatic';
 
-const DataSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssistantPanel }) => {
+const DataSpace: React.FC<{}> = ({}) => {
     const {
         curDataPath,
         dataSwitchingFlag,
@@ -52,17 +52,8 @@ const DataSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssista
 
     return (
         <DataSpaceContainer>
-            <TopRow>
-                <CloseDataSpaceBtn
-                    onClick={() => {
-                        closeAssistantPanel();
-                    }}
-                >
-                    x
-                </CloseDataSpaceBtn>
-            </TopRow>
             <ChildPart>
-                <PartTitle>数据空间</PartTitle>
+                <PartTitle>存储空间</PartTitle>
                 <ShowPath>
                     <PathContainer ref={pathUlRef}>
                         <Path>
@@ -139,24 +130,9 @@ const DataSpace: React.FC<{ closeAssistantPanel: () => void }> = ({ closeAssista
 const DataSpaceContainer = styled.div({
     display: 'flex',
     flexDirection: 'column',
+    width: '100%',
     height: '100%',
     padding: '5px',
-});
-
-const TopRow = styled.div({
-    display: 'flex',
-    alignItem: 'center',
-    justifyContent: 'flex-end',
-});
-
-const CloseDataSpaceBtn = styled.div({
-    width: '20px',
-    height: '20px',
-    lineHeight: '18px',
-    fontSize: '20px',
-    padding: '5px 10px',
-    margin: '0 0 2px 0',
-    cursor: 'pointer',
 });
 
 const ChildPart = styled.div({

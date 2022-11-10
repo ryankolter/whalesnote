@@ -1,25 +1,14 @@
-import { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useContext } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 
-const GlobalSetting: React.FC<{
-    closeAssistantPanel: () => void;
-}> = ({ closeAssistantPanel }) => {
+const GlobalSetting: React.FC<{}> = ({}) => {
     const { theme, setTheme } = useContext(GlobalContext);
 
     return (
         <DataSpaceContainer>
-            <TopRow>
-                <CloseDataSpaceBtn
-                    onClick={() => {
-                        closeAssistantPanel();
-                    }}
-                >
-                    x
-                </CloseDataSpaceBtn>
-            </TopRow>
             <ChildPart>
-                <PartTitle>主题</PartTitle>
+                <PartTitle>配色</PartTitle>
                 <SelectArea>
                     <div className="radio-beauty-container">
                         <input

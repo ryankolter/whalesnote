@@ -5,13 +5,15 @@ import { GlobalContext } from './GlobalProvider';
 import WaitingMask from './components/WaitingMask';
 import NavColumn from './main/NavColumn';
 import CenterArea from './main/CenterArea';
-import SideBar from './main/SideBar';
+import AssistantPanel from './main/AssistantPanel';
+import SettingPanel from './main/SettingPanel';
 
 import SocketServerBtn from './components/socketServerBtn';
 import SocketClientBtn from './socketClientBtn';
 
 const App = () => {
-    const { dataInitingFlag, dataPathChangeFlag, theme } = useContext(GlobalContext);
+    const { curAssistantPanelTab, curSettingPanelTab, dataInitingFlag, dataPathChangeFlag, theme } =
+        useContext(GlobalContext);
 
     return (
         <AppContainer className={`${theme}-theme-global`}>
@@ -20,7 +22,8 @@ const App = () => {
                 <AppUI>
                     <NavColumn />
                     <CenterArea />
-                    <SideBar />
+                    {curAssistantPanelTab !== 'none' ? <AssistantPanel /> : <></>}
+                    {curSettingPanelTab !== 'none' ? <SettingPanel /> : <></>}
                 </AppUI>
             ) : (
                 <></>
