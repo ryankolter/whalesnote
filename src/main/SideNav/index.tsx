@@ -82,6 +82,7 @@ const SideNav: React.FC<Record<string, unknown>> = ({}) => {
     return (
         <LeftPanel>
             <FolderAndRepo width={folderWidth}>
+                <DragArea></DragArea>
                 <FolderBox>
                     <FolderList />
                 </FolderBox>
@@ -101,16 +102,15 @@ const SideNav: React.FC<Record<string, unknown>> = ({}) => {
                         {showKeySelect ? <RepoPanelKeyTab>Z</RepoPanelKeyTab> : <></>}
                     </CurRepoNameTag>
                 </RepoBox>
-                {showRepoPanel ? (
-                    <AllRepo
-                        style={{ maxWidth: `calc(100% - ${folderWidth}px - 40px)` }}
-                        left={folderWidth}
-                    >
-                        <RepoPanel />
-                    </AllRepo>
-                ) : (
-                    <></>
-                )}
+                <AllRepo
+                    style={{
+                        maxWidth: `calc(100% - ${folderWidth}px - 40px)`,
+                        bottom: `${showRepoPanel ? '20px' : '-400px'}`,
+                    }}
+                    left={folderWidth}
+                >
+                    <RepoPanel />
+                </AllRepo>
             </FolderAndRepo>
             <ResizeFolderWidth
                 left={folderWidth}
@@ -170,6 +170,16 @@ const LeftPanel = styled.div({
     boxSizing: 'border-box',
     color: 'var(--main-text-color)',
 });
+
+const DragArea = styled.div(
+    {
+        height: '40px',
+        width: '100%',
+    },
+    `
+    -webkit-app-region: drag;
+`
+);
 
 const FolderAndRepo = styled.div(
     {
@@ -232,7 +242,6 @@ const AllRepo = styled.div(
     {
         width: '900px',
         position: 'fixed',
-        bottom: '20px',
         padding: '10px 20px',
         boxSizing: 'border-box',
         borderRadius: '8px',
@@ -270,11 +279,16 @@ const SearchBarAndNote = styled.div(
     })
 );
 
-const SearchBarBox = styled.div({
-    width: '100%',
-    boxSizing: 'border-box',
-    borderRight: '1px solid var(--main-border-color)',
-});
+const SearchBarBox = styled.div(
+    {
+        width: '100%',
+        boxSizing: 'border-box',
+        borderRight: '1px solid var(--main-border-color)',
+    },
+    `
+    -webkit-app-region: drag;
+`
+);
 
 const NoteBox = styled.div({
     width: '100%',

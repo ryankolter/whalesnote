@@ -6,97 +6,12 @@ const BottomRow: React.FC<{
     mdRenderState: string;
     setMdRenderState: React.Dispatch<React.SetStateAction<string>>;
 }> = ({ mdRenderState, setMdRenderState }) => {
-    const {
-        currentRepoKey,
-        currentFolderKey,
-        currentNoteKey,
-        platformName,
-        theme,
-        whalenote,
-        showKeySelect,
-        showRepoPanel,
-        showSearchPanel,
-        manualFocus,
-        setKeySelectNumArray,
-        setShowKeySelect,
-        setShowRepoPanel,
-    } = useContext(GlobalContext);
+    const { currentRepoKey, currentFolderKey, currentNoteKey } = useContext(GlobalContext);
 
-    const folders_obj = useMemo(() => {
-        return whalenote.repos_obj ? whalenote.repos_obj[currentRepoKey]?.folders_obj : undefined;
-    }, [whalenote, currentRepoKey]);
-
-    const composing = useRef(false);
     const [showSwitchMdRenderState, setShowSwitchMdRenderState] = useState(false);
 
-    const handleKeyDown = useCallback(
-        async (e: KeyboardEvent) => {
-            if (platformName === 'darwin' || platformName === 'win32' || platformName === 'linux') {
-                const modKey = platformName === 'darwin' ? e.metaKey : e.ctrlKey;
-
-                //alpha z
-                if (e.key === 'z' && !modKey && showKeySelect) {
-                    setShowRepoPanel((_showAllRepo) => !_showAllRepo);
-                }
-
-                //normal enter and extra enter
-                if (!composing.current && e.key === 'Enter') {
-                    if (showKeySelect) {
-                        setShowKeySelect(false);
-                        setKeySelectNumArray([]);
-                    }
-                    if (
-                        (showKeySelect || showSearchPanel) &&
-                        currentNoteKey &&
-                        mdRenderState !== 'all'
-                    ) {
-                        manualFocus(0);
-                    }
-                    setShowRepoPanel(false);
-                }
-
-                // esc
-                if (e.key === 'Escape') {
-                    if (showKeySelect) {
-                        setShowKeySelect(false);
-                        setKeySelectNumArray([]);
-                    }
-                    setShowRepoPanel(false);
-                }
-            }
-        },
-        [
-            currentNoteKey,
-            showKeySelect,
-            showSearchPanel,
-            mdRenderState,
-            manualFocus,
-            setShowKeySelect,
-            setKeySelectNumArray,
-        ]
-    );
-
-    useEffect(() => {
-        document.addEventListener('keydown', handleKeyDown);
-        document.addEventListener('compositionstart', () => {
-            composing.current = true;
-        });
-        document.addEventListener('compositionend', () => {
-            composing.current = false;
-        });
-        return () => {
-            document.removeEventListener('keydown', handleKeyDown);
-            document.removeEventListener('compositionstart', () => {
-                composing.current = true;
-            });
-            document.removeEventListener('compositionend', () => {
-                composing.current = false;
-            });
-        };
-    }, [handleKeyDown]);
-
     return (
-        <BottomRowContainer>
+        <TopRowContainer>
             <BreakCrumb></BreakCrumb>
             <SwitchMode>
                 <SwitchModeBtn
@@ -142,19 +57,24 @@ const BottomRow: React.FC<{
                     <></>
                 )}
             </SwitchMode>
-        </BottomRowContainer>
+        </TopRowContainer>
     );
 };
 
-const BottomRowContainer = styled.div({
-    width: '100%',
-    height: '66px',
-    display: 'flex',
-    alignItems: 'center',
-    padding: '0 30px 0 30px',
-    boxSizing: 'border-box',
-    backgroundColor: 'var(--main-bg-color)',
-});
+const TopRowContainer = styled.div(
+    {
+        width: '100%',
+        height: '60px',
+        display: 'flex',
+        alignItems: 'center',
+        padding: '0 30px 0 30px',
+        boxSizing: 'border-box',
+        backgroundColor: 'var(--main-bg-color)',
+    },
+    `
+    -webkit-app-region: drag;
+`
+);
 
 const BreakCrumb = styled.div({
     width: '100%',
@@ -174,6 +94,7 @@ const SwitchMode = styled.div({
 
 const SwitchModeBtn = styled.div({
     display: 'flex',
+    alignItems: 'center',
     width: '112px',
     boxSizing: 'border-box',
     height: '30px',
@@ -202,15 +123,16 @@ const Triangle = styled.div({
     height: '0',
     width: '0',
     marginLeft: '4px',
-    borderBottom: '9px solid #939395',
-    borderTop: '10px solid transparent',
+    transform: 'translateY(25%)',
+    borderBottom: '9px solid transparent',
+    borderTop: '10px solid #939395',
     borderLeft: '6px solid transparent',
     borderRight: '6px solid transparent',
 });
 
 const SwitchMdRenderState = styled.div({
     position: 'absolute',
-    bottom: '31px',
+    top: '31px',
     left: '50%',
     transform: 'translateX(-50%)',
     width: '112px',

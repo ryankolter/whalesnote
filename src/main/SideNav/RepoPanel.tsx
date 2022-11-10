@@ -32,6 +32,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
         whalenote,
         changeNotesAfterNew,
         deleteRepo,
+        manualFocus,
         newRepo,
         newFolder,
         newNote,
@@ -39,6 +40,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
         reorderRepo,
         setShowKeySelect,
         setShowRepoPanel,
+        setKeySelectNumArray,
         switchRepo,
         switchFolder,
         switchNote,
@@ -249,6 +251,14 @@ const RepoPanel: React.FC<{}> = ({}) => {
         [deleteRepoConfirm, setDeletePopUp]
     );
 
+    useEffect(() => {
+        whalenote.repos_key
+            .filter((key) => whalenote && whalenote.repos_obj && whalenote.repos_obj[key])
+            .forEach((key, index) => {
+                if (key === currentRepoKey) setRepoSelectedList(Math.floor(index / 6.0));
+            });
+    }, [currentRepoKey]);
+
     const prevRepoList = useCallback(() => {
         const prevSelectedList = repoSelectedList - 1;
         if (prevSelectedList >= 0) {
@@ -343,6 +353,20 @@ const RepoPanel: React.FC<{}> = ({}) => {
                 if ((e.key === 'ArrowRight' || e.key === 'l') && modKey) {
                     nextRepoPage();
                 }
+
+                //alpha z
+                if (e.key === 'z' && !modKey && showKeySelect) {
+                    setShowRepoPanel((_showAllRepo) => !_showAllRepo);
+                }
+
+                // esc
+                if (e.key === 'Escape') {
+                    if (showKeySelect) {
+                        setShowKeySelect(false);
+                        setKeySelectNumArray([]);
+                    }
+                    setShowRepoPanel(false);
+                }
             }
         },
         [
@@ -350,8 +374,12 @@ const RepoPanel: React.FC<{}> = ({}) => {
             repoSelectedList,
             whalenote,
             nextRepoList,
+            nextRepoPage,
             prevRepoList,
+            prevRepoPage,
             setShowKeySelect,
+            setShowRepoPanel,
+            setKeySelectNumArray,
             switchRepoInPanel,
         ]
     );

@@ -7,7 +7,7 @@ import { useRecordValue } from '../../lib/useRecordValue';
 import MarkdownEditor from './MarkdownEditor';
 import MarkdownRender from './MarkdownRender';
 import useRenderState from '../../lib/useRenderState';
-import BottomRow from './BottomRow';
+import TopRow from './TopRow';
 
 const CenterArea: React.FC<{}> = ({}) => {
     const {
@@ -19,10 +19,13 @@ const CenterArea: React.FC<{}> = ({}) => {
         platformName,
         theme,
         showKeySelect,
+        showRepoPanel,
+        showSearchPanel,
         manualBlur,
         manualFocus,
         setKeySelectNumArray,
         setShowKeySelect,
+        setShowRepoPanel,
     } = useContext(GlobalContext);
 
     const [
@@ -39,6 +42,8 @@ const CenterArea: React.FC<{}> = ({}) => {
     const [renderNoteStr, setRenderNoteStr] = useState('');
     const [renderScrollTops, { updateRecordValue: updateRenderScrollTop }] =
         useRecordValue<number>();
+
+    const composing = useRef(false);
 
     const renderScrollTop = useMemo(
         () =>
@@ -63,7 +68,7 @@ const CenterArea: React.FC<{}> = ({}) => {
                     if (showKeySelect) {
                         setShowKeySelect(false);
                         setKeySelectNumArray([]);
-                        if (currentNoteKey) {
+                        if (currentNoteKey && !showRepoPanel) {
                             manualFocus(0);
                         }
                     } else {
@@ -78,30 +83,63 @@ const CenterArea: React.FC<{}> = ({}) => {
                 if (e.key === '/' && modKey && !e.shiftKey) {
                     nextMdRenderState();
                 }
+
+                //normal enter and extra enter
+                if (!composing.current && e.key === 'Enter') {
+                    if (showKeySelect) {
+                        setShowKeySelect(false);
+                        setKeySelectNumArray([]);
+                    }
+                    if (
+                        (showKeySelect || showSearchPanel) &&
+                        currentNoteKey &&
+                        mdRenderState !== 'all'
+                    ) {
+                        manualFocus(0);
+                    }
+                    setShowRepoPanel(false);
+                }
             }
         },
         [
             currentNoteKey,
             showKeySelect,
+            showRepoPanel,
+            showSearchPanel,
             manualFocus,
             manualBlur,
             setShowKeySelect,
+            setShowRepoPanel,
             nextMdRenderState,
         ]
     );
 
     useEffect(() => {
         document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('compositionstart', () => {
+            composing.current = true;
+        });
+        document.addEventListener('compositionend', () => {
+            composing.current = false;
+        });
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
+            document.removeEventListener('compositionstart', () => {
+                composing.current = true;
+            });
+            document.removeEventListener('compositionend', () => {
+                composing.current = false;
+            });
         };
     }, [handleKeyDown]);
 
     return (
         <CenterAreaContainer>
-            <TopRow>
-                <EditorTools></EditorTools>
-            </TopRow>
+            {dataPathChangeFlag > 0 ? (
+                <TopRow mdRenderState={mdRenderState} setMdRenderState={setMdRenderState}></TopRow>
+            ) : (
+                <></>
+            )}
             <MarkdownArea>
                 <EditorPanel widthValue={editorWidth}>
                     <MarkdownEditor
@@ -129,14 +167,6 @@ const CenterArea: React.FC<{}> = ({}) => {
                     )}
                 </RenderPanel>
             </MarkdownArea>
-            {dataPathChangeFlag > 0 ? (
-                <BottomRow
-                    mdRenderState={mdRenderState}
-                    setMdRenderState={setMdRenderState}
-                ></BottomRow>
-            ) : (
-                <></>
-            )}
         </CenterAreaContainer>
     );
 };
@@ -149,27 +179,6 @@ const CenterAreaContainer = styled.div({
     minWidth: '0',
     height: '100%',
     boxSizing: 'border-box',
-});
-
-const TopRow = styled.div(
-    {
-        width: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        height: '49px',
-        paddingRight: '30px',
-        boxSizing: 'border-box',
-    },
-    `
-    -webkit-app-region: drag;
-`
-);
-
-const EditorTools = styled.div({
-    display: 'flex',
-    alignItems: 'center',
-    flex: '1',
-    minWidth: '0',
 });
 
 const MarkdownArea = styled.div({

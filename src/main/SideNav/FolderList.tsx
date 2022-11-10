@@ -553,7 +553,7 @@ const FolderListContainer = styled.div({
     height: '100%',
     width: '100%',
     minWidth: '60px',
-    padding: '40px 0 20px 16px',
+    padding: '0 0 20px 16px',
     boxSizing: 'border-box',
 });
 
