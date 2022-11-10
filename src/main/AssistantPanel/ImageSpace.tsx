@@ -182,12 +182,7 @@ const ImageSpace: React.FC<{}> = ({}) => {
                         {loadImageStatus == 'none' ? (
                             <DragZoneTips>
                                 将图片拖到此处，或
-                                <LoadImageBtn
-                                    className="load-image-btn-border-color"
-                                    onClick={handleLoadImage}
-                                >
-                                    点击载入
-                                </LoadImageBtn>
+                                <LoadImageBtn onClick={handleLoadImage}>点击载入</LoadImageBtn>
                             </DragZoneTips>
                         ) : (
                             <></>
@@ -284,6 +279,7 @@ const DragZoneTips = styled.div({
 });
 
 const LoadImageBtn = styled.span({
+    borderBottom: '1px solid var(--main-border-color)',
     cursor: 'pointer',
 });
 

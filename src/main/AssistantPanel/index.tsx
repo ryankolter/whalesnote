@@ -112,6 +112,8 @@ const AssistantPanelContainer = styled.div(
     {
         position: 'relative',
         border: '1px solid var(--main-border-color)',
+        zIndex: '4000',
+        backgroundColor: 'var(--main-bg-color)',
     },
     (props: { width: number }) => ({
         width: props.width,

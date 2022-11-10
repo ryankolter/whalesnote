@@ -44,8 +44,8 @@ const InputBox = styled.div({
     padding: '30px 20px',
     borderRadius: '5px',
     fontSize: '14px',
-    color: '#C8C8C8',
-    backgroundColor: '#2C3033',
+    color: 'var(--main-text-color)',
+    backgroundColor: 'var(--float-popup-bg-color)',
     zIndex: '6000',
 });
 
@@ -70,7 +70,7 @@ const CancelBtn = styled.div({
     padding: '4px 0',
     borderRadius: '5px',
     textAlign: 'center',
-    backgroundColor: '#464646',
+    backgroundColor: 'var(--main-btn-bg-color)',
     cursor: 'pointer',
 });
 
@@ -81,6 +81,6 @@ const ConfirmBtn = styled.div({
     padding: '4px 0',
     borderRadius: '5px',
     textAlign: 'center',
-    backgroundColor: '#464646',
+    backgroundColor: 'var(--main-btn-bg-color)',
     cursor: 'pointer',
 });

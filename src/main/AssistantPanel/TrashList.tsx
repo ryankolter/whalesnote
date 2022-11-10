@@ -226,10 +226,10 @@ const NotesScroll = styled.div(
         height: 9px;
     }
     &::-webkit-scrollbar-track {
-        background-color: #2C3033;
+        background-color: inherit;
     }
     &::-webkit-scrollbar-thumb {
-        background-color: hsla(0,0%,78%,.2);
+        background-color: var(--main-scroller-bg-color);
         border-radius: 3px;
     }
 `

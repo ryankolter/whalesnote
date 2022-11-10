@@ -79,7 +79,6 @@ const SwitchModeBtn = styled.div({
     margin: '1px 5px',
     padding: '0 14px',
     borderRadius: '8px',
-    border: '1px solid var(--bottom-btn-border-color)',
     color: 'var(--bottom-btn-text-color)',
     backgroundColor: 'var(--bottom-btn-bg-color)',
 });

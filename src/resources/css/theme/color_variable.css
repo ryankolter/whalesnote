@@ -63,6 +63,9 @@
     --float-panel-bg-color: #21242D;
     --float-panel-bg-color-no-border: #21242D;
     --float-panel-border-color: #6F7374CC;
+    --float-popup-bg-color: #2C3033;
+    --float-mask-hide-bg-color: rgba(0, 0, 0, 0);
+    --float-mask-show-bg-color: rgba(0, 0, 0, 0.6);
 
     /* menu panel */
     --menu-text-color: #CDCDCD;
@@ -89,17 +92,17 @@
 
     /* border */
     --main-border-color: rgba(0, 0, 0, 0.3);
-    --main-dashed-border-color: #FFFFFF4D;
-    --main-tips-border-color: #0059FFB3;
+    --main-dashed-border-color: rgba(0, 0, 0, 0.3);
+    --main-tips-border-color: #0059FF88;
 
     /* background */
     --main-bg-color: #FFFFFF;
     --main-folder-and-repo-bg-color: #F7F7F7;
-    --main-btn-bg-color: #F7F7FA;
+    --main-btn-bg-color: #E3F3ED;
     --main-selected-bg-color: #E5EEFF;
     --main-scroller-bg-color: #94949666;
     --main-tips-bg-color: #E3F3ED; /*#72c4a4*/
-    --main-waiting-bg-color: rgba(0,0,0,0.4);
+    --main-waiting-bg-color: rgba(0,0,0,0.3);
 
     /* editor */
     --editor-main-text-color: #000000F0;
@@ -133,8 +136,8 @@
 
     /* bottom bar */
     --bottom-btn-text-color: #4C4C4C;
-    --bottom-btn-bg-color: #FFFFFF;
-    --bottom-btn-border-color: #0059FFB3;
+    --bottom-btn-bg-color: #F7F7F7;
+    --bottom-btn-border-color: #0059FF88;
 
     /* side bar */
     --sidebar-bg-color: #F0F0F2;
@@ -142,7 +145,10 @@
     /* float panel */
     --float-panel-bg-color: #F7F7F7;
     --float-panel-bg-color-no-border: #F7F7F7;
-    --float-panel-border-color: #0059FFB3;
+    --float-panel-border-color: #0059FF88;
+    --float-popup-bg-color: #F7F7F7;
+    --float-mask-hide-bg-color: rgba(0, 0, 0, 0);
+    --float-mask-show-bg-color: rgba(0, 0, 0, 0.4);
 
     /* menu panel */
     --menu-text-color: #CDCDCD;
@@ -150,7 +156,7 @@
     --menu-bg-color: #2E2A27;
     --menu-hover-color: #3A404C;
 
-    --toc-text-color: #CDCDCDAA;
+    --toc-text-color: #3F3F3F;
 
     /* other */
     --input-text-color: #808080;

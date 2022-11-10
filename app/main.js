@@ -42,7 +42,7 @@ const createWindow = async () => {
         mainWindow.loadFile(path.join(__dirname, '/build/index.html'));
     } else {
         mainWindow.loadURL('http://localhost:3005');
-        mainWindow.webContents.openDevTools();
+        //mainWindow.webContents.openDevTools();
     }
 
     mainWindow.on('ready-to-show', () => {
