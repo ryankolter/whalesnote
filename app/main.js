@@ -28,7 +28,7 @@ const createWindow = async () => {
         trafficLightPosition: { x: 18, y: 18 },
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
-            nodeIntegration: true,
+            nodeIntegration: false,
             contextIsolation: true,
         },
     });
