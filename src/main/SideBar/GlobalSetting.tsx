@@ -30,6 +30,7 @@ const GlobalSetting: React.FC<{
                             className="radio-input"
                             checked={theme === 'white'}
                             onChange={(e: any) => {
+                                window.localStorage.setItem('whalenote_theme', e.target.value);
                                 setTheme(e.target.value);
                             }}
                         />
@@ -40,11 +41,12 @@ const GlobalSetting: React.FC<{
                         <input
                             type="radio"
                             name="theme"
-                            value="grey"
+                            value="dark"
                             id="radioNameGrey"
                             className="radio-input"
-                            checked={theme === 'grey'}
+                            checked={theme === 'dark'}
                             onChange={(e: any) => {
+                                window.localStorage.setItem('whalenote_theme', e.target.value);
                                 setTheme(e.target.value);
                             }}
                         />

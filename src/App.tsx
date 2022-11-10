@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import styled from '@emotion/styled';
 
 import { GlobalContext } from './GlobalProvider';
@@ -6,7 +6,6 @@ import WaitingMask from './components/WaitingMask';
 import SideNav from './main/SideNav';
 import CenterArea from './main/CenterArea';
 import SideBar from './main/SideBar';
-import RepoPanel from './main/SideNav/RepoPanel';
 
 import SocketServerBtn from './components/socketServerBtn';
 import SocketClientBtn from './socketClientBtn';

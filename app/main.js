@@ -1,4 +1,4 @@
-const { app, Menu, BrowserWindow, ipcMain, dialog, shell } = require('electron');
+const { app, Menu, BrowserWindow, ipcMain, dialog, nativeTheme, shell } = require('electron');
 
 const path = require('path');
 const CSON = require('cson');
@@ -390,6 +390,10 @@ const processIPC = () => {
         fse.ensureDirSync(folder_path);
         shell.openPath(folder_path);
         return;
+    });
+
+    ipcMain.on('query:shouldUseDarkMode', async (event) => {
+        event.returnValue = nativeTheme.shouldUseDarkColors;
     });
 
     ipcMain.handle('plugin:loadNodejiebaDict', async (event) => {

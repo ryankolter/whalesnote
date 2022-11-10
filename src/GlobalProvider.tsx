@@ -106,8 +106,8 @@ const initContext: {
     setShowKeySelect: Dispatch<SetStateAction<boolean>>;
     keySelectNumArray: number[];
     setKeySelectNumArray: Dispatch<SetStateAction<number[]>>;
-    theme: string;
-    setTheme: Dispatch<SetStateAction<string>>;
+    theme: any;
+    setTheme: Dispatch<SetStateAction<any>>;
     editorFontSize: number;
     setEditorFontSize: Dispatch<SetStateAction<number>>;
     renderFontSize: number;
@@ -216,7 +216,14 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
     const [showKeySelect, setShowKeySelect] = useState<boolean>(false);
     const [keySelectNumArray, setKeySelectNumArray] = useState<number[]>([]);
 
-    const [theme, setTheme] = useState('grey');
+    const [theme, setTheme] = useState(() => {
+        const whalenote_theme = window.localStorage.getItem('whalenote_theme');
+        if (whalenote_theme && (whalenote_theme === 'dark' || whalenote_theme === 'white')) {
+            return whalenote_theme;
+        } else {
+            return window.electronAPI.shouldUseDarkMode() ? 'dark' : 'white';
+        }
+    });
     const [editorFontSize, setEditorFontSize] = useState<number>(
         Number(window.localStorage.getItem('editor_font_size')) || 15
     );
