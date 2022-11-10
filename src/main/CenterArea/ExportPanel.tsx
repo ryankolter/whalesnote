@@ -108,7 +108,7 @@ const ExportPanel: React.FC<{}> = ({}) => {
                 })) || '';
             const hljsStyle =
                 (await window.electronAPI.readCssSync({
-                    file_name: `/hljs_theme/${theme}_standard.css`,
+                    file_name: `/hljs_theme/${theme}.css`,
                 })) || '';
             const renderStyle =
                 (await window.electronAPI.readCssSync({
@@ -179,7 +179,7 @@ const ExportPanel: React.FC<{}> = ({}) => {
                 })) || '';
             const hljsStyle =
                 (await window.electronAPI.readCssSync({
-                    file_name: `/hljs_theme/${theme}_standard.css`,
+                    file_name: `/hljs_theme/${theme}.css`,
                 })) || '';
             const renderStyle =
                 (await window.electronAPI.readCssSync({
