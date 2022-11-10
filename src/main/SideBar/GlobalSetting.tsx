@@ -25,17 +25,17 @@ const GlobalSetting: React.FC<{
                         <input
                             type="radio"
                             name="theme"
-                            value="white"
+                            value="light"
                             id="radioNameWhite"
                             className="radio-input"
-                            checked={theme === 'white'}
+                            checked={theme === 'light'}
                             onChange={(e: any) => {
                                 window.localStorage.setItem('whalenote_theme', e.target.value);
                                 setTheme(e.target.value);
                             }}
                         />
                         <label htmlFor="radioNameWhite" className="radio-beauty"></label>
-                        <span className="radio-name">明亮</span>
+                        <span className="radio-name">浅色</span>
                     </div>
                     <div className="radio-beauty-container">
                         <input
@@ -51,7 +51,7 @@ const GlobalSetting: React.FC<{
                             }}
                         />
                         <label htmlFor="radioNameDark" className="radio-beauty"></label>
-                        <span className="radio-name">黑夜</span>
+                        <span className="radio-name">深色</span>
                     </div>
                 </SelectArea>
             </ChildPart>

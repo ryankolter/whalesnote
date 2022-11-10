@@ -218,10 +218,10 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
 
     const [theme, setTheme] = useState(() => {
         const whalenote_theme = window.localStorage.getItem('whalenote_theme');
-        if (whalenote_theme && (whalenote_theme === 'dark' || whalenote_theme === 'white')) {
+        if (whalenote_theme && (whalenote_theme === 'dark' || whalenote_theme === 'light')) {
             return whalenote_theme;
         } else {
-            return window.electronAPI.shouldUseDarkMode() ? 'dark' : 'white';
+            return window.electronAPI.shouldUseDarkMode() ? 'dark' : 'light';
         }
     });
     const [editorFontSize, setEditorFontSize] = useState<number>(

@@ -78,9 +78,9 @@
     --key-tab-bg-color: #3A404C;
 }
 
-/* ---------- white theme ---------- */
+/* ---------- light theme ---------- */
 
-.white-theme-global {
+.light-theme-global {
     /* text */
     --main-text-color: #3F3F3F;
     --main-text-hover-color: #000000;
