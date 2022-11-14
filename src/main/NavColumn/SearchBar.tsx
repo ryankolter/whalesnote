@@ -64,10 +64,10 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
             setSearchResults([]);
             return;
         }
-        if (!showSearchPanel) setShowSearchPanel(true);
+        setShowSearchPanel(true);
         const search_result = searchNote(word);
         setSearchResults(search_result);
-    }, [word, showSearchPanel, searchNote, setShowSearchPanel, setSearchResults]);
+    }, [word, searchNote, setShowSearchPanel, setSearchResults]);
 
     const resultSwitch = useCallback(
         async (id: string) => {
@@ -131,7 +131,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
 
                 if ((e.key === 'f' || e.key === 'F') && modKey && e.shiftKey) {
                     searchInputRef.current?.focus();
-                    if (showKeySelect) setShowKeySelect(false);
+                    setShowKeySelect(false);
                 }
 
                 if ((!composing.current && e.key === 'Enter') || e.key === 'Escape') {
@@ -156,7 +156,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                 }
             }
         },
-        [showSearchPanel, prevSearchResult, nextSearchResult, setWord]
+        [showSearchPanel, nextSearchResult, prevSearchResult, setShowKeySelect, setShowSearchPanel]
     );
 
     useEffect(() => {
@@ -237,7 +237,6 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                                     <SearchResultDiv
                                         onClick={() => {
                                             setCurResultIndex(index);
-                                            resultSwitch(result.id);
                                         }}
                                         key={result.id}
                                         style={{

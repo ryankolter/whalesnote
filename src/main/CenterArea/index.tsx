@@ -113,7 +113,7 @@ const CenterArea: React.FC<{}> = ({}) => {
     );
 
     useEffect(() => {
-        document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('keydown', handleKeyDown, true);
         document.addEventListener('compositionstart', () => {
             composing.current = true;
         });
@@ -121,7 +121,7 @@ const CenterArea: React.FC<{}> = ({}) => {
             composing.current = false;
         });
         return () => {
-            document.removeEventListener('keydown', handleKeyDown);
+            document.removeEventListener('keydown', handleKeyDown, true);
             document.removeEventListener('compositionstart', () => {
                 composing.current = true;
             });
