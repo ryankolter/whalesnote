@@ -61,8 +61,8 @@ const CenterArea: React.FC<{}> = ({}) => {
             if (platformName === 'darwin' || platformName === 'win32' || platformName === 'linux') {
                 const modKey = platformName === 'darwin' ? e.metaKey : e.ctrlKey;
 
-                // normal number 0 and extra number 0
-                if (Number(e.key) === 0 && modKey) {
+                // show A0,A1,...,AA,AB,...,Z tips for keyborard
+                if (e.key === ',' && modKey) {
                     if (showKeySelect) {
                         setShowKeySelect(false);
                         setKeySelectNumArray([]);

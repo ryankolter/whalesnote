@@ -28,6 +28,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
         currentFolderKey,
         keySelectNumArray,
         platformName,
+        showRepoPanel,
         showKeySelect,
         whalenote,
         changeNotesAfterNew,
@@ -325,7 +326,9 @@ const RepoPanel: React.FC<{}> = ({}) => {
                     Number(e.key) >= 1 &&
                     Number(e.key) <= 6 &&
                     !modKey &&
-                    keySelectNumArray.length === 0
+                    keySelectNumArray.length === 0 &&
+                    showRepoPanel &&
+                    showKeySelect
                 ) {
                     const index = Number(e.key) + 6 * repoSelectedList - 1;
                     if (whalenote.repos_key && index < whalenote.repos_key.length) {
@@ -356,7 +359,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
 
                 //alpha z
                 if (e.key === 'z' && !modKey && showKeySelect) {
-                    setShowRepoPanel((_showAllRepo) => !_showAllRepo);
+                    setShowRepoPanel((_showRepoPanel) => !_showRepoPanel);
                 }
 
                 // esc
@@ -372,6 +375,8 @@ const RepoPanel: React.FC<{}> = ({}) => {
         [
             keySelectNumArray,
             repoSelectedList,
+            showKeySelect,
+            showRepoPanel,
             whalenote,
             nextRepoList,
             nextRepoPage,
