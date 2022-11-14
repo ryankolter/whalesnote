@@ -322,9 +322,9 @@ const RepoPanel: React.FC<{}> = ({}) => {
                 const modKey = platformName === 'darwin' ? e.metaKey : e.ctrlKey;
 
                 // normal number 1-6
+                const number_re = /^[1-6]$/;
                 if (
-                    Number(e.key) >= 1 &&
-                    Number(e.key) <= 6 &&
+                    e.key.match(number_re) &&
                     !modKey &&
                     keySelectNumArray.length === 0 &&
                     showRepoPanel &&
