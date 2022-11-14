@@ -79,7 +79,10 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
     );
 
     useEffect(() => {
-        setShowSearchPanel(false);
+        setWord('');
+        if (searchInputRef.current) {
+            searchInputRef.current.value = '';
+        }
     }, [curDataPath]);
 
     useEffect(() => {

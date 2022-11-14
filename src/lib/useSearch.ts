@@ -76,6 +76,7 @@ const useSearch = () => {
         setShowWaitingMask(true);
 
         setTimeout(async () => {
+            await loadDict();
             await fetchNotesInAllRepo(curDataPath, whalenote);
 
             const documents: {
@@ -110,7 +111,6 @@ const useSearch = () => {
                     });
                 });
             });
-            await loadDict();
             miniSearch.current = new MiniSearch({
                 fields: ['title', 'content'],
                 storeFields: ['id', 'type', 'title', 'folder_name'],
