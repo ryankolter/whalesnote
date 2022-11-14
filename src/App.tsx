@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 
 import { GlobalContext } from './GlobalProvider';
 import WaitingMask from './components/WaitingMask';
+import WaitingMaskStatic from './components/WaitingMaskStatic';
 import NavColumn from './main/NavColumn';
 import CenterArea from './main/CenterArea';
 import AssistantPanel from './main/AssistantPanel';
@@ -12,12 +13,19 @@ import SocketServerBtn from './components/socketServerBtn';
 import SocketClientBtn from './socketClientBtn';
 
 const App = () => {
-    const { curAssistantPanelTab, curSettingPanelTab, dataInitingFlag, dataPathChangeFlag, theme } =
-        useContext(GlobalContext);
+    const {
+        curAssistantPanelTab,
+        curSettingPanelTab,
+        dataInitingFlag,
+        dataPathChangeFlag,
+        dataSwitchingFlag,
+        theme,
+    } = useContext(GlobalContext);
 
     return (
         <AppContainer className={`${theme}-theme-global`}>
             <WaitingMask in={dataInitingFlag} timeout={300}></WaitingMask>
+            <WaitingMaskStatic show={dataSwitchingFlag} word={'载入中......'}></WaitingMaskStatic>
             {dataPathChangeFlag > 0 ? (
                 <AppUI>
                     <NavColumn />

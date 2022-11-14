@@ -122,7 +122,6 @@ const DataSpace: React.FC<{}> = ({}) => {
             <ChildPart>
                 <PartTitle>同步</PartTitle>
             </ChildPart>
-            <WaitingMaskStatic show={dataSwitchingFlag} word={'载入中......'}></WaitingMaskStatic>
         </DataSpaceContainer>
     );
 };
