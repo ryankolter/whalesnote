@@ -181,6 +181,7 @@ const MarkdownArea = styled.div({
     minHeight: '0',
     width: 'calc(100% - 29px)',
     paddingLeft: '24px',
+    paddingBottom: '24px',
     boxSizing: 'border-box',
 });
 
