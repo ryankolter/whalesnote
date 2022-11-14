@@ -144,13 +144,13 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                 }
 
                 // arrow bottom 40
-                if (e.key === 'ArrowDown' && showSearchPanel) {
+                if (e.key === 'ArrowDown' && !modKey && showSearchPanel) {
                     e.preventDefault();
                     nextSearchResult();
                 }
 
                 // arrow top 38
-                if (e.key === 'ArrowUp' && showSearchPanel) {
+                if (e.key === 'ArrowUp' && !modKey && showSearchPanel) {
                     e.preventDefault();
                     prevSearchResult();
                 }

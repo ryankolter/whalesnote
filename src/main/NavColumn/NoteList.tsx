@@ -28,6 +28,7 @@ const NoteList: React.FC<{}> = ({}) => {
         keySelectNumArray,
         platformName,
         showKeySelect,
+        showSearchPanel,
         whalenote,
         changeNotesAfterNew,
         deleteNote,
@@ -203,17 +204,27 @@ const NoteList: React.FC<{}> = ({}) => {
                 }
 
                 // arrow down or K
-                if ((e.key === 'ArrowDown' || e.key === 'k') && !modKey && showKeySelect) {
+                if (
+                    (e.key === 'ArrowDown' || e.key === 'k') &&
+                    !modKey &&
+                    showKeySelect &&
+                    !showSearchPanel
+                ) {
                     nextNotePage();
                 }
 
                 // arrow up or I
-                if ((e.key === 'ArrowUp' || e.key === 'i') && !modKey && showKeySelect) {
+                if (
+                    (e.key === 'ArrowUp' || e.key === 'i') &&
+                    !modKey &&
+                    showKeySelect &&
+                    !showSearchPanel
+                ) {
                     preNotePage();
                 }
             }
         },
-        [showKeySelect, handleNewNote, nextNotePage, preNotePage]
+        [showKeySelect, showSearchPanel, handleNewNote, nextNotePage, preNotePage]
     );
 
     useEffect(() => {

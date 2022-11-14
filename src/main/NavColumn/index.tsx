@@ -35,11 +35,8 @@ const NavColumn: React.FC<Record<string, unknown>> = ({}) => {
             if (platformName === 'darwin' || platformName === 'win32' || platformName === 'linux') {
                 const modKey = platformName === 'darwin' ? e.metaKey : e.ctrlKey;
 
-                if (
-                    ((e.key >= 'a' && e.key <= 'h') || (e.key >= 'm' && e.key <= 'y')) &&
-                    !modKey &&
-                    showKeySelect
-                ) {
+                const lowercase_re = /^[a-hm-y]$/;
+                if (e.key.match(lowercase_re) && !modKey && showKeySelect) {
                     const num = e.key.charCodeAt(0) - 32;
                     if (keySelectNumArray.length === 0) {
                         setKeySelectNumArray((state: any) => state.concat([num]));
@@ -48,11 +45,8 @@ const NavColumn: React.FC<Record<string, unknown>> = ({}) => {
                     }
                 }
 
-                if (
-                    ((e.key >= 'A' && e.key <= 'H') || (e.key >= 'M' && e.key <= 'Y')) &&
-                    !modKey &&
-                    showKeySelect
-                ) {
+                const uppercase_re = /^[A-HM-Y]$/;
+                if (e.key.match(uppercase_re) && !modKey && showKeySelect) {
                     const num = e.key.charCodeAt(0);
                     if (keySelectNumArray.length === 0) {
                         setKeySelectNumArray((state: any) => state.concat([num]));
@@ -61,7 +55,8 @@ const NavColumn: React.FC<Record<string, unknown>> = ({}) => {
                     }
                 }
 
-                if (Number(e.key) >= 0 && Number(e.key) <= 9 && !modKey && showKeySelect) {
+                const number_re = /^[0-9]$/;
+                if (e.key.match(number_re) && !modKey && showKeySelect) {
                     const num = e.key.charCodeAt(0);
                     if (keySelectNumArray.length === 1) {
                         setKeySelectNumArray((state: any) => state.concat([num]));
