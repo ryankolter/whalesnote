@@ -123,7 +123,7 @@ const ImageSpace: React.FC<{}> = ({}) => {
             const paths = await window.electronAPI.openSelectImagesDialog({
                 file_types: validImageFileType.current,
             });
-            await loadImages(paths);
+            if (paths.length > 0) await loadImages(paths);
         },
         [loadImages]
     );

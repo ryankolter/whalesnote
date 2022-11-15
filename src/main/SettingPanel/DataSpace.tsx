@@ -3,23 +3,27 @@ import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 
 import WaitingMaskStatic from '../../components/WaitingMaskStatic';
+import { usePopUp } from '../../lib/usePopUp';
+import { AlertPopUp } from '../../components/AlertPopUp';
 
 const DataSpace: React.FC<{}> = ({}) => {
     const {
         curDataPath,
-        dataSwitchingFlag,
         dataPathList,
         removeDataPathFromList,
         setCurDataPath,
         setDataSwitchingFlag,
     } = useContext(GlobalContext);
     const [showPathUl, setShowPathUl] = useState(false);
+    const [removeDataSpacePath, setRemoveDataSpacePath] = useState('');
     const pathUlRef = useRef<HTMLDivElement>(null);
+
+    const [removePopUp, setRemovePopUp, removeMask] = usePopUp(500);
 
     const addDataPath = useCallback(async () => {
         const filePath = await window.electronAPI.openDirectoryDialog();
         setShowPathUl(false);
-        if (filePath !== curDataPath) {
+        if (filePath !== '' && filePath !== curDataPath) {
             setDataSwitchingFlag(true);
             setTimeout(() => {
                 setCurDataPath(filePath);
@@ -30,6 +34,22 @@ const DataSpace: React.FC<{}> = ({}) => {
     const openDataPath = useCallback(async (data_path: string) => {
         await window.electronAPI.openParentFolder({ folder_path: data_path });
     }, []);
+
+    const removeDataSpaceConfirm = useCallback(() => {
+        removeDataPathFromList(removeDataSpacePath);
+        setRemovePopUp(false);
+    }, [removeDataPathFromList, removeDataSpacePath]);
+
+    const handleRemoveDataSpaceKeyDown = useCallback(
+        (e: any) => {
+            if (e.key === 'Enter') {
+                removeDataSpaceConfirm();
+            } else if (e.key === 'Escape') {
+                setRemovePopUp(false);
+            }
+        },
+        [removeDataSpaceConfirm, setRemovePopUp]
+    );
 
     const handleClick = useCallback(
         (event: MouseEvent) => {
@@ -89,7 +109,8 @@ const DataSpace: React.FC<{}> = ({}) => {
                                                         onClick={(e) => {
                                                             e.preventDefault();
                                                             e.stopPropagation();
-                                                            removeDataPathFromList(dataPath);
+                                                            setRemoveDataSpacePath(dataPath);
+                                                            setRemovePopUp(true);
                                                         }}
                                                     >
                                                         x
@@ -111,6 +132,15 @@ const DataSpace: React.FC<{}> = ({}) => {
                         </OpenDataPathBtn>
                     </OpenDataPath>
                 </ShowPath>
+                <AlertPopUp
+                    popupState={removePopUp}
+                    maskState={removeMask}
+                    title="提示"
+                    content={`即将移除数据目录\n${removeDataSpacePath}(不会删除目录内容)`}
+                    onCancel={() => setRemovePopUp(false)}
+                    onConfirm={removeDataSpaceConfirm}
+                    onKeyDown={handleRemoveDataSpaceKeyDown}
+                ></AlertPopUp>
             </ChildPart>
             {/* <ChildPart>
                 <PartTitle>操作</PartTitle>

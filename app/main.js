@@ -335,7 +335,7 @@ const processIPC = () => {
         if (!canceled && filePaths.length > 0) {
             return filePaths[0];
         } else {
-            return;
+            return '';
         }
     });
 
@@ -356,7 +356,7 @@ const processIPC = () => {
         if (!canceled) {
             return filePath;
         } else {
-            return;
+            return '';
         }
     });
 
@@ -377,7 +377,7 @@ const processIPC = () => {
         if (!canceled) {
             return filePaths;
         } else {
-            return;
+            return [];
         }
     });
 

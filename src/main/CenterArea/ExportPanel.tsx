@@ -155,14 +155,14 @@ const ExportPanel: React.FC<{}> = ({}) => {
                         file_name: currentTitle,
                         file_types: ['html'],
                     });
-                    await saveNoteToHtml(htmlFilePath);
+                    if (htmlFilePath !== '') await saveNoteToHtml(htmlFilePath);
                     break;
                 case 'md':
                     const mdFilePath = await window.electronAPI.openSaveDialog({
                         file_name: currentTitle,
                         file_types: ['md'],
                     });
-                    await saveNoteToMd(mdFilePath);
+                    if (mdFilePath !== '') await saveNoteToMd(mdFilePath);
                     break;
                 case 'default':
                     break;
@@ -226,7 +226,7 @@ const ExportPanel: React.FC<{}> = ({}) => {
             switch (type) {
                 case 'html':
                     const filePath = await window.electronAPI.openDirectoryDialog();
-                    await saveFolderToHtml(filePath);
+                    if (filePath !== '') await saveFolderToHtml(filePath);
                     break;
                 case 'default':
                     break;
