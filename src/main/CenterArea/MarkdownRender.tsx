@@ -363,7 +363,7 @@ const MarkdownRenderContainer = styled.div(
         width: '100%',
         height: 'calc(100% - 2px)',
     },
-    (props: { fontSizeValue: number }) => ({
+    (props: { fontSizeValue: string }) => ({
         fontSize: props.fontSizeValue + 'px',
     })
 );

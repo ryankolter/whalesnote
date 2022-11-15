@@ -357,7 +357,7 @@ const MarkdownEditorContainer = styled.div(
         height: '100%',
         fontSize: '15px',
     },
-    (props: { fontSizeValue: number }) => ({
+    (props: { fontSizeValue: string }) => ({
         fontSize: props.fontSizeValue + 'px',
     })
 );

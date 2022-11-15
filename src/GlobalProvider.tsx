@@ -114,10 +114,10 @@ const initContext: {
     setCurAssistantPanelTab: Dispatch<SetStateAction<string>>;
     theme: any;
     setTheme: Dispatch<SetStateAction<any>>;
-    editorFontSize: number;
-    setEditorFontSize: Dispatch<SetStateAction<number>>;
-    renderFontSize: number;
-    setRenderFontSize: Dispatch<SetStateAction<number>>;
+    editorFontSize: string;
+    setEditorFontSize: Dispatch<SetStateAction<string>>;
+    renderFontSize: string;
+    setRenderFontSize: Dispatch<SetStateAction<string>>;
 } = {
     curDataPath: '',
     setCurDataPath: () => {},
@@ -179,9 +179,9 @@ const initContext: {
     setCurAssistantPanelTab: () => {},
     theme: '',
     setTheme: () => {},
-    editorFontSize: 15,
+    editorFontSize: '15',
     setEditorFontSize: () => {},
-    renderFontSize: 15,
+    renderFontSize: '15',
 };
 export const GlobalContext = createContext(initContext);
 
@@ -239,11 +239,11 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
             return window.electronAPI.shouldUseDarkMode() ? 'dark' : 'light';
         }
     });
-    const [editorFontSize, setEditorFontSize] = useState<number>(
-        Number(window.localStorage.getItem('editor_font_size')) || 15
+    const [editorFontSize, setEditorFontSize] = useState<string>(
+        window.localStorage.getItem('editor_font_size') || '15'
     );
-    const [renderFontSize, setRenderFontSize] = useState<number>(
-        Number(window.localStorage.getItem('render_font_size')) || 15
+    const [renderFontSize, setRenderFontSize] = useState<string>(
+        window.localStorage.getItem('render_font_size') || '15'
     );
 
     useEffect(() => {

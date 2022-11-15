@@ -149,9 +149,6 @@ const DataSpace: React.FC<{}> = ({}) => {
                     <OperationBtn style={{ marginBottom: '15px' }}>加密备份</OperationBtn>
                 </OperationList>
             </ChildPart> */}
-            <ChildPart>
-                <PartTitle>同步</PartTitle>
-            </ChildPart>
         </DataSpaceContainer>
     );
 };

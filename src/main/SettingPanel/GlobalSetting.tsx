@@ -1,9 +1,37 @@
-import { useContext } from 'react';
+import { useCallback, useContext, useMemo } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 
+import { SelectionOptions } from '../../components/SelectionOptions';
+
 const GlobalSetting: React.FC<{}> = ({}) => {
-    const { theme, setTheme } = useContext(GlobalContext);
+    const {
+        theme,
+        setTheme,
+        editorFontSize,
+        renderFontSize,
+        setEditorFontSize,
+        setRenderFontSize,
+    } = useContext(GlobalContext);
+
+    const editorFontSizeList = useMemo(() => ['12', '13', '14', '15', '16', '17', '18'], []);
+    const renderFontSizeList = useMemo(() => ['12', '13', '14', '15', '16', '17', '18'], []);
+
+    const changeEditorFontSize = useCallback(
+        (value: string) => {
+            setEditorFontSize(value);
+            window.localStorage.setItem('editor_font_size', value);
+        },
+        [setEditorFontSize]
+    );
+
+    const changeRenderFontSize = useCallback(
+        (value: string) => {
+            setRenderFontSize(value);
+            window.localStorage.setItem('render_font_size', value);
+        },
+        [setRenderFontSize]
+    );
 
     return (
         <DataSpaceContainer>
@@ -45,12 +73,21 @@ const GlobalSetting: React.FC<{}> = ({}) => {
                 </SelectArea>
             </ChildPart>
             <ChildPart>
-                <PartTitle>字体</PartTitle>
-                <div>编辑框</div>
-                <div>预览框</div>
-            </ChildPart>
-            <ChildPart>
-                <PartTitle>同步</PartTitle>
+                <PartTitle>字号</PartTitle>
+                <PartContent>
+                    <SelectionOptions
+                        title="编辑"
+                        currentOption={editorFontSize}
+                        optionList={editorFontSizeList}
+                        handleOption={changeEditorFontSize}
+                    />
+                    <SelectionOptions
+                        title="预览"
+                        currentOption={renderFontSize}
+                        optionList={renderFontSizeList}
+                        handleOption={changeRenderFontSize}
+                    />
+                </PartContent>
             </ChildPart>
         </DataSpaceContainer>
     );
@@ -63,22 +100,6 @@ const DataSpaceContainer = styled.div({
     padding: '5px',
 });
 
-const TopRow = styled.div({
-    display: 'flex',
-    alignItem: 'center',
-    justifyContent: 'flex-end',
-});
-
-const CloseDataSpaceBtn = styled.div({
-    width: '20px',
-    height: '20px',
-    lineHeight: '18px',
-    fontSize: '20px',
-    padding: '5px 10px',
-    margin: '0 0 2px 0',
-    cursor: 'pointer',
-});
-
 const ChildPart = styled.div({
     padding: '10px',
 });
@@ -89,6 +110,10 @@ const PartTitle = styled.div({
     marginBottom: '15px',
     paddingBottom: '4px',
     borderBottom: '1px solid var(--main-border-color)',
+});
+
+const PartContent = styled.div({
+    padding: '0 10px 0 50px',
 });
 
 const SelectArea = styled.div({
