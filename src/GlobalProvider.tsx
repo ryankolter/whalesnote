@@ -100,6 +100,8 @@ const initContext: {
     manualBlur: (delay: number) => void;
     showSearchPanel: boolean;
     setShowSearchPanel: Dispatch<SetStateAction<boolean>>;
+    showSearchResultHighlight: boolean;
+    setShowSearchResultHighlight: Dispatch<SetStateAction<boolean>>;
     showRepoPanel: boolean;
     setShowRepoPanel: Dispatch<SetStateAction<boolean>>;
     showKeySelect: boolean;
@@ -163,6 +165,8 @@ const initContext: {
     setRenderFontSize: () => {},
     showSearchPanel: false,
     setShowSearchPanel: () => {},
+    showSearchResultHighlight: false,
+    setShowSearchResultHighlight: () => {},
     showRepoPanel: false,
     setShowRepoPanel: () => {},
     showKeySelect: false,
@@ -220,6 +224,7 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
     const [blur, setBlur] = useState<string>('');
 
     const [showSearchPanel, setShowSearchPanel] = useState(false);
+    const [showSearchResultHighlight, setShowSearchResultHighlight] = useState(false);
     const [showRepoPanel, setShowRepoPanel] = useState(false);
     const [showKeySelect, setShowKeySelect] = useState<boolean>(false);
     const [keySelectNumArray, setKeySelectNumArray] = useState<number[]>([]);
@@ -389,6 +394,8 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
                 manualBlur,
                 showSearchPanel,
                 setShowSearchPanel,
+                showSearchResultHighlight,
+                setShowSearchResultHighlight,
                 showRepoPanel,
                 setShowRepoPanel,
                 showKeySelect,

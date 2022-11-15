@@ -19,6 +19,7 @@ const CenterArea: React.FC<{}> = ({}) => {
         showKeySelect,
         showRepoPanel,
         showSearchPanel,
+        showSearchResultHighlight,
         manualBlur,
         manualFocus,
         setKeySelectNumArray,
@@ -89,7 +90,7 @@ const CenterArea: React.FC<{}> = ({}) => {
                         setKeySelectNumArray([]);
                     }
                     if (
-                        (showKeySelect || showSearchPanel) &&
+                        (showKeySelect || (showSearchPanel && showSearchResultHighlight)) &&
                         currentNoteKey &&
                         mdRenderState !== 'all'
                     ) {
@@ -104,6 +105,7 @@ const CenterArea: React.FC<{}> = ({}) => {
             showKeySelect,
             showRepoPanel,
             showSearchPanel,
+            showSearchResultHighlight,
             manualFocus,
             manualBlur,
             setShowKeySelect,

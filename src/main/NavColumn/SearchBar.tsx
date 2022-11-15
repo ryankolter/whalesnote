@@ -12,10 +12,10 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
         curDataPath,
         currentNoteKey,
         platformName,
-        showKeySelect,
         showSearchPanel,
         setShowKeySelect,
         setShowSearchPanel,
+        setShowSearchResultHighlight,
         switchNote,
     } = useContext(GlobalContext);
 
@@ -25,8 +25,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
 
     const [word, setWord] = useState('');
     const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
-    const [curResultIndex, setCurResultIndex] = useState(-1);
-    const [showResultHighlight, setShowResultHighlight] = useState(false);
+    const [curSearchResultIndex, setCurSearchResultIndex] = useState(-1);
 
     const [
         showUpdateIndexTips,
@@ -69,15 +68,6 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
         setSearchResults(search_result);
     }, [word, searchNote, setShowSearchPanel, setSearchResults]);
 
-    const resultSwitch = useCallback(
-        async (id: string) => {
-            setShowResultHighlight(true);
-            const arr = id.split('-');
-            await switchNote(arr[0], arr[1], arr[2]);
-        },
-        [setShowResultHighlight, switchNote]
-    );
-
     useEffect(() => {
         setWord('');
         if (searchInputRef.current) {
@@ -86,8 +76,8 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
     }, [curDataPath]);
 
     useEffect(() => {
-        setShowResultHighlight(false);
-        setCurResultIndex(-1);
+        setShowSearchResultHighlight(false);
+        setCurSearchResultIndex(-1);
         if (word === '') {
             setShowSearchPanel(false);
             setSearchResults([]);
@@ -105,24 +95,27 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
     }, [showSearchPanel]);
 
     const nextSearchResult = useCallback(() => {
-        if (curResultIndex < searchResults.length - 1) {
-            setCurResultIndex((curResultIndex) => curResultIndex + 1);
+        if (curSearchResultIndex < searchResults.length - 1) {
+            setCurSearchResultIndex((_curSearchResultIndex) => _curSearchResultIndex + 1);
         }
-    }, [curResultIndex, searchResults, setCurResultIndex]);
+    }, [curSearchResultIndex, searchResults, setCurSearchResultIndex]);
 
     const prevSearchResult = useCallback(() => {
-        if (curResultIndex > 0) {
-            setCurResultIndex((curResultIndex) => curResultIndex - 1);
+        if (curSearchResultIndex > 0) {
+            setCurSearchResultIndex((_curSearchResultIndex) => _curSearchResultIndex - 1);
         }
-    }, [curResultIndex, setCurResultIndex]);
+    }, [curSearchResultIndex, setCurSearchResultIndex]);
 
     useEffect(() => {
-        if (curResultIndex >= 0 && curResultIndex < searchResults.length) {
+        if (curSearchResultIndex >= 0 && curSearchResultIndex < searchResults.length) {
+            setShowSearchResultHighlight(true);
             /* eslint-disable */
-            resultSwitch(searchResults[curResultIndex]['id']);
+            const id = searchResults[curSearchResultIndex]['id'];
             /* eslint-enable */
+            const arr = id.split('-');
+            switchNote(arr[0], arr[1], arr[2]);
         }
-    }, [curResultIndex]);
+    }, [curSearchResultIndex]);
 
     const handleKeyDown = useCallback(
         async (e: KeyboardEvent) => {
@@ -134,13 +127,20 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                     setShowKeySelect(false);
                 }
 
-                if ((!composing.current && e.key === 'Enter') || e.key === 'Escape') {
+                if (
+                    (!composing.current && e.key === 'Enter' && curSearchResultIndex !== -1) ||
+                    e.key === 'Escape'
+                ) {
                     if (showSearchPanel) {
                         setShowSearchPanel(false);
                         if (searchInputRef.current) {
                             searchInputRef.current.blur();
                         }
                     }
+                }
+
+                if (!composing.current && e.key === 'Enter' && curSearchResultIndex === -1) {
+                    nextSearchResult();
                 }
 
                 // arrow bottom 40
@@ -156,7 +156,14 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                 }
             }
         },
-        [showSearchPanel, nextSearchResult, prevSearchResult, setShowKeySelect, setShowSearchPanel]
+        [
+            showSearchPanel,
+            curSearchResultIndex,
+            nextSearchResult,
+            prevSearchResult,
+            setShowKeySelect,
+            setShowSearchPanel,
+        ]
     );
 
     useEffect(() => {
@@ -236,13 +243,13 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                                 return (
                                     <SearchResultDiv
                                         onClick={() => {
-                                            setCurResultIndex(index);
+                                            setCurSearchResultIndex(index);
                                         }}
                                         key={result.id}
                                         style={{
                                             backgroundColor:
                                                 currentNoteKey === result.id.split('-')[2] &&
-                                                showResultHighlight
+                                                curSearchResultIndex !== -1
                                                     ? 'var(--main-selected-bg-color)'
                                                     : '',
                                         }}
