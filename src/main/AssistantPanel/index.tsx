@@ -140,6 +140,8 @@ const AssistantBox = styled.div({
     display: 'flex',
     flexDirection: 'column',
     height: '100%',
+    padding: '5px',
+    boxSizing: 'border-box',
 });
 
 const FloatCloseBtn = styled.div({
@@ -153,7 +155,7 @@ const AssistantTabs = styled.div({
     alignItems: 'center',
     justifyContent: 'space-between',
     height: '32px',
-    margin: '13px 50px 8px 30px',
+    margin: '13px 50px 13px 30px',
 });
 
 const AssistantTab = styled.div({

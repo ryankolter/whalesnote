@@ -215,7 +215,7 @@ const ImageSpaceContainer = styled.div({
     display: 'flex',
     flexDirection: 'column',
     height: '100%',
-    padding: '5px',
+    padding: '0 5px',
 });
 
 const ChildPart = styled.div({
