@@ -8,6 +8,8 @@ import { EditorView, keymap } from '@codemirror/view';
 import { indentWithTab } from '@codemirror/commands';
 import { oneDark } from '@codemirror/theme-one-dark';
 import { indentUnit } from '@codemirror/language';
+import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
+import { languages } from '@codemirror/language-data';
 
 import useContextMenu from '../../lib/useContextMenu';
 
@@ -57,6 +59,7 @@ const TrashList: React.FC<{}> = ({}) => {
         keymap.of([indentWithTab]),
         EditorView.lineWrapping,
         indentUnit.of('    '),
+        markdown({ base: markdownLanguage, addKeymap: false, codeLanguages: languages }),
     ];
 
     useEffect(() => {
