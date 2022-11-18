@@ -25,7 +25,6 @@
     --editor-main-text-color: #999183;
     --editor-main-bg-color: #2A2C34;
     --editor-htag-text-color: #A9B7C6;
-    --editor-lastpos-bg-color: #3A404C;
     --editor-line-active-bg-color: #6699FF0B;
     --editor-line-select-bg-color: #3F4859;
     --editor-cursor-color: #528BFF;
@@ -108,7 +107,6 @@
     --editor-main-text-color: #000000F0;
     --editor-main-bg-color: #F7F7FA;
     --editor-htag-text-color: #000000;
-    --editor-lastpos-bg-color: #F7F7FA;
     --editor-line-active-bg-color: #6699FF0B;
     --editor-line-select-bg-color: #3F4859;
     --editor-cursor-color: #528BFF;

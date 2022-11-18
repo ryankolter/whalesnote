@@ -19,16 +19,23 @@ body {
 }
 
 .repo-name-input {
-    width: 100px;
+    width: 120px;
     height: 28px;
     line-height: 28px;
     border: none;
     outline: none;
     flex: 1;
-    font-size: 14px;
-    border-bottom: 1px solid #939395;
+    font-size: 15px;
+    margin: 0 0 0 5px;
+    padding: 0 0 0 10px;
+    border-bottom: 2px solid var(--main-border-color);
+    color: var(--main-text-color);
     background-color: var(--float-panel-bg-color) !important;
-    margin: 0 0 0 20px;
+}
+
+.repo-name-input::-webkit-input-placeholder {
+    font-size: 14px;
+    color: var(--input-placeholder-text-color);
 }
 
 .folder-name-input {
@@ -43,7 +50,7 @@ body {
     font-weight: 500;
     border-bottom: 2px solid var(--main-border-color);
     background-color: var(--float-panel-bg-color) !important;
-    color: var(--input-text-color);
+    color: var(--main-text-color);
 }
 
 .folder-name-input::-webkit-input-placeholder {
@@ -119,37 +126,3 @@ figure {
     margin-block-end: 2em !important;
 }
 
-.radio-beauty-container {
-    font-size: 0;
-}
-
-.radio-beauty-container .radio-name {
-    vertical-align: middle;
-    font-size: 16px;
-}
-.radio-beauty-container .radio-input {
-    display: none;
-}
-.radio-beauty-container .radio-beauty {
-    width: 15px;
-    height: 15px;
-    box-sizing: border-box;
-    display: inline-block;
-    border: 1px solid var(--main-text-color);
-    border-radius: 50%;
-    vertical-align: middle;
-    margin: 0 15px 0 3px;
-}
-
-.radio-beauty-container .radio-beauty:hover {
-    box-shadow: 0 0 7px var(--main-text-color);
-    padding: 2px;
-    background-color: var(--main-text-color);
-    background-clip: content-box;
-}
-
-.radio-beauty-container input[type="radio"]:checked+.radio-beauty {
-    padding: 2px;
-    background-color: var(--main-text-color);
-    background-clip: content-box;
-}

@@ -29,7 +29,6 @@ import markdownItTable from 'markdown-it-multimd-table';
 import markdownItTocDoneRight from 'markdown-it-toc-done-right';
 
 import useContextMenu from '../../lib/useContextMenu';
-import { notes } from '../../lib/notes';
 
 const MarkdownRender: React.FC<{
     cursorInRenderFlag: boolean;
@@ -87,6 +86,7 @@ const MarkdownRender: React.FC<{
 
     md.current = useMemo(() => {
         return markdownIt({
+            html: true,
             breaks: true,
             linkify: true,
             typographer: true,
@@ -144,7 +144,12 @@ const MarkdownRender: React.FC<{
             })
             .use(markwodnItReplaceLink, {
                 replaceLink: function (link: string, env: string, token: any) {
-                    if (token.type === 'image') return curDataPath + '/images/' + link;
+                    if (
+                        token.type === 'image' &&
+                        link.indexOf('https://') === -1 &&
+                        link.indexOf('http://') === -1
+                    )
+                        return curDataPath + '/images/' + link;
                     else return link;
                 },
             })
@@ -379,12 +384,12 @@ const LastScrollPos = styled.div(
         padding: '0 12px 0 6px',
         zIndex: 1000,
         cursor: 'pointer',
-        backgroundColor: 'var(--editor-lastpos-bg-color)',
+        backgroundColor: 'var(--main-btn-bg-color)',
     },
     `
     &:before {
         border: 15px dashed transparent;
-        border-right: 15px solid #3a404c;
+        border-right: 15px solid var(--main-btn-bg-color);
         content: "";
         font-size: 0;
         height: 0;

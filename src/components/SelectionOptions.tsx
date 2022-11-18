@@ -6,7 +6,8 @@ export const SelectionOptions: React.FC<{
     currentOption: string;
     optionList: string[];
     handleOption: (option: string) => void;
-}> = ({ title, currentOption, optionList, handleOption }) => {
+    translateFunc?: (option: string) => string;
+}> = ({ title, currentOption, optionList, handleOption, translateFunc }) => {
     const [showOptions, setShowOptions] = useState(false);
     const selectionRef = useRef<HTMLDivElement>(null);
 
@@ -34,7 +35,9 @@ export const SelectionOptions: React.FC<{
             <Title optionHeight={32}>{title}</Title>
             <Selection ref={selectionRef}>
                 <CurrentOption optionHeight={32}>
-                    <CurrentValue>{currentOption}</CurrentValue>
+                    <CurrentValue>
+                        {translateFunc ? translateFunc(currentOption) : currentOption}
+                    </CurrentValue>
                     <Triangle optionHeight={32}></Triangle>
                 </CurrentOption>
                 {showOptions ? (
@@ -46,7 +49,9 @@ export const SelectionOptions: React.FC<{
                                     key={index}
                                     onClick={(e) => handleOption(option)}
                                 >
-                                    <OptionValue>{option}</OptionValue>
+                                    <OptionValue>
+                                        {translateFunc ? translateFunc(option) : option}
+                                    </OptionValue>
                                 </Option>
                             );
                         })}
@@ -132,6 +137,7 @@ const Options = styled.div({
     left: '0',
     right: '0',
     padding: '5px 0',
+    boxSizing: 'border-box',
     border: '1px solid var(--main-border-color)',
     backgroundColor: 'var(--main-bg-color)',
     zIndex: '4000',

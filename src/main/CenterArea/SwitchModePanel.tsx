@@ -79,8 +79,7 @@ const SwitchModeBtn = styled.div({
     margin: '1px 5px',
     padding: '0 14px',
     borderRadius: '8px',
-    color: 'var(--bottom-btn-text-color)',
-    backgroundColor: 'var(--bottom-btn-bg-color)',
+    backgroundColor: 'var(--main-btn-bg-color)',
 });
 
 const ModeNameTag = styled.div({
@@ -119,7 +118,7 @@ const SwitchMdRenderState = styled.div({
     padding: '5px 0',
     borderRadius: '4px',
     zIndex: '4000',
-    backgroundColor: 'var(--float-panel-bg-color-no-border)',
+    backgroundColor: 'var(--main-btn-bg-color)',
 });
 
 const StateOption = styled.div({

@@ -373,12 +373,12 @@ const LastScrollPos = styled.div(
         padding: '0 12px 0 6px',
         zIndex: 1000,
         cursor: 'pointer',
-        backgroundColor: 'var(--editor-lastpos-bg-color)',
+        backgroundColor: 'var(--main-btn-bg-color)',
     },
     `
     &:before {
         border: 15px dashed transparent;
-        border-right: 15px solid #3a404c;
+        border-right: 15px solid var(--main-btn-bg-color);
         content: "";
         font-size: 0;
         height: 0;

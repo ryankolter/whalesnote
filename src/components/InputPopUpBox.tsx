@@ -24,6 +24,9 @@ export const InputPopUpBox: React.FC<{
                     onChangeHandle(e);
                 }}
                 onKeyDown={onKeyDown}
+                onFocus={(e) => {
+                    e.target.setSelectionRange(0, e.target.value.length);
+                }}
                 autoFocus
             />
             <Operation>
@@ -56,6 +59,10 @@ const Input = styled.input({
     fontSize: '16px',
     marginLeft: '12px',
     width: '90%',
+    paddingBottom: '4px',
+    borderBottom: '2px solid var(--main-border-color)',
+    color: 'var(--main-text-color)',
+    backgroundColor: 'var(--float-popup-bg-color)',
 });
 
 const Operation = styled.div({

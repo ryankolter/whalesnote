@@ -68,15 +68,14 @@ const useCodeMirror = <T extends Element>({
     );
 
     const myCompletions = useCallback((CompletionContext: any) => {
-        const word = CompletionContext.matchBefore(/\s*```[a-z]*/);
-        const assistant_word = CompletionContext.matchBefore(/```[a-z]*/);
+        const word = CompletionContext.matchBefore(/\s*```[a-z]+/);
+        const assistant_word = CompletionContext.matchBefore(/```[a-z]+/);
 
         if (!word || (word.from == word.to && !CompletionContext.explicit)) return null;
 
         const space_count = assistant_word.from - word.from;
 
         const langs = [
-            '',
             'bash',
             'cpp',
             'css',

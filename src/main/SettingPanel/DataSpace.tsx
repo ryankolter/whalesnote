@@ -288,7 +288,7 @@ const OpenDataPathBtn = styled.div({
     padding: '2px 14px',
     marginLeft: '10px',
     borderRadius: '4px',
-    backgroundColor: '#3a404c',
+    backgroundColor: 'var(--main-btn-bg-color)',
     cursor: 'pointer',
 });
 

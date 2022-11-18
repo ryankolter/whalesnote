@@ -19,6 +19,16 @@
     outline: none !important;
 }
 
+.wn-theme-cm .cm-tooltip-autocomplete {
+    color: var(--main-text-color) !important;
+    background-color: var(--float-panel-bg-color) !important;
+}
+
+.wn-theme-cm .cm-tooltip-autocomplete li[aria-selected="true"] {
+    color: var(--main-text-color) !important;
+    background-color: var(--main-selected-bg-color) !important;
+}
+
 /* ͼ */
 .wn-theme-cm .ͼ11 {
     color: var(--editor-main-text-color) !important;

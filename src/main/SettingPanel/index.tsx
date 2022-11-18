@@ -37,7 +37,7 @@ const SettingPanel: React.FC<{}> = ({}) => {
                         }
                         onClick={(e) => handleSettingTabSwitch('global_setting')}
                     >
-                        主题
+                        界面
                     </SettingTab>
                     <SettingTab
                         style={

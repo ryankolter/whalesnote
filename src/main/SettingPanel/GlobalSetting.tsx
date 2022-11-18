@@ -14,8 +14,27 @@ const GlobalSetting: React.FC<{}> = ({}) => {
         setRenderFontSize,
     } = useContext(GlobalContext);
 
+    const themeList = useMemo(() => ['light', 'dark'], []);
     const editorFontSizeList = useMemo(() => ['12', '13', '14', '15', '16', '17', '18'], []);
     const renderFontSizeList = useMemo(() => ['12', '13', '14', '15', '16', '17', '18'], []);
+
+    const changeTheme = useCallback(
+        (value: string) => {
+            setTheme(value);
+            window.localStorage.setItem('whalenote_theme', value);
+        },
+        [setEditorFontSize]
+    );
+
+    const translateTheme = useCallback((option: string) => {
+        if (option === 'light') {
+            return '浅色';
+        } else if (option === 'dark') {
+            return '深色';
+        } else {
+            return '';
+        }
+    }, []);
 
     const changeEditorFontSize = useCallback(
         (value: string) => {
@@ -36,53 +55,23 @@ const GlobalSetting: React.FC<{}> = ({}) => {
     return (
         <DataSpaceContainer>
             <ChildPart>
-                <PartTitle>配色</PartTitle>
-                <SelectArea>
-                    <div className="radio-beauty-container">
-                        <input
-                            type="radio"
-                            name="theme"
-                            value="light"
-                            id="radioNameWhite"
-                            className="radio-input"
-                            checked={theme === 'light'}
-                            onChange={(e: any) => {
-                                window.localStorage.setItem('whalenote_theme', e.target.value);
-                                setTheme(e.target.value);
-                            }}
-                        />
-                        <label htmlFor="radioNameWhite" className="radio-beauty"></label>
-                        <span className="radio-name">浅色</span>
-                    </div>
-                    <div className="radio-beauty-container">
-                        <input
-                            type="radio"
-                            name="theme"
-                            value="dark"
-                            id="radioNameDark"
-                            className="radio-input"
-                            checked={theme === 'dark'}
-                            onChange={(e: any) => {
-                                window.localStorage.setItem('whalenote_theme', e.target.value);
-                                setTheme(e.target.value);
-                            }}
-                        />
-                        <label htmlFor="radioNameDark" className="radio-beauty"></label>
-                        <span className="radio-name">深色</span>
-                    </div>
-                </SelectArea>
-            </ChildPart>
-            <ChildPart>
-                <PartTitle>字号</PartTitle>
+                <PartTitle>样式</PartTitle>
                 <PartContent>
                     <SelectionOptions
-                        title="编辑"
+                        title="主题色"
+                        currentOption={theme}
+                        optionList={themeList}
+                        handleOption={changeTheme}
+                        translateFunc={translateTheme}
+                    />
+                    <SelectionOptions
+                        title="编辑字号"
                         currentOption={editorFontSize}
                         optionList={editorFontSizeList}
                         handleOption={changeEditorFontSize}
                     />
                     <SelectionOptions
-                        title="预览"
+                        title="预览字号"
                         currentOption={renderFontSize}
                         optionList={renderFontSizeList}
                         handleOption={changeRenderFontSize}
@@ -113,7 +102,7 @@ const PartTitle = styled.div({
 });
 
 const PartContent = styled.div({
-    padding: '0 10px 0 50px',
+    padding: '0 30px 0 30px',
 });
 
 const SelectArea = styled.div({
