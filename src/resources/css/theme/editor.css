@@ -47,6 +47,7 @@
 .wn-theme-cm .cm-gutters {
     background-color: var(--editor-main-bg-color);
     border-right: none;
+    display: none;
 }
 
 .wn-theme-cm .cm-activeLineGutter {
@@ -123,8 +124,14 @@
 }
 
 .wn-theme-cm .cm-button {
+    color: var(--search-panel-text-color) !important;
     background-image: linear-gradient(var(--search-panel-button-bg-start-color), var(--search-panel-button-bg-end-color));
     border: 1px solid var(--search-panel-button-border-color);
+    cursor: pointer;
+}
+
+.wn-theme-cm .cm-button:active {
+    background: var(--search-panel-button-border-color) !important;
 }
 
 .wn-theme-cm .cm-textfield {

@@ -175,6 +175,7 @@ const NoteListContainer = styled.div({
     flexDirection: 'column',
     height: '100%',
     padding: '5px',
+    boxSizing: 'border-box',
 });
 
 const ChildPart = styled.div({
@@ -187,7 +188,7 @@ const PartTitle = styled.div({
     justifyContent: 'space-between',
     fontSize: '18px',
     fontWeight: '500',
-    marginBottom: '15px',
+    marginBottom: '5px',
     paddingBottom: '4px',
     borderBottom: '1px solid var(--main-border-color)',
 });

@@ -105,19 +105,19 @@
 
     /* editor */
     --editor-main-text-color: #000000F0;
-    --editor-main-bg-color: #F7F7FA;
+    --editor-main-bg-color: #FFFFFF;
     --editor-htag-text-color: #000000;
-    --editor-line-active-bg-color: #6699FF0B;
-    --editor-line-select-bg-color: #3F4859;
+    --editor-line-active-bg-color: #6699FF10;
+    --editor-line-select-bg-color: #E3F3ED;
     --editor-cursor-color: #528BFF;
     
     /* editor search */
-    --search-panel-bg-color: #21252B;
-    --search-panel-text-color: #ABB2BF;
-    --search-panel-button-border-color: #888888;
-    --search-panel-button-bg-start-color: #393939;
-    --search-panel-button-bg-end-color: #111111;
-    --search-panel-textfield-border-color: #555555;
+    --search-panel-bg-color: #F7F7F7;
+    --search-panel-text-color: #3F3F3F;
+    --search-panel-button-border-color: #999999;
+    --search-panel-button-bg-start-color: #E3F3ED;
+    --search-panel-button-bg-end-color: #E3F3ED;
+    --search-panel-textfield-border-color: #999999;
 
     /* render */
     --render-main-bg-color: #FAFAFC;
@@ -149,10 +149,10 @@
     --float-mask-show-bg-color: rgba(0, 0, 0, 0.4);
 
     /* menu panel */
-    --menu-text-color: #CDCDCD;
-    --menu-border-color: #585655;
-    --menu-bg-color: #2E2A27;
-    --menu-hover-color: #3A404C;
+    --menu-text-color: #3F3F3F;
+    --menu-border-color: #CCCCCC;
+    --menu-bg-color: #E3F3ED;
+    --menu-hover-color: rgba(102, 102, 102, 0.2);
 
     --toc-text-color: #3F3F3F;
 

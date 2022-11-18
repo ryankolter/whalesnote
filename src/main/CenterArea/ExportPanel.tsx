@@ -257,7 +257,7 @@ const ExportPanel: React.FC<{}> = ({}) => {
                                 ExportNote('html');
                             }}
                         >
-                            导出笔记(html)
+                            导出笔记 [.html]
                         </ModeOption>
                         <ModeOption
                             onClick={() => {
@@ -265,7 +265,7 @@ const ExportPanel: React.FC<{}> = ({}) => {
                                 ExportNote('md');
                             }}
                         >
-                            导出笔记(md)
+                            导出笔记 [.md]
                         </ModeOption>
                         <ModeOption
                             onClick={() => {
@@ -273,7 +273,7 @@ const ExportPanel: React.FC<{}> = ({}) => {
                                 ExportFolder('html');
                             }}
                         >
-                            导出分类(html)
+                            导出分类 [.html]
                         </ModeOption>
                     </SwitchExportPanel>
                 ) : (
@@ -306,10 +306,11 @@ const SwitchExportPanel = styled.div({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    fontSize: '14px',
     padding: '5px 0',
     borderRadius: '4px',
     zIndex: '4000',
-    backgroundColor: 'var(--float-panel-bg-color)',
+    backgroundColor: 'var(--main-btn-bg-color)',
 });
 
 const ModeOption = styled.div({

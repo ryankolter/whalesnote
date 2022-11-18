@@ -854,7 +854,7 @@ const RepoAddBtn = styled.div({
     height: '28px',
     lineHeight: '24px',
     margin: '5px 10px 0 5px',
-    fontSize: '28px',
+    fontSize: '22px',
     borderRadius: '5px',
     display: 'flex',
     alignItem: 'center',

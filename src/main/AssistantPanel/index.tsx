@@ -110,8 +110,9 @@ const AssistantPanel: React.FC<{}> = ({}) => {
 
 const AssistantPanelContainer = styled.div(
     {
+        height: '100vh',
         position: 'relative',
-        border: '1px solid var(--main-border-color)',
+        borderLeft: '1px solid var(--main-border-color)',
         zIndex: '4000',
         backgroundColor: 'var(--main-bg-color)',
     },
@@ -152,7 +153,7 @@ const AssistantTabs = styled.div({
     alignItems: 'center',
     justifyContent: 'space-between',
     height: '32px',
-    margin: '13px 50px 20px 30px',
+    margin: '13px 50px 8px 30px',
 });
 
 const AssistantTab = styled.div({

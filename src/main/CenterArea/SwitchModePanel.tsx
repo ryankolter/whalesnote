@@ -24,30 +24,42 @@ const SwitchModePanel: React.FC<{
                 </SwitchModeBtn>
                 {showSwitchMdRenderState ? (
                     <SwitchMdRenderState>
-                        <StateOption
-                            onClick={() => {
-                                setMdRenderState('hidden');
-                                setShowSwitchMdRenderState(false);
-                            }}
-                        >
-                            编辑
-                        </StateOption>
-                        <StateOption
-                            onClick={() => {
-                                setMdRenderState('all');
-                                setShowSwitchMdRenderState(false);
-                            }}
-                        >
-                            预览
-                        </StateOption>
-                        <StateOption
-                            onClick={() => {
-                                setMdRenderState('half');
-                                setShowSwitchMdRenderState(false);
-                            }}
-                        >
-                            编辑+预览
-                        </StateOption>
+                        {mdRenderState !== 'hidden' ? (
+                            <StateOption
+                                onClick={() => {
+                                    setMdRenderState('hidden');
+                                    setShowSwitchMdRenderState(false);
+                                }}
+                            >
+                                编辑
+                            </StateOption>
+                        ) : (
+                            <></>
+                        )}
+                        {mdRenderState !== 'half' ? (
+                            <StateOption
+                                onClick={() => {
+                                    setMdRenderState('half');
+                                    setShowSwitchMdRenderState(false);
+                                }}
+                            >
+                                编辑+预览
+                            </StateOption>
+                        ) : (
+                            <></>
+                        )}
+                        {mdRenderState !== 'all' ? (
+                            <StateOption
+                                onClick={() => {
+                                    setMdRenderState('all');
+                                    setShowSwitchMdRenderState(false);
+                                }}
+                            >
+                                预览
+                            </StateOption>
+                        ) : (
+                            <></>
+                        )}
                     </SwitchMdRenderState>
                 ) : (
                     <></>
@@ -116,6 +128,7 @@ const SwitchMdRenderState = styled.div({
     flexDirection: 'column',
     alignItems: 'center',
     padding: '5px 0',
+    fontSize: '14px',
     borderRadius: '4px',
     zIndex: '4000',
     backgroundColor: 'var(--main-btn-bg-color)',
