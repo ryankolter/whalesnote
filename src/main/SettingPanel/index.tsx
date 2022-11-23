@@ -31,16 +31,6 @@ const SettingPanel: React.FC<{}> = ({}) => {
                 <SettingTabs>
                     <SettingTab
                         style={
-                            curSettingPanelTab === 'global_setting'
-                                ? { backgroundColor: 'var(--main-selected-bg-color)' }
-                                : {}
-                        }
-                        onClick={(e) => handleSettingTabSwitch('global_setting')}
-                    >
-                        界面
-                    </SettingTab>
-                    <SettingTab
-                        style={
                             curSettingPanelTab === 'data_space'
                                 ? { backgroundColor: 'var(--main-selected-bg-color)' }
                                 : {}
@@ -48,6 +38,16 @@ const SettingPanel: React.FC<{}> = ({}) => {
                         onClick={(e) => handleSettingTabSwitch('data_space')}
                     >
                         数据
+                    </SettingTab>
+                    <SettingTab
+                        style={
+                            curSettingPanelTab === 'global_setting'
+                                ? { backgroundColor: 'var(--main-selected-bg-color)' }
+                                : {}
+                        }
+                        onClick={(e) => handleSettingTabSwitch('global_setting')}
+                    >
+                        界面
                     </SettingTab>
                 </SettingTabs>
                 <SettingContent>

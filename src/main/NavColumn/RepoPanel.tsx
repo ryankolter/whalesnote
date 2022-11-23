@@ -456,13 +456,13 @@ const RepoPanel: React.FC<{}> = ({}) => {
 
     return (
         <RepoListContainer>
-            <CloseRepoListBtn
+            {/* <CloseRepoListBtn
                 onClick={() => {
                     setShowRepoPanel(false);
                 }}
             >
                 x
-            </CloseRepoListBtn>
+            </CloseRepoListBtn> */}
             <ReposScroll ref={repoScrollRef}>
                 <Repos ref={outerRef}>
                     {whalenote.repos_key ? (
@@ -758,8 +758,8 @@ const Repos = styled.div({
     display: 'flex',
     flexDirection: 'column',
     flexWrap: 'wrap',
-    margin: '8px 0',
-    height: 'calc(6 * (28px + 4px) + 5px)',
+    margin: '10px 0',
+    height: 'calc(6 * (28px + 4px))',
 });
 
 const RepoItem = styled.div({
@@ -850,10 +850,10 @@ const RepoAdd = styled.div({
 
 const RepoAddBtn = styled.div({
     position: 'relative',
-    width: '28px',
-    height: '28px',
-    lineHeight: '24px',
-    margin: '5px 10px 0 5px',
+    width: '26px',
+    height: '26px',
+    lineHeight: '22px',
+    margin: '3px 10px 0 5px',
     fontSize: '22px',
     borderRadius: '5px',
     display: 'flex',

@@ -1,4 +1,4 @@
-import { useCallback, useContext, useMemo, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 
@@ -38,6 +38,30 @@ const ExportPanel: React.FC<{}> = ({}) => {
         whalenote,
     } = useContext(GlobalContext);
     const [showSwitchExportPanel, setShowSwitchExportPanel] = useState(false);
+
+    const switchExportPanelBtnRef = useRef<HTMLDivElement>(null);
+
+    const handleClick = useCallback(
+        (event: MouseEvent) => {
+            event.preventDefault();
+            if (
+                switchExportPanelBtnRef &&
+                switchExportPanelBtnRef.current?.contains(event.target as Node)
+            ) {
+                setShowSwitchExportPanel((_showSwitchExportPanel) => !_showSwitchExportPanel);
+            } else {
+                setShowSwitchExportPanel(false);
+            }
+        },
+        [setShowSwitchExportPanel]
+    );
+
+    useEffect(() => {
+        document.addEventListener('click', handleClick);
+        return () => {
+            document.removeEventListener('click', handleClick);
+        };
+    }, [handleClick]);
 
     const mdPrint = useRef<markdownIt>(markdownIt());
 
@@ -238,17 +262,9 @@ const ExportPanel: React.FC<{}> = ({}) => {
     return (
         <ExportPanelContainer>
             <SwitchExport>
-                <SvgIcon
-                    iconWidth={23}
-                    iconHeight={20}
-                    iconPadding={8}
-                    iconSrc={exportIcon}
-                    onClick={() => {
-                        setShowSwitchExportPanel(
-                            (_showSwitchExportPanel) => !_showSwitchExportPanel
-                        );
-                    }}
-                />
+                <SwitchExportPanelBtn ref={switchExportPanelBtnRef}>
+                    <SvgIcon iconWidth={23} iconHeight={20} iconPadding={8} iconSrc={exportIcon} />
+                </SwitchExportPanelBtn>
                 {showSwitchExportPanel ? (
                     <SwitchExportPanel>
                         <ModeOption
@@ -287,14 +303,19 @@ const ExportPanel: React.FC<{}> = ({}) => {
 const ExportPanelContainer = styled.div({
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center',
+    height: '100%',
 });
 
 const SwitchExport = styled.div({
+    height: '100%',
     position: 'relative',
-    display: 'flex',
-    flexDirection: 'row-reverse',
     cursor: 'pointer',
+});
+
+const SwitchExportPanelBtn = styled.div({
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
 });
 
 const SwitchExportPanel = styled.div({

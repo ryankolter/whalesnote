@@ -5,92 +5,101 @@ const SwitchModePanel: React.FC<{
     mdRenderState: string;
     setMdRenderState: React.Dispatch<React.SetStateAction<string>>;
 }> = ({ mdRenderState, setMdRenderState }) => {
+    const switchModeBtnRef = useRef<HTMLDivElement>(null);
     const [showSwitchMdRenderState, setShowSwitchMdRenderState] = useState(false);
 
+    const handleClick = useCallback(
+        (event: MouseEvent) => {
+            event.preventDefault();
+            if (switchModeBtnRef && switchModeBtnRef.current?.contains(event.target as Node)) {
+                setShowSwitchMdRenderState((_showSwitchModePanel) => !_showSwitchModePanel);
+            } else {
+                setShowSwitchMdRenderState(false);
+            }
+        },
+        [setShowSwitchMdRenderState]
+    );
+
+    useEffect(() => {
+        document.addEventListener('click', handleClick);
+        return () => {
+            document.removeEventListener('click', handleClick);
+        };
+    }, [handleClick]);
+
     return (
-        <SwitchmodePanelContainer>
-            <SwitchMode>
-                <SwitchModeBtn
-                    onClick={() => {
-                        setShowSwitchMdRenderState((_showSwitchModePanel) => !_showSwitchModePanel);
-                    }}
-                >
-                    <ModeNameTag>
-                        {mdRenderState === 'hidden' ? <ModeName>编辑</ModeName> : <></>}
-                        {mdRenderState === 'half' ? <ModeName>编辑+预览</ModeName> : <></>}
-                        {mdRenderState === 'all' ? <ModeName>预览</ModeName> : <></>}
-                    </ModeNameTag>
-                    <Triangle></Triangle>
-                </SwitchModeBtn>
-                {showSwitchMdRenderState ? (
-                    <SwitchMdRenderState>
-                        {mdRenderState !== 'hidden' ? (
-                            <StateOption
-                                onClick={() => {
-                                    setMdRenderState('hidden');
-                                    setShowSwitchMdRenderState(false);
-                                }}
-                            >
-                                编辑
-                            </StateOption>
-                        ) : (
-                            <></>
-                        )}
-                        {mdRenderState !== 'half' ? (
-                            <StateOption
-                                onClick={() => {
-                                    setMdRenderState('half');
-                                    setShowSwitchMdRenderState(false);
-                                }}
-                            >
-                                编辑+预览
-                            </StateOption>
-                        ) : (
-                            <></>
-                        )}
-                        {mdRenderState !== 'all' ? (
-                            <StateOption
-                                onClick={() => {
-                                    setMdRenderState('all');
-                                    setShowSwitchMdRenderState(false);
-                                }}
-                            >
-                                预览
-                            </StateOption>
-                        ) : (
-                            <></>
-                        )}
-                    </SwitchMdRenderState>
-                ) : (
-                    <></>
-                )}
-            </SwitchMode>
-        </SwitchmodePanelContainer>
+        <SwitchModePanelContainer>
+            <SwitchModeBtn ref={switchModeBtnRef}>
+                <ModeNameTag>
+                    {mdRenderState === 'hidden' ? <ModeName>编辑</ModeName> : <></>}
+                    {mdRenderState === 'half' ? <ModeName>并排</ModeName> : <></>}
+                    {mdRenderState === 'all' ? <ModeName>预览</ModeName> : <></>}
+                </ModeNameTag>
+                <Triangle></Triangle>
+            </SwitchModeBtn>
+            {showSwitchMdRenderState ? (
+                <SwitchMdRenderState>
+                    {mdRenderState !== 'hidden' ? (
+                        <StateOption
+                            onClick={() => {
+                                setMdRenderState('hidden');
+                                setShowSwitchMdRenderState(false);
+                            }}
+                        >
+                            编辑
+                        </StateOption>
+                    ) : (
+                        <></>
+                    )}
+                    {mdRenderState !== 'all' ? (
+                        <StateOption
+                            onClick={() => {
+                                setMdRenderState('all');
+                                setShowSwitchMdRenderState(false);
+                            }}
+                        >
+                            预览
+                        </StateOption>
+                    ) : (
+                        <></>
+                    )}
+                    {mdRenderState !== 'half' ? (
+                        <StateOption
+                            onClick={() => {
+                                setMdRenderState('half');
+                                setShowSwitchMdRenderState(false);
+                            }}
+                        >
+                            并排
+                        </StateOption>
+                    ) : (
+                        <></>
+                    )}
+                </SwitchMdRenderState>
+            ) : (
+                <></>
+            )}
+        </SwitchModePanelContainer>
     );
 };
 
-const SwitchmodePanelContainer = styled.div({
+const SwitchModePanelContainer = styled.div({
+    position: 'relative',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-});
-
-const SwitchMode = styled.div({
-    position: 'relative',
-    display: 'flex',
-    flexDirection: 'row-reverse',
     cursor: 'pointer',
 });
 
 const SwitchModeBtn = styled.div({
     display: 'flex',
     alignItems: 'center',
-    width: '112px',
+    width: '80px',
     boxSizing: 'border-box',
-    height: '30px',
-    margin: '1px 5px',
-    padding: '0 14px',
-    borderRadius: '8px',
+    height: '26px',
+    margin: '0 5px',
+    padding: '0 10px',
+    borderRadius: '5px',
     backgroundColor: 'var(--main-btn-bg-color)',
 });
 
@@ -103,7 +112,7 @@ const ModeNameTag = styled.div({
 
 const ModeName = styled.div({
     fontSize: '14px',
-    lineHeight: '28px',
+    lineHeight: '26px',
 });
 
 const Triangle = styled.div({
@@ -120,14 +129,14 @@ const Triangle = styled.div({
 
 const SwitchMdRenderState = styled.div({
     position: 'absolute',
-    top: '31px',
+    top: '26px',
     left: '50%',
     transform: 'translateX(-50%)',
-    width: '112px',
+    width: '80px',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    padding: '5px 0',
+    padding: '7px 0 5px 0',
     fontSize: '14px',
     borderRadius: '4px',
     zIndex: '4000',
@@ -138,7 +147,9 @@ const StateOption = styled.div({
     display: 'flex',
     justifyContent: 'center',
     width: '100%',
+    boxSizing: 'border-box',
     padding: '5px',
+    lineHeight: '18px',
 });
 
 export default SwitchModePanel;

@@ -37,8 +37,12 @@ const ToolBar: React.FC<{
 
     return (
         <TopRowContainer>
-            <BreakCrumb></BreakCrumb>
-            <SwitchModePanel mdRenderState={mdRenderState} setMdRenderState={setMdRenderState} />
+            <BreakCrumb>
+                <SwitchModePanel
+                    mdRenderState={mdRenderState}
+                    setMdRenderState={setMdRenderState}
+                />
+            </BreakCrumb>
             <SvgIcon
                 iconWidth={20}
                 iconHeight={20}
@@ -70,7 +74,7 @@ const TopRowContainer = styled.div(
         width: '100%',
         height: '60px',
         display: 'flex',
-        padding: '0 40px 0 0',
+        padding: '10px 40px 10px 0',
         alignItems: 'center',
         boxSizing: 'border-box',
         backgroundColor: 'var(--main-bg-color)',
@@ -86,6 +90,7 @@ const BreakCrumb = styled.div({
     minWidth: '0',
     display: 'flex',
     alignItems: 'center',
+    padding: '0 20px',
     zIndex: '1000',
 });
 

@@ -237,10 +237,10 @@ const AllRepo = styled.div(
     {
         width: '900px',
         position: 'fixed',
-        padding: '10px 20px',
+        padding: '15px 15px 5px 15px',
         boxSizing: 'border-box',
         borderRadius: '8px',
-        zIndex: '3000',
+        zIndex: '3400',
         border: '1px solid var(--float-panel-border-color)',
         backgroundColor: 'var(--float-panel-bg-color)',
     },
@@ -274,16 +274,11 @@ const SearchBarAndNote = styled.div(
     })
 );
 
-const SearchBarBox = styled.div(
-    {
-        width: '100%',
-        boxSizing: 'border-box',
-        borderRight: '1px solid var(--main-border-color)',
-    },
-    `
-    -webkit-app-region: drag;
-`
-);
+const SearchBarBox = styled.div({
+    width: '100%',
+    boxSizing: 'border-box',
+    borderRight: '1px solid var(--main-border-color)',
+});
 
 const NoteBox = styled.div({
     width: '100%',

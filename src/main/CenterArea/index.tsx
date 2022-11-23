@@ -25,6 +25,7 @@ const CenterArea: React.FC<{}> = ({}) => {
         setKeySelectNumArray,
         setShowKeySelect,
         setShowRepoPanel,
+        setShowSearchPanel,
     } = useContext(GlobalContext);
 
     const [
@@ -136,7 +137,12 @@ const CenterArea: React.FC<{}> = ({}) => {
     return (
         <CenterAreaContainer>
             <ToolBar mdRenderState={mdRenderState} setMdRenderState={setMdRenderState} />
-            <MarkdownArea>
+            <MarkdownArea
+                onClick={() => {
+                    setShowRepoPanel(false);
+                    setShowSearchPanel(false);
+                }}
+            >
                 <EditorPanel widthValue={editorWidth}>
                     <MarkdownEditor
                         cursorInRenderFlag={cursorInRenderFlag}

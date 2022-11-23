@@ -19,6 +19,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
         switchNote,
     } = useContext(GlobalContext);
 
+    const searchBarRef = useRef<HTMLDivElement>(null);
     const searchInputRef = useRef<HTMLInputElement>(null);
     const setWordTimerObj = useRef<NodeJS.Timeout>();
     const composing = useRef(false);
@@ -166,8 +167,19 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
         ]
     );
 
+    const handleClick = useCallback(
+        (event: MouseEvent) => {
+            event.preventDefault();
+            if (!searchBarRef.current?.contains(event.target as Node)) {
+                setShowSearchPanel(false);
+            }
+        },
+        [setShowSearchPanel]
+    );
+
     useEffect(() => {
         document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('click', handleClick);
         document.addEventListener('compositionstart', () => {
             composing.current = true;
         });
@@ -176,6 +188,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
         });
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
+            document.removeEventListener('click', handleClick);
             document.removeEventListener('compositionstart', () => {
                 composing.current = true;
             });
@@ -186,7 +199,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
     }, [handleKeyDown]);
 
     return (
-        <SearchBarContainer>
+        <SearchBarContainer ref={searchBarRef}>
             <WaitingMaskStatic show={showWaitingMask} word={'请等待......'}></WaitingMaskStatic>
             <Search>
                 <SearchIcon
@@ -221,13 +234,13 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                                 )}
                             </UpdateIndexBtn>
                         </UpdateIndex>
-                        <CloseSearchPanelBtn
+                        {/* <CloseSearchPanelBtn
                             onClick={() => {
                                 setShowSearchPanel(false);
                             }}
                         >
                             x
-                        </CloseSearchPanelBtn>
+                        </CloseSearchPanelBtn> */}
                     </SearchTool>
                     {showUpdateIndexTips ? (
                         <UpdateIndexTips>
@@ -341,7 +354,7 @@ const SearchPanel = styled.div({
     height: 'calc(100vh - 140px)',
     padding: '15px',
     boxSizing: 'border-box',
-    zIndex: '3000',
+    zIndex: '3500',
     borderRadius: '10px',
     border: '1px solid var(--float-panel-border-color)',
     backgroundColor: 'var(--float-panel-bg-color)',

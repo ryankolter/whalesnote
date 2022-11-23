@@ -491,7 +491,7 @@ const Notes = styled.div(
         overflowY: 'auto',
         flex: '1',
         minHeight: '0',
-        padding: '10px 0 70px 0',
+        padding: '10px 0 270px 0',
         borderRight: '1px solid var(--main-border-color)',
         scrollBehavior: 'smooth',
     },

@@ -365,19 +365,8 @@ const FolderList: React.FC<{}> = ({}) => {
                                 .map((key: string, index: number) => {
                                     return (
                                         <Sortable key={key} id={key}>
-                                            <FolderItem
+                                            <FolderItemBox
                                                 key={`item-${key}`}
-                                                className={
-                                                    currentFolderKey === key ? 'item-selected' : ''
-                                                }
-                                                style={
-                                                    currentFolderKey === key
-                                                        ? {
-                                                              backgroundColor:
-                                                                  'var(--main-selected-bg-color)',
-                                                          }
-                                                        : {}
-                                                }
                                                 onClick={() => {
                                                     if (currentFolderKey !== key) {
                                                         switchFolder(currentRepoKey, key);
@@ -389,50 +378,69 @@ const FolderList: React.FC<{}> = ({}) => {
                                                     }
                                                 }}
                                             >
-                                                <FolderIcon>
-                                                    <FolderIconImg src={folderIcon} alt="" />
-                                                </FolderIcon>
-                                                <FolderName>
-                                                    {folders_obj[key].folder_name}
-                                                </FolderName>
-                                                {showKeySelect &&
-                                                currentFolderKey !== key &&
-                                                index < 21 * 10 ? (
-                                                    <FolderKeyTab>
-                                                        <span
-                                                            style={{
-                                                                color:
-                                                                    keySelectNumArray.length >= 1 &&
-                                                                    keySelectNumArray[0] ===
-                                                                        genAlphaCode1(index + 1)
-                                                                        ? 'var(--main-text-selected-color)'
-                                                                        : '',
-                                                            }}
-                                                        >
-                                                            {String.fromCharCode(
-                                                                genAlphaCode1(index + 1)
-                                                            )}
-                                                        </span>
-                                                        <span
-                                                            style={{
-                                                                color:
-                                                                    keySelectNumArray.length ===
-                                                                        2 &&
-                                                                    keySelectNumArray[1] ===
-                                                                        genNumberCode2(index + 1)
-                                                                        ? 'var(--main-text-selected-color)'
-                                                                        : '',
-                                                            }}
-                                                        >
-                                                            {String.fromCharCode(
-                                                                genNumberCode2(index + 1)
-                                                            )}
-                                                        </span>
-                                                    </FolderKeyTab>
-                                                ) : (
-                                                    <></>
-                                                )}
-                                            </FolderItem>
+                                                <FolderItem
+                                                    className={
+                                                        currentFolderKey === key
+                                                            ? 'item-selected'
+                                                            : ''
+                                                    }
+                                                    style={
+                                                        currentFolderKey === key
+                                                            ? {
+                                                                  backgroundColor:
+                                                                      'var(--main-selected-bg-color)',
+                                                              }
+                                                            : {}
+                                                    }
+                                                >
+                                                    <FolderIcon>
+                                                        <FolderIconImg src={folderIcon} alt="" />
+                                                    </FolderIcon>
+                                                    <FolderName>
+                                                        {folders_obj[key].folder_name}
+                                                    </FolderName>
+                                                    {showKeySelect &&
+                                                    currentFolderKey !== key &&
+                                                    index < 21 * 10 ? (
+                                                        <FolderKeyTab>
+                                                            <span
+                                                                style={{
+                                                                    color:
+                                                                        keySelectNumArray.length >=
+                                                                            1 &&
+                                                                        keySelectNumArray[0] ===
+                                                                            genAlphaCode1(index + 1)
+                                                                            ? 'var(--main-text-selected-color)'
+                                                                            : '',
+                                                                }}
+                                                            >
+                                                                {String.fromCharCode(
+                                                                    genAlphaCode1(index + 1)
+                                                                )}
+                                                            </span>
+                                                            <span
+                                                                style={{
+                                                                    color:
+                                                                        keySelectNumArray.length ===
+                                                                            2 &&
+                                                                        keySelectNumArray[1] ===
+                                                                            genNumberCode2(
+                                                                                index + 1
+                                                                            )
+                                                                            ? 'var(--main-text-selected-color)'
+                                                                            : '',
+                                                                }}
+                                                            >
+                                                                {String.fromCharCode(
+                                                                    genNumberCode2(index + 1)
+                                                                )}
+                                                            </span>
+                                                        </FolderKeyTab>
+                                                    ) : (
+                                                        <></>
+                                                    )}
+                                                </FolderItem>
+                                            </FolderItemBox>
                                         </Sortable>
                                     );
                                 })}
@@ -492,24 +500,29 @@ const FolderList: React.FC<{}> = ({}) => {
                     {dragActiveId ? (
                         <DragOverlay>
                             {folders_obj && folders_obj[dragActiveId as string] ? (
-                                <FolderItem
-                                    key={dragActiveId}
-                                    className={
-                                        currentFolderKey === dragActiveId ? 'item-selected' : ''
-                                    }
-                                    style={
-                                        currentFolderKey === dragActiveId
-                                            ? { backgroundColor: 'var(--main-selected-bg-color)' }
-                                            : {}
-                                    }
-                                >
-                                    <FolderIcon>
-                                        <FolderIconImg src={folderIcon} alt="" />
-                                    </FolderIcon>
-                                    <FolderName>
-                                        {folders_obj[dragActiveId as string].folder_name}
-                                    </FolderName>
-                                </FolderItem>
+                                <FolderItemBox>
+                                    <FolderItem
+                                        key={dragActiveId}
+                                        className={
+                                            currentFolderKey === dragActiveId ? 'item-selected' : ''
+                                        }
+                                        style={
+                                            currentFolderKey === dragActiveId
+                                                ? {
+                                                      backgroundColor:
+                                                          'var(--main-selected-bg-color)',
+                                                  }
+                                                : {}
+                                        }
+                                    >
+                                        <FolderIcon>
+                                            <FolderIconImg src={folderIcon} alt="" />
+                                        </FolderIcon>
+                                        <FolderName>
+                                            {folders_obj[dragActiveId as string].folder_name}
+                                        </FolderName>
+                                    </FolderItem>
+                                </FolderItemBox>
                             ) : (
                                 <></>
                             )}
@@ -605,17 +618,10 @@ const Folders = styled.div(
 `
 );
 
-const FolderItem = styled.div(
+const FolderItemBox = styled.div(
     {
-        display: 'flex',
-        alignItems: 'center',
-        position: 'relative',
-        height: '30px',
-        lineHeight: '30px',
-        fontSize: '15px',
-        margin: '0 10px 5px 0',
-        padding: '0 0 0 8px',
-        cursor: 'pointer',
+        padding: '3px 10px 2px 0',
+        overflow: 'hidden',
     },
     `
     &:hover {
@@ -623,6 +629,17 @@ const FolderItem = styled.div(
     }
 `
 );
+
+const FolderItem = styled.div({
+    display: 'flex',
+    alignItems: 'center',
+    position: 'relative',
+    height: '30px',
+    lineHeight: '30px',
+    fontSize: '15px',
+    padding: '0 0 0 8px',
+    cursor: 'pointer',
+});
 
 const FolderIcon = styled.div({
     display: 'flex',
