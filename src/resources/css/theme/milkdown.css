@@ -1,0 +1,330 @@
+
+.milkdown {
+    height: 100%;
+    font-family: PingFangSC-Regular, sans-serif !important;
+    color: var(--editor-main-text-color) !important;
+    background-color: var(--editor-main-bg-color) !important;
+    overflow-y: scroll;
+    box-shadow: none !important;
+}
+
+.milkdown::-webkit-scrollbar {
+    width: 8px !important;
+}
+
+.milkdown::-webkit-scrollbar-thumb {
+    border: none !important;
+    border-radius: 3px !important;
+    background-color: var(--main-scroller-bg-color) !important;
+}
+
+.milkdown .editor {
+    padding: 0 10px !important;
+}
+
+.milkdown .editor>* {
+    margin: 1em 0 !important;
+}
+
+.milkdown .editor .code-fence {
+    color: var(--render-code-text-color) !important;
+    background-color: var(--render-code-block-bg-color) !important;
+}
+
+.milkdown .editor .code-fence_selector {
+    width: 90px !important;
+    height: 24px !important;
+}
+
+.milkdown .editor .code-fence_selector >span:first-child {
+    padding-left: 10px;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+}
+
+.milkdown .editor .code-fence_selector>.icon {
+    width: 24px !important;
+}
+
+.milkdown .editor .list-item_label {
+    visibility: hidden !important;
+}
+
+.milkdown .editor p {
+    font-size: inherit !important;
+    line-height: 1.6em !important;
+}
+
+
+.milkdown .editor .code-inline {
+    border: none;
+    border-radius: 5px !important;
+    margin: 0 5px !important;
+    padding: 1px 5px !important;
+    font-size: 0.9em;
+    font-family: inherit !important;
+    color: var(--render-code-text-color) !important;
+    background-color: var(--render-code-line-bg-color) !important;
+}
+
+
+.milkdown .editor pre code div{
+    color: var(--render-code-text-color) !important;
+    background-color: var(--render-code-block-bg-color) !important;
+}
+
+.milkdown .editor h1 {
+    font-size: 1.8em !important;
+    font-weight: bold !important;
+    line-height: 1.4em !important;
+    margin-block-start: 0.67em !important;
+    margin-block-end: 0.67em !important;
+}
+
+.milkdown .editor h2 {
+    font-size: 1.4em !important;
+    font-weight: bold !important;
+    line-height: 1.4em !important;
+    margin-block-start: 1.5em !important;
+    margin-block-end: 1em !important;
+    padding-bottom: 0.1em !important;
+    border-bottom: solid 1.5px var(--editor-main-text-color);
+}
+
+.milkdown .editor h3 {
+    font-size: 1.2em !important;
+    font-weight: bold !important;
+    line-height: 1.4em !important;
+    margin-block-start: 2em !important;
+    margin-block-end: 1em !important;
+}
+
+.milkdown .editor h4 {
+    font-size: 1em !important;
+    line-height: 1.4em !important;
+    margin-block-start: 1.6em !important;
+    margin-block-end: 1em !important;
+}
+
+.milkdown-menu-wrapper {
+    height: 100%;
+}
+
+.milkdown-menu {
+    border: none !important;
+    background-color: inherit !important;
+}
+
+.milkdown-menu::-webkit-scrollbar {
+    display: none;
+}
+
+.milkdown-menu>.button {
+    height: 20px !important;
+    width: 20px !important;
+    margin: 0 8px !important;
+}
+
+.milkdown-menu>.divider {
+    margin: 0 8px !important;
+    height: 28px !important;
+}
+
+.menu-selector-wrapper>.menu-selector{
+    height: 20px !important;
+    margin: 0px 10px !important;
+}
+
+.milkdown-menu>.button>.material-icons-outlined {
+    font-size: 20px;
+}
+
+.menu-selector-list {
+    background-color: var(--main-btn-bg-color) !important;
+}
+
+button {
+    color: var(--main-text-color) !important;
+    background-color: inherit !important;
+}
+
+/* table */
+
+.milkdown .editor .tableWrapper * {
+    font-size: inherit !important;
+}
+
+.milkdown .editor table {
+    border-collapse: collapse;
+}
+
+.milkdown .editor tr {
+    border:1px solid #444b59 !important; 
+}
+
+.milkdown .editor td, .milkdown .editor th {
+    border:1px solid #444b59 !important; 
+    background-color: inherit !important;
+}
+
+.milkdown .editor table, table tr th, table tr td { 
+    border:1px solid #444b59 !important; 
+    padding: 8px;
+    text-align: center !important;
+}
+
+/* ul */
+.milkdown .editor ul {
+    list-style-type: decimal !important;
+    margin-left: 0.5em !important;
+}
+
+.milkdown .editor ul li {
+    margin: 2em 0 0 0 !important;
+}
+
+.milkdown .editor ul > li > div > ul {
+    margin-left: 0.5em !important;
+    margin-bottom: 1em !important;
+    margin-top: 0.5em;
+    padding-top: 0.3em;
+    padding-bottom: 0.3em;
+    list-style-type: none;
+    border-left: 5px solid var(--render-list-border-color);
+}
+
+.milkdown .editor ul > li > div > ul > li {
+    margin-top: 0.3em !important;
+    margin-right: 0 !important;
+    margin-left: -0.7em !important;
+}
+
+.milkdown .editor ul > li > div > ul > li:not(:last-child) {
+    margin-bottom: 1.8em !important;
+}
+
+.milkdown .editor ul > li > div > ul > li > p {
+    margin: 0 0 !important;
+}
+
+.milkdown .editor ul > li > div > ul > li > ul {
+    margin-left: 0.2em !important;
+    margin-top: 1em;
+    padding-top: 0.3em;
+    list-style-type: none;
+    border-left: 4px solid var(--render-list-border-color);
+}
+
+.milkdown .editor ul > li > div > ul > li > div > ul > li {
+    margin: 0 0 0.5em 0.5em !important;
+}
+
+.milkdown .editor ul > li > div > ul > li > div > ul > li:first-child {
+    margin-top: 0.6em !important;
+}
+
+.milkdown .editor ul > li > div > ul > li > div > ul > li:not(:last-child) {
+    margin-bottom: 1.2em !important;
+}
+
+.milkdown .editor ul > li > div > ul > li > div > ul > li > ul {
+    border-left: 3px solid var(--render-list-border-color);
+}
+
+.milkdown .editor ul > li > div > ul > li > div > ul > li > div > ul > li:first-child {
+    margin-top: 0.4em !important;
+}
+
+.milkdown .editor ul > li > div > ul > li > div > ul > li > div > ul > li:not(:last-child) {
+    margin-bottom: 0.8em !important;
+}
+
+/* ol */
+.milkdown .editor ol {
+    list-style-type: decimal;
+    margin-left: -0.5em !important;
+}
+
+.milkdown .editor ol li {
+    margin: 2em 0 0 0 !important;
+}
+
+.milkdown .editor ol li > div > p {
+    margin: 0 !important;
+}
+
+.milkdown .editor ol > li > div > ol {
+    margin-bottom: 1em !important;
+    margin-top: 1em;
+    padding-top: 0.3em;
+    list-style-type: lower-alpha;
+}
+
+.milkdown .editor ol > li > div > ol > li {
+    margin: 0.3em 0 1.8em 0em !important;
+}
+
+.milkdown .editor ol > li > div > ol > li > div > p {
+    margin: 0 0 !important;
+}
+
+.milkdown .editor ol > li > div > ol > li > div > ol {
+    margin-top: 0.8em;
+    padding-top: 0.3em;
+    list-style-type: lower-roman;
+}
+
+.milkdown .editor ol > li > div > ol > li > div > ol > li {
+    margin: 0 0 0.5em 0em !important;
+}
+
+/* ol + ul */
+.milkdown .editor ol {
+    list-style-type: decimal;
+    margin-left: -0.5em !important;
+}
+
+.milkdown .editor ol li {
+    margin: 2em 0 0 0 !important;
+}
+
+.milkdown .editor ol > li > div > ul {
+    margin-bottom: 1em !important;
+    margin-top: 0.5em;
+    padding-top: 0.3em;
+    padding-bottom: 0.3em;
+    list-style-type: none;
+    /* border-left: 5px solid var(--render-list-border-color); */
+}
+
+.milkdown .editor ol > li > div > ul > li {
+    margin-top: 0 !important;
+    margin-right: 0 !important;
+    margin-left: -0.7em !important;
+}
+
+.milkdown .editor ol > li > div > ul > li:not(:last-child) {
+    margin-bottom: 1.8em !important;
+}
+
+.milkdown .editor ol > li > div > ul > li > p {
+    margin: 0 0 !important;
+}
+
+.milkdown .editor ol > li > div > ul > li > div > ul {
+    margin-top: 1.5em;
+    padding-top: 0.3em;
+    list-style-type: none;
+    /* border-left: 4px solid var(--render-list-border-color); */
+}
+
+.milkdown .editor ol > li > div > ul > li > div > ul > li {
+    margin: 0 0 0.5em -0.7em !important;
+}
+
+.milkdown .editor ol > li > div > ul > li > div > ul > li > div > ul {
+    /* border-left: 3px solid var(--render-list-border-color); */
+}

@@ -48,6 +48,7 @@
     margin: 1.2em 0;
     line-height: 1.6em;
     word-break: break-word;
+    letter-spacing: 0.5px !important;
 }
 
 .wn-theme-rd pre code {

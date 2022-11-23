@@ -6,8 +6,10 @@ import cryptoRandomString from 'crypto-random-string';
 import { useRecordValue } from '../../lib/useRecordValue';
 import MarkdownEditor from './MarkdownEditor';
 import MarkdownRender from './MarkdownRender';
+import MilkdownEditor from './MilkdownEditor';
 import useRenderState from '../../lib/useRenderState';
 import ToolBar from './ToolBar';
+import { notes } from '../../lib/notes';
 
 const CenterArea: React.FC<{}> = ({}) => {
     const {
@@ -57,6 +59,19 @@ const CenterArea: React.FC<{}> = ({}) => {
                 : 0,
         [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, renderScrollTops]
     );
+
+    useEffect(() => {
+        const str =
+            currentRepoKey &&
+            currentFolderKey &&
+            currentNoteKey &&
+            notes[currentRepoKey] &&
+            notes[currentRepoKey][currentFolderKey] &&
+            notes[currentRepoKey][currentFolderKey][currentNoteKey]
+                ? notes[currentRepoKey][currentFolderKey][currentNoteKey]
+                : '';
+        setRenderNoteStr(str);
+    }, [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey]);
 
     const handleKeyDown = useCallback(
         async (e: any) => {
@@ -143,17 +158,22 @@ const CenterArea: React.FC<{}> = ({}) => {
                     setShowSearchPanel(false);
                 }}
             >
-                <EditorPanel widthValue={editorWidth}>
-                    <MarkdownEditor
-                        cursorInRenderFlag={cursorInRenderFlag}
-                        mdRenderState={mdRenderState}
-                        renderScrollRatio={renderScrollRatio}
-                        setEditorScrollRatio={setEditorScrollRatio}
-                        setRenderNoteStr={setRenderNoteStr}
-                    />
-                </EditorPanel>
-                <RenderPanel leftValue={renderLeft} widthValue={renderWidth}>
-                    {mdRenderState !== 'hidden' ? (
+                {mdRenderState === 'default' ? <MilkdownEditor /> : <></>}
+                {mdRenderState === 'hidden' || mdRenderState === 'half' ? (
+                    <EditorPanel widthValue={editorWidth}>
+                        <MarkdownEditor
+                            cursorInRenderFlag={cursorInRenderFlag}
+                            mdRenderState={mdRenderState}
+                            renderScrollRatio={renderScrollRatio}
+                            setEditorScrollRatio={setEditorScrollRatio}
+                            setRenderNoteStr={setRenderNoteStr}
+                        />
+                    </EditorPanel>
+                ) : (
+                    <></>
+                )}
+                {mdRenderState === 'all' || mdRenderState === 'half' ? (
+                    <RenderPanel leftValue={renderLeft} widthValue={renderWidth}>
                         <MarkdownRender
                             cursorInRenderFlag={cursorInRenderFlag}
                             setCursorInRenderFlag={setCursorInRenderFlag}
@@ -164,10 +184,10 @@ const CenterArea: React.FC<{}> = ({}) => {
                             updateRenderScrollTop={updateRenderScrollTop}
                             renderNoteStr={renderNoteStr}
                         />
-                    ) : (
-                        <></>
-                    )}
-                </RenderPanel>
+                    </RenderPanel>
+                ) : (
+                    <></>
+                )}
             </MarkdownArea>
         </CenterAreaContainer>
     );

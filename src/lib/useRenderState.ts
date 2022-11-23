@@ -9,12 +9,14 @@ const useRenderState = () => {
     );
 
     const nextMdRenderState = useCallback(() => {
-        if (mdRenderState === 'hidden') {
+        if (mdRenderState === 'default') {
+            setMdRenderState('hidden');
+        } else if (mdRenderState === 'hidden') {
             setMdRenderState('half');
         } else if (mdRenderState === 'half') {
             setMdRenderState('all');
         } else if (mdRenderState === 'all') {
-            setMdRenderState('hidden');
+            setMdRenderState('default');
         }
     }, [mdRenderState]);
 

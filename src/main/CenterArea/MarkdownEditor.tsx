@@ -43,19 +43,6 @@ const MarkdownEditor: React.FC<{
         currentNoteKey
     );
 
-    useEffect(() => {
-        const str =
-            currentRepoKey &&
-            currentFolderKey &&
-            currentNoteKey &&
-            notes[currentRepoKey] &&
-            notes[currentRepoKey][currentFolderKey] &&
-            notes[currentRepoKey][currentFolderKey][currentNoteKey]
-                ? notes[currentRepoKey][currentFolderKey][currentNoteKey]
-                : '';
-        setRenderNoteStr(str);
-    }, [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey]);
-
     const [showEditorScrollPos, setShowEditorScrollPos] = useState(false);
     const [cursorInEditor, setCursorInEditor] = useState(false);
     const autoScroll = useRef(false);

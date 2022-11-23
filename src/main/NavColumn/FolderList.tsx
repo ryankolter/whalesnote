@@ -466,7 +466,7 @@ const FolderList: React.FC<{}> = ({}) => {
                                 <FolderAddBtn onClick={() => handleNewFolder()}>
                                     <svg width="20px" height="18px">
                                         <path
-                                            fill-rule="evenodd"
+                                            fillRule="evenodd"
                                             fill={
                                                 theme === 'dark'
                                                     ? 'rgba(255, 255, 255, 0.5)'

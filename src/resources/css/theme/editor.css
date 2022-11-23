@@ -13,6 +13,7 @@
 .wn-theme-cm .cm-line {
     font-family: PingFangSC-Regular, sans-serif;
     line-height: 1.6em;
+    letter-spacing: 0.5px !important;
 }
 
 .wn-theme-cm .cm-focused {
