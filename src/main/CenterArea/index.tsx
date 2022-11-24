@@ -6,7 +6,7 @@ import cryptoRandomString from 'crypto-random-string';
 import { useRecordValue } from '../../lib/useRecordValue';
 import MarkdownEditor from './MarkdownEditor';
 import MarkdownRender from './MarkdownRender';
-import MilkdownEditor from './MilkdownEditor';
+import TipTapEditor from './TipTapEditor';
 import useRenderState from '../../lib/useRenderState';
 import ToolBar from './ToolBar';
 import { notes } from '../../lib/notes';
@@ -158,7 +158,7 @@ const CenterArea: React.FC<{}> = ({}) => {
                     setShowSearchPanel(false);
                 }}
             >
-                {mdRenderState === 'default' ? <MilkdownEditor /> : <></>}
+                {mdRenderState === 'default' ? <TipTapEditor /> : <></>}
                 {mdRenderState === 'hidden' || mdRenderState === 'half' ? (
                     <EditorPanel widthValue={editorWidth}>
                         <MarkdownEditor

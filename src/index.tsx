@@ -7,6 +7,7 @@ import './resources/css/theme/global.css';
 import './resources/css/theme/editor.css';
 import './resources/css/theme/render.css';
 import './resources/css/theme/milkdown.css';
+import './resources/css/theme/prosemirror.css';
 import './resources/css/hljs_theme/light.css';
 import './resources/css/hljs_theme/dark.css';
 

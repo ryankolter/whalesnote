@@ -5,7 +5,9 @@ import cryptoRandomString from 'crypto-random-string';
 import ClipboardJS from 'clipboard';
 
 import markdownIt from 'markdown-it';
-import hljs from 'highlight.js/lib/common';
+// import hljs from 'highlight.js/lib/common';
+import { lowlight } from 'lowlight';
+import { toHtml } from 'hast-util-to-html';
 /* eslint-disable */
 //@ts-ignore
 import markdownItEmoji from 'markdown-it-emoji';
@@ -91,7 +93,7 @@ const MarkdownRender: React.FC<{
             linkify: true,
             typographer: true,
             highlight: function (str, lang) {
-                if (lang && hljs.getLanguage(lang)) {
+                if (lang) {
                     try {
                         const copyId = cryptoRandomString({
                             length: 12,
@@ -102,7 +104,7 @@ const MarkdownRender: React.FC<{
                         return (
                             '<pre><code class="hljs" style="position: relative;">' +
                             html +
-                            hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
+                            toHtml(lowlight.highlight(lang, str, {})) +
                             '</code></pre>' +
                             textarea
                         );
