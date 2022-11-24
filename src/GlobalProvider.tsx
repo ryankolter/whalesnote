@@ -114,6 +114,8 @@ const initContext: {
     setCurAssistantPanelTab: Dispatch<SetStateAction<string>>;
     theme: any;
     setTheme: Dispatch<SetStateAction<any>>;
+    editorType: string;
+    setEditorType: Dispatch<SetStateAction<string>>;
     editorFontSize: string;
     setEditorFontSize: Dispatch<SetStateAction<string>>;
     renderFontSize: string;
@@ -179,6 +181,8 @@ const initContext: {
     setCurAssistantPanelTab: () => {},
     theme: '',
     setTheme: () => {},
+    editorType: '',
+    setEditorType: () => {},
     editorFontSize: '15',
     setEditorFontSize: () => {},
     renderFontSize: '15',
@@ -237,6 +241,17 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
             return whalenote_theme;
         } else {
             return window.electronAPI.shouldUseDarkMode() ? 'dark' : 'light';
+        }
+    });
+    const [editorType, setEditorType] = useState(() => {
+        const whalenote_editor_type = window.localStorage.getItem('whalenote_theme');
+        if (
+            whalenote_editor_type &&
+            (whalenote_editor_type === 'prosemirror' || whalenote_editor_type === 'codemirror')
+        ) {
+            return whalenote_editor_type;
+        } else {
+            return 'prosemirror';
         }
     });
     const [editorFontSize, setEditorFontSize] = useState<string>(
@@ -412,6 +427,8 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
                 setRenderFontSize,
                 theme,
                 setTheme,
+                editorType,
+                setEditorType,
             }}
         >
             {children}

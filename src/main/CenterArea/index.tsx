@@ -17,6 +17,7 @@ const CenterArea: React.FC<{}> = ({}) => {
         currentRepoKey,
         currentFolderKey,
         currentNoteKey,
+        editorType,
         platformName,
         showKeySelect,
         showRepoPanel,
@@ -158,8 +159,17 @@ const CenterArea: React.FC<{}> = ({}) => {
                     setShowSearchPanel(false);
                 }}
             >
-                {mdRenderState === 'default' ? <TipTapEditor /> : <></>}
-                {mdRenderState === 'hidden' || mdRenderState === 'half' ? (
+                {editorType === 'prosemirror' ? (
+                    <TipTapEditor
+                        setRenderNoteStr={setRenderNoteStr}
+                        setEditorScrollRatio={setEditorScrollRatio}
+                        setRenderScrollRatio={setRenderScrollRatio}
+                    />
+                ) : (
+                    <></>
+                )}
+                {editorType === 'codemirror' &&
+                (mdRenderState === 'hidden' || mdRenderState === 'half') ? (
                     <EditorPanel widthValue={editorWidth}>
                         <MarkdownEditor
                             cursorInRenderFlag={cursorInRenderFlag}
@@ -172,7 +182,8 @@ const CenterArea: React.FC<{}> = ({}) => {
                 ) : (
                     <></>
                 )}
-                {mdRenderState === 'all' || mdRenderState === 'half' ? (
+                {editorType === 'codemirror' &&
+                (mdRenderState === 'all' || mdRenderState === 'half') ? (
                     <RenderPanel leftValue={renderLeft} widthValue={renderWidth}>
                         <MarkdownRender
                             cursorInRenderFlag={cursorInRenderFlag}

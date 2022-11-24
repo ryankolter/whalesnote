@@ -6,6 +6,8 @@ import { SelectionOptions } from '../../components/SelectionOptions';
 
 const GlobalSetting: React.FC<{}> = ({}) => {
     const {
+        editorType,
+        setEditorType,
         theme,
         setTheme,
         editorFontSize,
@@ -15,6 +17,7 @@ const GlobalSetting: React.FC<{}> = ({}) => {
     } = useContext(GlobalContext);
 
     const themeList = useMemo(() => ['light', 'dark'], []);
+    const editorTypeList = useMemo(() => ['prosemirror', 'codemirror'], []);
     const editorFontSizeList = useMemo(() => ['12', '13', '14', '15', '16', '17', '18'], []);
     const renderFontSizeList = useMemo(() => ['12', '13', '14', '15', '16', '17', '18'], []);
 
@@ -31,6 +34,24 @@ const GlobalSetting: React.FC<{}> = ({}) => {
             return '浅色';
         } else if (option === 'dark') {
             return '深色';
+        } else {
+            return '';
+        }
+    }, []);
+
+    const changeEditorType = useCallback(
+        (value: string) => {
+            setEditorType(value);
+            window.localStorage.setItem('whalenote_editor_type', value);
+        },
+        [setEditorType]
+    );
+
+    const translateEditorType = useCallback((option: string) => {
+        if (option === 'prosemirror') {
+            return '所见即所得';
+        } else if (option === 'codemirror') {
+            return '传统模式';
         } else {
             return '';
         }
@@ -55,7 +76,7 @@ const GlobalSetting: React.FC<{}> = ({}) => {
     return (
         <DataSpaceContainer>
             <ChildPart>
-                <PartTitle>样式</PartTitle>
+                <PartTitle>模式</PartTitle>
                 <PartContent>
                     <SelectionOptions
                         title="主题色"
@@ -64,6 +85,18 @@ const GlobalSetting: React.FC<{}> = ({}) => {
                         handleOption={changeTheme}
                         translateFunc={translateTheme}
                     />
+                    <SelectionOptions
+                        title="编辑器"
+                        currentOption={editorType}
+                        optionList={editorTypeList}
+                        handleOption={changeEditorType}
+                        translateFunc={translateEditorType}
+                    />
+                </PartContent>
+            </ChildPart>
+            <ChildPart>
+                <PartTitle>样式</PartTitle>
+                <PartContent>
                     <SelectionOptions
                         title="编辑字号"
                         currentOption={editorFontSize}

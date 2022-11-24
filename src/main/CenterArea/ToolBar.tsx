@@ -14,6 +14,7 @@ const ToolBar: React.FC<{
 }> = ({ mdRenderState, setMdRenderState }) => {
     const {
         curSettingPanelTab,
+        editorType,
         setCurSettingPanelTab,
         curAssistantPanelTab,
         setCurAssistantPanelTab,
@@ -38,10 +39,14 @@ const ToolBar: React.FC<{
     return (
         <TopRowContainer>
             <BreakCrumb>
-                <SwitchModePanel
-                    mdRenderState={mdRenderState}
-                    setMdRenderState={setMdRenderState}
-                />
+                {editorType === 'codemirror' ? (
+                    <SwitchModePanel
+                        mdRenderState={mdRenderState}
+                        setMdRenderState={setMdRenderState}
+                    />
+                ) : (
+                    <></>
+                )}
             </BreakCrumb>
             <SvgIcon
                 iconWidth={20}

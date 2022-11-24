@@ -61,18 +61,39 @@ const MarkdownEditor: React.FC<{
                 new_value
             );
             setRenderNoteStr(new_value);
-            const doc = view.current?.state.doc;
-            if (doc) {
-                const first_line_content = doc.lineAt(0).text.replace(/^[#\-\_*>\s]+/g, '');
-                const new_name: string = first_line_content || '空笔记';
-                await renameNote(
-                    curDataPath,
-                    currentRepoKey,
-                    currentFolderKey,
-                    currentNoteKey,
-                    new_name
-                );
+
+            let line = '';
+            const is_with_lf = new_value.indexOf('\n') !== -1;
+            if (is_with_lf) {
+                let index = 0;
+                let max_count = 500;
+                while ((line === '' || line === '\n') && index !== -1) {
+                    const next_index = new_value.indexOf('\n', index + 1);
+                    if (next_index === -1) {
+                        line = new_value.substring(index);
+                        break;
+                    }
+                    line = new_value.substring(index, next_index);
+                    index = next_index;
+                    if (--max_count < 0) break;
+                }
+            } else {
+                line = new_value;
             }
+
+            let new_name = '空笔记';
+            if (line !== '' && !line.startsWith('\\#')) {
+                const replace_line = line.replace(/^[#\-\_*>\s]+/g, '');
+                if (replace_line !== '' && !replace_line.startsWith('\\#')) new_name = replace_line;
+            }
+
+            await renameNote(
+                curDataPath,
+                currentRepoKey,
+                currentFolderKey,
+                currentNoteKey,
+                new_name
+            );
         },
         [
             curDataPath,
@@ -126,15 +147,17 @@ const MarkdownEditor: React.FC<{
     }, [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey]);
 
     useEffect(() => {
-        if (view.current) {
+        if (view.current && !Number.isNaN(renderScrollRatio)) {
             const offsetHeight = view.current.contentDOM.getBoundingClientRect().height;
             const scrollTop = offsetHeight * renderScrollRatio;
             const scrollPos = view.current.lineBlockAtHeight(scrollTop).from;
-            view.current?.dispatch({
-                effects: EditorView.scrollIntoView(scrollPos, {
-                    y: 'start',
-                }),
-            });
+            setTimeout(() => {
+                view.current?.dispatch({
+                    effects: EditorView.scrollIntoView(scrollPos, {
+                        y: 'start',
+                    }),
+                });
+            }, 0);
         }
     }, [renderScrollRatio]);
 

@@ -31,27 +31,14 @@ const SwitchModePanel: React.FC<{
         <SwitchModePanelContainer>
             <SwitchModeBtn ref={switchModeBtnRef}>
                 <ModeNameTag>
-                    {mdRenderState === 'default' ? <ModeName>默认</ModeName> : <></>}
-                    {mdRenderState === 'hidden' ? <ModeName>纯编辑</ModeName> : <></>}
-                    {mdRenderState === 'half' ? <ModeName>双栏</ModeName> : <></>}
-                    {mdRenderState === 'all' ? <ModeName>纯预览</ModeName> : <></>}
+                    {mdRenderState === 'hidden' ? <ModeName>编辑</ModeName> : <></>}
+                    {mdRenderState === 'half' ? <ModeName>双列</ModeName> : <></>}
+                    {mdRenderState === 'all' ? <ModeName>预览</ModeName> : <></>}
                 </ModeNameTag>
                 <Triangle></Triangle>
             </SwitchModeBtn>
             {showSwitchMdRenderState ? (
                 <SwitchMdRenderState>
-                    {mdRenderState !== 'default' ? (
-                        <StateOption
-                            onClick={() => {
-                                setMdRenderState('default');
-                                setShowSwitchMdRenderState(false);
-                            }}
-                        >
-                            默认
-                        </StateOption>
-                    ) : (
-                        <></>
-                    )}
                     {mdRenderState !== 'hidden' ? (
                         <StateOption
                             onClick={() => {
@@ -59,7 +46,7 @@ const SwitchModePanel: React.FC<{
                                 setShowSwitchMdRenderState(false);
                             }}
                         >
-                            纯编辑
+                            编辑
                         </StateOption>
                     ) : (
                         <></>
@@ -71,7 +58,7 @@ const SwitchModePanel: React.FC<{
                                 setShowSwitchMdRenderState(false);
                             }}
                         >
-                            双栏
+                            双列
                         </StateOption>
                     ) : (
                         <></>
@@ -83,7 +70,7 @@ const SwitchModePanel: React.FC<{
                                 setShowSwitchMdRenderState(false);
                             }}
                         >
-                            纯预览
+                            预览
                         </StateOption>
                     ) : (
                         <></>
