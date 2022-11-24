@@ -5,7 +5,6 @@ import styled from '@emotion/styled';
 import SwitchModePanel from './SwitchModePanel';
 import ExportPanel from './ExportPanel';
 import SvgIcon from '../../components/SvgIcon';
-import mobilePanelIcon from '../../resources/icon/sideBar/mobilePanelIcon.svg';
 import settingPanelIcon from '../../resources/icon/sideBar/settingPanelIcon.svg';
 
 const ToolBar: React.FC<{
@@ -48,27 +47,23 @@ const ToolBar: React.FC<{
                     <></>
                 )}
             </BreakCrumb>
-            <SvgIcon
-                iconWidth={20}
-                iconHeight={20}
-                iconPadding={8}
-                iconSrc={settingPanelIcon}
-                onClick={() => handleOpenSettingClick()}
-            />
+            <SettingPanelBtnBox>
+                <SettingPanelBtn
+                    className="ri-settings-3-line"
+                    onClick={() => handleOpenSettingClick()}
+                ></SettingPanelBtn>
+            </SettingPanelBtnBox>
             <ExportPanel />
-            <AssistantPanelBtn>
+            <AssistantPanelBtnBox>
                 {curAssistantPanelTab === 'none' ? (
-                    <SvgIcon
-                        iconWidth={16}
-                        iconHeight={20}
-                        iconPadding={0}
-                        iconSrc={mobilePanelIcon}
+                    <AssistantPanelBtn
+                        className="ri-side-bar-line"
                         onClick={() => handleOpenAssistantClick()}
-                    />
+                    ></AssistantPanelBtn>
                 ) : (
                     <></>
                 )}
-            </AssistantPanelBtn>
+            </AssistantPanelBtnBox>
         </TopRowContainer>
     );
 };
@@ -79,7 +74,7 @@ const TopRowContainer = styled.div(
         width: '100%',
         height: '60px',
         display: 'flex',
-        padding: '10px 40px 10px 0',
+        padding: '10px 45px 10px 0',
         alignItems: 'center',
         boxSizing: 'border-box',
         backgroundColor: 'var(--main-bg-color)',
@@ -99,10 +94,28 @@ const BreakCrumb = styled.div({
     zIndex: '1000',
 });
 
-const AssistantPanelBtn = styled.div({
+const SettingPanelBtnBox = styled.div({
+    width: '20px',
+    height: '20px',
+    margin: '1px 3px 0 0',
+});
+
+const SettingPanelBtn = styled.div({
+    fontSize: '22px',
+    color: 'var(--main-icon-color)',
+    transform: 'rotate(180deg)',
+});
+
+const AssistantPanelBtnBox = styled.div({
     position: 'absolute',
     top: '20px',
     right: '20px',
+});
+
+const AssistantPanelBtn = styled.div({
+    fontSize: '22px',
+    color: 'var(--main-icon-color)',
+    transform: 'rotate(180deg)',
 });
 
 export default ToolBar;

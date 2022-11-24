@@ -463,19 +463,10 @@ const FolderList: React.FC<{}> = ({}) => {
                                 <></>
                             )}
                             {curDataPath && !newFolderKey ? (
-                                <FolderAddBtn onClick={() => handleNewFolder()}>
-                                    <svg width="20px" height="18px">
-                                        <path
-                                            fillRule="evenodd"
-                                            fill={
-                                                theme === 'dark'
-                                                    ? 'rgba(255, 255, 255, 0.5)'
-                                                    : 'rgba(102, 102, 102, 0.7)'
-                                            }
-                                            d="M17.910,3.720 L8.955,3.720 C8.505,3.720 8.141,3.367 8.141,2.932 L8.141,2.67 C8.141,1.197 7.412,0.492 6.512,0.492 L1.628,0.492 C0.728,0.492 0.0,1.197 0.0,2.67 L0.0,5.295 L0.0,6.791 L0.0,15.924 C0.0,16.794 0.728,17.499 1.628,17.499 L17.910,17.499 C18.809,17.499 19.538,16.794 19.538,15.924 L19.538,5.295 C19.538,4.425 18.809,3.720 17.910,3.720 ZM12.822,11.358 L10.583,11.358 L10.583,13.523 C10.583,13.958 10.219,14.311 9.769,14.311 C9.319,14.311 8.955,13.958 8.955,13.523 L8.955,11.358 L6.716,11.358 C6.266,11.358 5.902,11.5 5.902,10.570 C5.902,10.136 6.266,9.783 6.716,9.783 L8.955,9.783 L8.955,7.618 C8.955,7.183 9.319,6.830 9.769,6.830 C10.219,6.830 10.583,7.183 10.583,7.618 L10.583,9.783 L12.822,9.783 C13.271,9.783 13.636,10.136 13.636,10.570 C13.636,11.5 13.271,11.358 12.822,11.358 Z"
-                                        />
-                                    </svg>
-                                </FolderAddBtn>
+                                <FolderAddBtn
+                                    className="ri-folder-add-fill"
+                                    onClick={() => handleNewFolder()}
+                                ></FolderAddBtn>
                             ) : (
                                 <div></div>
                             )}
@@ -710,12 +701,12 @@ const MenuLi = styled.li(
 const FolderAddBtn = styled.div({
     width: '20px',
     height: '18px',
-    transform: 'scale(0.8)',
-    margin: '6px 0 0 0',
+    fontSize: '17px',
+    margin: '4px 0 0 2px',
     padding: '8px 10px 10px 4px',
     display: 'flex',
     alignItem: 'center',
-    color: '#939395',
+    color: 'var(--main-folder-add-bg-color)',
     cursor: 'pointer',
 });
 

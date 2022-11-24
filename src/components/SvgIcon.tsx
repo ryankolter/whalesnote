@@ -26,7 +26,6 @@ const Icon = styled.div({}, (props: { width: number; height: number; padding: nu
     width: props.width + 'px',
     height: props.height + 'px',
     padding: '0 ' + props.padding + 'px',
-    cursor: 'pointer',
 }));
 
 const IconImg = styled.img({}, (props: { width: number; height: number }) => ({

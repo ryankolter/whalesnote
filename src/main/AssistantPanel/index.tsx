@@ -2,8 +2,6 @@ import styled from '@emotion/styled';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 
-import SvgIcon from '../../components/SvgIcon';
-import mobilePanelIcon from '../../resources/icon/sideBar/mobilePanelIcon.svg';
 import ImageSpace from './ImageSpace';
 import TrashList from './TrashList';
 
@@ -55,15 +53,12 @@ const AssistantPanel: React.FC<{}> = ({}) => {
                 draggable="true"
             ></ResizeAssistantPanelWidth>
             <AssistantBox>
-                <FloatCloseBtn>
-                    <SvgIcon
-                        iconWidth={16}
-                        iconHeight={20}
-                        iconPadding={0}
-                        iconSrc={mobilePanelIcon}
+                <FloatCloseBtnBox>
+                    <FloatCloseBtn
+                        className="ri-side-bar-fill"
                         onClick={() => setCurAssistantPanelTab('none')}
-                    />
-                </FloatCloseBtn>
+                    ></FloatCloseBtn>
+                </FloatCloseBtnBox>
 
                 <AssistantTabs>
                     <AssistantTab
@@ -144,10 +139,16 @@ const AssistantBox = styled.div({
     boxSizing: 'border-box',
 });
 
-const FloatCloseBtn = styled.div({
+const FloatCloseBtnBox = styled.div({
     position: 'absolute',
     top: '19px',
-    right: '19px',
+    right: '20px',
+});
+
+const FloatCloseBtn = styled.div({
+    fontSize: '22px',
+    color: 'var(--main-icon-color)',
+    transform: 'rotate(180deg)',
 });
 
 const AssistantTabs = styled.div({

@@ -261,61 +261,62 @@ const ExportPanel: React.FC<{}> = ({}) => {
 
     return (
         <ExportPanelContainer>
-            <SwitchExport>
-                <SwitchExportPanelBtn ref={switchExportPanelBtnRef}>
-                    <SvgIcon iconWidth={23} iconHeight={20} iconPadding={8} iconSrc={exportIcon} />
-                </SwitchExportPanelBtn>
-                {showSwitchExportPanel ? (
-                    <SwitchExportPanel>
-                        <ModeOption
-                            onClick={() => {
-                                setShowSwitchExportPanel(false);
-                                ExportNote('html');
-                            }}
-                        >
-                            导出笔记 [.html]
-                        </ModeOption>
-                        <ModeOption
-                            onClick={() => {
-                                setShowSwitchExportPanel(false);
-                                ExportNote('md');
-                            }}
-                        >
-                            导出笔记 [.md]
-                        </ModeOption>
-                        <ModeOption
-                            onClick={() => {
-                                setShowSwitchExportPanel(false);
-                                ExportFolder('html');
-                            }}
-                        >
-                            导出分类 [.html]
-                        </ModeOption>
-                    </SwitchExportPanel>
-                ) : (
-                    <></>
-                )}
-            </SwitchExport>
+            <SwitchExportPanelBtnBox ref={switchExportPanelBtnRef}>
+                <SwitchExportPanelBtn className="ri-external-link-line"></SwitchExportPanelBtn>
+            </SwitchExportPanelBtnBox>
+            {showSwitchExportPanel ? (
+                <SwitchExportPanel>
+                    <ModeOption
+                        onClick={() => {
+                            setShowSwitchExportPanel(false);
+                            ExportNote('html');
+                        }}
+                    >
+                        导出笔记 [.html]
+                    </ModeOption>
+                    <ModeOption
+                        onClick={() => {
+                            setShowSwitchExportPanel(false);
+                            ExportNote('md');
+                        }}
+                    >
+                        导出笔记 [.md]
+                    </ModeOption>
+                    <ModeOption
+                        onClick={() => {
+                            setShowSwitchExportPanel(false);
+                            ExportFolder('html');
+                        }}
+                    >
+                        导出分类 [.html]
+                    </ModeOption>
+                </SwitchExportPanel>
+            ) : (
+                <></>
+            )}
         </ExportPanelContainer>
     );
 };
 
 const ExportPanelContainer = styled.div({
+    position: 'relative',
     display: 'flex',
     flexDirection: 'column',
     height: '100%',
 });
 
-const SwitchExport = styled.div({
-    height: '100%',
-    position: 'relative',
-    cursor: 'pointer',
-});
-
-const SwitchExportPanelBtn = styled.div({
+const SwitchExportPanelBtnBox = styled.div({
     height: '100%',
     display: 'flex',
     alignItems: 'center',
+    margin: '0 10px',
+});
+
+const SwitchExportPanelBtn = styled.div({
+    fontSize: '23px',
+    width: '22px',
+    height: '22px',
+    color: 'var(--main-icon-color)',
 });
 
 const SwitchExportPanel = styled.div({
@@ -332,6 +333,7 @@ const SwitchExportPanel = styled.div({
     borderRadius: '4px',
     zIndex: '4000',
     backgroundColor: 'var(--main-btn-bg-color)',
+    cursor: 'pointer',
 });
 
 const ModeOption = styled.div({

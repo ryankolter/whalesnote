@@ -1,7 +1,7 @@
 import { createRoot } from 'react-dom/client';
 import { GlobalProvider } from './GlobalProvider';
 
-import '@material-design-icons/font';
+import './resources/icon/iconfont/remixicon.css';
 import './resources/css/theme/color_variable.css';
 import './resources/css/theme/global.css';
 import './resources/css/theme/editor.css';

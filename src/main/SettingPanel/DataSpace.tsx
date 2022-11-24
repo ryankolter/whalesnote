@@ -119,7 +119,9 @@ const DataSpace: React.FC<{}> = ({}) => {
                                             );
                                         }
                                     })}
-                                    <PathAddBtn onClick={addDataPath}>添加</PathAddBtn>
+                                    <PathAddBtnBox onClick={addDataPath}>
+                                        <PathAddBtn className="ri-add-box-line"></PathAddBtn>
+                                    </PathAddBtnBox>
                                 </PathUl>
                             ) : (
                                 <></>
@@ -264,13 +266,20 @@ const RemovePathBtn = styled.div({
     cursor: 'pointer',
 });
 
-const PathAddBtn = styled.div({
+const PathAddBtnBox = styled.div({
     display: 'flex',
     justifyContent: 'center',
     width: '100%',
     height: '40px',
     lineHeight: '40px',
     boxSizing: 'border-box',
+});
+
+const PathAddBtn = styled.div({
+    fontSize: '20px',
+    height: '20px',
+    width: '20px',
+    color: 'var(--main-text-color)',
 });
 
 const OpenDataPath = styled.div({

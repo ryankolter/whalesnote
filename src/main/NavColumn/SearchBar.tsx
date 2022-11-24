@@ -203,12 +203,11 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
             <WaitingMaskStatic show={showWaitingMask} word={'请等待......'}></WaitingMaskStatic>
             <Search>
                 <SearchIcon
+                    className="ri-search-line"
                     onClick={() => {
                         searchInputRef.current?.focus();
                     }}
-                >
-                    <SearchIconImg src={searchIcon} alt="" />
-                </SearchIcon>
+                ></SearchIcon>
                 <SearchInput
                     ref={searchInputRef}
                     onChange={handleSearchInputChange}
@@ -287,7 +286,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
 const SearchBarContainer = styled.div({
     position: 'relative',
     width: '100%',
-    padding: '10px 30px 10px 30px',
+    padding: '18px 30px 10px 30px',
     boxSizing: 'border-box',
     display: 'flex',
 });
@@ -301,13 +300,10 @@ const Search = styled.div({
 });
 
 const SearchIcon = styled.div({
+    fontSize: '14px',
     width: '14px',
     height: '14px',
-});
-
-const SearchIconImg = styled.img({
-    width: '14px',
-    height: '14px',
+    color: 'var(--input-text-color) !important',
 });
 
 const SearchInput = styled.input(
@@ -320,7 +316,7 @@ const SearchInput = styled.input(
         lineHeight: '20px',
         letterSpacing: '1px',
         width: '100%',
-        padding: '12px 0 6px 16px',
+        padding: '6px 0 6px 16px',
         boxSizing: 'border-box',
         color: 'var(--input-text-color) !important',
         backgroundColor: 'var(--main-bg-color) !important',

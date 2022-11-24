@@ -15,6 +15,7 @@
     /* background */
     --main-bg-color: #2A2C34;
     --main-folder-and-repo-bg-color: #21242D; /*#21242D;*/
+    --main-folder-add-bg-color: #939395;
     --main-btn-bg-color: #3A404C;
     --main-selected-bg-color: #3A404C;
     --main-scroller-bg-color: #C7C7C733;
@@ -72,6 +73,8 @@
     --menu-bg-color: #2E2A27;
     --menu-hover-color: #3A404C;
 
+    --main-icon-color: rgb(102, 102, 102);
+
     --toc-text-color: #A0A0A0;
 
     /* other */
@@ -97,6 +100,7 @@
     /* background */
     --main-bg-color: #FFFFFF;
     --main-folder-and-repo-bg-color: #F7F7F7;
+    --main-folder-add-bg-color: #939395;
     --main-btn-bg-color: #E3F3ED;
     --main-selected-bg-color: #E5EEFF;
     --main-scroller-bg-color: #94949666;
@@ -153,6 +157,8 @@
     --menu-border-color: #CCCCCC;
     --menu-bg-color: #E3F3ED;
     --menu-hover-color: rgba(102, 102, 102, 0.2);
+
+    --main-icon-color: rgb(146, 184, 255);
 
     --toc-text-color: #3F3F3F;
 
