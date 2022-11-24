@@ -143,7 +143,7 @@ const useCodeMirror = <T extends Element>({
             keymap.of([indentWithTab]),
             EditorView.lineWrapping,
             markdown({ base: markdownLanguage, addKeymap: false, codeLanguages: languages }),
-            indentUnit.of('    '),
+            indentUnit.of('  '),
             autocompletion({
                 activateOnTyping: true,
                 aboveCursor: true,

@@ -20,7 +20,7 @@ const ToolBar: React.FC<{
     } = useContext(GlobalContext);
 
     const handleOpenSettingClick = useCallback(() => {
-        const curTab = window.localStorage.getItem('cur_setting_panel_tab') || 'global_setting';
+        const curTab = window.localStorage.getItem('cur_setting_panel_tab') || 'data_space';
         setCurSettingPanelTab((curSettingPanelTab: string) => {
             if (curSettingPanelTab !== 'none') {
                 return 'none';
