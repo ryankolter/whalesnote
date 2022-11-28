@@ -46,6 +46,7 @@ const FolderList: React.FC<{}> = ({}) => {
         setKeySelectNumArray,
         switchFolder,
         switchNote,
+        setShowRepoPanel,
     } = useContext(GlobalContext);
 
     const folders_key = useMemo(() => {
@@ -487,6 +488,16 @@ const FolderList: React.FC<{}> = ({}) => {
                                 <div></div>
                             )}
                         </Folders>
+                        <FoldersBottomFlexBox
+                            onClick={() => {
+                                setShowRepoPanel(false);
+                            }}
+                        ></FoldersBottomFlexBox>
+                        <FoldersBottomFixedBox
+                            onClick={() => {
+                                setShowRepoPanel(false);
+                            }}
+                        ></FoldersBottomFixedBox>
                     </SortableContext>
                     {dragActiveId ? (
                         <DragOverlay>
@@ -563,7 +574,6 @@ const FolderListContainer = styled.div({
     height: '100%',
     width: '100%',
     minWidth: '60px',
-    padding: '0 0 10px 16px',
     boxSizing: 'border-box',
 });
 
@@ -597,9 +607,8 @@ const Folders = styled.div(
         width: '100%',
         overflowY: 'auto',
         overflowX: 'hidden',
-        flex: '1',
-        minHeight: '0',
-        paddingBottom: '56px',
+        boxSizing: 'border-box',
+        padding: '0 0 56px 16px',
         scrollBehavior: 'smooth',
     },
     `
@@ -662,6 +671,17 @@ const FolderKeyTab = styled.div({
     padding: '2px 4px',
     borderRadius: '4px',
     backgroundColor: 'var(--key-tab-bg-color)',
+});
+
+const FoldersBottomFlexBox = styled.div({
+    flex: '1',
+    minHeight: '0',
+    width: '100%',
+});
+
+const FoldersBottomFixedBox = styled.div({
+    height: '70px',
+    minHeight: '70px',
 });
 
 const MenuUl = styled.ul(
