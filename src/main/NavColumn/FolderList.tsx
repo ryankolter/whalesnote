@@ -487,6 +487,11 @@ const FolderList: React.FC<{}> = ({}) => {
                             ) : (
                                 <div></div>
                             )}
+                            <FoldersInnerFixedBox
+                                onClick={() => {
+                                    setShowRepoPanel(false);
+                                }}
+                            ></FoldersInnerFixedBox>
                         </Folders>
                         <FoldersBottomFlexBox
                             onClick={() => {
@@ -608,7 +613,7 @@ const Folders = styled.div(
         overflowY: 'auto',
         overflowX: 'hidden',
         boxSizing: 'border-box',
-        padding: '0 0 56px 16px',
+        padding: '0 0 0 16px',
         scrollBehavior: 'smooth',
     },
     `
@@ -671,6 +676,11 @@ const FolderKeyTab = styled.div({
     padding: '2px 4px',
     borderRadius: '4px',
     backgroundColor: 'var(--key-tab-bg-color)',
+});
+
+const FoldersInnerFixedBox = styled.div({
+    height: '56px',
+    minHeight: '56px',
 });
 
 const FoldersBottomFlexBox = styled.div({

@@ -38,6 +38,7 @@ const NoteList: React.FC<{}> = ({}) => {
         setKeySelectNumArray,
         setShowKeySelect,
         switchNote,
+        setShowRepoPanel,
     } = useContext(GlobalContext);
 
     const notes_key = useMemo(() => {
@@ -410,7 +411,17 @@ const NoteList: React.FC<{}> = ({}) => {
                             ) : (
                                 <></>
                             )}
+                            <NotesInnerFixedBox
+                                onClick={() => {
+                                    setShowRepoPanel(false);
+                                }}
+                            ></NotesInnerFixedBox>
                         </Notes>
+                        <NotesBottomFlexBox
+                            onClick={() => {
+                                setShowRepoPanel(false);
+                            }}
+                        ></NotesBottomFlexBox>
                     </SortableContext>
                     {dragActiveId ? (
                         <DragOverlay>
@@ -489,9 +500,7 @@ const NewNoteIconImg = styled.img({
 const Notes = styled.div(
     {
         overflowY: 'auto',
-        flex: '1',
-        minHeight: '0',
-        padding: '10px 0 270px 0',
+        padding: '10px 0 0 0',
         borderRight: '1px solid var(--main-border-color)',
         scrollBehavior: 'smooth',
     },
@@ -550,6 +559,17 @@ const AddNotesTips = styled.div({
     borderRadius: '5px',
     border: '1px dotted var(--main-tips-border-color)',
     backgroundColor: 'var(--main-tips-bg-color)',
+});
+
+const NotesInnerFixedBox = styled.div({
+    height: '270px',
+    minHeight: '270px',
+});
+
+const NotesBottomFlexBox = styled.div({
+    flex: '1',
+    minHeight: '0',
+    width: '100%',
 });
 
 const MenuUl = styled.ul(
