@@ -230,7 +230,7 @@ const RenderPanel = styled.div(
     {
         position: 'absolute',
         top: '0',
-        height: 'calc(100% + 2px)',
+        height: '100%',
         boxSizing: 'border-box',
     },
     (props: { leftValue: string; widthValue: string }) => ({
