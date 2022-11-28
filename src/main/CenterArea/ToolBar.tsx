@@ -11,13 +11,8 @@ const ToolBar: React.FC<{
     mdRenderState: string;
     setMdRenderState: React.Dispatch<React.SetStateAction<string>>;
 }> = ({ mdRenderState, setMdRenderState }) => {
-    const {
-        curSettingPanelTab,
-        editorType,
-        setCurSettingPanelTab,
-        curAssistantPanelTab,
-        setCurAssistantPanelTab,
-    } = useContext(GlobalContext);
+    const { setCurSettingPanelTab, curAssistantPanelTab, setCurAssistantPanelTab } =
+        useContext(GlobalContext);
 
     const handleOpenSettingClick = useCallback(() => {
         const curTab = window.localStorage.getItem('cur_setting_panel_tab') || 'data_space';
@@ -38,14 +33,10 @@ const ToolBar: React.FC<{
     return (
         <TopRowContainer>
             <BreakCrumb>
-                {editorType === 'codemirror' ? (
-                    <SwitchModePanel
-                        mdRenderState={mdRenderState}
-                        setMdRenderState={setMdRenderState}
-                    />
-                ) : (
-                    <></>
-                )}
+                <SwitchModePanel
+                    mdRenderState={mdRenderState}
+                    setMdRenderState={setMdRenderState}
+                />
             </BreakCrumb>
             <SettingPanelBtnBox>
                 <SettingPanelBtn
