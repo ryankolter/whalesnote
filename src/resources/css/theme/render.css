@@ -150,7 +150,6 @@
 
 /* ul */
 .wn-theme-rd ul {
-    list-style-type: decimal;
     margin-left: -0.5em !important;
 }
 
@@ -359,6 +358,10 @@
 
 .copy-btn:hover{
     color: var(--render-copy-btn-hover-color) !important;
+}
+
+.wn-theme-rd img[alt=w200] {
+    max-width: 200px !important;
 }
 
 .wn-theme-rd img[alt=w300] {
