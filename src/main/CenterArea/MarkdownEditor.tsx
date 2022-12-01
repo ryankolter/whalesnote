@@ -1,6 +1,7 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState, MouseEvent } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
+import { useDropzone } from 'react-dropzone';
 import { EditorView, ViewUpdate } from '@codemirror/view';
 import useCodeMirror from '../../lib/useCodeMirror';
 import useContextMenu from '../../lib/useContextMenu';
@@ -47,7 +48,7 @@ const MarkdownEditor: React.FC<{
     const scrollSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
     const scrollRatioSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
     const editorContainerRef = useRef<HTMLDivElement>(null);
-    const { xPos, yPos, menu } = useContextMenu(editorContainerRef);
+    const { xPos, yPos, menu, showMenu } = useContextMenu(editorContainerRef);
 
     const onDocChange = useCallback(
         async (new_value: string, vu: ViewUpdate) => {
@@ -329,6 +330,166 @@ const MarkdownEditor: React.FC<{
         };
     }, [handleKeyDown, handleScroll, handleMouseEnter, handleMouseLeave]);
 
+    const validImageFileType = useRef([
+        'jpeg',
+        'jpg',
+        'png',
+        'apng',
+        'webp',
+        'gif',
+        'avif',
+        'bmp',
+        'tif',
+        'tiff',
+        'svg',
+    ]);
+    const validImageMimeType = useRef([
+        'image/jpeg',
+        'image/png',
+        'image/apng',
+        'image/webp',
+        'image/gif',
+        'image/avif',
+        'image/bmp',
+        'image/tiff',
+        'image/svg+xml',
+    ]);
+
+    const openImagePath = useCallback(async (path: string) => {
+        await window.electronAPI.openFolder({ folder_path: path });
+    }, []);
+
+    const addMultizero = useCallback((num: number | string, count: number) => {
+        return String(num).padStart(count, '0');
+    }, []);
+
+    const generateTimeStamp = useCallback(() => {
+        const time = new Date();
+        const y = time.getFullYear();
+        const m = time.getMonth() + 1;
+        const d = time.getDate();
+        const h = time.getHours();
+        const mm = time.getMinutes();
+        const s = time.getSeconds();
+        const mi = time.getMilliseconds();
+
+        return (
+            y +
+            addMultizero(m, 2) +
+            addMultizero(d, 2) +
+            '_' +
+            addMultizero(h, 2) +
+            addMultizero(mm, 2) +
+            addMultizero(s, 2) +
+            addMultizero(mi, 3)
+        );
+    }, []);
+
+    const insertImageMdLink = useCallback(async (file_name_list: string[]) => {
+        const md_link_string = file_name_list
+            .map((file_name) => {
+                const md_link = `![w500](${file_name} "${file_name.substring(
+                    0,
+                    file_name.lastIndexOf('.')
+                )}")`;
+                return md_link;
+            })
+            .join('\n\n');
+
+        if (view.current) {
+            const from = view.current.state.selection.main.from;
+            const line = view.current.state.doc.lineAt(from);
+            const prefix = line && line.text ? '\n' : '';
+            const to = view.current.state.selection.main.to;
+            view.current.dispatch({
+                changes: {
+                    from: from,
+                    to: to,
+                    insert: prefix + md_link_string + '\n',
+                },
+            });
+            const new_head = from + (prefix ? 1 : 0) + md_link_string.length + 1;
+            view.current.dispatch({
+                selection: {
+                    anchor: new_head,
+                    head: new_head,
+                },
+            });
+        }
+    }, []);
+
+    const loadImages = useCallback(
+        async (paths: string[]) => {
+            const len = paths.length;
+            const timeStamp = generateTimeStamp();
+            const dest_file_name_list = [];
+            for (const [index, path] of paths.entries()) {
+                const dest_file_name =
+                    timeStamp +
+                    (len > 1 ? '_' + addMultizero(index, String(len).length) : '') +
+                    '.' +
+                    path.substring(path.lastIndexOf('.') + 1);
+                const result = await window.electronAPI.copy({
+                    src_file_path: path,
+                    dest_dir_path: curDataPath + '/images',
+                    dest_file_name: dest_file_name,
+                });
+                if (result) {
+                    dest_file_name_list.push(dest_file_name);
+                }
+            }
+            await insertImageMdLink(dest_file_name_list);
+        },
+        [addMultizero, generateTimeStamp, insertImageMdLink]
+    );
+
+    const handleLoadImage = useCallback(
+        async (e: MouseEvent<HTMLSpanElement>) => {
+            e.stopPropagation();
+            e.preventDefault();
+            showMenu(false);
+            const paths = await window.electronAPI.openSelectImagesDialog({
+                file_types: validImageFileType.current,
+            });
+            if (paths.length > 0) await loadImages(paths);
+        },
+        [loadImages, showMenu]
+    );
+
+    const handleZoneDrop = useCallback(
+        async (acceptedFiles: any) => {
+            const dest_file_name_list = [];
+            const len = acceptedFiles.length;
+            const timeStamp = generateTimeStamp();
+
+            for (const [index, file] of acceptedFiles.entries()) {
+                if (!validImageMimeType.current.includes(file.type)) {
+                    return;
+                }
+
+                const dest_file_name =
+                    timeStamp +
+                    (len > 1 ? '_' + addMultizero(index, String(len).length) : '') +
+                    '.' +
+                    file.name.split('.').pop().toLowerCase();
+
+                const result = await window.electronAPI.copy({
+                    src_file_path: file.path,
+                    dest_dir_path: curDataPath + '/images',
+                    dest_file_name: dest_file_name,
+                });
+
+                if (result) {
+                    dest_file_name_list.push(dest_file_name);
+                }
+            }
+            await insertImageMdLink(dest_file_name_list);
+        },
+        [curDataPath, addMultizero, generateTimeStamp, insertImageMdLink]
+    );
+
+    const { getRootProps } = useDropzone({ onDrop: handleZoneDrop, noClick: true, multiple: true });
+
     return (
         <MarkdownEditorContainer ref={editorContainerRef} fontSizeValue={editorFontSize}>
             {showEditorScrollPos && mdRenderState !== 'all' ? (
@@ -336,10 +497,14 @@ const MarkdownEditor: React.FC<{
             ) : (
                 <></>
             )}
-            <div
-                ref={editor}
-                className={`wn-theme-cm ${cursorInRenderFlag ? 'editor-smooth' : 'editor-auto'}`}
-            />
+            <EditorDragZone {...getRootProps()}>
+                <div
+                    ref={editor}
+                    className={`wn-theme-cm ${
+                        cursorInRenderFlag ? 'editor-smooth' : 'editor-auto'
+                    }`}
+                />
+            </EditorDragZone>
             {menu ? (
                 <MenuUl top={yPos} left={xPos}>
                     <MenuLi className="menu-li-color" onClick={() => copySelection()}>
@@ -350,6 +515,9 @@ const MarkdownEditor: React.FC<{
                     </MenuLi>
                     <MenuLi className="menu-li-color" onClick={() => pasteClipboard()}>
                         粘贴
+                    </MenuLi>
+                    <MenuLi className="menu-li-color" onClick={handleLoadImage}>
+                        插入图片
                     </MenuLi>
                 </MenuUl>
             ) : (
@@ -370,6 +538,11 @@ const MarkdownEditorContainer = styled.div(
         fontSize: props.fontSizeValue + 'px',
     })
 );
+
+const EditorDragZone = styled.div({
+    width: '100%',
+    height: '100%',
+});
 
 const LastScrollPos = styled.div(
     {

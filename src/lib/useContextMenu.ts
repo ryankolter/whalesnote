@@ -32,7 +32,7 @@ const useContextMenu = (outerRef: any) => {
         };
     }, [handleClick, handleContextMenu]);
 
-    return { xPos, yPos, menu };
+    return { xPos, yPos, menu, showMenu };
 };
 
 export default useContextMenu;

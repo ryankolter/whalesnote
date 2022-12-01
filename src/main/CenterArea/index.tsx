@@ -1,7 +1,8 @@
-import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useRef, useState, MouseEvent } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 import cryptoRandomString from 'crypto-random-string';
+import { useDropzone } from 'react-dropzone';
 
 import { useRecordValue } from '../../lib/useRecordValue';
 import MarkdownEditor from './MarkdownEditor';
@@ -225,6 +226,10 @@ const EditorPanel = styled.div(
         width: props.widthValue,
     })
 );
+
+const EditorDropZone = styled.div({
+    height: '100%',
+});
 
 const RenderPanel = styled.div(
     {

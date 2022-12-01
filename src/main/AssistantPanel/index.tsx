@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 
-import ImageSpace from './ImageSpace';
 import TrashList from './TrashList';
 
 const AssistantPanel: React.FC<{}> = ({}) => {
@@ -73,16 +72,6 @@ const AssistantPanel: React.FC<{}> = ({}) => {
                     </AssistantTab>
                     <AssistantTab
                         style={
-                            curAssistantPanelTab === 'image_space'
-                                ? { backgroundColor: 'var(--main-selected-bg-color)' }
-                                : {}
-                        }
-                        onClick={(e) => handleAssistantTabSwitch('image_space')}
-                    >
-                        图片空间
-                    </AssistantTab>
-                    <AssistantTab
-                        style={
                             curAssistantPanelTab === 'trash_list'
                                 ? { backgroundColor: 'var(--main-selected-bg-color)' }
                                 : {}
@@ -94,7 +83,6 @@ const AssistantPanel: React.FC<{}> = ({}) => {
                 </AssistantTabs>
                 <AssistantContent>
                     {curAssistantPanelTab == 'mobile_panel' ? <></> : <></>}
-                    {curAssistantPanelTab == 'image_space' ? <ImageSpace /> : <></>}
                     {curAssistantPanelTab == 'model_panel' ? <></> : <></>}
                     {curAssistantPanelTab == 'trash_list' ? <TrashList /> : <></>}
                 </AssistantContent>
@@ -156,7 +144,7 @@ const AssistantTabs = styled.div({
     alignItems: 'center',
     justifyContent: 'space-between',
     height: '32px',
-    margin: '13px 50px 13px 30px',
+    margin: '13px 70px 13px 50px',
 });
 
 const AssistantTab = styled.div({
