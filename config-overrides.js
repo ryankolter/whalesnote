@@ -1,5 +1,6 @@
 const { override } = require('customize-cra');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const WebpackObfuscator = require('webpack-obfuscator');
 const path = require('path');
 
 const ignoreWarnings = (value) => (config) => {
@@ -25,8 +26,22 @@ const bundleAnalyzerPlugin = (value) => (config, env) => {
     return config;
 };
 
+const WebpackObfuscatorPlugin = (value) => (config, env) => {
+    if (process.env.NODE_ENV === 'production') {
+        config.plugins = [
+            ...config.plugins,
+            new WebpackObfuscator({
+                rotateStringArray: true,
+            }),
+        ];
+    }
+
+    return config;
+};
+
 module.exports = override(
     ignoreWarnings([/Failed to parse source map/]),
     publicPathPlugin(),
-    bundleAnalyzerPlugin()
+    bundleAnalyzerPlugin(),
+    WebpackObfuscatorPlugin()
 );
