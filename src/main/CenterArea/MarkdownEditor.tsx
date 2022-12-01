@@ -20,8 +20,6 @@ const MarkdownEditor: React.FC<{
     setEditorScrollRatio,
     setRenderNoteStr,
 }) => {
-    console.log('editor render');
-
     const {
         blur,
         curDataPath,
@@ -181,7 +179,7 @@ const MarkdownEditor: React.FC<{
         }
 
         setShowEditorScrollPos(false);
-    }, [cursorHeadPos, topLinePos]);
+    }, [cursorHeadPos, topLinePos, setShowEditorScrollPos]);
 
     const copySelection = useCallback(() => {
         if (view.current) {
@@ -257,7 +255,7 @@ const MarkdownEditor: React.FC<{
                 }
             }
         },
-        [mdRenderState, showRepoPanel, autoScrollToLine]
+        [mdRenderState, platformName, showRepoPanel, autoScrollToLine]
     );
 
     const handleScroll = useCallback(
@@ -303,9 +301,10 @@ const MarkdownEditor: React.FC<{
             currentRepoKey,
             currentFolderKey,
             currentNoteKey,
+            cursorInEditor,
             setEditorScrollRatio,
             setShowEditorScrollPos,
-            cursorInEditor,
+            updateTopLinePos,
         ]
     );
 

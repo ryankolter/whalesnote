@@ -19,6 +19,7 @@ const createWindow = async () => {
         show: false,
         vibrancy: 'under-window',
         visualEffectState: 'active',
+        autoHideMenuBar: true,
         width: 1080,
         height: 720,
         minWidth: 800,
@@ -42,7 +43,7 @@ const createWindow = async () => {
         mainWindow.loadFile(path.join(__dirname, '/build/index.html'));
     } else {
         mainWindow.loadURL('http://localhost:3005');
-        //mainWindow.webContents.openDevTools();
+        mainWindow.webContents.openDevTools();
     }
 
     mainWindow.on('ready-to-show', () => {

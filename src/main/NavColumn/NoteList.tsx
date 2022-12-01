@@ -570,6 +570,8 @@ const NotesBottomFlexBox = styled.div({
     flex: '1',
     minHeight: '0',
     width: '100%',
+    boxSizing: 'border-box',
+    borderRight: '1px solid var(--main-border-color)',
 });
 
 const MenuUl = styled.ul(

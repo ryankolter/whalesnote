@@ -186,7 +186,6 @@ const initContext: {
 export const GlobalContext = createContext(initContext);
 
 export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
-    console.log('GlobalProvider render');
     const [
         data,
         curDataPath,
