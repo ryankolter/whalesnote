@@ -34,6 +34,8 @@ const createWindow = async () => {
         },
     });
 
+    mainWindow.setBackgroundColor('#2A2C34');
+
     mainWindow.webContents.setWindowOpenHandler(({ url }) => {
         shell.openExternal(url);
         return { action: 'deny' };
