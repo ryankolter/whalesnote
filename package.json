@@ -64,6 +64,7 @@
     "scripts": {
         "start": "cross-env PORT=3005 react-app-rewired start",
         "build": "rm -rf ./app/build && cross-env GENERATE_SOURCEMAP=false react-app-rewired build",
+        "stats": "cross-env STATS=server npm run start",
         "test": "react-app-rewired test",
         "prepare": "husky install"
     },

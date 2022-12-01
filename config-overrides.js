@@ -15,8 +15,13 @@ const publicPathPlugin = (value) => (config) => {
     return config;
 };
 
-const bundleAnalyzerPlugin = (value) => (config) => {
-    config.plugins = [...config.plugins, new BundleAnalyzerPlugin()];
+const bundleAnalyzerPlugin = (value) => (config, env) => {
+    config.plugins = [
+        ...config.plugins,
+        new BundleAnalyzerPlugin({
+            analyzerMode: process.env.STATS || 'disabled',
+        }),
+    ];
     return config;
 };
 
