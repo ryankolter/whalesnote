@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import { usePopUp } from '../../lib/usePopUp';
 import { AlertPopUp } from '../../components/AlertPopUp';
 
-const DataSpace: React.FC<{}> = ({}) => {
+const DataPage: React.FC<{}> = ({}) => {
     const {
         curDataPath,
         dataPathList,
@@ -41,7 +41,6 @@ const DataSpace: React.FC<{}> = ({}) => {
 
     const handleClick = useCallback(
         (event: MouseEvent) => {
-            event.preventDefault();
             if (pathUlRef && pathUlRef.current?.contains(event.target as Node)) {
                 setShowPathUl((showPathUl) => !showPathUl);
             } else {
@@ -154,7 +153,7 @@ const ChildPart = styled.div({
 });
 
 const PartTitle = styled.div({
-    fontSize: '18px',
+    fontSize: '15px',
     fontWeight: '500',
     marginBottom: '15px',
     paddingBottom: '4px',
@@ -287,20 +286,4 @@ const OpenDataPathBtn = styled.div({
     cursor: 'pointer',
 });
 
-const OperationList = styled.div({
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-});
-
-const OperationBtn = styled.div({
-    fontSize: '16px',
-    height: '26px',
-    lineHeight: '26px',
-    padding: '2px 14px',
-    borderRadius: '4px',
-    backgroundColor: '#3a404c',
-    cursor: 'pointer',
-});
-
-export default DataSpace;
+export default DataPage;

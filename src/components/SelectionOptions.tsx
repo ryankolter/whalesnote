@@ -13,7 +13,7 @@ export const SelectionOptions: React.FC<{
 
     const handleClick = useCallback(
         (event: MouseEvent) => {
-            event.preventDefault();
+            //event.preventDefault();
             if (selectionRef && selectionRef.current?.contains(event.target as Node)) {
                 setShowOptions((_showOptions) => !_showOptions);
             } else {
@@ -73,7 +73,7 @@ const SelectionContainer = styled.div({
 const Title = styled.div(
     {
         width: '160px',
-        fontSize: '15px',
+        fontSize: '14px',
     },
     (props: { optionHeight: number }) => ({
         height: props.optionHeight + 'px',
@@ -94,6 +94,7 @@ const CurrentOption = styled.div(
         display: ' flex',
         justifyContent: 'center',
         boxSizing: 'border-box',
+        fontSize: '14px',
         border: '1px solid var(--main-border-color)',
         backgroundColor: 'var(--main-bg-color)',
     },
@@ -138,6 +139,7 @@ const Options = styled.div({
     right: '0',
     padding: '5px 0',
     boxSizing: 'border-box',
+    fontSize: '14px',
     border: '1px solid var(--main-border-color)',
     backgroundColor: 'var(--main-bg-color)',
     zIndex: '4000',

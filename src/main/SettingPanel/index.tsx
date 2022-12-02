@@ -2,8 +2,9 @@ import styled from '@emotion/styled';
 import { useCallback, useContext } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 
-import GlobalSetting from './GlobalSetting';
-import DataSpace from './DataSpace';
+import InterfacePage from './InterfacePage';
+import DataPage from './DataPage';
+import AboutPage from './AboutPage';
 
 const SettingPanel: React.FC<{}> = ({}) => {
     const { curSettingPanelTab, setCurSettingPanelTab } = useContext(GlobalContext);
@@ -31,28 +32,39 @@ const SettingPanel: React.FC<{}> = ({}) => {
                 <SettingTabs>
                     <SettingTab
                         style={
-                            curSettingPanelTab === 'data_space'
+                            curSettingPanelTab === 'data_page'
                                 ? { backgroundColor: 'var(--main-selected-bg-color)' }
                                 : {}
                         }
-                        onClick={(e) => handleSettingTabSwitch('data_space')}
+                        onClick={(e) => handleSettingTabSwitch('data_page')}
                     >
                         数据
                     </SettingTab>
                     <SettingTab
                         style={
-                            curSettingPanelTab === 'global_setting'
+                            curSettingPanelTab === 'interface_page'
                                 ? { backgroundColor: 'var(--main-selected-bg-color)' }
                                 : {}
                         }
-                        onClick={(e) => handleSettingTabSwitch('global_setting')}
+                        onClick={(e) => handleSettingTabSwitch('interface_page')}
                     >
                         界面
                     </SettingTab>
+                    <SettingTab
+                        style={
+                            curSettingPanelTab === 'about_page'
+                                ? { backgroundColor: 'var(--main-selected-bg-color)' }
+                                : {}
+                        }
+                        onClick={(e) => handleSettingTabSwitch('about_page')}
+                    >
+                        关于
+                    </SettingTab>
                 </SettingTabs>
                 <SettingContent>
-                    {curSettingPanelTab == 'global_setting' ? <GlobalSetting /> : <></>}
-                    {curSettingPanelTab == 'data_space' ? <DataSpace /> : <></>}
+                    {curSettingPanelTab == 'interface_page' ? <InterfacePage /> : <></>}
+                    {curSettingPanelTab == 'data_page' ? <DataPage /> : <></>}
+                    {curSettingPanelTab == 'about_page' ? <AboutPage /> : <></>}
                 </SettingContent>
             </SettingBox>
         </SettingPanelContainer>

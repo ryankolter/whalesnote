@@ -10,7 +10,7 @@ const SwitchMode: React.FC<{
 
     const handleClick = useCallback(
         (event: MouseEvent) => {
-            event.preventDefault();
+            //event.preventDefault();
             if (switchModeBtnRef && switchModeBtnRef.current?.contains(event.target as Node)) {
                 setShowSwitchMdRenderState((_showSwitchModePanel) => !_showSwitchModePanel);
             } else {

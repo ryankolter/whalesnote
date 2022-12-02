@@ -42,7 +42,7 @@ const ExportNoteFunc: React.FC<{}> = ({}) => {
 
     const handleClick = useCallback(
         (event: MouseEvent) => {
-            event.preventDefault();
+            //event.preventDefault();
             if (
                 switchExportNoteFuncBtnRef &&
                 switchExportNoteFuncBtnRef.current?.contains(event.target as Node)

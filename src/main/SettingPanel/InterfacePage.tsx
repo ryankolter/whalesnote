@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 
 import { SelectionOptions } from '../../components/SelectionOptions';
 
-const GlobalSetting: React.FC<{}> = ({}) => {
+const InterfacePage: React.FC<{}> = ({}) => {
     const {
         theme,
         setTheme,
@@ -99,7 +99,7 @@ const ChildPart = styled.div({
 });
 
 const PartTitle = styled.div({
-    fontSize: '18px',
+    fontSize: '15px',
     fontWeight: '500',
     marginBottom: '15px',
     paddingBottom: '4px',
@@ -107,13 +107,7 @@ const PartTitle = styled.div({
 });
 
 const PartContent = styled.div({
-    padding: '0 30px 0 30px',
+    padding: '0 40px 0 40px',
 });
 
-const SelectArea = styled.div({
-    display: 'flex',
-    justifyContent: 'space-between',
-    padding: '0 50px',
-});
-
-export default GlobalSetting;
+export default InterfacePage;

@@ -168,7 +168,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
 
     const handleClick = useCallback(
         (event: MouseEvent) => {
-            event.preventDefault();
+            //event.preventDefault();
             if (!searchBarRef.current?.contains(event.target as Node)) {
                 setShowSearchPanel(false);
             }
