@@ -26,6 +26,8 @@ import SvgIcon from '../../components/SvgIcon';
 import exportIcon from '../../resources/icon/sideBar/exportIcon.svg';
 
 import { notes } from '../../lib/notes';
+import { usePopUp } from '../../lib/usePopUp';
+import { AlertPopUp } from '../../components/AlertPopUp';
 
 const ExportPanel: React.FC<{}> = ({}) => {
     const {
@@ -40,6 +42,7 @@ const ExportPanel: React.FC<{}> = ({}) => {
     const [showSwitchExportPanel, setShowSwitchExportPanel] = useState(false);
 
     const switchExportPanelBtnRef = useRef<HTMLDivElement>(null);
+    const [exportFinishPopUp, setExportFinishPopUp, exportFinishMask] = usePopUp(500);
 
     const handleClick = useCallback(
         (event: MouseEvent) => {
@@ -294,6 +297,14 @@ const ExportPanel: React.FC<{}> = ({}) => {
             ) : (
                 <></>
             )}
+            <AlertPopUp
+                popupState={exportFinishPopUp}
+                maskState={exportFinishMask}
+                content="导出成功"
+                onConfirm={() => {
+                    setExportFinishPopUp(false);
+                }}
+            ></AlertPopUp>
         </ExportPanelContainer>
     );
 };

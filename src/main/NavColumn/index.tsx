@@ -127,34 +127,40 @@ const NavColumn: React.FC<Record<string, unknown>> = ({}) => {
                 }}
                 draggable="true"
             ></ResizeFolderWidth>
-            <SearchBarAndNote width={noteWidth}>
-                <SearchBarBox>
-                    <SearchBar />
-                </SearchBarBox>
-                <NoteBox>
-                    <NoteList />
-                </NoteBox>
-            </SearchBarAndNote>
-            <ResizeNoteWidth
-                left={folderWidth + noteWidth}
-                onDragStart={(e) => {
-                    resizeNoteOffsetX.current = e.pageX - noteWidth;
-                }}
-                onDrag={(e) => {
-                    if (Math.abs(e.pageX - lastNotePageX.current) < 5) return;
-                    lastNotePageX.current = e.pageX;
-                    if (e.pageX > 0) {
-                        const newNoteWidth = e.pageX - resizeNoteOffsetX.current;
-                        if (newNoteWidth > 100 && newNoteWidth <= 600) {
-                            setNoteWidth(newNoteWidth);
-                        }
-                    }
-                }}
-                onDragEnd={(e) => {
-                    window.localStorage.setItem('note_width', noteWidth.toString());
-                }}
-                draggable="true"
-            ></ResizeNoteWidth>
+            {whalenote.repos_key && whalenote.repos_key.length > 0 ? (
+                <>
+                    <SearchBarAndNote width={noteWidth}>
+                        <SearchBarBox>
+                            <SearchBar />
+                        </SearchBarBox>
+                        <NoteBox>
+                            <NoteList />
+                        </NoteBox>
+                    </SearchBarAndNote>
+                    <ResizeNoteWidth
+                        left={folderWidth + noteWidth}
+                        onDragStart={(e) => {
+                            resizeNoteOffsetX.current = e.pageX - noteWidth;
+                        }}
+                        onDrag={(e) => {
+                            if (Math.abs(e.pageX - lastNotePageX.current) < 5) return;
+                            lastNotePageX.current = e.pageX;
+                            if (e.pageX > 0) {
+                                const newNoteWidth = e.pageX - resizeNoteOffsetX.current;
+                                if (newNoteWidth > 100 && newNoteWidth <= 600) {
+                                    setNoteWidth(newNoteWidth);
+                                }
+                            }
+                        }}
+                        onDragEnd={(e) => {
+                            window.localStorage.setItem('note_width', noteWidth.toString());
+                        }}
+                        draggable="true"
+                    ></ResizeNoteWidth>
+                </>
+            ) : (
+                <></>
+            )}
         </LeftPanel>
     );
 };

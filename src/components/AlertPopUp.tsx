@@ -1,16 +1,14 @@
-import { KeyboardEvent } from 'react';
+import { useCallback, useEffect, KeyboardEvent } from 'react';
 import styled from '@emotion/styled';
 import { AlertPopUpBox } from './AlertPopUpBox';
 
 export const AlertPopUp: React.FC<{
     popupState: boolean;
     maskState: boolean;
-    title: string;
     content: string;
-    onCancel: () => void;
+    onCancel?: () => void;
     onConfirm: () => void;
-    onKeyDown: (e: Event) => void;
-}> = ({ popupState, maskState, title, content, onCancel, onConfirm, onKeyDown }) => {
+}> = ({ popupState, maskState, content, onCancel, onConfirm }) => {
     return (
         <AlertPopUpContainer>
             <div
@@ -19,11 +17,9 @@ export const AlertPopUp: React.FC<{
             ></div>
             {popupState ? (
                 <AlertPopUpBox
-                    title={title}
                     content={content}
                     onCancel={onCancel}
                     onConfirm={onConfirm}
-                    onKeyDown={onKeyDown}
                 ></AlertPopUpBox>
             ) : (
                 <></>

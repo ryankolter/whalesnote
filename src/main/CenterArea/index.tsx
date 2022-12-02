@@ -17,6 +17,7 @@ const CenterArea: React.FC<{}> = ({}) => {
         currentFolderKey,
         currentNoteKey,
         platformName,
+        whalenote,
         showKeySelect,
         showRepoPanel,
         showSearchPanel,
@@ -150,48 +151,56 @@ const CenterArea: React.FC<{}> = ({}) => {
 
     return (
         <CenterAreaContainer>
-            <ToolBar mdRenderState={mdRenderState} setMdRenderState={setMdRenderState} />
-            <MarkdownArea
-                onClick={() => {
-                    setShowRepoPanel(false);
-                    setShowSearchPanel(false);
-                }}
-            >
-                {/* <TipTapEditor
-                    setRenderNoteStr={setRenderNoteStr}
-                    setEditorScrollRatio={setEditorScrollRatio}
-                    setRenderScrollRatio={setRenderScrollRatio}
-                /> */}
-                {mdRenderState === 'hidden' || mdRenderState === 'half' ? (
-                    <EditorPanel widthValue={editorWidth}>
-                        <MarkdownEditor
-                            cursorInRenderFlag={cursorInRenderFlag}
-                            mdRenderState={mdRenderState}
-                            renderScrollRatio={renderScrollRatio}
-                            setEditorScrollRatio={setEditorScrollRatio}
+            {whalenote.repos_key && whalenote.repos_key.length > 0 ? (
+                <>
+                    <ToolBar mdRenderState={mdRenderState} setMdRenderState={setMdRenderState} />
+                    <MarkdownArea
+                        onClick={() => {
+                            setShowRepoPanel(false);
+                            setShowSearchPanel(false);
+                        }}
+                    >
+                        {/* <TipTapEditor
                             setRenderNoteStr={setRenderNoteStr}
-                        />
-                    </EditorPanel>
-                ) : (
-                    <></>
-                )}
-                {mdRenderState === 'all' || mdRenderState === 'half' ? (
-                    <RenderPanel leftValue={renderLeft} widthValue={renderWidth}>
-                        <MarkdownRender
-                            cursorInRenderFlag={cursorInRenderFlag}
-                            setCursorInRenderFlag={setCursorInRenderFlag}
-                            mdRenderState={mdRenderState}
-                            editorScrollRatio={editorScrollRatio}
+                            setEditorScrollRatio={setEditorScrollRatio}
                             setRenderScrollRatio={setRenderScrollRatio}
-                            renderScrollTop={renderScrollTop}
-                            updateRenderScrollTop={updateRenderScrollTop}
-                            renderNoteStr={renderNoteStr}
-                        />
-                    </RenderPanel>
-                ) : (
-                    <></>
-                )}
-            </MarkdownArea>
+                        /> */}
+                        {mdRenderState === 'hidden' || mdRenderState === 'half' ? (
+                            <EditorPanel widthValue={editorWidth}>
+                                <MarkdownEditor
+                                    cursorInRenderFlag={cursorInRenderFlag}
+                                    mdRenderState={mdRenderState}
+                                    renderScrollRatio={renderScrollRatio}
+                                    setEditorScrollRatio={setEditorScrollRatio}
+                                    setRenderNoteStr={setRenderNoteStr}
+                                />
+                            </EditorPanel>
+                        ) : (
+                            <></>
+                        )}
+                        {mdRenderState === 'all' || mdRenderState === 'half' ? (
+                            <RenderPanel leftValue={renderLeft} widthValue={renderWidth}>
+                                <MarkdownRender
+                                    cursorInRenderFlag={cursorInRenderFlag}
+                                    setCursorInRenderFlag={setCursorInRenderFlag}
+                                    mdRenderState={mdRenderState}
+                                    editorScrollRatio={editorScrollRatio}
+                                    setRenderScrollRatio={setRenderScrollRatio}
+                                    renderScrollTop={renderScrollTop}
+                                    updateRenderScrollTop={updateRenderScrollTop}
+                                    renderNoteStr={renderNoteStr}
+                                />
+                            </RenderPanel>
+                        ) : (
+                            <></>
+                        )}
+                    </MarkdownArea>
+                </>
+            ) : (
+                <EmptyRepoTips>
+                    <TipsWord>检测到资料库为空，请点击左下角添加</TipsWord>
+                </EmptyRepoTips>
+            )}
         </CenterAreaContainer>
     );
 };
@@ -241,5 +250,15 @@ const RenderPanel = styled.div(
         width: props.widthValue,
     })
 );
+
+const EmptyRepoTips = styled.div({
+    height: '100%',
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+});
+
+const TipsWord = styled.div({});
 
 export default CenterArea;

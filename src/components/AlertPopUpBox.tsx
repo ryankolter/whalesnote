@@ -1,25 +1,34 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import styled from '@emotion/styled';
 
 export const AlertPopUpBox: React.FC<{
-    title: string;
     content: string;
-    onCancel: () => void;
+    onCancel?: () => void;
     onConfirm: () => void;
-    onKeyDown: (e: Event) => void;
-}> = ({ title, content, onCancel, onConfirm, onKeyDown }) => {
+}> = ({ content, onCancel, onConfirm }) => {
+    const handleKeyDown = useCallback(
+        (e: any) => {
+            if (e.key === 'Enter' && onConfirm) {
+                onConfirm();
+            } else if (e.key === 'Escape' && onCancel) {
+                onCancel();
+            }
+        },
+        [onCancel, onConfirm]
+    );
+
     useEffect(() => {
-        document.addEventListener('keydown', onKeyDown, true);
+        document.addEventListener('keydown', handleKeyDown, true);
         return () => {
-            document.removeEventListener('keydown', onKeyDown, true);
+            document.removeEventListener('keydown', handleKeyDown, true);
         };
-    }, [onKeyDown]);
+    }, [handleKeyDown]);
 
     return (
         <AlertBox>
             <AlertContent>{content}</AlertContent>
             <Operation>
-                <CancelBtn onClick={() => onCancel()}>取消</CancelBtn>
+                {onCancel ? <CancelBtn onClick={() => onCancel()}>取消</CancelBtn> : <></>}
                 <ConfirmBtn onClick={() => onConfirm()}>确认</ConfirmBtn>
             </Operation>
         </AlertBox>

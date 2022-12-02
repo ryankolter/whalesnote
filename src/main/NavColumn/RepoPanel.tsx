@@ -240,18 +240,6 @@ const RepoPanel: React.FC<{}> = ({}) => {
         }
     }, [curDataPath, currentRepoKey, setDeletePopUp, switchRepoInPanel]);
 
-    const handleDeleteRepoKeyDown = useCallback(
-        (e: any) => {
-            e.stopPropagation();
-            if (e.key === 'Escape') {
-                setDeletePopUp(false);
-            } else if (e.key === 'Enter') {
-                deleteRepoConfirm();
-            }
-        },
-        [deleteRepoConfirm, setDeletePopUp]
-    );
-
     useEffect(() => {
         whalenote.repos_key
             .filter((key) => whalenote && whalenote.repos_obj && whalenote.repos_obj[key])
@@ -617,7 +605,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
                                             className="menu-li-color"
                                             onClick={() => setDeletePopUp(true)}
                                         >
-                                            删除仓库
+                                            删除资料库
                                         </MenuLi>
                                     </MenuUl>
                                 ) : (
@@ -657,7 +645,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
                                 {whalenote.repos_key.filter(
                                     (key) =>
                                         whalenote && whalenote.repos_obj && whalenote.repos_obj[key]
-                                ).length == 1 ? (
+                                ).length <= 1 ? (
                                     <AddReposTips>
                                         <div>点击按钮</div>
                                         <div>添加新资料库</div>
@@ -694,8 +682,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
             <AlertPopUp
                 popupState={deletePopup}
                 maskState={deleteMask}
-                title="提示"
-                content={`即将删除仓库「${
+                content={`即将删除资料库「${
                     whalenote &&
                     whalenote.repos_obj &&
                     currentRepoKey &&
@@ -705,7 +692,6 @@ const RepoPanel: React.FC<{}> = ({}) => {
                 }」内所有笔记，不可撤销(但内容可在废纸篓找回)`}
                 onCancel={() => setDeletePopUp(false)}
                 onConfirm={deleteRepoConfirm}
-                onKeyDown={handleDeleteRepoKeyDown}
             ></AlertPopUp>
             <InputPopUp
                 popupState={renamePopup}

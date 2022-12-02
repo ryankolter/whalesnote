@@ -11,22 +11,17 @@ import { indentUnit } from '@codemirror/language';
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
 import { languages } from '@codemirror/language-data';
 
-import useContextMenu from '../../lib/useContextMenu';
+import { usePopUp } from '../../lib/usePopUp';
+import { AlertPopUp } from '../../components/AlertPopUp';
 
 const TrashList: React.FC<{}> = ({}) => {
     const { curDataPath } = useContext(GlobalContext);
-
     const editor = useRef<HTMLDivElement>(null);
     const view = useRef<EditorView>();
     const noteScrollRef = useRef<HTMLDivElement>(null);
-
     const trash = useRef({});
     const [curTrashKey, setCurTrashKey] = useState('---');
-
-    const outerRef = useRef(null);
-    const { xPos, yPos, menu } = useContextMenu(outerRef);
-
-    const fullDeleteNote = useCallback((trash_key: string) => {}, []);
+    const [emptyPopUp, setEmptyPopUp, emptyMask] = usePopUp(500);
 
     const handleEmptyTrash = useCallback(async () => {
         const result = await window.electronAPI.remove({
@@ -38,6 +33,11 @@ const TrashList: React.FC<{}> = ({}) => {
             trash.current = {};
         }
     }, [curDataPath, setCurTrashKey]);
+
+    const emptyTrashListConfirm = useCallback(() => {
+        handleEmptyTrash();
+        setEmptyPopUp(false);
+    }, [handleEmptyTrash, setEmptyPopUp]);
 
     useEffect(() => {
         (async () => {
@@ -117,7 +117,7 @@ const TrashList: React.FC<{}> = ({}) => {
                     <EmptyTrash>
                         <EmptyTrashBtn
                             onClick={() => {
-                                handleEmptyTrash();
+                                setEmptyPopUp(true);
                             }}
                         >
                             <div>清空</div>
@@ -126,7 +126,7 @@ const TrashList: React.FC<{}> = ({}) => {
                 </PartTitle>
             </ChildPart>
             <NotesScroll ref={noteScrollRef}>
-                <Notes ref={outerRef}>
+                <Notes>
                     {Object.keys(trash.current)
                         ?.reverse()
                         .map((trash_key: string) => {
@@ -150,18 +150,6 @@ const TrashList: React.FC<{}> = ({}) => {
                                 </NoteItem>
                             );
                         })}
-                    {menu && curTrashKey ? (
-                        <MenuUl top={yPos} left={xPos}>
-                            <MenuLi
-                                className="menu-li-color"
-                                onClick={() => fullDeleteNote(curTrashKey)}
-                            >
-                                彻底删除
-                            </MenuLi>
-                        </MenuUl>
-                    ) : (
-                        <></>
-                    )}
                 </Notes>
             </NotesScroll>
             <CodeMirrorContainer
@@ -169,6 +157,13 @@ const TrashList: React.FC<{}> = ({}) => {
             >
                 <div ref={editor} className={'wn-theme-cm'} />
             </CodeMirrorContainer>
+            <AlertPopUp
+                popupState={emptyPopUp}
+                maskState={emptyMask}
+                content="即将清空废纸篓"
+                onCancel={() => setEmptyPopUp(false)}
+                onConfirm={emptyTrashListConfirm}
+            ></AlertPopUp>
         </NoteListContainer>
     );
 };
@@ -269,40 +264,6 @@ const NoteItem = styled.div(
     `
     &:hover {
         color: var(--main-text-hover-color);
-    }
-`
-);
-
-const MenuUl = styled.ul(
-    {
-        listStyleType: 'none',
-        position: 'fixed',
-        padding: '4px',
-        borderRadius: '5px',
-        zIndex: '4000',
-        border: '1px solid var(--menu-border-color)',
-        color: 'var(--menu-text-color)',
-        backgroundColor: 'var(--menu-bg-color)',
-    },
-    (props: { top: string; left: string }) => ({
-        top: props.top,
-        left: props.left,
-    })
-);
-
-const MenuLi = styled.li(
-    {
-        padding: '0 10px',
-        fontSize: '13px',
-        fontWeight: '500',
-        lineHeight: '22px',
-        letterSpacing: '1px',
-        cursor: 'pointer',
-    },
-    `
-    &:hover {
-        border-radius: 4px;
-        background-color: var(--menu-hover-color);
     }
 `
 );

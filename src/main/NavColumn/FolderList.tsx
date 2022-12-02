@@ -184,17 +184,6 @@ const FolderList: React.FC<{}> = ({}) => {
         }
     }, [curDataPath, whalenote, currentRepoKey, currentFolderKey, switchFolder, setDeletePopUp]);
 
-    const handleDeleteFolderKeyDown = useCallback(
-        (e: any) => {
-            if (e.key === 'Enter') {
-                deleteFolderConfirm();
-            } else if (e.key === 'Escape') {
-                setDeletePopUp(false);
-            }
-        },
-        [deleteFolderConfirm, setDeletePopUp]
-    );
-
     // part4 : scroll folder
     const preFolderPage = useCallback(() => {
         if (innerRef && innerRef.current) {
@@ -544,7 +533,6 @@ const FolderList: React.FC<{}> = ({}) => {
             <AlertPopUp
                 popupState={deletePopup}
                 maskState={deleteMask}
-                title="提示"
                 content={`即将删除文件夹「${
                     folders_obj && currentFolderKey && folders_obj[currentFolderKey]
                         ? folders_obj[currentFolderKey].folder_name
@@ -552,7 +540,6 @@ const FolderList: React.FC<{}> = ({}) => {
                 }」内所有笔记，不可撤销(但内容可在废纸篓找回)`}
                 onCancel={() => setDeletePopUp(false)}
                 onConfirm={deleteFolderConfirm}
-                onKeyDown={handleDeleteFolderKeyDown}
             ></AlertPopUp>
             <InputPopUp
                 popupState={renamePopup}

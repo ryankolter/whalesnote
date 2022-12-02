@@ -2,7 +2,6 @@ import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 
-import WaitingMaskStatic from '../../components/WaitingMaskStatic';
 import { usePopUp } from '../../lib/usePopUp';
 import { AlertPopUp } from '../../components/AlertPopUp';
 
@@ -39,17 +38,6 @@ const DataSpace: React.FC<{}> = ({}) => {
         removeDataPathFromList(removeDataSpacePath);
         setRemovePopUp(false);
     }, [removeDataPathFromList, removeDataSpacePath]);
-
-    const handleRemoveDataSpaceKeyDown = useCallback(
-        (e: any) => {
-            if (e.key === 'Enter') {
-                removeDataSpaceConfirm();
-            } else if (e.key === 'Escape') {
-                setRemovePopUp(false);
-            }
-        },
-        [removeDataSpaceConfirm, setRemovePopUp]
-    );
 
     const handleClick = useCallback(
         (event: MouseEvent) => {
@@ -137,11 +125,9 @@ const DataSpace: React.FC<{}> = ({}) => {
                 <AlertPopUp
                     popupState={removePopUp}
                     maskState={removeMask}
-                    title="提示"
                     content={`即将移除数据目录\n${removeDataSpacePath}(不会删除目录内容)`}
                     onCancel={() => setRemovePopUp(false)}
                     onConfirm={removeDataSpaceConfirm}
-                    onKeyDown={handleRemoveDataSpaceKeyDown}
                 ></AlertPopUp>
             </ChildPart>
             {/* <ChildPart>
