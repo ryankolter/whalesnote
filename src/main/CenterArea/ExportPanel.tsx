@@ -160,8 +160,9 @@ const ExportPanel: React.FC<{}> = ({}) => {
                 file_path: path,
                 str: outerHtml,
             });
+            setExportFinishPopUp(true);
         },
-        [print_str, theme]
+        [print_str, theme, setExportFinishPopUp]
     );
 
     const saveNoteToMd = useCallback(
@@ -170,8 +171,9 @@ const ExportPanel: React.FC<{}> = ({}) => {
                 file_path: path,
                 str: print_str,
             });
+            setExportFinishPopUp(true);
         },
-        [print_str]
+        [print_str, setExportFinishPopUp]
     );
 
     const ExportNote = useCallback(
@@ -244,8 +246,9 @@ const ExportPanel: React.FC<{}> = ({}) => {
                     str: outerHtml,
                 });
             }
+            setExportFinishPopUp(true);
         },
-        [whalenote, currentRepoKey, currentFolderKey, theme]
+        [whalenote, currentRepoKey, currentFolderKey, theme, setExportFinishPopUp]
     );
 
     const ExportFolder = useCallback(
