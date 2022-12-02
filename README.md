@@ -25,11 +25,10 @@ npm run electron
 
 <br>
 
-[question]what is the benefit of two directory's structure?
+Q: What is the benefit of two directory's structure?
 
-<br>
 
-[answer]By seperating app/node_modules from node_modules and building the js bundle file into app directory, we can minimize the packaging size of electron using electron-builder.
+A: By seperating app/node_modules from node_modules and building the js bundle file into app directory, we can minimize the packaging size of electron using electron-builder.
 
 <br>
 <br>
