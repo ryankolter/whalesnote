@@ -1,4 +1,4 @@
-import { useReducer, useRef, useMemo, useCallback } from 'react';
+import { useReducer, useRef, useCallback } from 'react';
 import produce from 'immer';
 import { historyTypes } from '../commonType';
 

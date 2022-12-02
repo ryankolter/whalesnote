@@ -1,11 +1,10 @@
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
-
 import { SearchResult } from 'minisearch';
+
 import useSearch from '../../lib/useSearch';
 import WaitingMaskStatic from '../../components/WaitingMaskStatic';
-import searchIcon from '../../resources/icon/searchIcon.svg';
 
 const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
     const {

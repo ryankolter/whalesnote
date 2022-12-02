@@ -1,4 +1,3 @@
-import { useCallback, useEffect, KeyboardEvent } from 'react';
 import styled from '@emotion/styled';
 import { AlertPopUpBox } from './AlertPopUpBox';
 

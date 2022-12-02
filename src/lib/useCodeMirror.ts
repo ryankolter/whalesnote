@@ -1,5 +1,4 @@
 import { MutableRefObject, useCallback, useEffect, useMemo, useRef } from 'react';
-
 import { basicSetup } from 'codemirror';
 import { EditorState, StateEffect } from '@codemirror/state';
 import { EditorView, keymap, ViewUpdate } from '@codemirror/view';

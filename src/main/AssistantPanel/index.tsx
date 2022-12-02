@@ -1,6 +1,6 @@
-import styled from '@emotion/styled';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
+import styled from '@emotion/styled';
 
 import TrashList from './TrashList';
 

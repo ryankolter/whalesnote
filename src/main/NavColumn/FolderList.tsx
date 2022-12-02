@@ -2,7 +2,6 @@ import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'r
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 import cryptoRandomString from 'crypto-random-string';
-
 import {
     DndContext,
     MouseSensor,
@@ -21,10 +20,8 @@ import { AlertPopUp } from '../../components/AlertPopUp';
 import { InputPopUp } from '../../components/InputPopUp';
 import { usePopUp } from '../../lib/usePopUp';
 import useContextMenu from '../../lib/useContextMenu';
-
 import categoryIcon from '../../resources/icon/categoryIcon.svg';
 import folderIcon from '../../resources/icon/folderIcon.svg';
-import newFolderIcon from '../../resources/icon/newFolderIcon.svg';
 
 const FolderList: React.FC<{}> = ({}) => {
     const {
@@ -35,7 +32,6 @@ const FolderList: React.FC<{}> = ({}) => {
         platformName,
         showKeySelect,
         whalenote,
-        theme,
         changeNotesAfterNew,
         deleteFolder,
         manualFocus,

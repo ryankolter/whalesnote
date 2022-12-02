@@ -3,7 +3,6 @@ import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 import cryptoRandomString from 'crypto-random-string';
 import ClipboardJS from 'clipboard';
-
 import markdownIt from 'markdown-it';
 // import hljs from 'highlight.js/lib/common';
 import { lowlight } from 'lowlight';

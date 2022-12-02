@@ -3,10 +3,11 @@ import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 import { useDropzone } from 'react-dropzone';
 import { EditorView, ViewUpdate } from '@codemirror/view';
+
 import useCodeMirror from '../../lib/useCodeMirror';
 import useContextMenu from '../../lib/useContextMenu';
 import useEditorPosition from '../../lib/useEditorPosition';
-import { notes, updateNote } from '../../lib/notes';
+import { updateNote } from '../../lib/notes';
 
 const MarkdownEditor: React.FC<{
     cursorInRenderFlag: boolean;

@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 const SwitchMode: React.FC<{
     mdRenderState: string;
