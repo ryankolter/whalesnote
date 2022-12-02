@@ -26,6 +26,7 @@ const bundleAnalyzerPlugin = (value) => (config, env) => {
     return config;
 };
 
+//using obfuscator when execute "npm run build"
 const WebpackObfuscatorPlugin = (value) => (config, env) => {
     if (process.env.NODE_ENV === 'production') {
         config.plugins = [
@@ -42,6 +43,5 @@ const WebpackObfuscatorPlugin = (value) => (config, env) => {
 module.exports = override(
     ignoreWarnings([/Failed to parse source map/]),
     publicPathPlugin(),
-    bundleAnalyzerPlugin(),
-    WebpackObfuscatorPlugin()
+    bundleAnalyzerPlugin()
 );
