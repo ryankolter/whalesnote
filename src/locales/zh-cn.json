@@ -1,0 +1,11 @@
+{
+    "nav_column": {
+        "category": "分类",
+        "search": "搜索"
+    },
+    "center_area": {
+        "edit": "编辑",
+        "preview": "预览",
+        "double": "双排"
+    }
+}

@@ -399,6 +399,10 @@ const processIPC = () => {
         event.returnValue = nativeTheme.shouldUseDarkColors;
     });
 
+    ipcMain.on('query:language', async (event) => {
+        event.returnValue = app.getLocale();
+    });
+
     ipcMain.handle('plugin:loadNodejiebaDict', async (event) => {
         let dictFilePath = app.isPackaged
             ? path.join(__dirname, '../extraResources/dict')

@@ -23,6 +23,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     openParentFolder: (params) => ipcRenderer.invoke('dialog:openParentFolder', params),
     openFolder: (params) => ipcRenderer.invoke('dialog:openFolder', params),
     shouldUseDarkMode: (params) => ipcRenderer.sendSync('query:shouldUseDarkMode', params),
+    getLanguage: (params) => ipcRenderer.sendSync('query:language', params),
     loadNodejiebaDict: (params) => ipcRenderer.invoke('plugin:loadNodejiebaDict', params),
     nodejieba: (params) => ipcRenderer.sendSync('plugin:nodejieba', params),
 });

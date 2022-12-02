@@ -1,10 +1,12 @@
 import styled from '@emotion/styled';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const SwitchMode: React.FC<{
     mdRenderState: string;
     setMdRenderState: React.Dispatch<React.SetStateAction<string>>;
 }> = ({ mdRenderState, setMdRenderState }) => {
+    const { t } = useTranslation();
     const switchModeBtnRef = useRef<HTMLDivElement>(null);
     const [showSwitchMdRenderState, setShowSwitchMdRenderState] = useState(false);
 
@@ -31,9 +33,21 @@ const SwitchMode: React.FC<{
         <SwitchModePanelContainer>
             <SwitchModeBtn ref={switchModeBtnRef}>
                 <ModeNameTag>
-                    {mdRenderState === 'hidden' ? <ModeName>编辑</ModeName> : <></>}
-                    {mdRenderState === 'half' ? <ModeName>双列</ModeName> : <></>}
-                    {mdRenderState === 'all' ? <ModeName>预览</ModeName> : <></>}
+                    {mdRenderState === 'hidden' ? (
+                        <ModeName>{t('center_area.edit')}</ModeName>
+                    ) : (
+                        <></>
+                    )}
+                    {mdRenderState === 'half' ? (
+                        <ModeName>{t('center_area.double')}</ModeName>
+                    ) : (
+                        <></>
+                    )}
+                    {mdRenderState === 'all' ? (
+                        <ModeName>{t('center_area.preview')}</ModeName>
+                    ) : (
+                        <></>
+                    )}
                 </ModeNameTag>
                 <Triangle></Triangle>
             </SwitchModeBtn>
@@ -46,7 +60,7 @@ const SwitchMode: React.FC<{
                                 setShowSwitchMdRenderState(false);
                             }}
                         >
-                            编辑
+                            {t('center_area.edit')}
                         </StateOption>
                     ) : (
                         <></>
@@ -58,7 +72,7 @@ const SwitchMode: React.FC<{
                                 setShowSwitchMdRenderState(false);
                             }}
                         >
-                            双列
+                            {t('center_area.double')}
                         </StateOption>
                     ) : (
                         <></>
@@ -70,7 +84,7 @@ const SwitchMode: React.FC<{
                                 setShowSwitchMdRenderState(false);
                             }}
                         >
-                            预览
+                            {t('center_area.preview')}
                         </StateOption>
                     ) : (
                         <></>
@@ -94,7 +108,7 @@ const SwitchModePanelContainer = styled.div({
 const SwitchModeBtn = styled.div({
     display: 'flex',
     alignItems: 'center',
-    width: '80px',
+    width: '90px',
     boxSizing: 'border-box',
     height: '26px',
     margin: '0 5px',
@@ -132,7 +146,7 @@ const SwitchMdRenderState = styled.div({
     top: '26px',
     left: '50%',
     transform: 'translateX(-50%)',
-    width: '80px',
+    width: '90px',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',

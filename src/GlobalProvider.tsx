@@ -14,6 +14,8 @@ import useDataList from './lib/useDataList';
 import useHistory from './lib/useHistory';
 import useWhalenote from './lib/useWhalenote';
 
+import i18next from './i18n';
+
 import { fetchNotesInfolder, changeNotesAfterNew, initNotes } from './lib/notes';
 
 const initContext: {
@@ -114,6 +116,8 @@ const initContext: {
     setCurAssistantPanelTab: Dispatch<SetStateAction<string>>;
     theme: any;
     setTheme: Dispatch<SetStateAction<any>>;
+    language: any;
+    setLanguage: Dispatch<SetStateAction<any>>;
     editorFontSize: string;
     setEditorFontSize: Dispatch<SetStateAction<string>>;
     renderFontSize: string;
@@ -178,6 +182,8 @@ const initContext: {
     setCurAssistantPanelTab: () => {},
     theme: '',
     setTheme: () => {},
+    language: '',
+    setLanguage: () => {},
     editorFontSize: '15',
     setEditorFontSize: () => {},
     renderFontSize: '15',
@@ -238,6 +244,19 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
             return window.electronAPI.shouldUseDarkMode() ? 'dark' : 'light';
         }
     });
+
+    const [language, setLanguage] = useState(() => {
+        return (
+            window.localStorage.getItem('whalenote_language') || window.electronAPI.getLanguage()
+        );
+    });
+
+    useEffect(() => {
+        console.log(language);
+        i18next.changeLanguage(language).then(() => {
+            console.log('111');
+        });
+    }, [language]);
 
     const [editorFontSize, setEditorFontSize] = useState<string>(
         window.localStorage.getItem('editor_font_size') || '15'
@@ -412,6 +431,8 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
                 setRenderFontSize,
                 theme,
                 setTheme,
+                language,
+                setLanguage,
             }}
         >
             {children}

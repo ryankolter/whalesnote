@@ -1,0 +1,11 @@
+{
+    "nav_column": {
+        "category": "category",
+        "search": "search"
+    },
+    "center_area": {
+        "edit": "edit",
+        "preview": "preview",
+        "double": "double"
+    }
+}

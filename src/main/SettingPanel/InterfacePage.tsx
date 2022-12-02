@@ -8,6 +8,8 @@ const InterfacePage: React.FC<{}> = ({}) => {
     const {
         theme,
         setTheme,
+        language,
+        setLanguage,
         editorFontSize,
         renderFontSize,
         setEditorFontSize,
@@ -15,6 +17,7 @@ const InterfacePage: React.FC<{}> = ({}) => {
     } = useContext(GlobalContext);
 
     const themeList = useMemo(() => ['light', 'dark'], []);
+    const languageList = useMemo(() => ['zh-CN', 'en-US'], []);
     const editorFontSizeList = useMemo(() => ['12', '13', '14', '15', '16', '17', '18'], []);
     const renderFontSizeList = useMemo(() => ['12', '13', '14', '15', '16', '17', '18'], []);
 
@@ -31,6 +34,24 @@ const InterfacePage: React.FC<{}> = ({}) => {
             return '浅色';
         } else if (option === 'dark') {
             return '深色';
+        } else {
+            return '';
+        }
+    }, []);
+
+    const changeLanguage = useCallback(
+        (value: string) => {
+            setLanguage(value);
+            window.localStorage.setItem('whalenote_language', value);
+        },
+        [setEditorFontSize]
+    );
+
+    const translateLanguage = useCallback((option: string) => {
+        if (option === 'zh-CN') {
+            return '简体中文';
+        } else if (option === 'en-US') {
+            return 'English';
         } else {
             return '';
         }
@@ -63,6 +84,13 @@ const InterfacePage: React.FC<{}> = ({}) => {
                         optionList={themeList}
                         handleOption={changeTheme}
                         translateFunc={translateTheme}
+                    />
+                    <SelectionOptions
+                        title="语言"
+                        currentOption={language}
+                        optionList={languageList}
+                        handleOption={changeLanguage}
+                        translateFunc={translateLanguage}
                     />
                 </PartContent>
             </ChildPart>

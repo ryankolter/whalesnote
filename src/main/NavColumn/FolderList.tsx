@@ -13,6 +13,7 @@ import {
 } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { restrictToFirstScrollableAncestor, restrictToVerticalAxis } from '@dnd-kit/modifiers';
+import { useTranslation } from 'react-i18next';
 
 import { Sortable } from '../../components/Sortable';
 import { TextInput } from '../../components/TextInput';
@@ -44,6 +45,7 @@ const FolderList: React.FC<{}> = ({}) => {
         switchNote,
         setShowRepoPanel,
     } = useContext(GlobalContext);
+    const { t } = useTranslation();
 
     const folders_key = useMemo(() => {
         return whalenote.repos_obj ? whalenote.repos_obj[currentRepoKey]?.folders_key : undefined;
@@ -335,7 +337,7 @@ const FolderList: React.FC<{}> = ({}) => {
                 <CategoryIcon>
                     <CategoryIconImg src={categoryIcon} alt="" />
                 </CategoryIcon>
-                <FolderTopTitle>分类</FolderTopTitle>
+                <FolderTopTitle>{t('nav_column.category')}</FolderTopTitle>
             </FolderTopBar>
             {folders_key && folders_obj ? (
                 <DndContext

@@ -2,6 +2,7 @@ import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 import { SearchResult } from 'minisearch';
+import { useTranslation } from 'react-i18next';
 
 import useSearch from '../../lib/useSearch';
 import WaitingMaskStatic from '../../components/WaitingMaskStatic';
@@ -17,6 +18,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
         setShowSearchResultHighlight,
         switchNote,
     } = useContext(GlobalContext);
+    const { t } = useTranslation();
 
     const searchBarRef = useRef<HTMLDivElement>(null);
     const searchInputRef = useRef<HTMLInputElement>(null);
@@ -211,7 +213,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                     ref={searchInputRef}
                     onChange={handleSearchInputChange}
                     onFocus={handleSearchInputFocus}
-                    placeholder="搜索"
+                    placeholder={t('nav_column.search') || ''}
                     readOnly={showLoadingSearch}
                 />
             </Search>
