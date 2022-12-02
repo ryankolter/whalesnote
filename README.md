@@ -1,5 +1,6 @@
 
 <div align="center">
+  ![icon](https://user-images.githubusercontent.com/44566054/205326811-3a3ac7a6-a0fd-4ae5-9ac9-646352959264.png)
   <h1>Whalenote (desktop version)</h1>
   <p>A cross-platform desktop note-taking software. Easily classify and store tens of thousands of notes.</p>
 </div>
