@@ -444,13 +444,6 @@ const RepoPanel: React.FC<{}> = ({}) => {
 
     return (
         <RepoListContainer>
-            {/* <CloseRepoListBtn
-                onClick={() => {
-                    setShowRepoPanel(false);
-                }}
-            >
-                x
-            </CloseRepoListBtn> */}
             <ReposScroll ref={repoScrollRef}>
                 <Repos ref={outerRef}>
                     {whalenote.repos_key ? (
