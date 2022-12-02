@@ -6,6 +6,17 @@
 
 <br>
 
+## Why Whalenote？
+
+1. Privacy first: local open source software that is not connected to the Internet, giving you complete control over the data.
+2. Super-capacity second brain: three-level directory structure can store at least 100 repositories * 50 categories * 60 notes = 300,000 notes !!!
+3. Only takes one second to open: no matter how many notes you have, because it use segmentation based search system which won't load all notes at beginning.
+4. Have memory: it remembers where the document left off last time.
+5. Perfect shortcut support: like vimium C, you can quickly switch between notes with the keyboard( Activate with ctrl/command + , ).
+6. Export support: allow batch export by notes or categories, with txt, html, md formats.
+7. Markdown support: Provide preview mode and two-column mode.
+8. Two mode support: light or dark, as you like.
+
 ## Development
 
 ```bash
@@ -26,7 +37,6 @@ npm run electron
 <br>
 
 Q: What is the benefit of two directory's structure?
-
 
 A: By seperating app/node_modules from node_modules and building the js bundle file into app directory, we can minimize the packaging size of electron using electron-builder.
 
