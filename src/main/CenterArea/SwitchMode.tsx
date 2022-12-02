@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
-const SwitchModePanel: React.FC<{
+const SwitchMode: React.FC<{
     mdRenderState: string;
     setMdRenderState: React.Dispatch<React.SetStateAction<string>>;
 }> = ({ mdRenderState, setMdRenderState }) => {
@@ -152,4 +152,4 @@ const StateOption = styled.div({
     lineHeight: '18px',
 });
 
-export default SwitchModePanel;
+export default SwitchMode;

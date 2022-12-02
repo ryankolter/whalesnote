@@ -1,7 +1,6 @@
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
-
 import markdownIt from 'markdown-it';
 import hljs from 'highlight.js/lib/common';
 /* eslint-disable */
@@ -22,14 +21,11 @@ import markwodnItReplaceLink from 'markdown-it-replace-link';
 /* eslint-enable */
 import markdownItTable from 'markdown-it-multimd-table';
 
-import SvgIcon from '../../components/SvgIcon';
-import exportIcon from '../../resources/icon/sideBar/exportIcon.svg';
-
 import { notes } from '../../lib/notes';
 import { usePopUp } from '../../lib/usePopUp';
 import { AlertPopUp } from '../../components/AlertPopUp';
 
-const ExportPanel: React.FC<{}> = ({}) => {
+const ExportNoteFunc: React.FC<{}> = ({}) => {
     const {
         curDataPath,
         currentRepoKey,
@@ -39,24 +35,26 @@ const ExportPanel: React.FC<{}> = ({}) => {
         theme,
         whalenote,
     } = useContext(GlobalContext);
-    const [showSwitchExportPanel, setShowSwitchExportPanel] = useState(false);
+    const [showSwitchExportNoteFunc, setShowSwitchExportNoteFunc] = useState(false);
 
-    const switchExportPanelBtnRef = useRef<HTMLDivElement>(null);
+    const switchExportNoteFuncBtnRef = useRef<HTMLDivElement>(null);
     const [exportFinishPopUp, setExportFinishPopUp, exportFinishMask] = usePopUp(500);
 
     const handleClick = useCallback(
         (event: MouseEvent) => {
             event.preventDefault();
             if (
-                switchExportPanelBtnRef &&
-                switchExportPanelBtnRef.current?.contains(event.target as Node)
+                switchExportNoteFuncBtnRef &&
+                switchExportNoteFuncBtnRef.current?.contains(event.target as Node)
             ) {
-                setShowSwitchExportPanel((_showSwitchExportPanel) => !_showSwitchExportPanel);
+                setShowSwitchExportNoteFunc(
+                    (_showSwitchExportNoteFunc) => !_showSwitchExportNoteFunc
+                );
             } else {
-                setShowSwitchExportPanel(false);
+                setShowSwitchExportNoteFunc(false);
             }
         },
-        [setShowSwitchExportPanel]
+        [setShowSwitchExportNoteFunc]
     );
 
     useEffect(() => {
@@ -176,7 +174,7 @@ const ExportPanel: React.FC<{}> = ({}) => {
         [print_str, setExportFinishPopUp]
     );
 
-    const ExportNote = useCallback(
+    const ExportNoteFunc = useCallback(
         async (type: string) => {
             switch (type) {
                 case 'html':
@@ -251,7 +249,7 @@ const ExportPanel: React.FC<{}> = ({}) => {
         [whalenote, currentRepoKey, currentFolderKey, theme, setExportFinishPopUp]
     );
 
-    const ExportFolder = useCallback(
+    const ExportNotesInFolderFunc = useCallback(
         async (type: string) => {
             switch (type) {
                 case 'html':
@@ -266,37 +264,37 @@ const ExportPanel: React.FC<{}> = ({}) => {
     );
 
     return (
-        <ExportPanelContainer>
-            <SwitchExportPanelBtnBox ref={switchExportPanelBtnRef}>
-                <SwitchExportPanelBtn className="ri-external-link-line"></SwitchExportPanelBtn>
-            </SwitchExportPanelBtnBox>
-            {showSwitchExportPanel ? (
-                <SwitchExportPanel>
+        <ExportNoteFuncContainer>
+            <SwitchExportNoteFuncBtnBox ref={switchExportNoteFuncBtnRef}>
+                <SwitchExportNoteFuncBtn className="ri-external-link-line"></SwitchExportNoteFuncBtn>
+            </SwitchExportNoteFuncBtnBox>
+            {showSwitchExportNoteFunc ? (
+                <SwitchExportNoteFunc>
                     <ModeOption
                         onClick={() => {
-                            setShowSwitchExportPanel(false);
-                            ExportNote('html');
+                            setShowSwitchExportNoteFunc(false);
+                            ExportNoteFunc('html');
                         }}
                     >
                         导出笔记 [.html]
                     </ModeOption>
                     <ModeOption
                         onClick={() => {
-                            setShowSwitchExportPanel(false);
-                            ExportNote('md');
+                            setShowSwitchExportNoteFunc(false);
+                            ExportNoteFunc('md');
                         }}
                     >
                         导出笔记 [.md]
                     </ModeOption>
                     <ModeOption
                         onClick={() => {
-                            setShowSwitchExportPanel(false);
-                            ExportFolder('html');
+                            setShowSwitchExportNoteFunc(false);
+                            ExportNotesInFolderFunc('html');
                         }}
                     >
                         导出分类 [.html]
                     </ModeOption>
-                </SwitchExportPanel>
+                </SwitchExportNoteFunc>
             ) : (
                 <></>
             )}
@@ -308,32 +306,33 @@ const ExportPanel: React.FC<{}> = ({}) => {
                     setExportFinishPopUp(false);
                 }}
             ></AlertPopUp>
-        </ExportPanelContainer>
+        </ExportNoteFuncContainer>
     );
 };
 
-const ExportPanelContainer = styled.div({
+const ExportNoteFuncContainer = styled.div({
     position: 'relative',
     display: 'flex',
     flexDirection: 'column',
     height: '100%',
 });
 
-const SwitchExportPanelBtnBox = styled.div({
+const SwitchExportNoteFuncBtnBox = styled.div({
     height: '100%',
     display: 'flex',
     alignItems: 'center',
     margin: '0 10px',
 });
 
-const SwitchExportPanelBtn = styled.div({
+const SwitchExportNoteFuncBtn = styled.div({
     fontSize: '23px',
     width: '22px',
     height: '22px',
     color: 'var(--main-icon-color)',
+    cursor: 'pointer',
 });
 
-const SwitchExportPanel = styled.div({
+const SwitchExportNoteFunc = styled.div({
     position: 'absolute',
     top: '31px',
     left: '50%',
@@ -357,4 +356,4 @@ const ModeOption = styled.div({
     padding: '5px',
 });
 
-export default ExportPanel;
+export default ExportNoteFunc;

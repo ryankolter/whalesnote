@@ -137,6 +137,7 @@ const FloatCloseBtn = styled.div({
     fontSize: '22px',
     color: 'var(--main-icon-color)',
     transform: 'rotate(180deg)',
+    cursor: 'pointer',
 });
 
 const AssistantTabs = styled.div({

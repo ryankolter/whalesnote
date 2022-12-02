@@ -1,11 +1,9 @@
-import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useContext } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 
-import SwitchModePanel from './SwitchModePanel';
-import ExportPanel from './ExportPanel';
-import SvgIcon from '../../components/SvgIcon';
-import settingPanelIcon from '../../resources/icon/sideBar/settingPanelIcon.svg';
+import SwitchMode from './SwitchMode';
+import ExportNote from './ExportNote';
 
 const ToolBar: React.FC<{
     mdRenderState: string;
@@ -33,10 +31,7 @@ const ToolBar: React.FC<{
     return (
         <TopRowContainer>
             <BreakCrumb>
-                <SwitchModePanel
-                    mdRenderState={mdRenderState}
-                    setMdRenderState={setMdRenderState}
-                />
+                <SwitchMode mdRenderState={mdRenderState} setMdRenderState={setMdRenderState} />
             </BreakCrumb>
             <SettingPanelBtnBox>
                 <SettingPanelBtn
@@ -44,7 +39,7 @@ const ToolBar: React.FC<{
                     onClick={() => handleOpenSettingClick()}
                 ></SettingPanelBtn>
             </SettingPanelBtnBox>
-            <ExportPanel />
+            <ExportNote />
             <AssistantPanelBtnBox>
                 {curAssistantPanelTab === 'none' ? (
                     <AssistantPanelBtn
@@ -95,6 +90,7 @@ const SettingPanelBtn = styled.div({
     fontSize: '22px',
     color: 'var(--main-icon-color)',
     transform: 'rotate(180deg)',
+    cursor: 'pointer',
 });
 
 const AssistantPanelBtnBox = styled.div({
@@ -107,6 +103,7 @@ const AssistantPanelBtn = styled.div({
     fontSize: '22px',
     color: 'var(--main-icon-color)',
     transform: 'rotate(180deg)',
+    cursor: 'pointer',
 });
 
 export default ToolBar;
