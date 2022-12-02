@@ -63,4 +63,6 @@ A: By seperating app/node_modules from node_modules and building the js bundle f
 
 <br>
 
+## License
 
+Look at the [LICENSE.md](./LICENSE.md) for details
