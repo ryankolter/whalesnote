@@ -6,54 +6,27 @@
 
 <br>
 
-## Install
+## Development
 
-- in root directory
+```bash
+git clone git@github.com/ryankolter/whalenote_desktop.git
+npm install
+npm run start
+```
+- the web server will run on port 3005
 
-  ```bash
-  npm i
-  ```
+- then open another terminal
 
-- in app directory
-
-  ```bash
-  npm i
-  ```
-
-<br>
-
-## development
-
-- in root directory
-
-  ```bash
-  npm run start
-  ```
-  - the web server will run on port 3005
-
-- in app directory
-  ```bash
-  npm run electron
-  ```
+```bash
+cd app
+npm install
+npm run electron
+```
 
 <br>
 
-## building && packaging
-
--  in root directory
-
-  ```bash
-  npm run build
-  ```
-
--  in app directory
-
-  ```bash
-  // for windows
-  npm run dist-win64
-  // for mac
-  npm run dist-mac
-  ```
+[question]what is the benefit of two directory's structure?
+[answer]By seperating app/node_modules from node_modules and building the js bundle file into app directory, we can minimize the packaging size of electron using electron-builder.
 
 <br>
 <br>
