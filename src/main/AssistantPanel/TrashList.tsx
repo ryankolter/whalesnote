@@ -27,7 +27,7 @@ const TrashList: React.FC<{}> = ({}) => {
 
     const handleEmptyTrash = useCallback(async () => {
         const result = await window.electronAPI.remove({
-            file_path: `${curDataPath}/trash.cson`,
+            file_path: `${curDataPath}/trash.json`,
         });
 
         if (result) {
@@ -43,8 +43,8 @@ const TrashList: React.FC<{}> = ({}) => {
 
     useEffect(() => {
         (async () => {
-            const read_trash = await window.electronAPI.readCsonSync({
-                file_path: `${curDataPath}/trash.cson`,
+            const read_trash = await window.electronAPI.readJsonSync({
+                file_path: `${curDataPath}/trash.json`,
             });
 
             trash.current = read_trash ? read_trash : {};

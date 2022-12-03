@@ -1,7 +1,5 @@
 const { app, Menu, BrowserWindow, ipcMain, dialog, nativeTheme, shell } = require('electron');
-
 const path = require('path');
-const CSON = require('cson');
 const fse = require('fs-extra');
 const nodejieba = require('nodejieba');
 
@@ -224,17 +222,17 @@ const processIPC = () => {
         return default_data_Path;
     });
 
-    ipcMain.handle('operate:writeCson', async (event, { file_path, obj }) => {
-        console.log('writeCson: ' + file_path);
-        fse.ensureFileSync(file_path);
-        fse.writeFileSync(file_path, CSON.createCSONString(obj));
-        return true;
-    });
-
     ipcMain.handle('operate:writeJson', async (event, { file_path, obj }) => {
         console.log('writeJson: ' + file_path);
         fse.ensureFileSync(file_path);
-        fse.writeFileSync(file_path, CSON.createJSONString(obj));
+        fse.writeFileSync(file_path, JSON.stringify(obj, null, 2));
+        return true;
+    });
+
+    ipcMain.handle('operate:writeMd', async (event, { file_path, str }) => {
+        console.log('writeMd: ' + file_path);
+        fse.ensureFileSync(file_path);
+        fse.writeFileSync(file_path, str);
         return true;
     });
 
@@ -251,23 +249,13 @@ const processIPC = () => {
         return true;
     });
 
-    ipcMain.handle('operate:readCsonSync', async (event, { file_path }) => {
-        console.log('readCsonSync: ' + file_path);
-        if (!fse.pathExistsSync(file_path)) {
-            return false;
-        } else {
-            let cson_str = fse.readFileSync(file_path);
-            return CSON.parseCSONString(cson_str);
-        }
-    });
-
     ipcMain.handle('operate:readJsonSync', async (event, { file_path }) => {
         console.log('readJsonSync: ' + file_path);
         if (!fse.pathExistsSync(file_path)) {
             return false;
         } else {
             let json_str = fse.readFileSync(file_path);
-            return CSON.parseJSONString(json_str);
+            return JSON.parse(json_str);
         }
     });
 
@@ -305,7 +293,7 @@ const processIPC = () => {
                 if (err) {
                     reject(false);
                 } else {
-                    resolve(CSON.parseJSONString(json_str));
+                    resolve(JSON.parse(json_str));
                 }
             });
         });

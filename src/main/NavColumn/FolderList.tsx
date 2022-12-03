@@ -113,16 +113,11 @@ const FolderList: React.FC<{}> = ({}) => {
 
             await switchNote(currentRepoKey, folder_key, note_key);
 
-            const note_info = {
-                createAt: new Date(),
-                updatedAt: new Date(),
-                type: 'markdown',
-                content: '',
-            };
+            const note_content = '';
 
-            await window.electronAPI.writeCson({
-                file_path: `${curDataPath}/${currentRepoKey}/${folder_key}/${note_key}.cson`,
-                obj: note_info,
+            await window.electronAPI.writeMd({
+                file_path: `${curDataPath}/${currentRepoKey}/${folder_key}/${note_key}.md`,
+                str: note_content,
             });
 
             setNewFolderKey('');

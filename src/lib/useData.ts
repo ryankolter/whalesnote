@@ -105,11 +105,11 @@ const useData = () => {
                 if (folder_info && folder_info.notes_obj) {
                     notes[init_repo_key][fetch_folder_key] = {};
                     for (const note_key of Object.keys(folder_info.notes_obj)) {
-                        const note_info = await window.electronAPI.readCsonSync({
-                            file_path: `${data_path}/${init_repo_key}/${fetch_folder_key}/${note_key}.cson`,
+                        const note_content = await window.electronAPI.readMdSync({
+                            file_path: `${data_path}/${init_repo_key}/${fetch_folder_key}/${note_key}.md`,
                         });
-                        if (note_info) {
-                            notes[init_repo_key][fetch_folder_key][note_key] = note_info.content;
+                        if (note_content) {
+                            notes[init_repo_key][fetch_folder_key][note_key] = note_content;
                         }
                     }
                 }
@@ -173,15 +173,10 @@ const useData = () => {
                                 notes[repo_key][folder_key] &&
                                 notes[repo_key][folder_key][note_key]
                             ) {
-                                const note_info = {
-                                    createAt: new Date(),
-                                    updatedAt: new Date(),
-                                    type: 'markdown',
-                                    content: notes[repo_key][folder_key][note_key],
-                                };
-                                await window.electronAPI.writeCson({
-                                    file_path: `${data_path}/${repo_key}/${folder_key}/${note_key}.cson`,
-                                    obj: note_info,
+                                const note_content = notes[repo_key][folder_key][note_key];
+                                await window.electronAPI.writeMd({
+                                    file_path: `${data_path}/${repo_key}/${folder_key}/${note_key}.md`,
+                                    str: note_content,
                                 });
                             }
                         }

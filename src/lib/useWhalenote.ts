@@ -183,8 +183,8 @@ const useWhalenote = () => {
     );
 
     const deleteRepo = useCallback(async (cur_data_path: string, repo_key: string) => {
-        let trash = await window.electronAPI.readCsonSync({
-            file_path: `${cur_data_path}/trash.cson`,
+        let trash = await window.electronAPI.readJsonSync({
+            file_path: `${cur_data_path}/trash.json`,
         });
         trash = trash ? trash : {};
 
@@ -196,17 +196,17 @@ const useWhalenote = () => {
                 file_path: `${cur_data_path}/${repo_key}/${folder_key}/folder_info.json`,
             });
             for (const note_key of folder_info.notes_key) {
-                const note_info = await window.electronAPI.readCsonSync({
-                    file_path: `${cur_data_path}/${repo_key}/${folder_key}/${note_key}.cson`,
+                const note_content = await window.electronAPI.readMdSync({
+                    file_path: `${cur_data_path}/${repo_key}/${folder_key}/${note_key}.md`,
                 });
 
                 trash[
                     `${repo_key}-${folder_key}-${note_key}-${folder_info.notes_obj[note_key]?.title}`
-                ] = note_info.content;
+                ] = note_content;
             }
         }
-        await window.electronAPI.writeCson({
-            file_path: `${cur_data_path}/trash.cson`,
+        await window.electronAPI.writeJson({
+            file_path: `${cur_data_path}/trash.json`,
             obj: trash,
         });
 
@@ -348,23 +348,23 @@ const useWhalenote = () => {
                 file_path: `${cur_data_path}/${repo_key}/${folder_key}/folder_info.json`,
             });
 
-            let trash = await window.electronAPI.readCsonSync({
-                file_path: `${cur_data_path}/trash.cson`,
+            let trash = await window.electronAPI.readJsonSync({
+                file_path: `${cur_data_path}/trash.json`,
             });
 
             trash = trash ? trash : {};
 
             for (const note_key of folder_info.notes_key) {
-                const note_info = await window.electronAPI.readCsonSync({
-                    file_path: `${cur_data_path}/${repo_key}/${folder_key}/${note_key}.cson`,
+                const note_content = await window.electronAPI.readMdSync({
+                    file_path: `${cur_data_path}/${repo_key}/${folder_key}/${note_key}.md`,
                 });
                 trash[
                     `${repo_key}-${folder_key}-${note_key}-${folder_info.notes_obj[note_key].title}`
-                ] = note_info.content;
+                ] = note_content;
             }
 
-            await window.electronAPI.writeCson({
-                file_path: `${cur_data_path}/trash.cson`,
+            await window.electronAPI.writeJson({
+                file_path: `${cur_data_path}/trash.json`,
                 obj: trash,
             });
 
@@ -434,16 +434,11 @@ const useWhalenote = () => {
                 obj: folder_info,
             });
 
-            const note_info = {
-                createAt: new Date(),
-                updatedAt: new Date(),
-                type: 'markdown',
-                content: '',
-            };
+            const note_content = '';
 
-            await window.electronAPI.writeCson({
-                file_path: `${cur_data_path}/${repo_key}/${folder_key}/${new_note_key}.cson`,
-                obj: note_info,
+            await window.electronAPI.writeMd({
+                file_path: `${cur_data_path}/${repo_key}/${folder_key}/${new_note_key}.md`,
+                str: note_content,
             });
 
             dispatch({
@@ -556,22 +551,22 @@ const useWhalenote = () => {
                 file_path: `${cur_data_path}/${repo_key}/${folder_key}/folder_info.json`,
             });
 
-            const note_info = await window.electronAPI.readCsonSync({
-                file_path: `${cur_data_path}/${repo_key}/${folder_key}/${note_key}.cson`,
+            const note_content = await window.electronAPI.readMdSync({
+                file_path: `${cur_data_path}/${repo_key}/${folder_key}/${note_key}.md`,
             });
 
-            let trash = await window.electronAPI.readCsonSync({
-                file_path: `${cur_data_path}/trash.cson`,
+            let trash = await window.electronAPI.readJsonSync({
+                file_path: `${cur_data_path}/trash.json`,
             });
 
             trash = trash ? trash : {};
 
             trash[
                 `${repo_key}-${folder_key}-${note_key}-${folder_info.notes_obj[note_key].title}`
-            ] = note_info.content;
+            ] = note_content;
 
-            await window.electronAPI.writeCson({
-                file_path: `${cur_data_path}/trash.cson`,
+            await window.electronAPI.writeJson({
+                file_path: `${cur_data_path}/trash.json`,
                 obj: trash,
             });
 
@@ -601,7 +596,7 @@ const useWhalenote = () => {
             });
 
             await window.electronAPI.remove({
-                file_path: `${cur_data_path}/${repo_key}/${folder_key}/${note_key}.cson`,
+                file_path: `${cur_data_path}/${repo_key}/${folder_key}/${note_key}.md`,
             });
 
             dispatch({

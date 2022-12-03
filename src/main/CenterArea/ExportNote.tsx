@@ -167,7 +167,7 @@ const ExportNoteFunc: React.FC<{}> = ({}) => {
 
     const saveNoteToMd = useCallback(
         async (path: string) => {
-            await window.electronAPI.writeStr({
+            await window.electronAPI.writeMd({
                 file_path: path,
                 str: print_str,
             });

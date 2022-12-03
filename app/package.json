@@ -53,10 +53,9 @@
         }
     },
     "dependencies": {
-        "string-width": "^5.1.2",
-        "cson": "^7.20.0",
         "fs-extra": "^10.1.0",
-        "nodejieba": "^2.6.0"
+        "nodejieba": "^2.6.0",
+        "string-width": "^5.1.2"
     },
     "scripts": {
         "electron": "electron .",

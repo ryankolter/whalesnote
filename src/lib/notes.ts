@@ -21,11 +21,11 @@ export const fetchNotesInAllRepo = async (
                     for (const note_key of whalenote.repos_obj[repo_key].folders_obj[folder_key]
                         .notes_key) {
                         if (notes[repo_key][folder_key][note_key] === undefined) {
-                            const note_info = await window.electronAPI.readCsonSync({
-                                file_path: `${data_path}/${repo_key}/${folder_key}/${note_key}.cson`,
+                            const note_content = await window.electronAPI.readMdSync({
+                                file_path: `${data_path}/${repo_key}/${folder_key}/${note_key}.md`,
                             });
-                            if (note_info) {
-                                notes[repo_key][folder_key][note_key] = note_info.content;
+                            if (note_content) {
+                                notes[repo_key][folder_key][note_key] = note_content;
                             }
                         }
                     }
@@ -49,11 +49,11 @@ export const fetchNotesInfolder = async (
             if (folder_info && folder_info.notes_obj) {
                 notes[repo_key][folder_key] = {};
                 for (const note_key of Object.keys(folder_info.notes_obj)) {
-                    const note_info = await window.electronAPI.readCsonSync({
-                        file_path: `${data_path}/${repo_key}/${folder_key}/${note_key}.cson`,
+                    const note_content = await window.electronAPI.readMdSync({
+                        file_path: `${data_path}/${repo_key}/${folder_key}/${note_key}.md`,
                     });
-                    if (note_info) {
-                        notes[repo_key][folder_key][note_key] = note_info.content;
+                    if (note_content) {
+                        notes[repo_key][folder_key][note_key] = note_content;
                     }
                 }
             }
@@ -87,10 +87,10 @@ export const changeNotesAfterNew = async (
         }
         case 'note': {
             const { data_path, repo_key, folder_key, note_key } = obj;
-            const note_info = await window.electronAPI.readCsonSync({
-                file_path: `${data_path}/${repo_key}/${folder_key}/${note_key}.cson`,
+            const note_content = await window.electronAPI.readMdSync({
+                file_path: `${data_path}/${repo_key}/${folder_key}/${note_key}.md`,
             });
-            notes[repo_key][folder_key][note_key] = note_info.content;
+            notes[repo_key][folder_key][note_key] = note_content;
             break;
         }
     }
@@ -106,29 +106,11 @@ const saveTask = async (
     folder_key: string,
     note_key: string
 ) => {
-    const note_info = await window.electronAPI.readCsonSync({
-        file_path: `${data_path}/${repo_key}/${folder_key}/${note_key}.cson`,
+    const new_note_content = notes[repo_key][folder_key][note_key];
+    await window.electronAPI.writeMd({
+        file_path: `${data_path}/${repo_key}/${folder_key}/${note_key}.md`,
+        str: new_note_content,
     });
-
-    if (note_info) {
-        note_info.content = notes[repo_key][folder_key][note_key];
-        note_info.updatedAt = new Date();
-        await window.electronAPI.writeCson({
-            file_path: `${data_path}/${repo_key}/${folder_key}/${note_key}.cson`,
-            obj: note_info,
-        });
-    } else {
-        const new_note_info = {
-            createAt: new Date(),
-            updatedAt: new Date(),
-            type: 'markdown',
-            content: notes[repo_key][folder_key][note_key],
-        };
-        await window.electronAPI.writeCson({
-            file_path: `${data_path}/${repo_key}/${folder_key}/${note_key}.cson`,
-            obj: new_note_info,
-        });
-    }
 };
 
 const addSaveTask = (
