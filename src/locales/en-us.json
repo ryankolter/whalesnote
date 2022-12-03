@@ -77,7 +77,7 @@
             "mode": {
                 "title": "Mode",
                 "theme": "Theme Color",
-                "dark": "Dark",
+                "dark": "dark",
                 "light": "light",
                 "language": "Language"
             },
