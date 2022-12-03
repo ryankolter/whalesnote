@@ -1,5 +1,6 @@
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
+import { useTranslation } from 'react-i18next';
 import styled from '@emotion/styled';
 import markdownIt from 'markdown-it';
 import hljs from 'highlight.js/lib/common';
@@ -35,6 +36,7 @@ const ExportNoteFunc: React.FC<{}> = ({}) => {
         theme,
         whalenote,
     } = useContext(GlobalContext);
+    const { t } = useTranslation();
     const [showSwitchExportNoteFunc, setShowSwitchExportNoteFunc] = useState(false);
 
     const switchExportNoteFuncBtnRef = useRef<HTMLDivElement>(null);
@@ -219,7 +221,7 @@ const ExportNoteFunc: React.FC<{}> = ({}) => {
                         ? whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]
                               ?.notes_obj[note_key]?.title || ''
                         : '';
-                if (title === '' || title === '空笔记') title = note_key;
+                if (title === '' || title === t('nav_column.empty_note')) title = note_key;
                 const content = notes[currentRepoKey][currentFolderKey][note_key];
                 const bodyContent = mdPrint.current.render(content);
                 const outerHtml = `<!DOCTYPE html><html style="height: 100%">

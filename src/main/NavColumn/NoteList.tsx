@@ -1,5 +1,6 @@
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
+import { useTranslation } from 'react-i18next';
 import styled from '@emotion/styled';
 import cryptoRandomString from 'crypto-random-string';
 import {
@@ -39,6 +40,7 @@ const NoteList: React.FC<{}> = ({}) => {
         switchNote,
         setShowRepoPanel,
     } = useContext(GlobalContext);
+    const { t } = useTranslation();
 
     const notes_key = useMemo(() => {
         return whalenote.repos_obj &&
@@ -75,7 +77,7 @@ const NoteList: React.FC<{}> = ({}) => {
             length: 12,
             type: 'alphanumeric',
         });
-        const new_note_title = '空笔记';
+        const new_note_title = t('nav_column.empty_note');
         await newNote(curDataPath, currentRepoKey, currentFolderKey, new_note_key, new_note_title);
         await switchNote(currentRepoKey, currentFolderKey, new_note_key);
         manualFocus(500);

@@ -1,6 +1,9 @@
 {
     "nav_column": {
-        "category": "category",
+        "first_repository": "Repository 1",
+        "category": "Category",
+        "default_category": "Default",
+        "empty_note": "Empty Note",
         "search": "search"
     },
     "center_area": {

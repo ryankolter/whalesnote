@@ -1,5 +1,6 @@
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
+import { useTranslation } from 'react-i18next';
 import styled from '@emotion/styled';
 import cryptoRandomString from 'crypto-random-string';
 import {
@@ -13,7 +14,6 @@ import {
 } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { restrictToFirstScrollableAncestor, restrictToVerticalAxis } from '@dnd-kit/modifiers';
-import { useTranslation } from 'react-i18next';
 
 import { Sortable } from '../../components/Sortable';
 import { TextInput } from '../../components/TextInput';

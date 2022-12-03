@@ -1,4 +1,5 @@
 import cryptoRandomString from 'crypto-random-string';
+import i18next from '../i18n';
 import { DataTypes } from '../commonType';
 
 const initDefault = () => {
@@ -10,15 +11,15 @@ const initDefault = () => {
             repos_key: [repo_id],
             repos_obj: {
                 [repo_id]: {
-                    repo_name: '1号资料库',
+                    repo_name: i18next.t('nav_column.first_repository'),
                     folders_key: [folder_id],
                     folders_obj: {
                         [folder_id]: {
-                            folder_name: '默认分类',
+                            folder_name: i18next.t('nav_column.default_category'),
                             notes_key: [note_id],
                             notes_obj: {
                                 [note_id]: {
-                                    title: '空笔记',
+                                    title: i18next.t('nav_column.empty_note'),
                                 },
                             },
                         },
