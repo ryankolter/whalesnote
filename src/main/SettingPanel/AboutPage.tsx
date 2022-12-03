@@ -15,8 +15,8 @@ const AboutPage: React.FC<{}> = ({}) => {
                     </Option>
                     <Option>
                         <OptionTitle>{t('setting.about.project.url')}: </OptionTitle>
-                        <HrefLink target="_blank" href="https://github.com/ryankolter/whalenote">
-                            https://github.com/ryankolter/whalenote
+                        <HrefLink target="_blank" href="https://github.com/ryankolter/whalesnote">
+                            https://github.com/ryankolter/whalesnote
                         </HrefLink>
                     </Option>
                     <Option>

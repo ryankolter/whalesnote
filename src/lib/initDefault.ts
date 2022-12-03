@@ -7,7 +7,7 @@ const initDefault = () => {
     const folder_id = cryptoRandomString({ length: 12, type: 'alphanumeric' });
     const note_id = cryptoRandomString({ length: 12, type: 'alphanumeric' });
     const default_data: DataTypes = {
-        whalenote: {
+        whalesnote: {
             repos_key: [repo_id],
             repos_obj: {
                 [repo_id]: {

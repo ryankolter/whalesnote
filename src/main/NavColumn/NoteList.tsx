@@ -30,7 +30,7 @@ const NoteList: React.FC<{}> = ({}) => {
         platformName,
         showKeySelect,
         showSearchPanel,
-        whalenote,
+        whalesnote,
         changeNotesAfterNew,
         deleteNote,
         manualFocus,
@@ -44,21 +44,21 @@ const NoteList: React.FC<{}> = ({}) => {
     const { t } = useTranslation();
 
     const notes_key = useMemo(() => {
-        return whalenote.repos_obj &&
-            whalenote.repos_key.length > 0 &&
-            whalenote.repos_obj[currentRepoKey]?.folders_obj &&
-            whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_key
-            ? whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_key
+        return whalesnote.repos_obj &&
+            whalesnote.repos_key.length > 0 &&
+            whalesnote.repos_obj[currentRepoKey]?.folders_obj &&
+            whalesnote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_key
+            ? whalesnote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_key
             : undefined;
-    }, [whalenote, currentRepoKey, currentFolderKey]);
+    }, [whalesnote, currentRepoKey, currentFolderKey]);
     const notes_obj = useMemo(() => {
-        return whalenote.repos_obj &&
-            whalenote.repos_key.length > 0 &&
-            whalenote.repos_obj[currentRepoKey]?.folders_obj &&
-            whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj
-            ? whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj
+        return whalesnote.repos_obj &&
+            whalesnote.repos_key.length > 0 &&
+            whalesnote.repos_obj[currentRepoKey]?.folders_obj &&
+            whalesnote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj
+            ? whalesnote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj
             : undefined;
-    }, [whalenote, currentRepoKey, currentFolderKey]);
+    }, [whalesnote, currentRepoKey, currentFolderKey]);
 
     const [dragActiveId, setDragActiveId] = useState<string | null>(null);
     const [noteScrollTop, setNoteScrollTop] = useState(0);

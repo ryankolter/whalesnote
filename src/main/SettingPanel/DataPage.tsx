@@ -71,8 +71,8 @@ const DataPage: React.FC<{}> = ({}) => {
                             <CurrentPath>
                                 <PathValue>
                                     <UnicodeSpan>{curDataPath}</UnicodeSpan>
-                                    {curDataPath.indexOf('/whalenote/noteData') !== -1 ||
-                                    curDataPath.indexOf('\\whalenote\\noteData') !== -1
+                                    {curDataPath.indexOf('/whalesnote/noteData') !== -1 ||
+                                    curDataPath.indexOf('\\whalesnote\\noteData') !== -1
                                         ? ' - ' + t('setting.data.default')
                                         : ''}
                                 </PathValue>
@@ -94,9 +94,10 @@ const DataPage: React.FC<{}> = ({}) => {
                                                     }}
                                                 >
                                                     <UnicodeSpan>{dataPath}</UnicodeSpan>
-                                                    {dataPath.indexOf('/whalenote/noteData') !==
+                                                    {dataPath.indexOf('/whalesnote/noteData') !==
                                                         -1 ||
-                                                    dataPath.indexOf('\\whalenote\\noteData') !== -1
+                                                    dataPath.indexOf('\\whalesnote\\noteData') !==
+                                                        -1
                                                         ? ' - ' + t('setting.data.default')
                                                         : ''}
                                                     <RemovePathBtn

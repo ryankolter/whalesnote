@@ -8,11 +8,11 @@ import {
     useEffect,
 } from 'react';
 import cryptoRandomString from 'crypto-random-string';
-import { whalenoteObjType, historyTypes, notesTypes } from './commonType';
+import { whalesnoteObjType, historyTypes, notesTypes } from './commonType';
 import useData from './lib/useData';
 import useDataList from './lib/useDataList';
 import useHistory from './lib/useHistory';
-import useWhalenote from './lib/useWhalenote';
+import usewhalesnote from './lib/usewhalesnote';
 
 import i18next from './i18n';
 
@@ -27,8 +27,8 @@ const initContext: {
     setDataSwitchingFlag: Dispatch<SetStateAction<boolean>>;
     dataPathList: string[];
     removeDataPathFromList: (data_path: string) => void;
-    whalenote: whalenoteObjType;
-    initWhalenote: (newRepos: whalenoteObjType) => void;
+    whalesnote: whalesnoteObjType;
+    initwhalesnote: (newRepos: whalesnoteObjType) => void;
     newRepo: (curDataPath: string, repo_key: string, repo_name: string) => void;
     newFolder: (
         curDataPath: string,
@@ -95,7 +95,7 @@ const initContext: {
         }
     ) => void;
     platformName: string;
-    whalenoteId: string;
+    whalesnoteId: string;
     focus: string;
     manualFocus: (delay: number) => void;
     blur: string;
@@ -131,8 +131,8 @@ const initContext: {
     setDataSwitchingFlag: () => {},
     dataPathList: [],
     removeDataPathFromList: () => {},
-    whalenote: { repos_key: [], repos_obj: {} },
-    initWhalenote: () => {},
+    whalesnote: { repos_key: [], repos_obj: {} },
+    initwhalesnote: () => {},
     newRepo: () => {},
     newFolder: () => {},
     newNote: () => {},
@@ -161,7 +161,7 @@ const initContext: {
     switchNote: () => {},
     changeNotesAfterNew: () => {},
     platformName: '',
-    whalenoteId: '',
+    whalesnoteId: '',
     focus: '',
     manualFocus: () => {},
     blur: '',
@@ -204,9 +204,9 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
     const [dataPathList, addDataPathToList, removeDataPathFromList] = useDataList();
     const [history, { initHistory, repoSwitch, folderSwitch, noteSwitch }] = useHistory();
     const [
-        whalenote,
+        whalesnote,
         {
-            initWhalenote,
+            initwhalesnote,
             newRepo,
             newFolder,
             newNote,
@@ -220,10 +220,10 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
             deleteFolder,
             deleteNote,
         },
-    ] = useWhalenote();
+    ] = usewhalesnote();
 
     const [platformName, setPlatformName] = useState<string>('');
-    const [whalenoteId, setWhaltenoteId] = useState<string>('');
+    const [whalesnoteId, setWhaltenoteId] = useState<string>('');
 
     const [focus, setFocus] = useState<string>('');
     const [blur, setBlur] = useState<string>('');
@@ -237,9 +237,9 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
     const [curAssistantPanelTab, setCurAssistantPanelTab] = useState('none');
 
     const [theme, setTheme] = useState(() => {
-        const whalenote_theme = window.localStorage.getItem('whalenote_theme');
-        if (whalenote_theme && (whalenote_theme === 'dark' || whalenote_theme === 'light')) {
-            return whalenote_theme;
+        const whalesnote_theme = window.localStorage.getItem('whalesnote_theme');
+        if (whalesnote_theme && (whalesnote_theme === 'dark' || whalesnote_theme === 'light')) {
+            return whalesnote_theme;
         } else {
             return window.electronAPI.shouldUseDarkMode() ? 'dark' : 'light';
         }
@@ -247,7 +247,7 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
 
     const [language, setLanguage] = useState(() => {
         return (
-            window.localStorage.getItem('whalenote_language') || window.electronAPI.getLanguage()
+            window.localStorage.getItem('whalesnote_language') || window.electronAPI.getLanguage()
         );
     });
 
@@ -267,7 +267,7 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
             addDataPathToList(curDataPath);
             setWhaltenoteId(data.current.id);
             initHistory(data.current.history);
-            initWhalenote(data.current.whalenote);
+            initwhalesnote(data.current.whalesnote);
             initNotes(data.current.notes);
         }
     }, [dataPathChangeFlag]);
@@ -296,14 +296,14 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
 
     const switchRepo = useCallback(
         async (repo_key: string) => {
-            const folders_key = whalenote.repos_obj[repo_key].folders_key;
+            const folders_key = whalesnote.repos_obj[repo_key].folders_key;
             const fetch_folder_key =
                 history.repos_record[repo_key]?.cur_folder_key ||
                 (folders_key.length > 0 ? folders_key[0] : undefined);
             await fetchNotesInfolder(curDataPath, repo_key, fetch_folder_key);
             await repoSwitch(curDataPath, repo_key);
         },
-        [curDataPath, history, whalenote]
+        [curDataPath, history, whalesnote]
     );
 
     const switchFolder = useCallback(
@@ -355,17 +355,17 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
             currentRepoKey &&
             currentFolderKey &&
             currentNoteKey &&
-            whalenote.repos_key.length > 0 &&
-            whalenote.repos_obj[currentRepoKey]?.folders_obj &&
-            whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj &&
-            whalenote.repos_obj[currentRepoKey].folders_obj[currentFolderKey].notes_obj[
+            whalesnote.repos_key.length > 0 &&
+            whalesnote.repos_obj[currentRepoKey]?.folders_obj &&
+            whalesnote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj &&
+            whalesnote.repos_obj[currentRepoKey].folders_obj[currentFolderKey].notes_obj[
                 currentNoteKey
             ]?.title
-                ? whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj[
+                ? whalesnote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj[
                       currentNoteKey
                   ].title
                 : i18next.t('note.untitled'),
-        [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, whalenote]
+        [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, whalesnote]
     );
 
     return (
@@ -379,8 +379,8 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
                 setDataSwitchingFlag,
                 dataPathList,
                 removeDataPathFromList,
-                whalenote,
-                initWhalenote,
+                whalesnote,
+                initwhalesnote,
                 newRepo,
                 newFolder,
                 newNote,
@@ -402,7 +402,7 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
                 switchFolder,
                 switchNote,
                 changeNotesAfterNew,
-                whalenoteId,
+                whalesnoteId,
                 platformName,
                 focus,
                 manualFocus,

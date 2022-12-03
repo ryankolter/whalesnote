@@ -5,7 +5,7 @@ import MiniSearch, { AsPlainObject, SearchResult } from 'minisearch';
 import { notes, fetchNotesInAllRepo } from './notes';
 
 const useSearch = () => {
-    const { curDataPath, whalenote } = useContext(GlobalContext);
+    const { curDataPath, whalesnote } = useContext(GlobalContext);
 
     const searchFileJson = useRef<AsPlainObject | false>(false);
     const miniSearch = useRef<MiniSearch | null>();
@@ -78,7 +78,7 @@ const useSearch = () => {
 
         setTimeout(async () => {
             await loadDict();
-            await fetchNotesInAllRepo(curDataPath, whalenote);
+            await fetchNotesInAllRepo(curDataPath, whalesnote);
 
             const documents: {
                 id: string;
@@ -88,17 +88,16 @@ const useSearch = () => {
                 content: string;
             }[] = [];
             Object.keys(notes).forEach((repo_key: string) => {
-                const folders_obj = whalenote.repos_obj[repo_key].folders_obj;
+                const folders_obj = whalesnote.repos_obj[repo_key].folders_obj;
                 Object.keys(notes[repo_key]).forEach((folder_key: string) => {
                     const folder_name = folders_obj[folder_key].folder_name;
                     Object.keys(notes[repo_key][folder_key]).forEach((note_key: string) => {
                         const id = `${repo_key}-${folder_key}-${note_key}`;
                         let title =
-                            whalenote.repos_obj[repo_key]?.folders_obj &&
-                            whalenote.repos_obj[repo_key]?.folders_obj[folder_key]?.notes_obj
-                                ? whalenote.repos_obj[repo_key]?.folders_obj[folder_key]?.notes_obj[
-                                      note_key
-                                  ]?.title || ''
+                            whalesnote.repos_obj[repo_key]?.folders_obj &&
+                            whalesnote.repos_obj[repo_key]?.folders_obj[folder_key]?.notes_obj
+                                ? whalesnote.repos_obj[repo_key]?.folders_obj[folder_key]
+                                      ?.notes_obj[note_key]?.title || ''
                                 : '';
                         if (title === t('note.untitled')) title = '';
                         const content = notes[repo_key][folder_key][note_key];
@@ -145,7 +144,7 @@ const useSearch = () => {
         }, 200);
     }, [
         curDataPath,
-        whalenote,
+        whalesnote,
         notes,
         setShowUpdateIndexTips,
         setShowWaitingMask,

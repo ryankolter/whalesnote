@@ -1,8 +1,8 @@
 import { useCallback, useReducer, useRef } from 'react';
 import produce from 'immer';
-import { whalenoteObjType } from '../commonType';
+import { whalesnoteObjType } from '../commonType';
 
-const whalenoteReducer = produce((state: whalenoteObjType, action: any) => {
+const whalesnoteReducer = produce((state: whalesnoteObjType, action: any) => {
     switch (action.type) {
         case 'init': {
             state = action.new_state;
@@ -90,15 +90,15 @@ const whalenoteReducer = produce((state: whalenoteObjType, action: any) => {
     }
 });
 
-const useWhalenote = () => {
-    const lastState = useRef<whalenoteObjType>({
+const usewhalesnote = () => {
+    const lastState = useRef<whalesnoteObjType>({
         repos_key: [],
         repos_obj: {},
     });
     const getState = useCallback(() => lastState.current, []);
     const [state, dispatch] = useReducer(
-        (state: whalenoteObjType, action: any) =>
-            (lastState.current = whalenoteReducer(state, action)),
+        (state: whalesnoteObjType, action: any) =>
+            (lastState.current = whalesnoteReducer(state, action)),
         {
             repos_key: [],
             repos_obj: {},
@@ -106,20 +106,20 @@ const useWhalenote = () => {
     );
     const renameSaveTimerObj = useRef<Map<string, NodeJS.Timeout>>(new Map());
 
-    const initWhalenote = useCallback(
-        (newRepo: whalenoteObjType) => dispatch({ type: 'init', new_state: newRepo }),
+    const initwhalesnote = useCallback(
+        (newRepo: whalesnoteObjType) => dispatch({ type: 'init', new_state: newRepo }),
         []
     );
 
     const newRepo = useCallback(
         async (cur_data_path: string, repo_key: string, repo_name: string) => {
-            const whalenote_info = await window.electronAPI.readJsonSync({
-                file_path: `${cur_data_path}/whalenote_info.json`,
+            const whalesnote_info = await window.electronAPI.readJsonSync({
+                file_path: `${cur_data_path}/whalesnote_info.json`,
             });
-            whalenote_info.repos_key.push(repo_key);
+            whalesnote_info.repos_key.push(repo_key);
             await window.electronAPI.writeJson({
-                file_path: `${cur_data_path}/whalenote_info.json`,
-                obj: whalenote_info,
+                file_path: `${cur_data_path}/whalesnote_info.json`,
+                obj: whalesnote_info,
             });
 
             const repo_info = {
@@ -163,13 +163,13 @@ const useWhalenote = () => {
     const reorderRepo = useCallback(
         async (cur_data_path: string, repo_key: string, new_repos_key: string[]) => {
             if (repo_key) {
-                const whalenote_info = await window.electronAPI.readJsonSync({
-                    file_path: `${cur_data_path}/whalenote_info.json`,
+                const whalesnote_info = await window.electronAPI.readJsonSync({
+                    file_path: `${cur_data_path}/whalesnote_info.json`,
                 });
-                whalenote_info.repos_key = new_repos_key;
+                whalesnote_info.repos_key = new_repos_key;
                 await window.electronAPI.writeJson({
-                    file_path: `${cur_data_path}/whalenote_info.json`,
-                    obj: whalenote_info,
+                    file_path: `${cur_data_path}/whalesnote_info.json`,
+                    obj: whalesnote_info,
                 });
                 dispatch({
                     type: 'reorder_repo',
@@ -210,28 +210,28 @@ const useWhalenote = () => {
             obj: trash,
         });
 
-        const whalenote_info = await window.electronAPI.readJsonSync({
-            file_path: `${cur_data_path}/whalenote_info.json`,
+        const whalesnote_info = await window.electronAPI.readJsonSync({
+            file_path: `${cur_data_path}/whalesnote_info.json`,
         });
         const remain_repos_key: string[] = [];
         let other_repo_key = undefined;
-        whalenote_info.repos_key.forEach((key: string, index: number) => {
+        whalesnote_info.repos_key.forEach((key: string, index: number) => {
             if (key === repo_key) {
-                if (whalenote_info.repos_key.length > 1) {
-                    if (index === whalenote_info.repos_key.length - 1) {
-                        other_repo_key = whalenote_info.repos_key[index - 1];
+                if (whalesnote_info.repos_key.length > 1) {
+                    if (index === whalesnote_info.repos_key.length - 1) {
+                        other_repo_key = whalesnote_info.repos_key[index - 1];
                     } else {
-                        other_repo_key = whalenote_info.repos_key[index + 1];
+                        other_repo_key = whalesnote_info.repos_key[index + 1];
                     }
                 }
             } else {
                 remain_repos_key.push(key);
             }
         });
-        whalenote_info.repos_key = remain_repos_key;
+        whalesnote_info.repos_key = remain_repos_key;
         await window.electronAPI.writeJson({
-            file_path: `${cur_data_path}/whalenote_info.json`,
-            obj: whalenote_info,
+            file_path: `${cur_data_path}/whalesnote_info.json`,
+            obj: whalesnote_info,
         });
 
         const history_info = await window.electronAPI.readJsonSync({
@@ -615,7 +615,7 @@ const useWhalenote = () => {
     return [
         state,
         {
-            initWhalenote,
+            initwhalesnote,
             newRepo,
             renameRepo,
             reorderRepo,
@@ -632,4 +632,4 @@ const useWhalenote = () => {
     ] as const;
 };
 
-export default useWhalenote;
+export default usewhalesnote;

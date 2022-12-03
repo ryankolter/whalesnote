@@ -9,7 +9,7 @@ const useDataList = () => {
             if (
                 (await window.electronAPI.checkFolderExist({ folder_path: data_path })) &&
                 (await window.electronAPI.checkFileExist({
-                    file_path: data_path + '/whalenote_info.json',
+                    file_path: data_path + '/whalesnote_info.json',
                 }))
             ) {
                 new_data_path_list.push(data_path);
@@ -47,10 +47,10 @@ const useDataList = () => {
             let data_path_list: string[] = [];
             try {
                 data_path_list = JSON.parse(
-                    window.localStorage.getItem('whalenote_data_path_list') || '[]'
+                    window.localStorage.getItem('whalesnote_data_path_list') || '[]'
                 );
             } catch (e) {
-                window.localStorage.setItem('whalenote_data_path_list', '[]');
+                window.localStorage.setItem('whalesnote_data_path_list', '[]');
             }
             const new_data_path_list = await validateDataPathList(data_path_list);
             setDataPathList(new_data_path_list);
@@ -58,7 +58,7 @@ const useDataList = () => {
     }, []);
 
     useEffect(() => {
-        window.localStorage.setItem('whalenote_data_path_list', JSON.stringify(dataPathList));
+        window.localStorage.setItem('whalesnote_data_path_list', JSON.stringify(dataPathList));
     }, [dataPathList]);
 
     return [dataPathList, addDataPathToList, removeDataPathFromList] as const;

@@ -31,7 +31,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
         platformName,
         showRepoPanel,
         showKeySelect,
-        whalenote,
+        whalesnote,
         changeNotesAfterNew,
         deleteRepo,
         manualFocus,
@@ -55,8 +55,8 @@ const RepoPanel: React.FC<{}> = ({}) => {
     const [curRepoName, setCurRepoName] = useState('');
     const [repoSelectedList, setRepoSelectedList] = useState(() => {
         let page = 0;
-        whalenote.repos_key
-            .filter((key) => whalenote && whalenote.repos_obj && whalenote.repos_obj[key])
+        whalesnote.repos_key
+            .filter((key) => whalesnote && whalesnote.repos_obj && whalesnote.repos_obj[key])
             .forEach((key, index) => {
                 if (key === currentRepoKey) page = Math.floor(index / 6.0);
             });
@@ -76,8 +76,8 @@ const RepoPanel: React.FC<{}> = ({}) => {
     useEffect(() => {
         if (showKeySelect) {
             let page = 0;
-            whalenote.repos_key
-                .filter((key) => whalenote && whalenote.repos_obj && whalenote.repos_obj[key])
+            whalesnote.repos_key
+                .filter((key) => whalesnote && whalesnote.repos_obj && whalesnote.repos_obj[key])
                 .forEach((key, index) => {
                     if (key === currentRepoKey) page = Math.floor(index / 6.0);
                 });
@@ -91,8 +91,8 @@ const RepoPanel: React.FC<{}> = ({}) => {
     //part1: switch repo in panel
     const changeRepoSelectedList = useCallback(
         (repo_key: string) => {
-            whalenote.repos_key
-                .filter((key) => whalenote && whalenote.repos_obj && whalenote.repos_obj[key])
+            whalesnote.repos_key
+                .filter((key) => whalesnote && whalesnote.repos_obj && whalesnote.repos_obj[key])
                 .forEach((key, index) => {
                     if (key === repo_key) setRepoSelectedList(Math.floor(index / 6.0));
                 });
@@ -105,7 +105,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
             await switchRepo(repo_key);
             changeRepoSelectedList(repo_key);
         },
-        [whalenote, changeRepoSelectedList]
+        [whalesnote, changeRepoSelectedList]
     );
 
     // part2 : new repo
@@ -168,7 +168,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
 
             setNewRepoKey('');
             setNewRepoName('');
-            setRepoSelectedList(Math.ceil(whalenote.repos_key.length / 6) - 1);
+            setRepoSelectedList(Math.ceil(whalesnote.repos_key.length / 6) - 1);
             allowNewRepo.current = true;
         },
         [
@@ -200,14 +200,14 @@ const RepoPanel: React.FC<{}> = ({}) => {
     // part3 : rename repo
     useEffect(() => {
         setCurRepoName(
-            whalenote &&
-                whalenote.repos_obj &&
+            whalesnote &&
+                whalesnote.repos_obj &&
                 currentRepoKey &&
-                whalenote.repos_obj[currentRepoKey]
-                ? whalenote.repos_obj[currentRepoKey].repo_name
+                whalesnote.repos_obj[currentRepoKey]
+                ? whalesnote.repos_obj[currentRepoKey].repo_name
                 : ''
         );
-    }, [currentRepoKey, whalenote]);
+    }, [currentRepoKey, whalesnote]);
 
     const renameRepoConfirm = useCallback(async () => {
         if (currentRepoKey) {
@@ -222,18 +222,18 @@ const RepoPanel: React.FC<{}> = ({}) => {
             if (e.key === 'Escape') {
                 setRenamePopUp(false);
                 setCurRepoName(
-                    whalenote &&
-                        whalenote.repos_obj &&
+                    whalesnote &&
+                        whalesnote.repos_obj &&
                         currentRepoKey &&
-                        whalenote.repos_obj[currentRepoKey]
-                        ? whalenote.repos_obj[currentRepoKey].repo_name
+                        whalesnote.repos_obj[currentRepoKey]
+                        ? whalesnote.repos_obj[currentRepoKey].repo_name
                         : ''
                 );
             } else if (!composing.current && e.key === 'Enter') {
                 renameRepoConfirm();
             }
         },
-        [currentRepoKey, whalenote, renameRepoConfirm, setRenamePopUp, setCurRepoName]
+        [currentRepoKey, whalesnote, renameRepoConfirm, setRenamePopUp, setCurRepoName]
     );
 
     // part4 : delete repo
@@ -243,14 +243,14 @@ const RepoPanel: React.FC<{}> = ({}) => {
             if (other_repo_key) {
                 switchRepoInPanel(other_repo_key);
             }
-            setRepoSelectedList(Math.ceil(whalenote.repos_key.length / 6) - 1);
+            setRepoSelectedList(Math.ceil(whalesnote.repos_key.length / 6) - 1);
             setDeletePopUp(false);
         }
     }, [curDataPath, currentRepoKey, setDeletePopUp, switchRepoInPanel]);
 
     useEffect(() => {
-        whalenote.repos_key
-            .filter((key) => whalenote && whalenote.repos_obj && whalenote.repos_obj[key])
+        whalesnote.repos_key
+            .filter((key) => whalesnote && whalesnote.repos_obj && whalesnote.repos_obj[key])
             .forEach((key, index) => {
                 if (key === currentRepoKey) setRepoSelectedList(Math.floor(index / 6.0));
             });
@@ -268,9 +268,9 @@ const RepoPanel: React.FC<{}> = ({}) => {
     }, [repoSelectedList]);
 
     const nextRepoList = useCallback(() => {
-        if (whalenote.repos_key && whalenote.repos_key.length > 6) {
+        if (whalesnote.repos_key && whalesnote.repos_key.length > 6) {
             const nextSelectedList = repoSelectedList + 1;
-            if (nextSelectedList <= (whalenote.repos_key.length - 1) / 6.0) {
+            if (nextSelectedList <= (whalesnote.repos_key.length - 1) / 6.0) {
                 if (repoScrollRef && repoScrollRef.current) {
                     repoScrollRef.current.scrollLeft =
                         Math.floor(nextSelectedList / 5.0) * repoScrollRef.current.offsetWidth;
@@ -278,7 +278,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
                 setRepoSelectedList((repoSelectedList) => repoSelectedList + 1);
             }
         }
-    }, [repoSelectedList, whalenote]);
+    }, [repoSelectedList, whalesnote]);
 
     const prevRepoPage = useCallback(() => {
         const prevSelectedList = (Math.floor(repoSelectedList / 5) - 1) * 5;
@@ -292,9 +292,9 @@ const RepoPanel: React.FC<{}> = ({}) => {
     }, [repoSelectedList]);
 
     const nextRepoPage = useCallback(() => {
-        if (whalenote.repos_key && whalenote.repos_key.length > 6) {
+        if (whalesnote.repos_key && whalesnote.repos_key.length > 6) {
             const nextSelectedList = (Math.floor(repoSelectedList / 5) + 1) * 5;
-            if (nextSelectedList <= (whalenote.repos_key.length - 1) / 6.0) {
+            if (nextSelectedList <= (whalesnote.repos_key.length - 1) / 6.0) {
                 if (repoScrollRef && repoScrollRef.current) {
                     repoScrollRef.current.scrollLeft =
                         Math.floor(nextSelectedList / 5.0) * repoScrollRef.current.offsetWidth;
@@ -304,13 +304,13 @@ const RepoPanel: React.FC<{}> = ({}) => {
                 );
             }
         }
-    }, [whalenote, repoSelectedList]);
+    }, [whalesnote, repoSelectedList]);
 
     useEffect(() => {
-        if (whalenote.repos_key && whalenote.repos_key.length <= 6) {
+        if (whalesnote.repos_key && whalesnote.repos_key.length <= 6) {
             setRepoSelectedList(0);
         }
-    }, [whalenote]);
+    }, [whalesnote]);
 
     const handleKeyDown = useCallback(
         async (e: KeyboardEvent) => {
@@ -327,8 +327,8 @@ const RepoPanel: React.FC<{}> = ({}) => {
                     showKeySelect
                 ) {
                     const index = Number(e.key) + 6 * repoSelectedList - 1;
-                    if (whalenote.repos_key && index < whalenote.repos_key.length) {
-                        switchRepoInPanel(whalenote.repos_key[index]);
+                    if (whalesnote.repos_key && index < whalesnote.repos_key.length) {
+                        switchRepoInPanel(whalesnote.repos_key[index]);
                         setShowKeySelect(true);
                     }
                 }
@@ -373,7 +373,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
             repoSelectedList,
             showKeySelect,
             showRepoPanel,
-            whalenote,
+            whalesnote,
             nextRepoList,
             nextRepoPage,
             prevRepoList,
@@ -437,39 +437,39 @@ const RepoPanel: React.FC<{}> = ({}) => {
 
             if (
                 active.id !== over.id &&
-                whalenote.repos_key &&
+                whalesnote.repos_key &&
                 currentRepoKey &&
                 currentFolderKey
             ) {
-                const oldIndex = whalenote.repos_key.indexOf(String(active.id));
-                const newIndex = whalenote.repos_key.indexOf(String(over.id));
-                const new_repos_key = arrayMove(whalenote.repos_key, oldIndex, newIndex);
+                const oldIndex = whalesnote.repos_key.indexOf(String(active.id));
+                const newIndex = whalesnote.repos_key.indexOf(String(over.id));
+                const new_repos_key = arrayMove(whalesnote.repos_key, oldIndex, newIndex);
                 reorderRepo(curDataPath, currentRepoKey, new_repos_key);
             }
         },
-        [curDataPath, currentRepoKey, currentFolderKey, whalenote, reorderRepo, setDragActiveId]
+        [curDataPath, currentRepoKey, currentFolderKey, whalesnote, reorderRepo, setDragActiveId]
     );
 
     return (
         <RepoListContainer>
             <ReposScroll ref={repoScrollRef}>
                 <Repos ref={outerRef}>
-                    {whalenote.repos_key ? (
+                    {whalesnote.repos_key ? (
                         <DndContext
                             sensors={sensors}
                             onDragStart={handleDragStart}
                             onDragEnd={handleDragEnd}
                         >
                             <SortableContext
-                                items={whalenote.repos_key}
+                                items={whalesnote.repos_key}
                                 strategy={verticalListSortingStrategy}
                             >
-                                {whalenote.repos_key
+                                {whalesnote.repos_key
                                     .filter(
                                         (key) =>
-                                            whalenote &&
-                                            whalenote.repos_obj &&
-                                            whalenote.repos_obj[key]
+                                            whalesnote &&
+                                            whalesnote.repos_obj &&
+                                            whalesnote.repos_obj[key]
                                     )
                                     .map((key, index) => {
                                         if (index === repoSelectedList * 6) {
@@ -495,7 +495,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
                                                                         : '',
                                                             }}
                                                         >
-                                                            {whalenote.repos_obj[key].repo_name}
+                                                            {whalesnote.repos_obj[key].repo_name}
                                                             {showKeySelect ? (
                                                                 <RepoGroupItem
                                                                     style={{
@@ -545,7 +545,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
                                                                         : '',
                                                             }}
                                                         >
-                                                            {whalenote.repos_obj[key].repo_name}
+                                                            {whalesnote.repos_obj[key].repo_name}
                                                             {showKeySelect ? (
                                                                 <RepoGroupItem
                                                                     style={{
@@ -587,7 +587,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
                                                                         : '',
                                                             }}
                                                         >
-                                                            {whalenote.repos_obj[key].repo_name}
+                                                            {whalesnote.repos_obj[key].repo_name}
                                                         </RepoItemName>
                                                     </RepoItem>
                                                 </Sortable>
@@ -615,7 +615,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
                             </SortableContext>
                             {dragActiveId ? (
                                 <DragOverlay>
-                                    {whalenote && whalenote.repos_obj ? (
+                                    {whalesnote && whalesnote.repos_obj ? (
                                         <RepoItem key={dragActiveId}>
                                             <RepoItemName
                                                 style={{
@@ -625,7 +625,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
                                                             : '',
                                                 }}
                                             >
-                                                {whalenote.repos_obj[dragActiveId].repo_name}
+                                                {whalesnote.repos_obj[dragActiveId].repo_name}
                                             </RepoItemName>
                                         </RepoItem>
                                     ) : (
@@ -643,9 +643,11 @@ const RepoPanel: React.FC<{}> = ({}) => {
                         <RepoAdd>
                             <RepoAddBtn onClick={handleAddRepoBtnClick}>
                                 +
-                                {whalenote.repos_key.filter(
+                                {whalesnote.repos_key.filter(
                                     (key) =>
-                                        whalenote && whalenote.repos_obj && whalenote.repos_obj[key]
+                                        whalesnote &&
+                                        whalesnote.repos_obj &&
+                                        whalesnote.repos_obj[key]
                                 ).length <= 1 ? (
                                     <AddReposTips>
                                         <div>{t('tips.click_btn_to')}</div>
@@ -684,11 +686,11 @@ const RepoPanel: React.FC<{}> = ({}) => {
                 popupState={deletePopup}
                 maskState={deleteMask}
                 content={`${t('repository.delete_tips_part_1')}${
-                    whalenote &&
-                    whalenote.repos_obj &&
+                    whalesnote &&
+                    whalesnote.repos_obj &&
                     currentRepoKey &&
-                    whalenote.repos_obj[currentRepoKey]
-                        ? whalenote.repos_obj[currentRepoKey].repo_name
+                    whalesnote.repos_obj[currentRepoKey]
+                        ? whalesnote.repos_obj[currentRepoKey].repo_name
                         : ''
                 }${t('repository.delete_tips_part_2')}${t('repository.delete_tips_part_3')}`}
                 onCancel={() => setDeletePopUp(false)}

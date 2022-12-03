@@ -33,7 +33,7 @@ const FolderList: React.FC<{}> = ({}) => {
         keySelectNumArray,
         platformName,
         showKeySelect,
-        whalenote,
+        whalesnote,
         changeNotesAfterNew,
         deleteFolder,
         manualFocus,
@@ -49,11 +49,11 @@ const FolderList: React.FC<{}> = ({}) => {
     const { t } = useTranslation();
 
     const folders_key = useMemo(() => {
-        return whalenote.repos_obj ? whalenote.repos_obj[currentRepoKey]?.folders_key : undefined;
-    }, [whalenote, currentRepoKey, currentFolderKey]);
+        return whalesnote.repos_obj ? whalesnote.repos_obj[currentRepoKey]?.folders_key : undefined;
+    }, [whalesnote, currentRepoKey, currentFolderKey]);
     const folders_obj = useMemo(() => {
-        return whalenote.repos_obj ? whalenote.repos_obj[currentRepoKey]?.folders_obj : undefined;
-    }, [whalenote, currentRepoKey, currentFolderKey]);
+        return whalesnote.repos_obj ? whalesnote.repos_obj[currentRepoKey]?.folders_obj : undefined;
+    }, [whalesnote, currentRepoKey, currentFolderKey]);
 
     const [dragActiveId, setDragActiveId] = useState<string | null>(null);
     const [newFolderKey, setNewFolderKey] = useState('');
@@ -176,7 +176,7 @@ const FolderList: React.FC<{}> = ({}) => {
             await switchFolder(currentRepoKey, next_folder_key);
             setDeletePopUp(false);
         }
-    }, [curDataPath, whalenote, currentRepoKey, currentFolderKey, switchFolder, setDeletePopUp]);
+    }, [curDataPath, whalesnote, currentRepoKey, currentFolderKey, switchFolder, setDeletePopUp]);
 
     // part4 : scroll folder
     const preFolderPage = useCallback(() => {

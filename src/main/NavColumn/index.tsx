@@ -14,7 +14,7 @@ const NavColumn: React.FC<Record<string, unknown>> = ({}) => {
         platformName,
         showKeySelect,
         showRepoPanel,
-        whalenote,
+        whalesnote,
         setKeySelectNumArray,
         setShowRepoPanel,
     } = useContext(GlobalContext);
@@ -88,10 +88,10 @@ const NavColumn: React.FC<Record<string, unknown>> = ({}) => {
                         }}
                     >
                         <RepoNameLabel>
-                            {whalenote.repos_obj &&
+                            {whalesnote.repos_obj &&
                             currentRepoKey &&
-                            whalenote.repos_obj[currentRepoKey]
-                                ? whalenote.repos_obj[currentRepoKey].repo_name
+                            whalesnote.repos_obj[currentRepoKey]
+                                ? whalesnote.repos_obj[currentRepoKey].repo_name
                                 : ''}
                         </RepoNameLabel>
                         {showKeySelect ? <RepoPanelKeyTab>Z</RepoPanelKeyTab> : <></>}
@@ -127,7 +127,7 @@ const NavColumn: React.FC<Record<string, unknown>> = ({}) => {
                 }}
                 draggable="true"
             ></ResizeFolderWidth>
-            {whalenote.repos_key && whalenote.repos_key.length > 0 ? (
+            {whalesnote.repos_key && whalesnote.repos_key.length > 0 ? (
                 <>
                     <SearchBarAndNote width={noteWidth}>
                         <SearchBarBox>

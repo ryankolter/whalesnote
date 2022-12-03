@@ -34,7 +34,7 @@ const ExportNoteFunc: React.FC<{}> = ({}) => {
         currentNoteKey,
         currentTitle,
         theme,
-        whalenote,
+        whalesnote,
     } = useContext(GlobalContext);
     const { t } = useTranslation();
     const [showSwitchExportNoteFunc, setShowSwitchExportNoteFunc] = useState(false);
@@ -216,18 +216,18 @@ const ExportNoteFunc: React.FC<{}> = ({}) => {
                 })) || '';
             for (const note_key of Object.keys(notes[currentRepoKey][currentFolderKey])) {
                 let title =
-                    whalenote.repos_obj[currentRepoKey]?.folders_obj &&
-                    whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj
-                        ? whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]
+                    whalesnote.repos_obj[currentRepoKey]?.folders_obj &&
+                    whalesnote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj
+                        ? whalesnote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]
                               ?.notes_obj[note_key]?.title || ''
                         : '';
                 let repeated_time = 0;
                 for (const comp_note_key of Object.keys(notes[currentRepoKey][currentFolderKey])) {
                     const comp_title =
-                        whalenote.repos_obj[currentRepoKey]?.folders_obj &&
-                        whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]
+                        whalesnote.repos_obj[currentRepoKey]?.folders_obj &&
+                        whalesnote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]
                             ?.notes_obj
-                            ? whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]
+                            ? whalesnote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]
                                   ?.notes_obj[comp_note_key]?.title || ''
                             : '';
                     if (title === comp_title) repeated_time++;
@@ -259,25 +259,25 @@ const ExportNoteFunc: React.FC<{}> = ({}) => {
             }
             setExportFinishPopUp(true);
         },
-        [whalenote, currentRepoKey, currentFolderKey, theme, setExportFinishPopUp]
+        [whalesnote, currentRepoKey, currentFolderKey, theme, setExportFinishPopUp]
     );
 
     const saveFolderToMd = useCallback(
         async (path: string) => {
             for (const note_key of Object.keys(notes[currentRepoKey][currentFolderKey])) {
                 let title =
-                    whalenote.repos_obj[currentRepoKey]?.folders_obj &&
-                    whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj
-                        ? whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]
+                    whalesnote.repos_obj[currentRepoKey]?.folders_obj &&
+                    whalesnote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj
+                        ? whalesnote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]
                               ?.notes_obj[note_key]?.title || ''
                         : '';
                 let repeated_time = 0;
                 for (const comp_note_key of Object.keys(notes[currentRepoKey][currentFolderKey])) {
                     const comp_title =
-                        whalenote.repos_obj[currentRepoKey]?.folders_obj &&
-                        whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]
+                        whalesnote.repos_obj[currentRepoKey]?.folders_obj &&
+                        whalesnote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]
                             ?.notes_obj
-                            ? whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]
+                            ? whalesnote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]
                                   ?.notes_obj[comp_note_key]?.title || ''
                             : '';
                     if (title === comp_title) repeated_time++;
@@ -292,7 +292,7 @@ const ExportNoteFunc: React.FC<{}> = ({}) => {
             }
             setExportFinishPopUp(true);
         },
-        [whalenote, currentRepoKey, currentFolderKey, setExportFinishPopUp]
+        [whalesnote, currentRepoKey, currentFolderKey, setExportFinishPopUp]
     );
 
     const ExportNotesInFolderFunc = useCallback(

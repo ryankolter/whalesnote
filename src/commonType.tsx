@@ -1,4 +1,4 @@
-export type whalenoteObjType = {
+export type whalesnoteObjType = {
     repos_key: string[];
     repos_obj:
         | {
@@ -52,6 +52,6 @@ export type notesTypes = {
 export type DataTypes = {
     id: string;
     history: historyTypes;
-    whalenote: whalenoteObjType;
+    whalesnote: whalesnoteObjType;
     notes: notesTypes;
 };

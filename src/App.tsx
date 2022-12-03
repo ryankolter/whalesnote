@@ -20,7 +20,7 @@ const App = () => {
         dataPathChangeFlag,
         dataSwitchingFlag,
         theme,
-        whalenote,
+        whalesnote,
     } = useContext(GlobalContext);
 
     return (

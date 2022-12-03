@@ -3,7 +3,7 @@ import { DataTypes } from '../commonType';
 
 const initGuide = () => {
     const guide_data: DataTypes = {
-        whalenote: {
+        whalesnote: {
             repos_key: ['DEFAULTREPO1'],
             repos_obj: {
                 DEFAULTREPO1: {

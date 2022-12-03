@@ -1,4 +1,4 @@
-import { historyTypes, whalenoteObjType } from '../commonType';
+import { historyTypes, whalesnoteObjType } from '../commonType';
 
 export let notes = {};
 
@@ -6,19 +6,19 @@ const saveTimerObj = new Map();
 
 export const fetchNotesInAllRepo = async (
     data_path: string | null,
-    whalenote: whalenoteObjType
+    whalesnote: whalesnoteObjType
 ) => {
-    for (const repo_key of whalenote.repos_key) {
-        if (whalenote.repos_obj[repo_key]) {
+    for (const repo_key of whalesnote.repos_key) {
+        if (whalesnote.repos_obj[repo_key]) {
             if (!notes[repo_key]) {
                 notes[repo_key] = {};
             }
-            for (const folder_key of whalenote.repos_obj[repo_key].folders_key) {
-                if (whalenote.repos_obj[repo_key].folders_obj[folder_key]) {
+            for (const folder_key of whalesnote.repos_obj[repo_key].folders_key) {
+                if (whalesnote.repos_obj[repo_key].folders_obj[folder_key]) {
                     if (!notes[repo_key][folder_key]) {
                         notes[repo_key][folder_key] = {};
                     }
-                    for (const note_key of whalenote.repos_obj[repo_key].folders_obj[folder_key]
+                    for (const note_key of whalesnote.repos_obj[repo_key].folders_obj[folder_key]
                         .notes_key) {
                         if (notes[repo_key][folder_key][note_key] === undefined) {
                             const note_content = await window.electronAPI.readMdSync({

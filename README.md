@@ -1,13 +1,13 @@
 
 <div align="center">
   <img src="public/icon.png" height="128">
-  <h1>Whalenote (desktop version)</h1>
+  <h1>Whalesnote (desktop)</h1>
   <p>A markdown note-taking software that supports win, mac and linux. Easily store and categorize tens of thousands of notes.</p>
 </div>
 
 <br>
 
-## Why Whalenote？
+## Why whalesnote？
 
 1. **Privacy first**: local open source software that is not connected to the Internet, giving you complete control over the data.
 2. **Markdown support**: Provide preview mode and two-column mode.
@@ -41,7 +41,7 @@ you can switch to another white mode
 ## Development
 
 ```bash
-git clone git@github.com/ryankolter/whalenote_desktop.git
+git clone git@github.com/ryankolter/whalesnote.git
 npm install
 npm run start
 ```

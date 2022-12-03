@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { DataTypes, whalenoteObjType, historyTypes, notesTypes } from '../commonType';
+import { DataTypes, whalesnoteObjType, historyTypes, notesTypes } from '../commonType';
 import initDefault from './initDefault';
 
 const useData = () => {
@@ -11,15 +11,15 @@ const useData = () => {
     const [dataSwitchingFlag, setDataSwitchingFlag] = useState<boolean>(false);
 
     const initExistRepo = useCallback(async (data_path: string) => {
-        const whalenote_info = await window.electronAPI.readJsonSync({
-            file_path: `${data_path}/whalenote_info.json`,
+        const whalesnote_info = await window.electronAPI.readJsonSync({
+            file_path: `${data_path}/whalesnote_info.json`,
         });
 
         let history_info: historyTypes = await window.electronAPI.readJsonSync({
             file_path: `${data_path}/history_info.json`,
         });
 
-        const whalenote: whalenoteObjType = {
+        const whalesnote: whalesnoteObjType = {
             repos_key: [],
             repos_obj: {},
         };
@@ -27,14 +27,14 @@ const useData = () => {
         let first_repo_key = '';
         const valid_repos_key: string[] = [];
 
-        for (const repo_key of whalenote_info.repos_key) {
+        for (const repo_key of whalesnote_info.repos_key) {
             const repo_info = await window.electronAPI.readJsonSync({
                 file_path: `${data_path}/${repo_key}/repo_info.json`,
             });
             if (repo_info) {
                 first_repo_key = first_repo_key ? first_repo_key : repo_key;
-                whalenote.repos_key.push(repo_key);
-                whalenote.repos_obj[repo_key] = {
+                whalesnote.repos_key.push(repo_key);
+                whalesnote.repos_obj[repo_key] = {
                     repo_name: repo_info.repo_name,
                     folders_key: repo_info.folders_key,
                     folders_obj: {},
@@ -45,12 +45,12 @@ const useData = () => {
                         file_path: `${data_path}/${repo_key}/${folder_key}/folder_info.json`,
                     });
                     if (folder_info) {
-                        whalenote.repos_obj[repo_key].folders_obj[folder_key] = folder_info;
+                        whalesnote.repos_obj[repo_key].folders_obj[folder_key] = folder_info;
                         valid_folders_key.push(folder_key);
                     }
                 }
                 if (repo_info.folders_key.length !== valid_folders_key.length) {
-                    whalenote.repos_obj[repo_key].folders_key = valid_folders_key;
+                    whalesnote.repos_obj[repo_key].folders_key = valid_folders_key;
                     repo_info.folders_key = valid_folders_key;
                     await window.electronAPI.writeJson({
                         file_path: `${data_path}/${repo_key}/repo_info.json`,
@@ -62,11 +62,11 @@ const useData = () => {
             }
         }
 
-        if (whalenote_info.repos_key.length !== valid_repos_key.length) {
-            whalenote_info.repos_key = valid_repos_key;
+        if (whalesnote_info.repos_key.length !== valid_repos_key.length) {
+            whalesnote_info.repos_key = valid_repos_key;
             await window.electronAPI.writeJson({
-                file_path: `${data_path}/whalenote_info.json`,
-                obj: whalenote_info,
+                file_path: `${data_path}/whalesnote_info.json`,
+                obj: whalesnote_info,
             });
         }
 
@@ -74,12 +74,12 @@ const useData = () => {
             let init_repo_key = '';
             let folders_key = [];
 
-            if (history_info.cur_repo_key && whalenote.repos_obj[history_info.cur_repo_key]) {
+            if (history_info.cur_repo_key && whalesnote.repos_obj[history_info.cur_repo_key]) {
                 init_repo_key = history_info.cur_repo_key;
-                folders_key = whalenote.repos_obj[history_info.cur_repo_key].folders_key;
+                folders_key = whalesnote.repos_obj[history_info.cur_repo_key].folders_key;
             } else {
                 init_repo_key = first_repo_key;
-                folders_key = whalenote.repos_obj[first_repo_key].folders_key;
+                folders_key = whalesnote.repos_obj[first_repo_key].folders_key;
                 history_info = {
                     cur_repo_key: first_repo_key,
                     repos_record: {
@@ -122,9 +122,9 @@ const useData = () => {
         }
 
         const data: DataTypes = {
-            whalenote: whalenote,
+            whalesnote: whalesnote,
             notes: notes,
-            id: whalenote_info.id,
+            id: whalesnote_info.id,
             history: history_info,
         };
 
@@ -133,13 +133,13 @@ const useData = () => {
 
     const initEmptyRepo = useCallback(async (data_path: string) => {
         const data: DataTypes = initDefault();
-        const { id, whalenote, notes, history } = data;
+        const { id, whalesnote, notes, history } = data;
 
         await window.electronAPI.writeJson({
-            file_path: `${data_path}/whalenote_info.json`,
+            file_path: `${data_path}/whalesnote_info.json`,
             obj: {
                 id,
-                repos_key: whalenote.repos_key,
+                repos_key: whalesnote.repos_key,
             },
         });
 
@@ -148,8 +148,8 @@ const useData = () => {
             obj: history,
         });
 
-        for (const repo_key of whalenote.repos_key) {
-            const repo = whalenote.repos_obj[repo_key];
+        for (const repo_key of whalesnote.repos_key) {
+            const repo = whalesnote.repos_obj[repo_key];
             if (repo) {
                 const repo_info = {
                     repo_name: repo.repo_name,
@@ -190,7 +190,7 @@ const useData = () => {
 
     useEffect(() => {
         (async () => {
-            let init_data_path = window.localStorage.getItem('whalenote_current_data_path') || '';
+            let init_data_path = window.localStorage.getItem('whalesnote_current_data_path') || '';
             if (
                 !init_data_path ||
                 !(await window.electronAPI.checkFolderExist({ folder_path: init_data_path }))
@@ -211,9 +211,9 @@ const useData = () => {
                 curDataPath &&
                 (await window.electronAPI.checkFolderExist({ folder_path: curDataPath }))
             ) {
-                window.localStorage.setItem('whalenote_current_data_path', curDataPath);
+                window.localStorage.setItem('whalesnote_current_data_path', curDataPath);
                 const new_data = (await window.electronAPI.checkFileExist({
-                    file_path: curDataPath + '/whalenote_info.json',
+                    file_path: curDataPath + '/whalesnote_info.json',
                 }))
                     ? await initExistRepo(curDataPath)
                     : await initEmptyRepo(curDataPath);

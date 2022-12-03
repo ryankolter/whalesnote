@@ -28,7 +28,7 @@ const InterfacePage: React.FC<{}> = ({}) => {
     const changeTheme = useCallback(
         (value: string) => {
             setTheme(value);
-            window.localStorage.setItem('whalenote_theme', value);
+            window.localStorage.setItem('whalesnote_theme', value);
         },
         [setEditorFontSize]
     );
@@ -46,7 +46,7 @@ const InterfacePage: React.FC<{}> = ({}) => {
     const changeLanguage = useCallback(
         (value: string) => {
             setLanguage(value);
-            window.localStorage.setItem('whalenote_language', value);
+            window.localStorage.setItem('whalesnote_language', value);
         },
         [setEditorFontSize]
     );
