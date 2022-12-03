@@ -251,12 +251,6 @@ const processIPC = () => {
         return true;
     });
 
-    ipcMain.handle('operate:writePngBlob', async (event, { file_path, url }) => {
-        fse.ensureFileSync(file_path);
-        fse.writeFileSync(file_path, url.replace(/^data:image\/png;base64,/, ''), 'base64');
-        return true;
-    });
-
     ipcMain.handle('operate:readCsonSync', async (event, { file_path }) => {
         console.log('readCsonSync: ' + file_path);
         if (!fse.pathExistsSync(file_path)) {
@@ -274,6 +268,16 @@ const processIPC = () => {
         } else {
             let json_str = fse.readFileSync(file_path);
             return CSON.parseJSONString(json_str);
+        }
+    });
+
+    ipcMain.handle('operate:readMdSync', async (event, { file_path }) => {
+        console.log('readMdSync: ' + file_path);
+        if (!fse.pathExistsSync(file_path)) {
+            return false;
+        } else {
+            let md_str = fse.readFileSync(file_path);
+            return md_str.toString();
         }
     });
 
@@ -371,6 +375,27 @@ const processIPC = () => {
             filters: [
                 {
                     name: 'Images',
+                    extensions: file_types,
+                },
+            ],
+            properties: ['openFile', 'multiSelections'],
+        });
+
+        if (!canceled) {
+            return filePaths;
+        } else {
+            return [];
+        }
+    });
+
+    ipcMain.handle('dialog:openSelectMarkdownsDialog', async (event, { file_types }) => {
+        const { canceled, filePaths } = await dialog.showOpenDialog({
+            title: 'Select markdown files',
+            buttonLabel: 'Load',
+            defaultPath: '*/',
+            filters: [
+                {
+                    name: 'Markdown',
                     extensions: file_types,
                 },
             ],

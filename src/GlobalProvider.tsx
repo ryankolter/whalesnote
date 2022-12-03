@@ -252,7 +252,6 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
     useEffect(() => {
-        console.log(language);
         i18next.changeLanguage(language);
     }, [language]);
 

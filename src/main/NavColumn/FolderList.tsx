@@ -14,6 +14,7 @@ import {
 } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { restrictToFirstScrollableAncestor, restrictToVerticalAxis } from '@dnd-kit/modifiers';
+import { updateNote } from '../../lib/notes';
 
 import { Sortable } from '../../components/Sortable';
 import { TextInput } from '../../components/TextInput';
@@ -253,7 +254,52 @@ const FolderList: React.FC<{}> = ({}) => {
         }
     }, [currentRepoKey, currentFolderKey]);
 
-    // part5 : key event
+    // part5 : batch import markdown file
+    const loadMarkdowns = useCallback(
+        async (paths: string[]) => {
+            for await (const path of paths) {
+                const content = await window.electronAPI.readMdSync({
+                    file_path: path,
+                });
+                if (content) {
+                    const index = content.indexOf('\n');
+                    if (index !== -1) {
+                        const new_note_key = cryptoRandomString({
+                            length: 12,
+                            type: 'alphanumeric',
+                        });
+                        const new_note_title = content
+                            .substring(0, index)
+                            .replace(/^[#\-\_*>\s]+/g, '');
+                        await newNote(
+                            curDataPath,
+                            currentRepoKey,
+                            currentFolderKey,
+                            new_note_key,
+                            new_note_title
+                        );
+                        await updateNote(
+                            curDataPath,
+                            currentRepoKey,
+                            currentFolderKey,
+                            new_note_key,
+                            content
+                        );
+                    }
+                }
+            }
+        },
+        [curDataPath, currentRepoKey, currentFolderKey, newNote, updateNote]
+    );
+
+    const handleBatchImport = useCallback(async () => {
+        const paths = await window.electronAPI.openSelectMarkdownsDialog({
+            file_types: ['md'],
+        });
+        if (paths.length > 0) await loadMarkdowns(paths);
+    }, [loadMarkdowns]);
+
+    // part6 : key event
     const handleKeyDown = useCallback(
         async (e: KeyboardEvent) => {
             if (platformName === 'darwin' || platformName === 'win32' || platformName === 'linux') {
@@ -445,6 +491,12 @@ const FolderList: React.FC<{}> = ({}) => {
                                         onClick={() => handleDeleteFolder()}
                                     >
                                         {t('category.delete')}
+                                    </MenuLi>
+                                    <MenuLi
+                                        className="menu-li-color"
+                                        onClick={() => handleBatchImport()}
+                                    >
+                                        {t('category.batch_import_md')}
                                     </MenuLi>
                                 </MenuUl>
                             ) : (

@@ -16,7 +16,8 @@
         "delete": "删除",
         "delete_tips_part_1": "即将删除分类「",
         "delete_tips_part_2": "」内的所有笔记，不可撤销",
-        "delete_tips_part_3": "(但内容可在右上方废纸篓找回)"
+        "delete_tips_part_3": "(但内容可在右上方废纸篓找回)",
+        "batch_import_md": "批量导入md"
     },
     "note": {
         "untitled": "无标题",

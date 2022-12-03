@@ -16,7 +16,8 @@
         "delete": "Delete",
         "delete_tips_part_1": "All notes in Category「",
         "delete_tips_part_2": "」will be deleted soon, irrevocable",
-        "delete_tips_part_3": "(but the content can be retrieved in the upper left trash bin)"
+        "delete_tips_part_3": "(but the content can be retrieved in the upper left trash bin)",
+        "batch_import_md": "Batch import md"
     },
     "note": {
         "untitled": "Untitled",
