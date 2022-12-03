@@ -1,5 +1,7 @@
 import React, { useCallback, useContext, useEffect, useRef, useState, MouseEvent } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
+import { useTranslation } from 'react-i18next';
+
 import styled from '@emotion/styled';
 import { useDropzone } from 'react-dropzone';
 import { EditorView, ViewUpdate } from '@codemirror/view';
@@ -35,6 +37,7 @@ const MarkdownEditor: React.FC<{
         renameNote,
         setShowKeySelect,
     } = useContext(GlobalContext);
+    const { t } = useTranslation();
 
     const [topLinePos, cursorHeadPos, updateTopLinePos, updateCursorHeadPos] = useEditorPosition(
         curDataPath,
@@ -66,7 +69,7 @@ const MarkdownEditor: React.FC<{
             const new_first_line = vu.state.doc.lineAt(0).text;
 
             if (new_first_line !== prev_first_line) {
-                let new_name = '空笔记';
+                let new_name = t('note.untitled');
                 const replace_line = new_first_line.replace(/^[#\-\_*>\s]+/g, '');
                 if (replace_line !== '') {
                     new_name = replace_line;
@@ -480,7 +483,7 @@ const MarkdownEditor: React.FC<{
     return (
         <MarkdownEditorContainer ref={editorContainerRef} fontSizeValue={editorFontSize}>
             {showEditorScrollPos && mdRenderState !== 'all' ? (
-                <LastScrollPos onClick={autoScrollToLine}>上次在</LastScrollPos>
+                <LastScrollPos onClick={autoScrollToLine}>{t('editor.last_time')}</LastScrollPos>
             ) : (
                 <></>
             )}
@@ -495,16 +498,16 @@ const MarkdownEditor: React.FC<{
             {menu ? (
                 <MenuUl top={yPos} left={xPos}>
                     <MenuLi className="menu-li-color" onClick={() => copySelection()}>
-                        复制
+                        {t('editor.copy')}
                     </MenuLi>
                     <MenuLi className="menu-li-color" onClick={() => cutSelection()}>
-                        剪切
+                        {t('editor.cut')}
                     </MenuLi>
                     <MenuLi className="menu-li-color" onClick={() => pasteClipboard()}>
-                        粘贴
+                        {t('editor.paste')}
                     </MenuLi>
                     <MenuLi className="menu-li-color" onClick={handleLoadImage}>
-                        插入图片
+                        {t('editor.insert_image')}
                     </MenuLi>
                 </MenuUl>
             ) : (

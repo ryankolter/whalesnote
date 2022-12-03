@@ -1,11 +1,13 @@
 import React, { useCallback, useContext, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
+import { useTranslation } from 'react-i18next';
 import styled from '@emotion/styled';
 
 import TrashList from './TrashList';
 
 const AssistantPanel: React.FC<{}> = ({}) => {
     const { curAssistantPanelTab, setCurAssistantPanelTab } = useContext(GlobalContext);
+    const { t } = useTranslation();
 
     const resizeAssistantPanelOffsetX = useRef<number>(0);
     const lastPageX = useRef<number>(0);
@@ -68,7 +70,7 @@ const AssistantPanel: React.FC<{}> = ({}) => {
                         }
                         onClick={(e) => handleAssistantTabSwitch('mobile_panel')}
                     >
-                        手机协作
+                        {t('assistant.mobile.title')}
                     </AssistantTab>
                     <AssistantTab
                         style={
@@ -78,7 +80,7 @@ const AssistantPanel: React.FC<{}> = ({}) => {
                         }
                         onClick={(e) => handleAssistantTabSwitch('trash_list')}
                     >
-                        废纸篓
+                        {t('assistant.trash.title')}
                     </AssistantTab>
                 </AssistantTabs>
                 <AssistantContent>

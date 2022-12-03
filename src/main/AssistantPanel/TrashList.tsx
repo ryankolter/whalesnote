@@ -1,5 +1,6 @@
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
+import { useTranslation } from 'react-i18next';
 import styled from '@emotion/styled';
 
 import { basicSetup } from 'codemirror';
@@ -16,6 +17,7 @@ import { AlertPopUp } from '../../components/AlertPopUp';
 
 const TrashList: React.FC<{}> = ({}) => {
     const { curDataPath } = useContext(GlobalContext);
+    const { t } = useTranslation();
     const editor = useRef<HTMLDivElement>(null);
     const view = useRef<EditorView>();
     const noteScrollRef = useRef<HTMLDivElement>(null);
@@ -83,7 +85,7 @@ const TrashList: React.FC<{}> = ({}) => {
     useEffect(() => {
         let content = trash.current[curTrashKey];
         if (content !== undefined) {
-            content = content || '空';
+            content = content || t('assistant.trash.content_empty');
             const newState = EditorState.create({
                 doc: content,
                 extensions: [...getExtensions],
@@ -113,14 +115,14 @@ const TrashList: React.FC<{}> = ({}) => {
         <NoteListContainer>
             <ChildPart>
                 <PartTitle>
-                    <PartTitleName>已删除</PartTitleName>
+                    <PartTitleName>{t('assistant.trash.deleted')}</PartTitleName>
                     <EmptyTrash>
                         <EmptyTrashBtn
                             onClick={() => {
                                 setEmptyPopUp(true);
                             }}
                         >
-                            <div>清空</div>
+                            <div>{t('assistant.trash.empty_btn')}</div>
                         </EmptyTrashBtn>
                     </EmptyTrash>
                 </PartTitle>
@@ -160,7 +162,7 @@ const TrashList: React.FC<{}> = ({}) => {
             <AlertPopUp
                 popupState={emptyPopUp}
                 maskState={emptyMask}
-                content="即将清空废纸篓"
+                content={t('tips.about_to_empty_the_trash')}
                 onCancel={() => setEmptyPopUp(false)}
                 onConfirm={emptyTrashListConfirm}
             ></AlertPopUp>
@@ -183,7 +185,7 @@ const PartTitle = styled.div({
     display: 'flex',
     alignItem: 'center',
     justifyContent: 'space-between',
-    fontSize: '18px',
+    fontSize: '15px',
     fontWeight: '500',
     marginBottom: '5px',
     paddingBottom: '4px',

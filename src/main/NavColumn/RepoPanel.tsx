@@ -1,5 +1,7 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
+import { useTranslation } from 'react-i18next';
+
 import styled from '@emotion/styled';
 import cryptoRandomString from 'crypto-random-string';
 import {
@@ -45,6 +47,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
         switchFolder,
         switchNote,
     } = useContext(GlobalContext);
+    const { t } = useTranslation();
 
     const [dragActiveId, setDragActiveId] = useState<string | null>(null);
     const [newRepoKey, setNewRepoKey] = useState('');
@@ -137,14 +140,20 @@ const RepoPanel: React.FC<{}> = ({}) => {
             await newRepo(curDataPath, repo_key, e.target.value);
             await changeNotesAfterNew('repo', { data_path: curDataPath, repo_key });
 
-            await newFolder(curDataPath, repo_key, default_folder_key, '默认分类');
+            await newFolder(curDataPath, repo_key, default_folder_key, t('category.default_name'));
             await changeNotesAfterNew('folder', {
                 data_path: curDataPath,
                 repo_key,
                 folder_key: default_folder_key,
             });
 
-            await newNote(curDataPath, repo_key, default_folder_key, default_note_key, '空笔记');
+            await newNote(
+                curDataPath,
+                repo_key,
+                default_folder_key,
+                default_note_key,
+                t('note.untitled')
+            );
             await changeNotesAfterNew('note', {
                 data_path: curDataPath,
                 repo_key,
@@ -591,13 +600,13 @@ const RepoPanel: React.FC<{}> = ({}) => {
                                             className="menu-li-color"
                                             onClick={() => setRenamePopUp(true)}
                                         >
-                                            重命名
+                                            {t('repository.rename')}
                                         </MenuLi>
                                         <MenuLi
                                             className="menu-li-color"
                                             onClick={() => setDeletePopUp(true)}
                                         >
-                                            删除资料库
+                                            {t('repository.delete')}
                                         </MenuLi>
                                     </MenuUl>
                                 ) : (
@@ -639,8 +648,8 @@ const RepoPanel: React.FC<{}> = ({}) => {
                                         whalenote && whalenote.repos_obj && whalenote.repos_obj[key]
                                 ).length <= 1 ? (
                                     <AddReposTips>
-                                        <div>点击按钮</div>
-                                        <div>添加新资料库</div>
+                                        <div>{t('tips.click_btn_to')}</div>
+                                        <div>{t('tips.add_new_repository')}</div>
                                     </AddReposTips>
                                 ) : (
                                     <></>
@@ -655,7 +664,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
                             key={newRepoKey}
                             value={newRepoName}
                             className="repo-name-input"
-                            placeholder="输入新的资料库名"
+                            placeholder={t('repository.enter_a_name') || ''}
                             autoFocus={true}
                             onBlur={(e) => {
                                 if (newRepoKey) newRepoSubmit(e, newRepoKey);
@@ -674,14 +683,14 @@ const RepoPanel: React.FC<{}> = ({}) => {
             <AlertPopUp
                 popupState={deletePopup}
                 maskState={deleteMask}
-                content={`即将删除资料库「${
+                content={`${t('repository.delete_tips_part_1')}${
                     whalenote &&
                     whalenote.repos_obj &&
                     currentRepoKey &&
                     whalenote.repos_obj[currentRepoKey]
                         ? whalenote.repos_obj[currentRepoKey].repo_name
                         : ''
-                }」内所有笔记，不可撤销(但内容可在废纸篓找回)`}
+                }${t('repository.delete_tips_part_2')}${t('repository.delete_tips_part_3')}`}
                 onCancel={() => setDeletePopUp(false)}
                 onConfirm={deleteRepoConfirm}
             ></AlertPopUp>
@@ -845,12 +854,12 @@ const AddReposTips = styled.div({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    width: '90px',
+    width: '100px',
     marginTop: '20px',
     fontSize: '14px',
     position: 'absolute',
-    bottom: '-80px',
-    left: '10px',
+    bottom: '-50px',
+    left: '35px',
     padding: '5px 10px',
     borderRadius: '5px',
     border: '1px dotted var(--main-tips-border-color)',

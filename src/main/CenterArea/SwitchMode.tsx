@@ -34,17 +34,17 @@ const SwitchMode: React.FC<{
             <SwitchModeBtn ref={switchModeBtnRef}>
                 <ModeNameTag>
                     {mdRenderState === 'hidden' ? (
-                        <ModeName>{t('center_area.edit')}</ModeName>
+                        <ModeName>{t('switch_mode.edit')}</ModeName>
                     ) : (
                         <></>
                     )}
                     {mdRenderState === 'half' ? (
-                        <ModeName>{t('center_area.double')}</ModeName>
+                        <ModeName>{t('switch_mode.double')}</ModeName>
                     ) : (
                         <></>
                     )}
                     {mdRenderState === 'all' ? (
-                        <ModeName>{t('center_area.preview')}</ModeName>
+                        <ModeName>{t('switch_mode.preview')}</ModeName>
                     ) : (
                         <></>
                     )}
@@ -60,7 +60,7 @@ const SwitchMode: React.FC<{
                                 setShowSwitchMdRenderState(false);
                             }}
                         >
-                            {t('center_area.edit')}
+                            {t('switch_mode.edit')}
                         </StateOption>
                     ) : (
                         <></>
@@ -72,7 +72,7 @@ const SwitchMode: React.FC<{
                                 setShowSwitchMdRenderState(false);
                             }}
                         >
-                            {t('center_area.double')}
+                            {t('switch_mode.double')}
                         </StateOption>
                     ) : (
                         <></>
@@ -84,7 +84,7 @@ const SwitchMode: React.FC<{
                                 setShowSwitchMdRenderState(false);
                             }}
                         >
-                            {t('center_area.preview')}
+                            {t('switch_mode.preview')}
                         </StateOption>
                     ) : (
                         <></>

@@ -221,7 +221,18 @@ const ExportNoteFunc: React.FC<{}> = ({}) => {
                         ? whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]
                               ?.notes_obj[note_key]?.title || ''
                         : '';
-                if (title === '' || title === t('nav_column.empty_note')) title = note_key;
+                let repeated_time = 0;
+                for (const comp_note_key of Object.keys(notes[currentRepoKey][currentFolderKey])) {
+                    const comp_title =
+                        whalenote.repos_obj[currentRepoKey]?.folders_obj &&
+                        whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]
+                            ?.notes_obj
+                            ? whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]
+                                  ?.notes_obj[comp_note_key]?.title || ''
+                            : '';
+                    if (title === comp_title) repeated_time++;
+                }
+                if (repeated_time > 1) title += '_' + note_key;
                 const content = notes[currentRepoKey][currentFolderKey][note_key];
                 const bodyContent = mdPrint.current.render(content);
                 const outerHtml = `<!DOCTYPE html><html style="height: 100%">
@@ -251,18 +262,55 @@ const ExportNoteFunc: React.FC<{}> = ({}) => {
         [whalenote, currentRepoKey, currentFolderKey, theme, setExportFinishPopUp]
     );
 
+    const saveFolderToMd = useCallback(
+        async (path: string) => {
+            for (const note_key of Object.keys(notes[currentRepoKey][currentFolderKey])) {
+                let title =
+                    whalenote.repos_obj[currentRepoKey]?.folders_obj &&
+                    whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj
+                        ? whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]
+                              ?.notes_obj[note_key]?.title || ''
+                        : '';
+                let repeated_time = 0;
+                for (const comp_note_key of Object.keys(notes[currentRepoKey][currentFolderKey])) {
+                    const comp_title =
+                        whalenote.repos_obj[currentRepoKey]?.folders_obj &&
+                        whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]
+                            ?.notes_obj
+                            ? whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]
+                                  ?.notes_obj[comp_note_key]?.title || ''
+                            : '';
+                    if (title === comp_title) repeated_time++;
+                }
+                if (repeated_time > 1) title += '_' + note_key;
+                const content = notes[currentRepoKey][currentFolderKey][note_key];
+                await window.electronAPI.writeStrToFile({
+                    folder_path: path,
+                    file_name: title + '.md',
+                    str: content,
+                });
+            }
+            setExportFinishPopUp(true);
+        },
+        [whalenote, currentRepoKey, currentFolderKey, setExportFinishPopUp]
+    );
+
     const ExportNotesInFolderFunc = useCallback(
         async (type: string) => {
             switch (type) {
                 case 'html':
-                    const filePath = await window.electronAPI.openDirectoryDialog();
-                    if (filePath !== '') await saveFolderToHtml(filePath);
+                    const htmlFilePath = await window.electronAPI.openDirectoryDialog();
+                    if (htmlFilePath !== '') await saveFolderToHtml(htmlFilePath);
+                    break;
+                case 'md':
+                    const mdFilePath = await window.electronAPI.openDirectoryDialog();
+                    if (mdFilePath !== '') await saveFolderToMd(mdFilePath);
                     break;
                 case 'default':
                     break;
             }
         },
-        [saveFolderToHtml]
+        [saveFolderToHtml, saveFolderToMd]
     );
 
     return (
@@ -275,18 +323,26 @@ const ExportNoteFunc: React.FC<{}> = ({}) => {
                     <ModeOption
                         onClick={() => {
                             setShowSwitchExportNoteFunc(false);
-                            ExportNoteFunc('html');
+                            ExportNoteFunc('md');
                         }}
                     >
-                        导出笔记 [.html]
+                        {t('export_note.export_note_as_md')}
                     </ModeOption>
                     <ModeOption
                         onClick={() => {
                             setShowSwitchExportNoteFunc(false);
-                            ExportNoteFunc('md');
+                            ExportNoteFunc('html');
                         }}
                     >
-                        导出笔记 [.md]
+                        {t('export_note.export_note_as_html')}
+                    </ModeOption>
+                    <ModeOption
+                        onClick={() => {
+                            setShowSwitchExportNoteFunc(false);
+                            ExportNotesInFolderFunc('md');
+                        }}
+                    >
+                        {t('export_note.export_category_as_md')}
                     </ModeOption>
                     <ModeOption
                         onClick={() => {
@@ -294,7 +350,7 @@ const ExportNoteFunc: React.FC<{}> = ({}) => {
                             ExportNotesInFolderFunc('html');
                         }}
                     >
-                        导出分类 [.html]
+                        {t('export_note.export_category_as_html')}
                     </ModeOption>
                 </SwitchExportNoteFunc>
             ) : (
@@ -303,7 +359,7 @@ const ExportNoteFunc: React.FC<{}> = ({}) => {
             <AlertPopUp
                 popupState={exportFinishPopUp}
                 maskState={exportFinishMask}
-                content="导出成功"
+                content={t('tips.export_success')}
                 onConfirm={() => {
                     setExportFinishPopUp(false);
                 }}

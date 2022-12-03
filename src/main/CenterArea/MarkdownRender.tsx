@@ -1,5 +1,6 @@
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
+import { useTranslation } from 'react-i18next';
 import styled from '@emotion/styled';
 import cryptoRandomString from 'crypto-random-string';
 import ClipboardJS from 'clipboard';
@@ -64,6 +65,7 @@ const MarkdownRender: React.FC<{
         renderFontSize,
         showRepoPanel,
     } = useContext(GlobalContext);
+    const { t } = useTranslation();
 
     const [result, setResult] = useState('');
     const [showRenderScrollPos, setShowRenderScrollPos] = useState(false);
@@ -98,7 +100,9 @@ const MarkdownRender: React.FC<{
                             length: 12,
                             type: 'alphanumeric',
                         });
-                        const html = `<button class="copy-btn" type="button" data-clipboard-action="copy" data-clipboard-target="#copy-${copyId}">复制</button>`;
+                        const html = `<button class="copy-btn" type="button" data-clipboard-action="copy" data-clipboard-target="#copy-${copyId}">${t(
+                            'render.copy'
+                        )}</button>`;
                         const textarea = `<textarea style="position: absolute;top: -9999px;left: -9999px;z-index: -9999;" id="copy-${copyId}">${str}</textarea>`;
                         return (
                             '<pre><code class="hljs" style="position: relative;">' +
@@ -163,9 +167,9 @@ const MarkdownRender: React.FC<{
         setResult(md.current.render(renderNoteStr));
         clipboard.current = new ClipboardJS('.copy-btn');
         clipboard.current.on('success', (e: any) => {
-            e.trigger.innerHTML = '成功';
+            e.trigger.innerHTML = t('render.success');
             setTimeout(() => {
-                e.trigger.innerHTML = '复制';
+                e.trigger.innerHTML = t('render.copy');
             }, 2000);
         });
 
@@ -310,7 +314,7 @@ const MarkdownRender: React.FC<{
     return (
         <MarkdownRenderContainer ref={renderContainerRef} fontSizeValue={renderFontSize}>
             {showRenderScrollPos && mdRenderState === 'all' ? (
-                <LastScrollPos onClick={autoScrollToLine}>上次在</LastScrollPos>
+                <LastScrollPos onClick={autoScrollToLine}>{t('render.last_time')}</LastScrollPos>
             ) : (
                 <></>
             )}
@@ -353,7 +357,7 @@ const MarkdownRender: React.FC<{
             {menu ? (
                 <MenuUl top={yPos} left={xPos}>
                     <MenuLi className="menu-li-color" onClick={() => copySelection()}>
-                        复制
+                        {t('render.copy')}
                     </MenuLi>
                 </MenuUl>
             ) : (

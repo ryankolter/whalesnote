@@ -1,8 +1,11 @@
 import { useCallback, useContext, useMemo } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
+import { useTranslation } from 'react-i18next';
+
 import styled from '@emotion/styled';
 
 import { SelectionOptions } from '../../components/SelectionOptions';
+import { t } from 'i18next';
 
 const InterfacePage: React.FC<{}> = ({}) => {
     const {
@@ -15,6 +18,7 @@ const InterfacePage: React.FC<{}> = ({}) => {
         setEditorFontSize,
         setRenderFontSize,
     } = useContext(GlobalContext);
+    const { t } = useTranslation();
 
     const themeList = useMemo(() => ['light', 'dark'], []);
     const languageList = useMemo(() => ['zh-CN', 'en-US'], []);
@@ -31,9 +35,9 @@ const InterfacePage: React.FC<{}> = ({}) => {
 
     const translateTheme = useCallback((option: string) => {
         if (option === 'light') {
-            return '浅色';
+            return t('setting.interface.mode.light');
         } else if (option === 'dark') {
-            return '深色';
+            return t('setting.interface.mode.dark');
         } else {
             return '';
         }
@@ -76,35 +80,35 @@ const InterfacePage: React.FC<{}> = ({}) => {
     return (
         <DataSpaceContainer>
             <ChildPart>
-                <PartTitle>模式</PartTitle>
+                <PartTitle>{t('setting.interface.mode.title')}</PartTitle>
                 <PartContent>
                     <SelectionOptions
-                        title="主题色"
-                        currentOption={theme}
-                        optionList={themeList}
-                        handleOption={changeTheme}
-                        translateFunc={translateTheme}
-                    />
-                    <SelectionOptions
-                        title="语言"
+                        title={t('setting.interface.mode.language')}
                         currentOption={language}
                         optionList={languageList}
                         handleOption={changeLanguage}
                         translateFunc={translateLanguage}
                     />
+                    <SelectionOptions
+                        title={t('setting.interface.mode.theme')}
+                        currentOption={theme}
+                        optionList={themeList}
+                        handleOption={changeTheme}
+                        translateFunc={translateTheme}
+                    />
                 </PartContent>
             </ChildPart>
             <ChildPart>
-                <PartTitle>样式</PartTitle>
+                <PartTitle>{t('setting.interface.style.title')}</PartTitle>
                 <PartContent>
                     <SelectionOptions
-                        title="编辑字号"
+                        title={t('setting.interface.style.edit_font_size')}
                         currentOption={editorFontSize}
                         optionList={editorFontSizeList}
                         handleOption={changeEditorFontSize}
                     />
                     <SelectionOptions
-                        title="预览字号"
+                        title={t('setting.interface.style.preview_font_size')}
                         currentOption={renderFontSize}
                         optionList={renderFontSizeList}
                         handleOption={changeRenderFontSize}

@@ -1,5 +1,7 @@
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
+import { useTranslation } from 'react-i18next';
+
 import styled from '@emotion/styled';
 
 import { usePopUp } from '../../lib/usePopUp';
@@ -13,6 +15,8 @@ const DataPage: React.FC<{}> = ({}) => {
         setCurDataPath,
         setDataSwitchingFlag,
     } = useContext(GlobalContext);
+    const { t } = useTranslation();
+
     const [showPathUl, setShowPathUl] = useState(false);
     const [removeDataSpacePath, setRemoveDataSpacePath] = useState('');
     const pathUlRef = useRef<HTMLDivElement>(null);
@@ -60,15 +64,16 @@ const DataPage: React.FC<{}> = ({}) => {
     return (
         <DataSpaceContainer>
             <ChildPart>
-                <PartTitle>存储空间</PartTitle>
+                <PartTitle>{t('setting.data.storage')}</PartTitle>
                 <ShowPath>
                     <PathContainer ref={pathUlRef}>
                         <Path>
                             <CurrentPath>
                                 <PathValue>
                                     <UnicodeSpan>{curDataPath}</UnicodeSpan>
-                                    {curDataPath.indexOf('/whale_note/noteData') !== -1
-                                        ? ' - 默认'
+                                    {curDataPath.indexOf('/whalenote/noteData') !== -1 ||
+                                    curDataPath.indexOf('\\whalenote\\noteData') !== -1
+                                        ? ' - ' + t('setting.data.default')
                                         : ''}
                                 </PathValue>
                                 <Triangle></Triangle>
@@ -89,8 +94,10 @@ const DataPage: React.FC<{}> = ({}) => {
                                                     }}
                                                 >
                                                     <UnicodeSpan>{dataPath}</UnicodeSpan>
-                                                    {dataPath.indexOf('/whale_note/noteData') !== -1
-                                                        ? ' - 默认'
+                                                    {dataPath.indexOf('/whalenote/noteData') !==
+                                                        -1 ||
+                                                    dataPath.indexOf('\\whalenote\\noteData') !== -1
+                                                        ? ' - ' + t('setting.data.default')
                                                         : ''}
                                                     <RemovePathBtn
                                                         onClick={(e) => {
@@ -117,25 +124,20 @@ const DataPage: React.FC<{}> = ({}) => {
                     </PathContainer>
                     <OpenDataPath>
                         <OpenDataPathBtn onClick={(e) => openDataPath(curDataPath)}>
-                            打开
+                            {t('setting.data.open')}
                         </OpenDataPathBtn>
                     </OpenDataPath>
                 </ShowPath>
                 <AlertPopUp
                     popupState={removePopUp}
                     maskState={removeMask}
-                    content={`即将移除数据目录\n${removeDataSpacePath}(不会删除目录内容)`}
+                    content={`${t('setting.data.remove_tips_part_1')}\n${removeDataSpacePath}${t(
+                        'setting.data.remove_tips_part_2'
+                    )}${t('setting.data.remove_tips_part_3')}`}
                     onCancel={() => setRemovePopUp(false)}
                     onConfirm={removeDataSpaceConfirm}
                 ></AlertPopUp>
             </ChildPart>
-            {/* <ChildPart>
-                <PartTitle>操作</PartTitle>
-                <OperationList>
-                    <OperationBtn style={{ marginBottom: '15px' }}>一键备份</OperationBtn>
-                    <OperationBtn style={{ marginBottom: '15px' }}>加密备份</OperationBtn>
-                </OperationList>
-            </ChildPart> */}
         </DataSpaceContainer>
     );
 };

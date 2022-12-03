@@ -1,5 +1,6 @@
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
+import { useTranslation } from 'react-i18next';
 import styled from '@emotion/styled';
 import { Editor } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
@@ -28,6 +29,7 @@ const TipTapEditor: React.FC<{
         renameNote,
         setShowKeySelect,
     } = useContext(GlobalContext);
+    const { t } = useTranslation();
 
     const domRef = useRef<HTMLDivElement>(null);
     const editorRef = useRef<MarkdownEditor>();
@@ -94,7 +96,7 @@ const TipTapEditor: React.FC<{
                 line = new_value;
             }
 
-            let new_name = '空笔记';
+            let new_name = t('note.untitled');
             if (line !== '' && !line.startsWith('\\#')) {
                 const replace_line = line.replace(/^[#\-\_*>\s]+/g, '');
                 if (replace_line !== '' && !replace_line.startsWith('\\#')) new_name = replace_line;

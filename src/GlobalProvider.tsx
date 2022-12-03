@@ -252,6 +252,7 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
     useEffect(() => {
+        console.log(language);
         i18next.changeLanguage(language);
     }, [language]);
 
@@ -364,7 +365,7 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
                 ? whalenote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj[
                       currentNoteKey
                   ].title
-                : i18next.t('nav_column.empty_note'),
+                : i18next.t('note.untitled'),
         [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, whalenote]
     );
 

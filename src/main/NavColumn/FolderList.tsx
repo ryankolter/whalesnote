@@ -102,7 +102,7 @@ const FolderList: React.FC<{}> = ({}) => {
                 folder_key,
             });
 
-            await newNote(curDataPath, currentRepoKey, folder_key, note_key, '空笔记');
+            await newNote(curDataPath, currentRepoKey, folder_key, note_key, t('note.untitled'));
             await changeNotesAfterNew('note', {
                 data_path: curDataPath,
                 repo_key: currentRepoKey,
@@ -337,7 +337,7 @@ const FolderList: React.FC<{}> = ({}) => {
                 <CategoryIcon>
                     <CategoryIconImg src={categoryIcon} alt="" />
                 </CategoryIcon>
-                <FolderTopTitle>{t('nav_column.category')}</FolderTopTitle>
+                <FolderTopTitle>{t('category.title')}</FolderTopTitle>
             </FolderTopBar>
             {folders_key && folders_obj ? (
                 <DndContext
@@ -438,13 +438,13 @@ const FolderList: React.FC<{}> = ({}) => {
                                         className="menu-li-color"
                                         onClick={() => handleRenameFolder()}
                                     >
-                                        重命名
+                                        {t('category.rename')}
                                     </MenuLi>
                                     <MenuLi
                                         className="menu-li-color"
                                         onClick={() => handleDeleteFolder()}
                                     >
-                                        删除文件夹
+                                        {t('category.delete')}
                                     </MenuLi>
                                 </MenuUl>
                             ) : (
@@ -463,7 +463,7 @@ const FolderList: React.FC<{}> = ({}) => {
                                     key={newFolderKey}
                                     value={newFolderName}
                                     className="folder-name-input"
-                                    placeholder="输入新的分类名"
+                                    placeholder={t('category.enter_a_name') || ''}
                                     autoFocus={true}
                                     onBlur={(e) => newFolderConfirm(e, newFolderKey)}
                                     onChange={(e: any) => {
@@ -531,11 +531,11 @@ const FolderList: React.FC<{}> = ({}) => {
             <AlertPopUp
                 popupState={deletePopup}
                 maskState={deleteMask}
-                content={`即将删除文件夹「${
+                content={`${t('category.delete_tips_part_1')}${
                     folders_obj && currentFolderKey && folders_obj[currentFolderKey]
                         ? folders_obj[currentFolderKey].folder_name
                         : ''
-                }」内所有笔记，不可撤销(但内容可在废纸篓找回)`}
+                }${t('category.delete_tips_part_2')}${t('category.delete_tips_part_3')}`}
                 onCancel={() => setDeletePopUp(false)}
                 onConfirm={deleteFolderConfirm}
             ></AlertPopUp>

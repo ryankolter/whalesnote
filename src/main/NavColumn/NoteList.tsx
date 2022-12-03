@@ -1,6 +1,7 @@
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
 import { useTranslation } from 'react-i18next';
+
 import styled from '@emotion/styled';
 import cryptoRandomString from 'crypto-random-string';
 import {
@@ -77,7 +78,7 @@ const NoteList: React.FC<{}> = ({}) => {
             length: 12,
             type: 'alphanumeric',
         });
-        const new_note_title = t('nav_column.empty_note');
+        const new_note_title = t('note.untitled');
         await newNote(curDataPath, currentRepoKey, currentFolderKey, new_note_key, new_note_title);
         await switchNote(currentRepoKey, currentFolderKey, new_note_key);
         manualFocus(500);
@@ -386,8 +387,8 @@ const NoteList: React.FC<{}> = ({}) => {
                             {notes_key.filter((key: string) => notes_obj && notes_obj[key])
                                 .length <= 1 ? (
                                 <AddNotesTips>
-                                    <div>点击按钮</div>
-                                    <div>添加新笔记</div>
+                                    <div>{t('tips.click_btn_to')}</div>
+                                    <div>{t('tips.add_new_note')}</div>
                                 </AddNotesTips>
                             ) : (
                                 <></>
@@ -406,7 +407,7 @@ const NoteList: React.FC<{}> = ({}) => {
                                         className="menu-li-color"
                                         onClick={() => handleDeleteNote(currentNoteKey)}
                                     >
-                                        扔到废纸篓
+                                        {t('note.delete')}
                                     </MenuLi>
                                 </MenuUl>
                             ) : (

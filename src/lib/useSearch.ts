@@ -1,12 +1,11 @@
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { GlobalContext } from '../GlobalProvider';
-import { useTranslation } from 'react-i18next';
+import { t } from 'i18next';
 import MiniSearch, { AsPlainObject, SearchResult } from 'minisearch';
 import { notes, fetchNotesInAllRepo } from './notes';
 
 const useSearch = () => {
     const { curDataPath, whalenote } = useContext(GlobalContext);
-    const { t } = useTranslation();
 
     const searchFileJson = useRef<AsPlainObject | false>(false);
     const miniSearch = useRef<MiniSearch | null>();
@@ -101,7 +100,7 @@ const useSearch = () => {
                                       note_key
                                   ]?.title || ''
                                 : '';
-                        if (title === t('nav_column.empty_note')) title = '';
+                        if (title === t('note.untitled')) title = '';
                         const content = notes[repo_key][folder_key][note_key];
                         documents.push({
                             id,

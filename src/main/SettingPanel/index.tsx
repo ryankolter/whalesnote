@@ -1,6 +1,7 @@
-import styled from '@emotion/styled';
 import { useCallback, useContext } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
+import { useTranslation } from 'react-i18next';
+import styled from '@emotion/styled';
 
 import InterfacePage from './InterfacePage';
 import DataPage from './DataPage';
@@ -8,6 +9,7 @@ import AboutPage from './AboutPage';
 
 const SettingPanel: React.FC<{}> = ({}) => {
     const { curSettingPanelTab, setCurSettingPanelTab } = useContext(GlobalContext);
+    const { t } = useTranslation();
 
     const handleSettingTabSwitch = useCallback(
         (tab_name: string) => {
@@ -38,7 +40,7 @@ const SettingPanel: React.FC<{}> = ({}) => {
                         }
                         onClick={(e) => handleSettingTabSwitch('data_page')}
                     >
-                        数据
+                        {t('setting.data.title')}
                     </SettingTab>
                     <SettingTab
                         style={
@@ -48,7 +50,7 @@ const SettingPanel: React.FC<{}> = ({}) => {
                         }
                         onClick={(e) => handleSettingTabSwitch('interface_page')}
                     >
-                        界面
+                        {t('setting.interface.title')}
                     </SettingTab>
                     <SettingTab
                         style={
@@ -58,7 +60,7 @@ const SettingPanel: React.FC<{}> = ({}) => {
                         }
                         onClick={(e) => handleSettingTabSwitch('about_page')}
                     >
-                        关于
+                        {t('setting.about.title')}
                     </SettingTab>
                 </SettingTabs>
                 <SettingContent>

@@ -1,25 +1,26 @@
-import { useCallback, useContext, useMemo } from 'react';
-import { GlobalContext } from '../../GlobalProvider';
+import { useTranslation } from 'react-i18next';
 import styled from '@emotion/styled';
 
 const AboutPage: React.FC<{}> = ({}) => {
+    const { t } = useTranslation();
+
     return (
         <AboutPageContainer>
             <ChildPart>
-                <PartTitle>项目</PartTitle>
+                <PartTitle>{t('setting.about.project.title')}</PartTitle>
                 <PartContent>
                     <Option>
-                        <OptionTitle>版本: </OptionTitle>
+                        <OptionTitle>{t('setting.about.project.version')}: </OptionTitle>
                         <OptionWord>1.0.0</OptionWord>
                     </Option>
                     <Option>
-                        <OptionTitle>开源地址: </OptionTitle>
+                        <OptionTitle>{t('setting.about.project.url')}: </OptionTitle>
                         <HrefLink target="_blank" href="https://github.com/ryankolter/whalenote">
                             https://github.com/ryankolter/whalenote
                         </HrefLink>
                     </Option>
                     <Option>
-                        <OptionTitle>开发者: </OptionTitle>
+                        <OptionTitle>{t('setting.about.project.developer')}: </OptionTitle>
                         <OptionWord>Ryan Kolter</OptionWord>
                     </Option>
                 </PartContent>

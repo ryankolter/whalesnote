@@ -232,7 +232,7 @@ const RepoPanelKeyTab = styled.div({
 const RepoNameLabel = styled.div({
     flex: 1,
     fontSize: '16px',
-    padding: '0 20px',
+    padding: '0 10px',
     textAlign: 'center',
     overflow: 'hidden',
     textOverflow: 'ellipsis',

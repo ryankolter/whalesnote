@@ -1,8 +1,9 @@
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { GlobalContext } from '../../GlobalProvider';
+import { useTranslation } from 'react-i18next';
+
 import styled from '@emotion/styled';
 import { SearchResult } from 'minisearch';
-import { useTranslation } from 'react-i18next';
 
 import useSearch from '../../lib/useSearch';
 import WaitingMaskStatic from '../../components/WaitingMaskStatic';
@@ -201,7 +202,10 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
 
     return (
         <SearchBarContainer ref={searchBarRef}>
-            <WaitingMaskStatic show={showWaitingMask} word={'请等待......'}></WaitingMaskStatic>
+            <WaitingMaskStatic
+                show={showWaitingMask}
+                word={t('tips.please_wait')}
+            ></WaitingMaskStatic>
             <Search>
                 <SearchIcon
                     className="ri-search-line"
@@ -213,7 +217,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                     ref={searchInputRef}
                     onChange={handleSearchInputChange}
                     onFocus={handleSearchInputFocus}
-                    placeholder={t('nav_column.search') || ''}
+                    placeholder={t('search.placeholder') || ''}
                     readOnly={showLoadingSearch}
                 />
             </Search>
@@ -228,24 +232,17 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                                 }}
                             >
                                 {showUpdateIndexTips ? (
-                                    <div>生成搜索树</div>
+                                    <div>{t('search.generate_search_tree')}</div>
                                 ) : (
-                                    <div>更新搜索树</div>
+                                    <div>{t('search.regenerate_search_tree')}</div>
                                 )}
                             </UpdateIndexBtn>
                         </UpdateIndex>
-                        {/* <CloseSearchPanelBtn
-                            onClick={() => {
-                                setShowSearchPanel(false);
-                            }}
-                        >
-                            x
-                        </CloseSearchPanelBtn> */}
                     </SearchTool>
                     {showUpdateIndexTips ? (
                         <UpdateIndexTips>
-                            <div>搜索功能需要搜索树</div>
-                            <div>请点击上方生成</div>
+                            <div>{t('tips.click_btn_to')}</div>
+                            <div>{t('tips.activate_searching')}</div>
                         </UpdateIndexTips>
                     ) : (
                         <></>
@@ -275,7 +272,13 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                             <></>
                         )}
                     </SearchResultList>
-                    {showLoadingSearch ? <LoadingSearch>搜索模块初始化中...</LoadingSearch> : <></>}
+                    {showLoadingSearch ? (
+                        <LoadingSearch>
+                            <LoadingSearchTips>{t('search.initing')}</LoadingSearchTips>
+                        </LoadingSearch>
+                    ) : (
+                        <></>
+                    )}
                 </SearchPanel>
             ) : (
                 <></>
@@ -339,6 +342,10 @@ const LoadingSearch = styled.div({
     transform: 'translate(-15px, -15px)',
     borderRadius: '10px',
     backgroundColor: 'var(--main-waiting-bg-color)',
+});
+
+const LoadingSearchTips = styled.div({
+    margin: '0 25px',
 });
 
 const SearchPanel = styled.div({

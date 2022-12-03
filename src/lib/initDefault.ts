@@ -11,15 +11,15 @@ const initDefault = () => {
             repos_key: [repo_id],
             repos_obj: {
                 [repo_id]: {
-                    repo_name: i18next.t('nav_column.first_repository'),
+                    repo_name: i18next.t('repository.default_name'),
                     folders_key: [folder_id],
                     folders_obj: {
                         [folder_id]: {
-                            folder_name: i18next.t('nav_column.default_category'),
+                            folder_name: i18next.t('category.default_name'),
                             notes_key: [note_id],
                             notes_obj: {
                                 [note_id]: {
-                                    title: i18next.t('nav_column.empty_note'),
+                                    title: i18next.t('note.untitled'),
                                 },
                             },
                         },
