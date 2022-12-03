@@ -34,30 +34,7 @@ const useData = () => {
             if (repo_info) {
                 first_repo_key = first_repo_key ? first_repo_key : repo_key;
                 whalesnote.repos_key.push(repo_key);
-                whalesnote.repos_obj[repo_key] = {
-                    repo_name: repo_info.repo_name,
-                    folders_key: repo_info.folders_key,
-                    folders_obj: {},
-                };
-                const valid_folders_key: string[] = [];
-                for (const folder_key of repo_info.folders_key) {
-                    const folder_info = await window.electronAPI.readJsonSync({
-                        file_path: `${data_path}/${repo_key}/${folder_key}/folder_info.json`,
-                    });
-                    if (folder_info) {
-                        whalesnote.repos_obj[repo_key].folders_obj[folder_key] = folder_info;
-                        valid_folders_key.push(folder_key);
-                    }
-                }
-                if (repo_info.folders_key.length !== valid_folders_key.length) {
-                    whalesnote.repos_obj[repo_key].folders_key = valid_folders_key;
-                    repo_info.folders_key = valid_folders_key;
-                    await window.electronAPI.writeJson({
-                        file_path: `${data_path}/${repo_key}/repo_info.json`,
-                        obj: repo_info,
-                    });
-                }
-
+                whalesnote.repos_obj[repo_key] = repo_info;
                 valid_repos_key.push(repo_key);
             }
         }
@@ -102,6 +79,10 @@ const useData = () => {
                 const folder_info = await window.electronAPI.readJsonSync({
                     file_path: `${data_path}/${init_repo_key}/${fetch_folder_key}/folder_info.json`,
                 });
+                whalesnote.repos_obj[init_repo_key].folders_obj[fetch_folder_key] = {
+                    ...whalesnote.repos_obj[init_repo_key].folders_obj[fetch_folder_key],
+                    ...folder_info,
+                };
                 if (folder_info && folder_info.notes_obj) {
                     notes[init_repo_key][fetch_folder_key] = {};
                     for (const note_key of Object.keys(folder_info.notes_obj)) {
@@ -151,9 +132,17 @@ const useData = () => {
         for (const repo_key of whalesnote.repos_key) {
             const repo = whalesnote.repos_obj[repo_key];
             if (repo) {
+                const folders_obj = {};
+                for (const folder_key of Object.keys(repo.folders_obj)) {
+                    folders_obj[folder_key] = {};
+                    folders_obj[folder_key].folder_name = String(
+                        repo.folders_obj[folder_key].folder_name
+                    );
+                }
                 const repo_info = {
                     repo_name: repo.repo_name,
                     folders_key: repo.folders_key,
+                    folders_obj: folders_obj,
                 };
                 await window.electronAPI.writeJson({
                     file_path: `${data_path}/${repo_key}/repo_info.json`,
@@ -162,9 +151,13 @@ const useData = () => {
                 for (const folder_key of Object.keys(repo.folders_obj)) {
                     const folder = repo.folders_obj[folder_key];
                     if (folder) {
+                        const folders_info = {
+                            notes_key: folder.notes_key,
+                            notes_obj: folder.notes_obj,
+                        };
                         await window.electronAPI.writeJson({
                             file_path: `${data_path}/${repo_key}/${folder_key}/folder_info.json`,
-                            obj: folder,
+                            obj: folders_info,
                         });
                         for (const note_key of Object.keys(folder.notes_obj)) {
                             const note = folder.notes_obj[note_key];

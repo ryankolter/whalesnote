@@ -207,6 +207,7 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
         whalesnote,
         {
             initwhalesnote,
+            fetchNotesInfoInFolder,
             newRepo,
             newFolder,
             newNote,
@@ -221,6 +222,8 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
             deleteNote,
         },
     ] = useWhalesnote();
+
+    console.log(whalesnote);
 
     const [platformName, setPlatformName] = useState<string>('');
     const [whalesnoteId, setWhaltenoteId] = useState<string>('');
@@ -300,6 +303,7 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
             const fetch_folder_key =
                 history.repos_record[repo_key]?.cur_folder_key ||
                 (folders_key.length > 0 ? folders_key[0] : undefined);
+            await fetchNotesInfoInFolder(curDataPath, repo_key, fetch_folder_key);
             await fetchNotesInfolder(curDataPath, repo_key, fetch_folder_key);
             await repoSwitch(curDataPath, repo_key);
         },
@@ -308,6 +312,7 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
 
     const switchFolder = useCallback(
         async (repo_key: string, folder_key: string | undefined) => {
+            await fetchNotesInfoInFolder(curDataPath, repo_key, folder_key);
             await fetchNotesInfolder(curDataPath, repo_key, folder_key);
             await folderSwitch(curDataPath, repo_key, folder_key);
         },
@@ -316,6 +321,7 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
 
     const switchNote = useCallback(
         async (repo_key: string, folder_key: string | undefined, note_key: string | undefined) => {
+            await fetchNotesInfoInFolder(curDataPath, repo_key, folder_key);
             await fetchNotesInfolder(curDataPath, repo_key, folder_key);
             await noteSwitch(curDataPath, repo_key, folder_key, note_key);
         },

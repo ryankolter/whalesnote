@@ -9,6 +9,14 @@ const whalesnoteReducer = produce((state: whalesnoteObjType, action: any) => {
             return state;
         }
 
+        case 'fetch_note_into_in_folder': {
+            state.repos_obj[action.repo_key].folders_obj[action.folder_key] = {
+                ...state.repos_obj[action.repo_key].folders_obj[action.folder_key],
+                ...action.folder_info,
+            };
+            return state;
+        }
+
         case 'new_repo': {
             state.repos_key = [...state.repos_key, action.repo_key];
             state.repos_obj[action.repo_key] = {
@@ -111,6 +119,30 @@ const useWhalesnote = () => {
         []
     );
 
+    const fetchNotesInfoInFolder = useCallback(
+        async (
+            cur_data_path: string,
+            repo_key: string | undefined,
+            folder_key: string | undefined
+        ) => {
+            if (repo_key && folder_key) {
+                if (!getState().repos_obj[repo_key].folders_obj[folder_key].notes_key) {
+                    const folder_info = await window.electronAPI.readJsonSync({
+                        file_path: `${cur_data_path}/${repo_key}/${folder_key}/folder_info.json`,
+                    });
+
+                    dispatch({
+                        type: 'fetch_note_into_in_folder',
+                        repo_key,
+                        folder_key,
+                        folder_info,
+                    });
+                }
+            }
+        },
+        []
+    );
+
     const newRepo = useCallback(
         async (cur_data_path: string, repo_key: string, repo_name: string) => {
             const whalesnote_info = await window.electronAPI.readJsonSync({
@@ -125,6 +157,7 @@ const useWhalesnote = () => {
             const repo_info = {
                 repo_name: repo_name,
                 folders_key: [],
+                folders_obj: {},
             };
             await window.electronAPI.writeJson({
                 file_path: `${cur_data_path}/${repo_key}/repo_info.json`,
@@ -269,20 +302,27 @@ const useWhalesnote = () => {
                 file_path: `${cur_data_path}/${repo_key}/repo_info.json`,
             });
             repo_info.folders_key.push(new_folder_key);
+            repo_info.folders_obj[new_folder_key] = {
+                folder_name: new_folder_name,
+            };
             await window.electronAPI.writeJson({
                 file_path: `${cur_data_path}/${repo_key}/repo_info.json`,
                 obj: repo_info,
             });
 
-            const folder_info = {
-                folder_name: new_folder_name,
+            const save_folder_info = {
                 notes_key: [],
                 notes_obj: {},
             };
             await window.electronAPI.writeJson({
                 file_path: `${cur_data_path}/${repo_key}/${new_folder_key}/folder_info.json`,
-                obj: folder_info,
+                obj: save_folder_info,
             });
+
+            const folder_info = {
+                ...save_folder_info,
+                folder_name: new_folder_name,
+            };
 
             dispatch({
                 type: 'new_folder',
@@ -301,13 +341,13 @@ const useWhalesnote = () => {
             folder_key: string,
             new_folder_name: string
         ) => {
-            const folder_info = await window.electronAPI.readJsonSync({
-                file_path: `${cur_data_path}/${repo_key}/${folder_key}/folder_info.json`,
+            const repo_info = await window.electronAPI.readJsonSync({
+                file_path: `${cur_data_path}/${repo_key}/repo_info.json`,
             });
-            folder_info.folder_name = new_folder_name;
+            repo_info.folders_obj[folder_key].folder_name = new_folder_name;
             await window.electronAPI.writeJson({
-                file_path: `${cur_data_path}/${repo_key}/${folder_key}/folder_info.json`,
-                obj: folder_info,
+                file_path: `${cur_data_path}/${repo_key}/repo_info.json`,
+                obj: repo_info,
             });
             dispatch({
                 type: 'rename_folder',
@@ -390,6 +430,7 @@ const useWhalesnote = () => {
             });
 
             repo_info.folders_key = remaining_folders_key;
+            delete repo_info.folders_obj[folder_key];
 
             await window.electronAPI.writeJson({
                 file_path: `${cur_data_path}/${repo_key}/repo_info.json`,
@@ -616,6 +657,7 @@ const useWhalesnote = () => {
         state,
         {
             initwhalesnote,
+            fetchNotesInfoInFolder,
             newRepo,
             renameRepo,
             reorderRepo,
