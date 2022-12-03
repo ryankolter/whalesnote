@@ -3,7 +3,7 @@
         "first_repository": "1号资料库",
         "category": "分类",
         "default_category": "默认分类",
-        "empty_note": "空笔记",
+        "untitled_note": "无标题",
         "search": "搜索"
     },
     "center_area": {

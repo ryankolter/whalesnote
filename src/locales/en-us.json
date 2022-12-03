@@ -3,7 +3,7 @@
         "first_repository": "Repository 1",
         "category": "Category",
         "default_category": "Default",
-        "empty_note": "Empty Note",
+        "untitled_note": "Untitled",
         "search": "search"
     },
     "center_area": {

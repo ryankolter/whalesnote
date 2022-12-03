@@ -62,38 +62,24 @@ const MarkdownEditor: React.FC<{
             );
             setRenderNoteStr(new_value);
 
-            let line = '';
-            const is_with_lf = new_value.indexOf('\n') !== -1;
-            if (is_with_lf) {
-                let index = 0;
-                let max_count = 500;
-                while ((line === '' || line === '\n') && index !== -1) {
-                    const next_index = new_value.indexOf('\n', index + 1);
-                    if (next_index === -1) {
-                        line = new_value.substring(index);
-                        break;
-                    }
-                    line = new_value.substring(index, next_index);
-                    index = next_index;
-                    if (--max_count < 0) break;
+            const prev_first_line = vu.startState.doc.lineAt(0).text;
+            const new_first_line = vu.state.doc.lineAt(0).text;
+
+            if (new_first_line !== prev_first_line) {
+                let new_name = '空笔记';
+                const replace_line = new_first_line.replace(/^[#\-\_*>\s]+/g, '');
+                if (replace_line !== '') {
+                    new_name = replace_line;
                 }
-            } else {
-                line = new_value;
-            }
 
-            let new_name = '空笔记';
-            if (line !== '' && !line.startsWith('\\#')) {
-                const replace_line = line.replace(/^[#\-\_*>\s]+/g, '');
-                if (replace_line !== '' && !replace_line.startsWith('\\#')) new_name = replace_line;
+                await renameNote(
+                    curDataPath,
+                    currentRepoKey,
+                    currentFolderKey,
+                    currentNoteKey,
+                    new_name
+                );
             }
-
-            await renameNote(
-                curDataPath,
-                currentRepoKey,
-                currentFolderKey,
-                currentNoteKey,
-                new_name
-            );
         },
         [
             curDataPath,

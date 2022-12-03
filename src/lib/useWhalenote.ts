@@ -514,7 +514,7 @@ const useWhalenote = () => {
                             new_title
                         );
                         renameSaveTimerObj.current.delete(note_key);
-                    }, 500)
+                    }, 300)
                 );
             }
         },
