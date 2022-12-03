@@ -12,7 +12,7 @@ import { whalesnoteObjType, historyTypes, notesTypes } from './commonType';
 import useData from './lib/useData';
 import useDataList from './lib/useDataList';
 import useHistory from './lib/useHistory';
-import usewhalesnote from './lib/usewhalesnote';
+import useWhalesnote from './lib/useWhalesnote';
 
 import i18next from './i18n';
 
@@ -220,7 +220,7 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
             deleteFolder,
             deleteNote,
         },
-    ] = usewhalesnote();
+    ] = useWhalesnote();
 
     const [platformName, setPlatformName] = useState<string>('');
     const [whalesnoteId, setWhaltenoteId] = useState<string>('');

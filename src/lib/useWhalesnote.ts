@@ -90,7 +90,7 @@ const whalesnoteReducer = produce((state: whalesnoteObjType, action: any) => {
     }
 });
 
-const usewhalesnote = () => {
+const useWhalesnote = () => {
     const lastState = useRef<whalesnoteObjType>({
         repos_key: [],
         repos_obj: {},
@@ -632,4 +632,4 @@ const usewhalesnote = () => {
     ] as const;
 };
 
-export default usewhalesnote;
+export default useWhalesnote;
