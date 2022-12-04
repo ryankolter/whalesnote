@@ -681,7 +681,7 @@ const FolderItem = styled.div({
     position: 'relative',
     height: '30px',
     lineHeight: '30px',
-    fontSize: '15px',
+    fontSize: '14px',
     padding: '0 0 0 8px',
     cursor: 'pointer',
 });

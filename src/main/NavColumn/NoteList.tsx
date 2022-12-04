@@ -519,7 +519,7 @@ const NoteItem = styled.div(
         height: '36px',
         lineHeight: '36px',
         padding: '0 20px',
-        fontSize: '15px',
+        fontSize: '14px',
         cursor: 'pointer',
         overflow: 'hidden',
         textOverflow: 'ellipsis',

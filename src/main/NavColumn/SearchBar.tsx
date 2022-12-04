@@ -318,7 +318,8 @@ const SearchInput = styled.input(
     {
         border: 'none',
         outline: 'none',
-        fontFamily: 'PingFang SC',
+        fontFamily:
+            '-apple-system, BlinkMacSystemFont, PingFang SC, Helvetica, Tahoma, Arial, "Microsoft YaHei", sans-serif',
         fontSize: '14px',
         fontWeight: 500,
         lineHeight: '20px',

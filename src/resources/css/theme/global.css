@@ -1,7 +1,7 @@
 /* ---------- whalesnote theme for global ---------- */
 body {
     margin: 0;
-    font-family: PingFangSC-Regular, sans-serif;
+    font-family: BlinkMacSystemFont, PingFang SC, Helvetica, Tahoma, Arial, "Microsoft YaHei", sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     user-select: none;

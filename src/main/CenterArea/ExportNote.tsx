@@ -151,7 +151,7 @@ const ExportNoteFunc: React.FC<{}> = ({}) => {
         ${renderStyle}
         </style>
         </head>
-        <body style="height:100%; margin:0; font-family: PingFangSC-Regular, sans-serif;">
+        <body style="height:100%; margin:0; font-family: -apple-system, BlinkMacSystemFont, PingFang SC, Helvetica, Tahoma, Arial, "Microsoft YaHei", sans-serif;">
         <div class='${theme}-theme-global wn-theme-rd'>
             ${bodyContent}
         </div>
@@ -245,7 +245,7 @@ const ExportNoteFunc: React.FC<{}> = ({}) => {
             ${renderStyle}
             </style>
             </head>
-            <body style="height:100%; margin:0; font-family: PingFangSC-Regular, sans-serif;">
+            <body style="height:100%; margin:0; font-family: -apple-system, BlinkMacSystemFont, PingFang SC, Helvetica, Tahoma, Arial, "Microsoft YaHei", sans-serif;">
             <div class='${theme}-theme-global wn-theme-rd'>
                 ${bodyContent}
             </div>
