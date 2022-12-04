@@ -3,6 +3,7 @@ import { GlobalContext } from '../../GlobalProvider';
 import { useTranslation } from 'react-i18next';
 import styled from '@emotion/styled';
 
+import MobilePage from './MobilePage';
 import TrashList from './TrashList';
 
 const AssistantPanel: React.FC<{}> = ({}) => {
@@ -84,7 +85,7 @@ const AssistantPanel: React.FC<{}> = ({}) => {
                     </AssistantTab>
                 </AssistantTabs>
                 <AssistantContent>
-                    {curAssistantPanelTab == 'mobile_panel' ? <></> : <></>}
+                    {curAssistantPanelTab == 'mobile_panel' ? <MobilePage /> : <></>}
                     {curAssistantPanelTab == 'model_panel' ? <></> : <></>}
                     {curAssistantPanelTab == 'trash_list' ? <TrashList /> : <></>}
                 </AssistantContent>

@@ -54,7 +54,8 @@
     },
     "assistant": {
         "mobile": {
-            "title": "手机协作"
+            "title": "手机协作",
+            "not_yet_develop": "暂未开发"
         },
         "trash": {
             "title": "废纸篓",

@@ -54,7 +54,8 @@
     },
     "assistant": {
         "mobile": {
-            "title": "Mobile"
+            "title": "Mobile",
+            "not_yet_develop": "Not yet developed"
         },
         "trash": {
             "title": "Trash",
