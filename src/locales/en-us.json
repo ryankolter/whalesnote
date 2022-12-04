@@ -1,0 +1,111 @@
+{
+    "repository": {
+        "default_name": "Repository 1",
+        "enter_a_name": "Enter a name",
+        "rename": "Rename",
+        "delete": "Delete",
+        "delete_tips_part_1": "All notes in Repository「",
+        "delete_tips_part_2": "」will be deleted soon, irrevocable",
+        "delete_tips_part_3": "(but the content can be retrieved in the upper left trash bin)"
+    },
+    "category": {
+        "title": "Category",
+        "default_name": "Default",
+        "enter_a_name": "Enter a name",
+        "rename": "Rename",
+        "delete": "Delete",
+        "delete_tips_part_1": "All notes in Category「",
+        "delete_tips_part_2": "」will be deleted soon, irrevocable",
+        "delete_tips_part_3": "(but the content can be retrieved in the upper left trash bin)",
+        "batch_import_md": "Batch import md"
+    },
+    "note": {
+        "untitled": "Untitled",
+        "delete": "Move to Trash"
+    },
+    "search": {
+        "placeholder": "search",
+        "generate_search_tree": "Generate",
+        "regenerate_search_tree": "Regenerate",
+        "initing": "Search module is initializing..."
+    },
+    "editor": {
+        "last_time": "Last Time",
+        "copy": "Copy",
+        "cut": "Cut",
+        "paste": "Paste",
+        "insert_image": "Insert image"
+    },
+    "render": {
+        "last_time": "Last Time",
+        "copy": "Copy",
+        "success": "Success"
+    },
+    "switch_mode": {
+        "edit": "edit",
+        "preview": "preview",
+        "double": "double"
+    },
+    "export_note": {
+        "export_note_as_html": "Export note(.html)",
+        "export_note_as_md": "Export note(.md)",
+        "export_category_as_html": "Export cat(.html)",
+        "export_category_as_md": "Export cat(.md)"
+    },
+    "assistant": {
+        "mobile": {
+            "title": "Mobile",
+            "not_yet_develop": "Not yet developed"
+        },
+        "trash": {
+            "title": "Trash",
+            "deleted": "Deleted",
+            "empty_btn": "Empty",
+            "content_empty": "Empty"
+        }
+    },
+    "setting": {
+        "data": {
+            "title": "Data",
+            "storage": "Storage",
+            "open": "Open",
+            "default": "Default",
+            "remove_tips_part_1": "The data directory ",
+            "remove_tips_part_2": " will be removed soon",
+            "remove_tips_part_3": "(will not delete the contents of the directory)"
+        },
+        "interface": {
+            "title": "Interface",
+            "mode": {
+                "title": "Mode",
+                "theme": "Theme Color",
+                "dark": "dark",
+                "light": "light",
+                "language": "Language"
+            },
+            "style": {
+                "title": "Style",
+                "edit_font_size": "Edit font size",
+                "preview_font_size": "Preview font size"
+            }
+        },
+        "about": {
+            "title": "About",
+            "project": {
+                "title": "Project",
+                "version": "Version",
+                "url": "Github URL",
+                "developer": "Developer"
+            }
+        }
+    },
+    "tips": {
+        "about_to_empty_the_trash": "About to empty the trash",
+        "activate_searching": "activate searching",
+        "add_new_repository": "add new repo",
+        "add_new_note": "add new note",
+        "click_btn_to": "Click button to",
+        "export_success": "Export success",
+        "please_wait": "Please wait......"
+    }
+}

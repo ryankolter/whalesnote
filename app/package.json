@@ -1,0 +1,81 @@
+{
+    "name": "whalesnote",
+    "description": "A cross-platform desktop note-taking software. Easily classify and store tens of thousands of notes.",
+    "version": "1.0.0",
+    "author": "ryankolter <ryankolter9@gamil.com>",
+    "license": "GPL",
+    "private": true,
+    "main": "main.js",
+    "homepage": ".",
+    "build": {
+        "productName": "Whalesnote",
+        "extends": null,
+        "files": [
+            "main.js",
+            "preload.js",
+            "build/**/*",
+            "!node_modules/nodejieba/dict/*"
+        ],
+        "extraResources": [
+            {
+                "from": "../src/resources/dict/",
+                "to": "extraResources/dict"
+            },
+            {
+                "from": "../src/resources/css/",
+                "to": "extraResources/css"
+            }
+        ],
+        "npmRebuild": false,
+        "mac": {
+            "icon": "../build/icon.png"
+        },
+        "win": {
+            "icon": "../build/icon.png",
+            "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
+            "target": [
+                {
+                    "target": "nsis",
+                    "arch": [
+                        "x64",
+                        "ia32"
+                    ]
+                }
+            ]
+        },
+        "nsis": {
+            "oneClick": false,
+            "perMachine": true,
+            "allowToChangeInstallationDirectory": true
+        },
+        "linux": {
+            "icon": "../build/icon.png"
+        }
+    },
+    "dependencies": {
+        "fs-extra": "^10.1.0",
+        "nodejieba": "^2.6.0",
+        "string-width": "^5.1.2"
+    },
+    "scripts": {
+        "electron": "electron .",
+        "dist-win": "electron-builder --win --publish always",
+        "dist-mac": "electron-builder --mac"
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    },
+    "devDependencies": {
+        "electron": "^21.2.3",
+        "electron-builder": "^23.6.0"
+    }
+}

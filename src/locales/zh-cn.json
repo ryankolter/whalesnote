@@ -1,0 +1,111 @@
+{
+    "repository": {
+        "default_name": "1号资料库",
+        "enter_a_name": "输入新的资料库名",
+        "rename": "重命名",
+        "delete": "删除",
+        "delete_tips_part_1": "即将删除资料库「",
+        "delete_tips_part_2": "」内的所有笔记，不可撤销",
+        "delete_tips_part_3": "(但内容可在右上方废纸篓找回)"
+    },
+    "category": {
+        "title": "分类",
+        "default_name": "默认分类",
+        "enter_a_name": "输入新的分类名",
+        "rename": "重命名",
+        "delete": "删除",
+        "delete_tips_part_1": "即将删除分类「",
+        "delete_tips_part_2": "」内的所有笔记，不可撤销",
+        "delete_tips_part_3": "(但内容可在右上方废纸篓找回)",
+        "batch_import_md": "批量导入md"
+    },
+    "note": {
+        "untitled": "无标题",
+        "delete": "移到废纸篓"
+    },
+    "search": {
+        "placeholder": "搜索",
+        "generate_search_tree": "生成",
+        "regenerate_search_tree": "重新生成",
+        "initing": "搜索模块初始化中..."
+    },
+    "editor": {
+        "last_time": "上次在",
+        "copy": "复制",
+        "cut": "剪切",
+        "paste": "粘贴",
+        "insert_image": "插入图片"
+    },
+    "render": {
+        "last_time": "上次在",
+        "copy": "复制",
+        "success": "成功"
+    },
+    "switch_mode": {
+        "edit": "编辑",
+        "preview": "预览",
+        "double": "双排"
+    },
+    "export_note": {
+        "export_note_as_html": "导出笔记(.html)",
+        "export_note_as_md": "导出笔记(.md)",
+        "export_category_as_html": "导出分类(.html)",
+        "export_category_as_md": "导出分类(.md)"
+    },
+    "assistant": {
+        "mobile": {
+            "title": "手机协作",
+            "not_yet_develop": "暂未开发"
+        },
+        "trash": {
+            "title": "废纸篓",
+            "deleted": "已删除",
+            "empty_btn": "清空",
+            "content_empty": "内容为空"
+        }
+    },
+    "setting": {
+        "data": {
+            "title": "数据",
+            "storage": "存储空间",
+            "open": "打开",
+            "default": "默认",
+            "remove_tips_part_1": "即将移除数据目录",
+            "remove_tips_part_2": "",
+            "remove_tips_part_3": "(不会删除目录中的内容)"
+        },
+        "interface": {
+            "title": "界面",
+            "mode": {
+                "title": "模式",
+                "theme": "主题色",
+                "dark": "深色",
+                "light": "浅色",
+                "language": "语言"
+            },
+            "style": {
+                "title": "样式",
+                "edit_font_size": "编辑字号",
+                "preview_font_size": "预览字号"
+            }
+        },
+        "about": {
+            "title": "关于",
+            "project": {
+                "title": "项目",
+                "version": "版本",
+                "url": "开源网址",
+                "developer": "开发者"
+            }
+        }
+    },
+    "tips": {
+        "about_to_empty_the_trash": "即将清空废纸篓",
+        "activate_searching": "激活搜索功能",
+        "add_new_repository": "添加新资料库",
+        "add_new_note": "添加新笔记",
+        "click_btn_to": "点击按钮",
+        "export_success": "导出成功",
+        "please_wait": "请等待......"
+    }
+}

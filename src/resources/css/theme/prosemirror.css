@@ -1,0 +1,67 @@
+.ProseMirror {
+    height: 100%;
+    padding: 0 15px 0 10px;
+    font-family: -apple-system, BlinkMacSystemFont, PingFang SC, Helvetica, Tahoma, Arial, "Microsoft YaHei", sans-serif !important;
+    color: var(--editor-main-text-color) !important;
+    background-color: var(--editor-main-bg-color) !important;
+    outline: none;
+    overflow-y: scroll;
+}
+
+.ProseMirror::-webkit-scrollbar {
+    width: 8px !important;
+}
+
+.ProseMirror::-webkit-scrollbar-thumb {
+    border: none !important;
+    border-radius: 3px !important;
+    background-color: var(--main-scroller-bg-color) !important;
+}
+
+.ProseMirror p {
+    margin: 1.2em 0 !important;
+    line-height: 1.6em !important;
+    letter-spacing: 0.5px !important;
+}
+
+.ProseMirror pre {
+    padding: 1.2em !important;
+    border-radius: 5px;
+    margin: 0 5px;
+    color: var(--render-code-text-color) !important;
+    background-color: var(--render-code-block-bg-color) !important;
+}
+
+.ProseMirror h1 {
+    font-size: 1.8em !important;
+    font-weight: bold !important;
+    line-height: 1.4em !important;
+    margin-block-start: 0.67em !important;
+    margin-block-end: 0.67em !important;
+}
+
+.ProseMirror h2 {
+    font-size: 1.4em !important;
+    font-weight: bold !important;
+    line-height: 1.4em !important;
+    margin-block-start: 1.5em !important;
+    margin-block-end: 1em !important;
+    padding-bottom: 0.1em !important;
+    border-bottom: solid 1.5px var(--editor-main-text-color);
+}
+
+.ProseMirror h3 {
+    font-size: 1.2em !important;
+    font-weight: bold !important;
+    line-height: 1.4em !important;
+    margin-block-start: 2em !important;
+    margin-block-end: 1em !important;
+}
+
+.ProseMirror h4 {
+    font-size: 1em !important;
+    line-height: 1.4em !important;
+    margin-block-start: 1.6em !important;
+    margin-block-end: 1em !important;
+}
+

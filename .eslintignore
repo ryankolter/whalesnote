@@ -1,0 +1,14 @@
+build/*
+dist/*
+coverage/*
+src/resources/*
+*.css
+*.json
+*.html
+*.md
+commitlint.config.js
+config-overrides.js
+app/main.js
+app/preload.js
+app/build/*
+app/dist/*

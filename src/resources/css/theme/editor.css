@@ -1,0 +1,181 @@
+/* ---------- whalesnote theme for codemirror ---------- */
+.wn-theme-cm {
+    height: 100%;
+}
+
+.wn-theme-cm .cm-editor {
+    height: 100%;
+    word-spacing: 0.333em;
+    color: var(--editor-main-text-color) !important;
+    background-color: var(--editor-main-bg-color) !important;
+}
+
+.wn-theme-cm .cm-line {
+    font-family: PingFang SC, -apple-system, Helvetica, Tahoma, Arial, "Microsoft YaHei", sans-serif;
+    line-height: 1.6em;
+    letter-spacing: 0.5px !important;
+}
+
+.wn-theme-cm .cm-focused {
+    outline: none !important;
+}
+
+.wn-theme-cm .cm-tooltip-autocomplete {
+    color: var(--main-text-color) !important;
+    background-color: var(--float-panel-bg-color) !important;
+}
+
+.wn-theme-cm .cm-tooltip-autocomplete li[aria-selected="true"] {
+    color: var(--main-text-color) !important;
+    background-color: var(--main-selected-bg-color) !important;
+}
+
+/* ͼ */
+.wn-theme-cm .ͼ11 {
+    color: var(--editor-main-text-color) !important;
+}
+
+.wn-theme-cm .ͼ11.ͼ13 {
+    letter-spacing: 0.04em;
+    color: var(--editor-htag-text-color) !important;
+}
+
+.wn-theme-cm .ͼy {
+    font-weight: 500;
+}
+
+/* gutter */
+.wn-theme-cm .cm-gutters {
+    background-color: var(--editor-main-bg-color);
+    border-right: none;
+    display: none;
+}
+
+.wn-theme-cm .cm-activeLineGutter {
+    background-color: var(--editor-main-bg-color);
+}
+
+.wn-theme-cm .cm-gutter {
+    line-height: 1.6em;
+}
+
+.wn-theme-cm .cm-foldGutter {
+    width: 0.933em;
+    padding: 0 0.266em 0 0;
+}
+
+.wn-theme-cm .cm-foldGutter .cm-gutterElement {
+    font-size: 1em;
+    transform: translateY(-4px);
+}
+
+.wn-theme-cm .cm-lineNumbers .cm-gutterElement {
+    min-width: 1.6em !important;
+}
+
+/* line */
+
+.wn-theme-cm .cm-activeLine {
+    background-color: var(--editor-line-active-bg-color) !important;
+}
+
+.wn-theme-cm .cm-cursor {
+    border-left-color: var(--editor-cursor-color) !important;
+}
+
+.wn-theme-cm .cm-selectionBackground {
+    background-color: var(--editor-line-select-bg-color) !important;
+}
+
+.wn-theme-cm .cm-selectionMatch {
+    background-color: inherit;
+}
+
+.wn-theme-cm .cm-searchMatch {
+    background-color: var(--editor-line-select-bg-color) !important;
+}
+
+
+/* scroller */
+.editor-smooth .cm-scroller {
+    scroll-behavior: smooth;
+}
+
+.editor-auto .cm-scroller {
+    scroll-behavior: auto;
+}
+
+.wn-theme-cm .cm-scroller::-webkit-scrollbar {
+    width: 8px;
+}
+
+.wn-theme-cm .cm-scroller::-webkit-scrollbar-thumb {
+    border-radius: 3px;
+    background-color: var(--main-scroller-bg-color);
+}
+
+.wn-theme-cm .cm-scroller::-webkit-scrollbar-track {
+    background-color: inherit !important;
+}
+
+/* search */
+.wn-theme-cm .cm-panels {
+    background-color: var(--search-panel-bg-color);
+    color: var(--search-panel-text-color);
+}
+
+.wn-theme-cm .cm-button {
+    color: var(--search-panel-text-color) !important;
+    background-image: linear-gradient(var(--search-panel-button-bg-start-color), var(--search-panel-button-bg-end-color));
+    border: 1px solid var(--search-panel-button-border-color);
+    cursor: pointer;
+}
+
+.wn-theme-cm .cm-button:active {
+    background: var(--search-panel-button-border-color) !important;
+}
+
+.wn-theme-cm .cm-textfield {
+    border: 1px solid var(--search-panel-textfield-border-color);
+    background-color: inherit;
+}
+
+.wn-theme-cm .cm-panel.cm-search {
+    padding: 5px 5px !important;
+}
+
+.wn-theme-cm .cm-panel.cm-search input {
+    margin: 0.3em 0.5em 0.5em 0.3em !important;
+    height: 1em;
+    font-size: 1em;
+}
+
+.wn-theme-cm .cm-panel.cm-search input[type=checkbox] {
+    margin: 0.2em 0.2em 0.2em 0.3em !important;
+    height: 1em;
+}
+
+.cm-panel.cm-search [name=close] {
+    font-size: 1.2em;
+    height: 1.2em;
+}
+
+.wn-theme-cm .cm-panel.cm-search button {
+    margin: 0.3em 0.5em 0.5em 0.3em !important;
+    height: 1.9em;
+    font-size: 0.8em;
+}
+
+.wn-theme-cm .cm-panel.cm-search label {
+    display: inline-flex;
+    align-items: center;
+    margin: 0em 0em 0em 0.6em !important;
+}
+
+.wn-theme-cm .cm-panels.cm-panels-bottom {
+    border-top: none !important;
+}
+
+.wn-theme-cm .cm-textfield {
+    outline: none !important;
+}

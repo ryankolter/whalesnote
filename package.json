@@ -1,0 +1,130 @@
+{
+    "name": "whalesnote",
+    "description": "A cross-platform desktop note-taking software. Easily classify and store tens of thousands of notes.",
+    "version": "1.0.0",
+    "author": "ryankolter <ryankolter9@gamil.com>",
+    "license": "GPL",
+    "private": true,
+    "main": "main.js",
+    "homepage": ".",
+    "dependencies": {
+        "@codemirror/autocomplete": "^6.3.0",
+        "@codemirror/commands": "^6.1.2",
+        "@codemirror/lang-markdown": "^6.0.2",
+        "@codemirror/language-data": "^6.1.0",
+        "@codemirror/lint": "^6.0.0",
+        "@codemirror/search": "^6.2.2",
+        "@codemirror/state": "^6.1.2",
+        "@codemirror/theme-one-dark": "^6.1.0",
+        "@codemirror/view": "^6.4.0",
+        "@dnd-kit/core": "^6.0.5",
+        "@dnd-kit/modifiers": "^6.0.0",
+        "@dnd-kit/sortable": "^7.0.1",
+        "@emotion/styled": "^11.10.5",
+        "@mapbox/node-pre-gyp": "^1.0.10",
+        "@testing-library/jest-dom": "^5.16.5",
+        "@testing-library/react": "^13.4.0",
+        "@testing-library/user-event": "^14.4.3",
+        "@tiptap/core": "^2.0.0-beta.202",
+        "@tiptap/extension-code-block-lowlight": "^2.0.0-beta.202",
+        "@tiptap/extension-highlight": "^2.0.0-beta.202",
+        "@tiptap/starter-kit": "^2.0.0-beta.202",
+        "classnames": "^2.3.2",
+        "clipboard": "^2.0.11",
+        "codemirror": "^6.0.1",
+        "crypto-random-string": "^5.0.0",
+        "hast-util-to-html": "^8.0.3",
+        "highlight.js": "^11.6.0",
+        "i18next": "^22.0.6",
+        "immer": "^9.0.16",
+        "lowlight": "^2.7.0",
+        "markdown-it": "^13.0.1",
+        "markdown-it-anchor": "^8.6.5",
+        "markdown-it-emoji": "^2.0.2",
+        "markdown-it-footnote": "^3.0.3",
+        "markdown-it-image-figures": "^2.1.0",
+        "markdown-it-link-attributes": "4.0.1",
+        "markdown-it-multimd-table": "^4.2.0",
+        "markdown-it-replace-link": "^1.1.0",
+        "markdown-it-sub": "^1.0.0",
+        "markdown-it-sup": "^1.0.0",
+        "markdown-it-task-lists": "2.1.1",
+        "markdown-it-toc-done-right": "^4.2.0",
+        "minisearch": "^5.0.0",
+        "prism-themes": "^1.9.0",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "react-dropzone": "^14.2.3",
+        "react-i18next": "^12.0.0",
+        "react-scripts": "^5.0.1",
+        "react-transition-group": "^4.4.5",
+        "socket.io": "^4.5.3",
+        "socket.io-client": "^4.5.3",
+        "tiptap-markdown": "^0.6.0",
+        "web-vitals": "^2.1.3"
+    },
+    "scripts": {
+        "start": "cross-env NODE_ENV=development PORT=3005 react-app-rewired start",
+        "build": "rm -rf ./app/build && cross-env NODE_ENV=production GENERATE_SOURCEMAP=false react-app-rewired build",
+        "stats": "cross-env STATS=server npm run start",
+        "test": "react-app-rewired test",
+        "prepare": "husky install"
+    },
+    "eslintConfig": {
+        "extends": [
+            "react-app",
+            "react-app/jest",
+            "prettier"
+        ]
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    },
+    "devDependencies": {
+        "@commitlint/cli": "^16.0.2",
+        "@commitlint/config-conventional": "^16.0.0",
+        "@types/jest": "^29.2.2",
+        "@types/markdown-it": "^12.2.3",
+        "@types/react": "^18.0.25",
+        "@types/react-dom": "^18.0.8",
+        "@types/react-transition-group": "^4.4.5",
+        "@types/react-window": "^1.8.5",
+        "@types/socket.io-client": "^3.0.0",
+        "@typescript-eslint/eslint-plugin": "^5.36.2",
+        "@typescript-eslint/parser": "^5.36.2",
+        "cross-env": "^7.0.3",
+        "customize-cra": "^1.0.0",
+        "eslint": "^8.23.0",
+        "eslint-config-airbnb-typescript": "^17.0.0",
+        "eslint-plugin-import": "^2.26.0",
+        "eslint-plugin-n": "^15.2.5",
+        "eslint-plugin-promise": "^6.0.1",
+        "eslint-plugin-react": "^7.31.7",
+        "husky": "^7.0.4",
+        "lint-staged": "^12.1.7",
+        "mini-css-extract-plugin": "2.4.5",
+        "prettier": "2.5.1",
+        "react-app-rewired": "^2.2.1",
+        "typescript": "^4.8.2",
+        "webpack-bundle-analyzer": "^4.7.0",
+        "webpack-obfuscator": "^3.5.1"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged",
+            "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+        }
+    },
+    "lint-staged": {
+        "*.{js,css,md,ts,tsx}": "prettier --write"
+    }
+}
