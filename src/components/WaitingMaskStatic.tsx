@@ -26,7 +26,7 @@ const Mask = styled.div({
 
 const WordPiece = styled.div({
     fontSize: '24px',
-    color: '#A9B7C6',
+    color: 'var(--waiting-mask-text-color)',
 });
 
 export default WaitingMaskStatic;

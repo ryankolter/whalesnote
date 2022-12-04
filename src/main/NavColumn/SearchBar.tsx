@@ -223,23 +223,27 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
             </Search>
             {showSearchPanel ? (
                 <SearchPanel>
-                    <SearchTool>
-                        <UpdateIndex>
-                            <UpdateIndexBtn
-                                onClick={() => {
-                                    updateMiniSearch();
-                                    search();
-                                }}
-                            >
-                                {showUpdateIndexTips ? (
-                                    <div>{t('search.generate_search_tree')}</div>
-                                ) : (
-                                    <div>{t('search.regenerate_search_tree')}</div>
-                                )}
-                            </UpdateIndexBtn>
-                        </UpdateIndex>
-                    </SearchTool>
-                    {showUpdateIndexTips ? (
+                    {!showLoadingSearch ? (
+                        <SearchTool>
+                            <UpdateIndex>
+                                <UpdateIndexBtn
+                                    onClick={() => {
+                                        updateMiniSearch();
+                                        search();
+                                    }}
+                                >
+                                    {showUpdateIndexTips ? (
+                                        <div>{t('search.generate_search_tree')}</div>
+                                    ) : (
+                                        <div>{t('search.regenerate_search_tree')}</div>
+                                    )}
+                                </UpdateIndexBtn>
+                            </UpdateIndex>
+                        </SearchTool>
+                    ) : (
+                        <></>
+                    )}
+                    {showUpdateIndexTips && !showLoadingSearch ? (
                         <UpdateIndexTips>
                             <div>{t('tips.click_btn_to')}</div>
                             <div>{t('tips.activate_searching')}</div>

@@ -51,11 +51,6 @@
     --render-copy-btn-bg-color: #3A404C;
     --render-copy-btn-hover-color: #D5D5D5;
 
-    /* bottom bar */
-    --bottom-btn-text-color: #CDCDCD;
-    --bottom-btn-bg-color: #21242D;
-    --bottom-btn-border-color: #21242D;
-
     /* side bar */
     --sidebar-bg-color: #3C3F42;
 
@@ -66,6 +61,7 @@
     --float-popup-bg-color: #2C3033;
     --float-mask-hide-bg-color: rgba(0, 0, 0, 0);
     --float-mask-show-bg-color: rgba(0, 0, 0, 0.6);
+    --waiting-mask-text-color: #A9B7C6;
 
     /* menu panel */
     --menu-text-color: #CDCDCD;
@@ -136,11 +132,6 @@
     --render-copy-btn-bg-color: #DBDCE8;
     --render-copy-btn-hover-color: #000000;
 
-    /* bottom bar */
-    --bottom-btn-text-color: #4C4C4C;
-    --bottom-btn-bg-color: #F7F7F7;
-    --bottom-btn-border-color: #0059FF88;
-
     /* side bar */
     --sidebar-bg-color: #F0F0F2;
 
@@ -151,6 +142,7 @@
     --float-popup-bg-color: #F7F7F7;
     --float-mask-hide-bg-color: rgba(0, 0, 0, 0);
     --float-mask-show-bg-color: rgba(0, 0, 0, 0.4);
+    --waiting-mask-text-color: #3F3F3F;
 
     /* menu panel */
     --menu-text-color: #3F3F3F;

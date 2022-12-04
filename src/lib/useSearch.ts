@@ -8,29 +8,12 @@ import { whalesnoteObjType } from '../commonType';
 const useSearch = () => {
     const { curDataPath, whalesnote } = useContext(GlobalContext);
 
-    const searchFileJson = useRef<AsPlainObject | false>(false);
+    const haveLoadSearchJson = useRef<boolean>(false);
     const miniSearch = useRef<MiniSearch | null>();
     const loadDictFinish = useRef<boolean>(false);
     const [showUpdateIndexTips, setShowUpdateIndexTips] = useState(true);
     const [showWaitingMask, setShowWaitingMask] = useState(false);
     const [showLoadingSearch, setShowLoadingSearch] = useState(false);
-
-    useEffect(() => {
-        if (curDataPath) {
-            window.electronAPI
-                .readJsonAsync({
-                    file_path: `${curDataPath}/search.json`,
-                })
-                .then((search: AsPlainObject) => {
-                    searchFileJson.current = search;
-                    setShowUpdateIndexTips(false);
-                })
-                .catch((err: false) => {
-                    setShowUpdateIndexTips(true);
-                    miniSearch.current = null;
-                });
-        }
-    }, [curDataPath]);
 
     const loadDict = useCallback(async () => {
         if (!loadDictFinish.current) {
@@ -40,39 +23,51 @@ const useSearch = () => {
     }, []);
 
     const loadSearchFileJson = useCallback(async () => {
-        if (searchFileJson.current) {
-            setShowUpdateIndexTips(false);
+        if (!haveLoadSearchJson.current) {
             setShowLoadingSearch(true);
             setTimeout(async () => {
-                if (searchFileJson.current) {
+                if (curDataPath) {
                     await loadDict();
-                    miniSearch.current = MiniSearch.loadJS(searchFileJson.current, {
-                        fields: ['title', 'content'],
-                        storeFields: ['id', 'type', 'title', 'folder_name'],
-                        tokenize: (string, _fieldName) => {
-                            const result = window.electronAPI.nodejieba({
-                                word: string,
+                    window.electronAPI
+                        .readJsonAsync({
+                            file_path: `${curDataPath}/search.json`,
+                        })
+                        .then((search: AsPlainObject) => {
+                            setShowUpdateIndexTips(false);
+                            miniSearch.current = MiniSearch.loadJS(search, {
+                                fields: ['title', 'content'],
+                                storeFields: ['id', 'type', 'title', 'folder_name'],
+                                tokenize: (string, _fieldName) => {
+                                    const result = window.electronAPI.nodejieba({
+                                        word: string,
+                                    });
+                                    return result;
+                                },
+                                searchOptions: {
+                                    boost: { title: 2 },
+                                    fuzzy: 0.2,
+                                    tokenize: (string: string) => {
+                                        let result = window.electronAPI.nodejieba({
+                                            word: string,
+                                        });
+                                        result = result.filter((w: string) => w !== ' ');
+                                        return result;
+                                    },
+                                },
                             });
-                            return result;
-                        },
-                        searchOptions: {
-                            boost: { title: 2 },
-                            fuzzy: 0.2,
-                            tokenize: (string: string) => {
-                                let result = window.electronAPI.nodejieba({
-                                    word: string,
-                                });
-                                result = result.filter((w: string) => w !== ' ');
-                                return result;
-                            },
-                        },
-                    });
-                    searchFileJson.current = false;
-                    setShowLoadingSearch(false);
+                            haveLoadSearchJson.current = true;
+                            setShowLoadingSearch(false);
+                        })
+                        .catch((err: false) => {
+                            setShowUpdateIndexTips(true);
+                            haveLoadSearchJson.current = true;
+                            setShowLoadingSearch(false);
+                            miniSearch.current = null;
+                        });
                 }
             }, 200);
         }
-    }, [setShowUpdateIndexTips, setShowLoadingSearch]);
+    }, [curDataPath, setShowUpdateIndexTips, setShowLoadingSearch]);
 
     const updateMiniSearch = useCallback(() => {
         setShowWaitingMask(true);
