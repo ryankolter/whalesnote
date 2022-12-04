@@ -2,7 +2,8 @@ import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { GlobalContext } from '../GlobalProvider';
 import { t } from 'i18next';
 import MiniSearch, { AsPlainObject, SearchResult } from 'minisearch';
-import { notes, fetchNotesInAllRepo } from './notes';
+import { notes } from './notes';
+import { whalesnoteObjType } from '../commonType';
 
 const useSearch = () => {
     const { curDataPath, whalesnote } = useContext(GlobalContext);
@@ -78,7 +79,37 @@ const useSearch = () => {
 
         setTimeout(async () => {
             await loadDict();
-            await fetchNotesInAllRepo(curDataPath, whalesnote);
+            const whalesnote_info = await window.electronAPI.readJsonSync({
+                file_path: `${curDataPath}/whalesnote_info.json`,
+            });
+
+            const newWhalesnote: whalesnoteObjType = {
+                repos_key: [],
+                repos_obj: {},
+            };
+
+            for await (const repo_key of whalesnote_info.repos_key) {
+                const repo_info = await window.electronAPI.readJsonSync({
+                    file_path: `${curDataPath}/${repo_key}/repo_info.json`,
+                });
+                if (repo_info) {
+                    newWhalesnote.repos_key.push(repo_key);
+                    newWhalesnote.repos_obj[repo_key] = {
+                        repo_name: repo_info.repo_name,
+                        folders_key: repo_info.folders_key,
+                        folders_obj: {},
+                    };
+                    for await (const folder_key of repo_info.folders_key) {
+                        const folder_info = await window.electronAPI.readJsonSync({
+                            file_path: `${curDataPath}/${repo_key}/${folder_key}/folder_info.json`,
+                        });
+                        folder_info.folder_name = repo_info.folders_obj[folder_key].folder_name;
+                        if (folder_info) {
+                            newWhalesnote.repos_obj[repo_key].folders_obj[folder_key] = folder_info;
+                        }
+                    }
+                }
+            }
 
             const documents: {
                 id: string;
@@ -87,30 +118,35 @@ const useSearch = () => {
                 folder_name: string;
                 content: string;
             }[] = [];
-            Object.keys(notes).forEach((repo_key: string) => {
-                const folders_obj = whalesnote.repos_obj[repo_key].folders_obj;
-                Object.keys(notes[repo_key]).forEach((folder_key: string) => {
-                    const folder_name = folders_obj[folder_key].folder_name;
-                    Object.keys(notes[repo_key][folder_key]).forEach((note_key: string) => {
-                        const id = `${repo_key}-${folder_key}-${note_key}`;
-                        let title =
-                            whalesnote.repos_obj[repo_key]?.folders_obj &&
-                            whalesnote.repos_obj[repo_key]?.folders_obj[folder_key]?.notes_obj
-                                ? whalesnote.repos_obj[repo_key]?.folders_obj[folder_key]
-                                      ?.notes_obj[note_key]?.title || ''
-                                : '';
-                        if (title === t('note.untitled')) title = '';
-                        const content = notes[repo_key][folder_key][note_key];
-                        documents.push({
-                            id,
-                            type: 'note',
-                            title,
-                            folder_name,
-                            content,
-                        });
-                    });
-                });
-            });
+
+            for (const repo_key of newWhalesnote.repos_key) {
+                if (newWhalesnote.repos_obj[repo_key]) {
+                    const folders_obj = newWhalesnote.repos_obj[repo_key].folders_obj;
+                    for (const folder_key of newWhalesnote.repos_obj[repo_key].folders_key) {
+                        if (folders_obj[folder_key]) {
+                            const folder_name = folders_obj[folder_key].folder_name;
+                            for (const note_key of folders_obj[folder_key].notes_key) {
+                                const content = await window.electronAPI.readMdSync({
+                                    file_path: `${curDataPath}/${repo_key}/${folder_key}/${note_key}.md`,
+                                });
+                                if (content) {
+                                    const id = `${repo_key}-${folder_key}-${note_key}`;
+                                    let title =
+                                        folders_obj[folder_key]?.notes_obj[note_key]?.title || '';
+                                    if (title === t('note.untitled')) title = '';
+                                    documents.push({
+                                        id,
+                                        type: 'note',
+                                        title,
+                                        folder_name,
+                                        content,
+                                    });
+                                }
+                            }
+                        }
+                    }
+                }
+            }
             miniSearch.current = new MiniSearch({
                 fields: ['title', 'content'],
                 storeFields: ['id', 'type', 'title', 'folder_name'],
@@ -142,14 +178,7 @@ const useSearch = () => {
             setShowUpdateIndexTips(false);
             setShowWaitingMask(false);
         }, 200);
-    }, [
-        curDataPath,
-        whalesnote,
-        notes,
-        setShowUpdateIndexTips,
-        setShowWaitingMask,
-        fetchNotesInAllRepo,
-    ]);
+    }, [curDataPath, whalesnote, notes, setShowUpdateIndexTips, setShowWaitingMask]);
 
     const searchNote = (word: string) => {
         if (!miniSearch.current) return [];

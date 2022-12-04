@@ -115,7 +115,7 @@ const useWhalesnote = () => {
     const renameSaveTimerObj = useRef<Map<string, NodeJS.Timeout>>(new Map());
 
     const initwhalesnote = useCallback(
-        (newRepo: whalesnoteObjType) => dispatch({ type: 'init', new_state: newRepo }),
+        (newWhalesnote: whalesnoteObjType) => dispatch({ type: 'init', new_state: newWhalesnote }),
         []
     );
 

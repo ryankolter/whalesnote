@@ -8,7 +8,7 @@ import {
     useEffect,
 } from 'react';
 import cryptoRandomString from 'crypto-random-string';
-import { whalesnoteObjType, historyTypes, notesTypes } from './commonType';
+import { whalesnoteObjType, historyTypes } from './commonType';
 import useData from './lib/useData';
 import useDataList from './lib/useDataList';
 import useHistory from './lib/useHistory';
@@ -28,7 +28,7 @@ const initContext: {
     dataPathList: string[];
     removeDataPathFromList: (data_path: string) => void;
     whalesnote: whalesnoteObjType;
-    initwhalesnote: (newRepos: whalesnoteObjType) => void;
+    initwhalesnote: (newWhalesnote: whalesnoteObjType) => void;
     newRepo: (curDataPath: string, repo_key: string, repo_name: string) => void;
     newFolder: (
         curDataPath: string,

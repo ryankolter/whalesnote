@@ -1,39 +1,5 @@
-import { historyTypes, whalesnoteObjType } from '../commonType';
-
+import { notesTypes } from '../commonType';
 export let notes = {};
-
-const saveTimerObj = new Map();
-
-export const fetchNotesInAllRepo = async (
-    data_path: string | null,
-    whalesnote: whalesnoteObjType
-) => {
-    for (const repo_key of whalesnote.repos_key) {
-        if (whalesnote.repos_obj[repo_key]) {
-            if (!notes[repo_key]) {
-                notes[repo_key] = {};
-            }
-            for (const folder_key of whalesnote.repos_obj[repo_key].folders_key) {
-                if (whalesnote.repos_obj[repo_key].folders_obj[folder_key]) {
-                    if (!notes[repo_key][folder_key]) {
-                        notes[repo_key][folder_key] = {};
-                    }
-                    for (const note_key of whalesnote.repos_obj[repo_key].folders_obj[folder_key]
-                        .notes_key) {
-                        if (notes[repo_key][folder_key][note_key] === undefined) {
-                            const note_content = await window.electronAPI.readMdSync({
-                                file_path: `${data_path}/${repo_key}/${folder_key}/${note_key}.md`,
-                            });
-                            if (note_content) {
-                                notes[repo_key][folder_key][note_key] = note_content;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-};
 
 export const fetchNotesInfolder = async (
     data_path: string | null,
@@ -100,6 +66,8 @@ export const initNotes = (_notes: notesTypes) => {
     notes = _notes;
 };
 
+const saveTimerObj = new Map();
+
 const saveTask = async (
     data_path: string,
     repo_key: string,
@@ -144,12 +112,4 @@ export const updateNote = (
         notes[repo_key][folder_key][note_key] = new_note_str;
         addSaveTask(data_path, repo_key, folder_key, note_key, 800);
     }
-};
-
-export type notesTypes = {
-    [key: string]: {
-        [key: string]: {
-            [key: string]: string;
-        };
-    };
 };
