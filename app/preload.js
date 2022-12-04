@@ -5,6 +5,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     checkFileExist: (params) => ipcRenderer.invoke('operate:checkFileExist', params),
     getDefaultDataPath: (params) => ipcRenderer.invoke('operate:getDefaultDataPath', params),
     getPlatform: (params) => ipcRenderer.invoke('operate:getPlatform', params),
+    getFileNameFromPath: (params) => ipcRenderer.invoke('operate:getFileNameFromPath', params),
     writeJson: (params) => ipcRenderer.invoke('operate:writeJson', params),
     writeMd: (params) => ipcRenderer.invoke('operate:writeMd', params),
     writeStr: (params) => ipcRenderer.invoke('operate:writeStr', params),

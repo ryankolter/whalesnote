@@ -21,7 +21,7 @@
     },
     "note": {
         "untitled": "无标题",
-        "delete": "Move to Trash"
+        "delete": "移到废纸篓"
     },
     "search": {
         "placeholder": "搜索",
@@ -99,7 +99,7 @@
         }
     },
     "tips": {
-        "about_to_empty_the_trash": "about to empty the trash",
+        "about_to_empty_the_trash": "即将清空废纸篓",
         "activate_searching": "激活搜索功能",
         "add_new_repository": "添加新资料库",
         "add_new_note": "添加新笔记",

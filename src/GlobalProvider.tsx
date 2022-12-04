@@ -223,8 +223,6 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
         },
     ] = useWhalesnote();
 
-    console.log(whalesnote);
-
     const [platformName, setPlatformName] = useState<string>('');
     const [whalesnoteId, setWhaltenoteId] = useState<string>('');
 

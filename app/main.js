@@ -222,6 +222,11 @@ const processIPC = () => {
         return default_data_Path;
     });
 
+    ipcMain.handle('operate:getFileNameFromPath', async (event, { file_path }) => {
+        const file_basename = path.basename(file_path);
+        return file_basename.substring(0, file_basename.lastIndexOf('.'));
+    });
+
     ipcMain.handle('operate:writeJson', async (event, { file_path, obj }) => {
         console.log('writeJson: ' + file_path);
         fse.ensureFileSync(file_path);

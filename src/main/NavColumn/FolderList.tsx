@@ -253,7 +253,10 @@ const FolderList: React.FC<{}> = ({}) => {
     const loadMarkdowns = useCallback(
         async (paths: string[]) => {
             for await (const path of paths) {
-                const content = await window.electronAPI.readMdSync({
+                let content = await window.electronAPI.readMdSync({
+                    file_path: path,
+                });
+                const file_name = await window.electronAPI.getFileNameFromPath({
                     file_path: path,
                 });
                 if (content) {
@@ -263,9 +266,14 @@ const FolderList: React.FC<{}> = ({}) => {
                             length: 12,
                             type: 'alphanumeric',
                         });
-                        const new_note_title = content
-                            .substring(0, index)
-                            .replace(/^[#\-\_*>\s]+/g, '');
+                        let new_note_title = file_name;
+                        const first_line = content.substring(0, index);
+                        if (first_line.indexOf('# ') !== -1) {
+                            new_note_title = first_line.replace(/^[#\-\_*>\s]+/g, '');
+                        } else if (first_line.indexOf(file_name) === -1) {
+                            content = '# ' + file_name + '\n\n' + content;
+                        }
+
                         await newNote(
                             curDataPath,
                             currentRepoKey,
