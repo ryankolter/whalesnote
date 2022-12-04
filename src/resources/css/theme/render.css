@@ -329,6 +329,18 @@
     background: var(--render-line-select-bg-color) !important;
 }
 
+.wn-theme-rd br::selection {
+    background: var(--render-line-select-bg-color) !important;
+}
+
+.wn-theme-rd em::selection {
+    background: var(--render-line-select-bg-color) !important;
+}
+
+.wn-theme-rd strong::selection {
+    background: var(--render-line-select-bg-color) !important;
+}
+
 .wn-theme-rd h1::selection {
     background: var(--render-line-select-bg-color) !important;
 }
