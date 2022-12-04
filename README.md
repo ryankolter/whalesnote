@@ -9,14 +9,14 @@
 
 ## Why whalesnote？
 
-1. **Privacy first**: local open source software that is not connected to the Internet, giving you complete control over the data.
-2. **Markdown support**: Provide preview mode and two-column mode.
+1. **Privacy first**: local open source software that is not connected to the Internet, giving you complete control over the data(save as .md format).
+2. **Markdown support**: Additionally provide preview mode and two-column mode.
 3. **Super-capacity** second brain: three-level directory structure can store at least 100 repositories * 50 categories * 60 notes = 300,000 notes.
 4. Only takes **one second** to open: no matter how many notes you have, because it use segmentation based search system which won't load all notes at beginning.
 
 5. Other
-    - Perfect shortcut support: like vimium C, you can quickly switch between notes with the keyboard( Activate with ctrl/command + , ).
-    - Export support: allow batch export by notes or categories, with txt, html, md formats.
+    - Perfect shortcut support: like Vimium C, you can quickly switch between notes with the keyboard( Activate with ctrl/command + , ).
+    - Export support: allow batch export by notes or categories, with html and md formats.
     - Two mode support: light or dark, as you like.
     - Memory support: it remembers where the document left off last time.
 
@@ -26,15 +26,19 @@
 
 ### dark mode
 
-![note1](https://user-images.githubusercontent.com/44566054/205018801-4bd2c085-c3bd-407e-8684-b8f8685ad7a3.PNG)
-
-you can switch to another white mode
+![note111](https://user-images.githubusercontent.com/44566054/205487966-53889309-bfce-4775-8d73-e47346515475.PNG)
 
 <br>
 
 ### shortcut support(like Vimium C on Chrome)
 
-![note3](https://user-images.githubusercontent.com/44566054/205018821-f6ebf053-efc4-46b3-a297-cd1ca4134c12.PNG)
+![note222](https://user-images.githubusercontent.com/44566054/205487983-a7b4ccbb-3c61-4fce-929c-2a07948d6e7b.PNG)
+
+<br>
+
+### light mode
+
+![note333](https://user-images.githubusercontent.com/44566054/205488150-4eea2f39-49c6-479f-9332-6b43b92d1083.PNG)
 
 <br>
 
