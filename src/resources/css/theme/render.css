@@ -25,6 +25,13 @@
     background-color: inherit !important;
 }
 
+.wn-theme-rd p {
+    margin: 1.2em 0;
+    line-height: 1.6em;
+    word-break: break-word;
+    letter-spacing: 0.5px !important;
+}
+
 .wn-theme-rd pre code.hljs::-webkit-scrollbar-track {
     background-color: inherit !important;
 }
@@ -42,13 +49,6 @@
 
 .wn-theme-rd pre {
     border-radius: 8px !important;
-}
-
-.wn-theme-rd p {
-    margin: 1.2em 0;
-    line-height: 1.6em;
-    word-break: break-word;
-    letter-spacing: 0.5px !important;
 }
 
 .wn-theme-rd pre code {
@@ -89,6 +89,7 @@
     margin-block-start: 2em !important;
     margin-block-end: 1em !important;
 }
+
 
 .wn-theme-rd h4 {
     font-size: 1em !important;
@@ -308,6 +309,48 @@
     border:1px solid #444b59; 
     padding: 8px;
     text-align: center !important;
+}
+
+/* selection */
+
+.wn-theme-rd p::selection {
+    background: var(--render-line-select-bg-color) !important;
+}
+
+.wn-theme-rd pre::selection {
+    background: var(--render-line-select-bg-color) !important;
+}
+
+.wn-theme-rd li::selection {
+    background: var(--render-line-select-bg-color) !important;
+}
+
+.wn-theme-rd a::selection {
+    background: var(--render-line-select-bg-color) !important;
+}
+
+.wn-theme-rd h1::selection {
+    background: var(--render-line-select-bg-color) !important;
+}
+
+.wn-theme-rd h2::selection {
+    background: var(--render-line-select-bg-color) !important;
+}
+
+.wn-theme-rd h3::selection {
+    background: var(--render-line-select-bg-color) !important;
+}
+
+.wn-theme-rd h4::selection {
+    background: var(--render-line-select-bg-color) !important;
+}
+
+.wn-theme-rd h5::selection {
+    background: var(--render-line-select-bg-color) !important;
+}
+
+.wn-theme-rd h6::selection {
+    background: var(--render-line-select-bg-color) !important;
 }
 
 /* TOC */

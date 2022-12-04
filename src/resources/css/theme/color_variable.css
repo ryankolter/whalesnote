@@ -44,6 +44,7 @@
     --render-code-line-bg-color: #363A3E;
     --render-code-block-bg-color: #212121;
     --render-blockquote-text-color: #A0A0A0;
+    --render-line-select-bg-color: #3F4859;
     --render-link-text-color: #2BAC8F;
     --render-link-hover-bg-color: rgba(90, 214, 186, 0.2);
     --render-list-border-color: #3D4450;
@@ -125,6 +126,7 @@
     --render-code-line-bg-color: #E5EEFF80;
     --render-code-block-bg-color: #E5EEFF80;
     --render-blockquote-text-color: #A0A0A0;
+    --render-line-select-bg-color: #E3F3ED;
     --render-link-text-color: #2BAC8F;
     --render-link-hover-bg-color: rgba(90, 214, 186, 0.2);
     --render-list-border-color: #00000018;
