@@ -181,14 +181,14 @@ const ExportNoteFunc: React.FC<{}> = ({}) => {
             switch (type) {
                 case 'html':
                     const htmlFilePath = await window.electronAPI.openSaveDialog({
-                        file_name: currentTitle,
+                        file_name: currentTitle.replace(/[\\\/:*?"<>|]+/g, '_'),
                         file_types: ['html'],
                     });
                     if (htmlFilePath !== '') await saveNoteToHtml(htmlFilePath);
                     break;
                 case 'md':
                     const mdFilePath = await window.electronAPI.openSaveDialog({
-                        file_name: currentTitle,
+                        file_name: currentTitle.replace(/[\\\/:*?"<>|]+/g, '_'),
                         file_types: ['md'],
                     });
                     if (mdFilePath !== '') await saveNoteToMd(mdFilePath);
@@ -199,6 +199,10 @@ const ExportNoteFunc: React.FC<{}> = ({}) => {
         },
         [currentTitle, saveNoteToHtml, saveNoteToMd]
     );
+
+    const addMultizero = useCallback((num: number | string, count: number) => {
+        return String(num).padStart(count, '0');
+    }, []);
 
     const saveFolderToHtml = useCallback(
         async (path: string) => {
@@ -214,7 +218,12 @@ const ExportNoteFunc: React.FC<{}> = ({}) => {
                 (await window.electronAPI.readCssSync({
                     file_name: '/theme/render.css',
                 })) || '';
-            for (const note_key of Object.keys(notes[currentRepoKey][currentFolderKey])) {
+            const len =
+                whalesnote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_key
+                    ?.length;
+            for (const [index, note_key] of whalesnote.repos_obj[currentRepoKey]?.folders_obj[
+                currentFolderKey
+            ]?.notes_key.entries()) {
                 let title =
                     whalesnote.repos_obj[currentRepoKey]?.folders_obj &&
                     whalesnote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj
@@ -222,7 +231,9 @@ const ExportNoteFunc: React.FC<{}> = ({}) => {
                               ?.notes_obj[note_key]?.title || ''
                         : '';
                 let repeated_time = 0;
-                for (const comp_note_key of Object.keys(notes[currentRepoKey][currentFolderKey])) {
+                for (const comp_note_key of whalesnote.repos_obj[currentRepoKey]?.folders_obj[
+                    currentFolderKey
+                ]?.notes_key) {
                     const comp_title =
                         whalesnote.repos_obj[currentRepoKey]?.folders_obj &&
                         whalesnote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]
@@ -232,7 +243,7 @@ const ExportNoteFunc: React.FC<{}> = ({}) => {
                             : '';
                     if (title === comp_title) repeated_time++;
                 }
-                if (repeated_time > 1) title += '_' + note_key;
+                if (repeated_time > 1) title += '' + note_key;
                 const content = notes[currentRepoKey][currentFolderKey][note_key];
                 const bodyContent = mdPrint.current.render(content);
                 const outerHtml = `<!DOCTYPE html><html style="height: 100%">
@@ -253,7 +264,11 @@ const ExportNoteFunc: React.FC<{}> = ({}) => {
 
                 await window.electronAPI.writeStrToFile({
                     folder_path: path,
-                    file_name: title + '.html',
+                    file_name:
+                        addMultizero(index, String(len).length) +
+                        '.' +
+                        title.replace(/[\\\/:*?"<>|]+/g, '_') +
+                        '.html',
                     str: outerHtml,
                 });
             }
@@ -264,7 +279,12 @@ const ExportNoteFunc: React.FC<{}> = ({}) => {
 
     const saveFolderToMd = useCallback(
         async (path: string) => {
-            for (const note_key of Object.keys(notes[currentRepoKey][currentFolderKey])) {
+            const len =
+                whalesnote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_key
+                    ?.length;
+            for (const [index, note_key] of whalesnote.repos_obj[currentRepoKey]?.folders_obj[
+                currentFolderKey
+            ]?.notes_key.entries()) {
                 let title =
                     whalesnote.repos_obj[currentRepoKey]?.folders_obj &&
                     whalesnote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj
@@ -272,7 +292,9 @@ const ExportNoteFunc: React.FC<{}> = ({}) => {
                               ?.notes_obj[note_key]?.title || ''
                         : '';
                 let repeated_time = 0;
-                for (const comp_note_key of Object.keys(notes[currentRepoKey][currentFolderKey])) {
+                for (const comp_note_key of whalesnote.repos_obj[currentRepoKey]?.folders_obj[
+                    currentFolderKey
+                ]?.notes_key) {
                     const comp_title =
                         whalesnote.repos_obj[currentRepoKey]?.folders_obj &&
                         whalesnote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]
@@ -282,11 +304,15 @@ const ExportNoteFunc: React.FC<{}> = ({}) => {
                             : '';
                     if (title === comp_title) repeated_time++;
                 }
-                if (repeated_time > 1) title += '_' + note_key;
+                if (repeated_time > 1) title += '' + note_key;
                 const content = notes[currentRepoKey][currentFolderKey][note_key];
                 await window.electronAPI.writeStrToFile({
                     folder_path: path,
-                    file_name: title + '.md',
+                    file_name:
+                        addMultizero(index, String(len).length) +
+                        '.' +
+                        title.replace(/[\\\/:*?"<>|]+/g, '_') +
+                        '.md',
                     str: content,
                 });
             }
