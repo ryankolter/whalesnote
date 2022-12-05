@@ -3,7 +3,8 @@ import { GlobalContext } from '../../GlobalProvider';
 import { useTranslation } from 'react-i18next';
 import styled from '@emotion/styled';
 import markdownIt from 'markdown-it';
-import hljs from 'highlight.js/lib/common';
+import { lowlight } from 'lowlight';
+import { toHtml } from 'hast-util-to-html';
 /* eslint-disable */
 //@ts-ignore
 import markdownItEmoji from 'markdown-it-emoji';
@@ -70,15 +71,16 @@ const ExportNoteFunc: React.FC<{}> = ({}) => {
 
     mdPrint.current = useMemo(() => {
         return markdownIt({
+            html: true,
             breaks: true,
             linkify: true,
             typographer: true,
             highlight: function (str, lang) {
-                if (lang && hljs.getLanguage(lang)) {
+                if (lang) {
                     try {
                         return (
                             '<pre><code class="hljs" style="position: relative;">' +
-                            hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
+                            toHtml(lowlight.highlight(lang, str, {})) +
                             '</code></pre>'
                         );
                     } catch (__) {}
@@ -245,7 +247,9 @@ const ExportNoteFunc: React.FC<{}> = ({}) => {
                 }
                 if (repeated_time > 1) title += '' + note_key;
                 const content = notes[currentRepoKey][currentFolderKey][note_key];
+                console.log(content);
                 const bodyContent = mdPrint.current.render(content);
+                console.log(bodyContent);
                 const outerHtml = `<!DOCTYPE html><html style="height: 100%">
             <head>
             <meta charset="UTF-8">
