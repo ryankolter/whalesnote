@@ -28,7 +28,8 @@
         ],
         "npmRebuild": false,
         "mac": {
-            "icon": "../build/icon.png"
+            "icon": "../build/icon.png",
+            "artifactName": "${productName}-${version}-${os}-${arch}.${ext}"
         },
         "win": {
             "icon": "../build/icon.png",
