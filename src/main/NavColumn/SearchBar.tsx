@@ -31,6 +31,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
     const [curSearchResultIndex, setCurSearchResultIndex] = useState(-1);
 
     const [
+        haveLoadSearchJson,
         showUpdateIndexTips,
         showWaitingMask,
         showLoadingSearch,
@@ -76,6 +77,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
         if (searchInputRef.current) {
             searchInputRef.current.value = '';
         }
+        haveLoadSearchJson.current = false;
     }, [curDataPath]);
 
     useEffect(() => {

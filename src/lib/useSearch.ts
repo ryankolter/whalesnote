@@ -183,6 +183,7 @@ const useSearch = () => {
     };
 
     return [
+        haveLoadSearchJson,
         showUpdateIndexTips,
         showWaitingMask,
         showLoadingSearch,
