@@ -97,7 +97,10 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                 }
 
                 if (!composing.current && e.key === 'Enter' && curSearchResultIndex === -1) {
-                    if (!searchModuleInitialized.current) {
+                    if (
+                        !searchModuleInitialized.current &&
+                        document.activeElement?.id === 'search-input-id'
+                    ) {
                         setShowSearchPanel(true);
                     } else if (showSearchPanel) {
                         nextSearchResult();
@@ -174,6 +177,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                     }}
                 ></SearchIcon>
                 <SearchInput
+                    id="search-input-id"
                     ref={searchInputRef}
                     onChange={handleSearchInputChange}
                     onFocus={handleSearchInputFocus}
