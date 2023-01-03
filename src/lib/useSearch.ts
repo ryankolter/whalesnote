@@ -6,74 +6,158 @@ import { notes } from './notes';
 import { whalesnoteObjType } from '../commonType';
 
 const useSearch = () => {
-    const { curDataPath, whalesnote } = useContext(GlobalContext);
+    const {
+        curDataPath,
+        showSearchPanel,
+        whalesnote,
+        setShowSearchPanel,
+        setShowSearchResultHighlight,
+        switchNote,
+    } = useContext(GlobalContext);
 
-    const haveLoadSearchJson = useRef<boolean>(false);
     const miniSearch = useRef<MiniSearch | null>();
-    const loadDictFinish = useRef<boolean>(false);
-    const [showUpdateIndexTips, setShowUpdateIndexTips] = useState(true);
-    const [showWaitingMask, setShowWaitingMask] = useState(false);
-    const [showLoadingSearch, setShowLoadingSearch] = useState(false);
 
-    const loadDict = useCallback(async () => {
-        if (!loadDictFinish.current) {
+    const searchModuleInitialized = useRef<boolean>(false);
+    const dictionaryLoaded = useRef<boolean>(false);
+    const [showInitTips, setShowInitTips] = useState(false);
+    const [initProgress, setInitProgress] = useState(0);
+
+    const [showUpdateIndexBtn, setShowUpdateIndexBtn] = useState(false);
+    const [needGenerateIndex, setNeedGenerateIndex] = useState(true);
+    const [showWaitingMask, setShowWaitingMask] = useState(false);
+
+    const [word, setWord] = useState('');
+    const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+    const [curSearchResultIndex, setCurSearchResultIndex] = useState(-1);
+
+    const querySearchResult = (word: string, type: string) => {
+        if (!miniSearch.current) return [];
+        return miniSearch.current.search(word, {
+            filter: (result: SearchResult) => result.type === type,
+        });
+    };
+
+    const searchCommit = useCallback(() => {
+        if (word === '' || word === '　') {
+            setSearchResults([]);
+            return;
+        }
+        const search_result = querySearchResult(word, 'note');
+        setSearchResults(search_result);
+    }, [word, querySearchResult, setSearchResults]);
+
+    useEffect(() => {
+        setShowSearchResultHighlight(false);
+        setCurSearchResultIndex(-1);
+        if (word === '') {
+            setShowSearchPanel(false);
+            setSearchResults([]);
+            return;
+        }
+        if (searchModuleInitialized.current) searchCommit();
+    }, [word]);
+
+    const nextSearchResult = useCallback(() => {
+        if (curSearchResultIndex < searchResults.length - 1) {
+            setCurSearchResultIndex((_curSearchResultIndex) => _curSearchResultIndex + 1);
+        }
+    }, [curSearchResultIndex, searchResults, setCurSearchResultIndex]);
+
+    const prevSearchResult = useCallback(() => {
+        if (curSearchResultIndex > 0) {
+            setCurSearchResultIndex((_curSearchResultIndex) => _curSearchResultIndex - 1);
+        }
+    }, [curSearchResultIndex, setCurSearchResultIndex]);
+
+    useEffect(() => {
+        if (curSearchResultIndex >= 0 && curSearchResultIndex < searchResults.length) {
+            setShowSearchResultHighlight(true);
+            /* eslint-disable */
+            const id = searchResults[curSearchResultIndex]['id'];
+            /* eslint-enable */
+            const arr = id.split('-');
+            switchNote(arr[0], arr[1], arr[2]);
+        }
+    }, [curSearchResultIndex]);
+
+    const loadDictionary = useCallback(async () => {
+        if (!dictionaryLoaded.current) {
             await window.electronAPI.loadNodejiebaDict();
-            loadDictFinish.current = true;
+            dictionaryLoaded.current = true;
         }
     }, []);
 
-    const loadSearchFileJson = useCallback(async () => {
-        if (!haveLoadSearchJson.current) {
-            setShowLoadingSearch(true);
-            setTimeout(async () => {
-                if (curDataPath) {
-                    await loadDict();
-                    window.electronAPI
-                        .readJsonAsync({
-                            file_path: `${curDataPath}/search.json`,
-                        })
-                        .then((search: AsPlainObject) => {
-                            setShowUpdateIndexTips(false);
-                            miniSearch.current = MiniSearch.loadJS(search, {
-                                fields: ['title', 'content'],
-                                storeFields: ['id', 'type', 'title', 'folder_name'],
-                                tokenize: (string, _fieldName) => {
-                                    const result = window.electronAPI.nodejieba({
-                                        word: string,
-                                    });
-                                    return result;
-                                },
-                                searchOptions: {
-                                    boost: { title: 2 },
-                                    fuzzy: 0.2,
-                                    tokenize: (string: string) => {
-                                        let result = window.electronAPI.nodejieba({
-                                            word: string,
-                                        });
-                                        result = result.filter((w: string) => w !== ' ');
-                                        return result;
-                                    },
-                                },
+    const loadSearchJson = useCallback(async () => {
+        window.electronAPI
+            .readJsonAsync({
+                file_path: `${curDataPath}/search.json`,
+            })
+            .then((search: AsPlainObject) => {
+                setInitProgress(75);
+                setNeedGenerateIndex(false);
+                setTimeout(() => {
+                    miniSearch.current = MiniSearch.loadJS(search, {
+                        fields: ['title', 'content'],
+                        storeFields: ['id', 'type', 'title', 'folder_name'],
+                        tokenize: (string, _fieldName) => {
+                            const result = window.electronAPI.nodejieba({
+                                word: string,
                             });
-                            haveLoadSearchJson.current = true;
-                            setShowLoadingSearch(false);
-                        })
-                        .catch((err: false) => {
-                            setShowUpdateIndexTips(true);
-                            haveLoadSearchJson.current = true;
-                            setShowLoadingSearch(false);
-                            miniSearch.current = null;
-                        });
-                }
-            }, 200);
+                            return result;
+                        },
+                        searchOptions: {
+                            boost: { title: 2 },
+                            fuzzy: 0.2,
+                            tokenize: (string: string) => {
+                                let result = window.electronAPI.nodejieba({
+                                    word: string,
+                                });
+                                result = result.filter((w: string) => w !== ' ');
+                                return result;
+                            },
+                        },
+                    });
+                    setInitProgress(100);
+                    setShowUpdateIndexBtn(true);
+                    setShowInitTips(false);
+                    searchModuleInitialized.current = true;
+                    searchCommit();
+                }, 50);
+            })
+            .catch((err: false) => {
+                setShowUpdateIndexBtn(true);
+                setNeedGenerateIndex(true);
+                setShowInitTips(false);
+                searchModuleInitialized.current = true;
+                miniSearch.current = null;
+            });
+    }, [nextSearchResult, searchCommit, setInitProgress, setNeedGenerateIndex, setShowInitTips]);
+
+    const initSearchModule = useCallback(async () => {
+        if (!searchModuleInitialized.current && curDataPath) {
+            setShowInitTips(true);
+            setInitProgress(10);
+            setTimeout(async () => {
+                await loadDictionary();
+                setInitProgress(35);
+                await loadSearchJson();
+            }, 20);
         }
-    }, [curDataPath, setShowUpdateIndexTips, setShowLoadingSearch]);
+    }, [curDataPath, loadDictionary, loadSearchJson, setInitProgress, setShowInitTips]);
+
+    useEffect(() => {
+        (async () => {
+            if (showSearchPanel) {
+                await initSearchModule();
+            }
+        })();
+    }, [showSearchPanel]);
 
     const updateMiniSearch = useCallback(() => {
         setShowWaitingMask(true);
 
         setTimeout(async () => {
-            await loadDict();
+            await loadDictionary();
             const whalesnote_info = await window.electronAPI.readJsonSync({
                 file_path: `${curDataPath}/whalesnote_info.json`,
             });
@@ -170,26 +254,26 @@ const useSearch = () => {
                 str: JSON.stringify(miniSearch.current),
             });
 
-            setShowUpdateIndexTips(false);
+            setNeedGenerateIndex(false);
             setShowWaitingMask(false);
-        }, 200);
-    }, [curDataPath, whalesnote, notes, setShowUpdateIndexTips, setShowWaitingMask]);
-
-    const searchNote = (word: string) => {
-        if (!miniSearch.current) return [];
-        return miniSearch.current.search(word, {
-            filter: (result: SearchResult) => result.type === 'note',
-        });
-    };
+            searchCommit();
+        }, 50);
+    }, [curDataPath, whalesnote, notes, searchCommit, setNeedGenerateIndex, setShowWaitingMask]);
 
     return [
-        haveLoadSearchJson,
-        showUpdateIndexTips,
+        curSearchResultIndex,
+        initProgress,
+        needGenerateIndex,
+        searchResults,
+        searchModuleInitialized,
         showWaitingMask,
-        showLoadingSearch,
-        loadSearchFileJson,
+        showInitTips,
+        showUpdateIndexBtn,
+        nextSearchResult,
+        prevSearchResult,
+        setWord,
+        setCurSearchResultIndex,
         updateMiniSearch,
-        searchNote,
     ] as const;
 };
 

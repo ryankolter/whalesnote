@@ -16,8 +16,6 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
         showSearchPanel,
         setShowKeySelect,
         setShowSearchPanel,
-        setShowSearchResultHighlight,
-        switchNote,
     } = useContext(GlobalContext);
     const { t } = useTranslation();
 
@@ -26,18 +24,20 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
     const setWordTimerObj = useRef<NodeJS.Timeout>();
     const composing = useRef(false);
 
-    const [word, setWord] = useState('');
-    const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
-    const [curSearchResultIndex, setCurSearchResultIndex] = useState(-1);
-
     const [
-        haveLoadSearchJson,
-        showUpdateIndexTips,
+        curSearchResultIndex,
+        initProgress,
+        needGenerateIndex,
+        searchResults,
+        searchModuleInitialized,
         showWaitingMask,
-        showLoadingSearch,
-        loadSearchFileJson,
+        showInitTips,
+        showUpdateIndexBtn,
+        nextSearchResult,
+        prevSearchResult,
+        setWord,
+        setCurSearchResultIndex,
         updateMiniSearch,
-        searchNote,
     ] = useSearch();
 
     const handleSearchInputChange = useCallback(
@@ -48,79 +48,31 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
             setWordTimerObj.current = setTimeout(() => {
                 setWord(e.target.value);
             }, 300);
-            setShowSearchPanel(true);
+            if (searchModuleInitialized.current) {
+                setShowSearchPanel(true);
+            }
         },
         [setWord, setShowSearchPanel]
     );
 
     const handleSearchInputFocus = useCallback(() => {
         if (!showSearchPanel) {
-            setShowSearchPanel(true);
+            if (searchModuleInitialized.current) {
+                setShowSearchPanel(true);
+            }
             if (searchInputRef.current) {
                 searchInputRef.current.setSelectionRange(0, searchInputRef.current.value.length);
             }
         }
     }, [showSearchPanel, setShowSearchPanel]);
 
-    const search = useCallback(() => {
-        if (word === '' || word === '　') {
-            setSearchResults([]);
-            return;
-        }
-        setShowSearchPanel(true);
-        const search_result = searchNote(word);
-        setSearchResults(search_result);
-    }, [word, searchNote, setShowSearchPanel, setSearchResults]);
-
     useEffect(() => {
         setWord('');
         if (searchInputRef.current) {
             searchInputRef.current.value = '';
         }
-        haveLoadSearchJson.current = false;
+        searchModuleInitialized.current = false;
     }, [curDataPath]);
-
-    useEffect(() => {
-        setShowSearchResultHighlight(false);
-        setCurSearchResultIndex(-1);
-        if (word === '') {
-            setShowSearchPanel(false);
-            setSearchResults([]);
-            return;
-        }
-        search();
-    }, [word]);
-
-    useEffect(() => {
-        (async () => {
-            if (showSearchPanel) {
-                await loadSearchFileJson();
-            }
-        })();
-    }, [showSearchPanel]);
-
-    const nextSearchResult = useCallback(() => {
-        if (curSearchResultIndex < searchResults.length - 1) {
-            setCurSearchResultIndex((_curSearchResultIndex) => _curSearchResultIndex + 1);
-        }
-    }, [curSearchResultIndex, searchResults, setCurSearchResultIndex]);
-
-    const prevSearchResult = useCallback(() => {
-        if (curSearchResultIndex > 0) {
-            setCurSearchResultIndex((_curSearchResultIndex) => _curSearchResultIndex - 1);
-        }
-    }, [curSearchResultIndex, setCurSearchResultIndex]);
-
-    useEffect(() => {
-        if (curSearchResultIndex >= 0 && curSearchResultIndex < searchResults.length) {
-            setShowSearchResultHighlight(true);
-            /* eslint-disable */
-            const id = searchResults[curSearchResultIndex]['id'];
-            /* eslint-enable */
-            const arr = id.split('-');
-            switchNote(arr[0], arr[1], arr[2]);
-        }
-    }, [curSearchResultIndex]);
 
     const handleKeyDown = useCallback(
         async (e: KeyboardEvent) => {
@@ -145,7 +97,11 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                 }
 
                 if (!composing.current && e.key === 'Enter' && curSearchResultIndex === -1) {
-                    nextSearchResult();
+                    if (!searchModuleInitialized.current) {
+                        setShowSearchPanel(true);
+                    } else if (showSearchPanel) {
+                        nextSearchResult();
+                    }
                 }
 
                 // arrow bottom 40
@@ -173,7 +129,6 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
 
     const handleClick = useCallback(
         (event: MouseEvent) => {
-            //event.preventDefault();
             if (!searchBarRef.current?.contains(event.target as Node)) {
                 setShowSearchPanel(false);
             }
@@ -212,7 +167,10 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                 <SearchIcon
                     className="ri-search-line"
                     onClick={() => {
-                        searchInputRef.current?.focus();
+                        setShowSearchPanel(true);
+                        if (searchModuleInitialized.current) {
+                            searchInputRef.current?.focus();
+                        }
                     }}
                 ></SearchIcon>
                 <SearchInput
@@ -220,21 +178,20 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                     onChange={handleSearchInputChange}
                     onFocus={handleSearchInputFocus}
                     placeholder={t('search.placeholder') || ''}
-                    readOnly={showLoadingSearch}
+                    readOnly={showInitTips}
                 />
             </Search>
             {showSearchPanel ? (
                 <SearchPanel>
-                    {!showLoadingSearch ? (
+                    {showUpdateIndexBtn ? (
                         <SearchTool>
                             <UpdateIndex>
                                 <UpdateIndexBtn
                                     onClick={() => {
                                         updateMiniSearch();
-                                        search();
                                     }}
                                 >
-                                    {showUpdateIndexTips ? (
+                                    {needGenerateIndex ? (
                                         <div>{t('search.generate_search_tree')}</div>
                                     ) : (
                                         <div>{t('search.regenerate_search_tree')}</div>
@@ -245,7 +202,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                     ) : (
                         <></>
                     )}
-                    {showUpdateIndexTips && !showLoadingSearch ? (
+                    {showUpdateIndexBtn && needGenerateIndex ? (
                         <UpdateIndexTips>
                             <div>{t('tips.click_btn_to')}</div>
                             <div>{t('tips.activate_searching')}</div>
@@ -278,9 +235,12 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                             <></>
                         )}
                     </SearchResultList>
-                    {showLoadingSearch ? (
+                    {showInitTips ? (
                         <LoadingSearch>
-                            <LoadingSearchTips>{t('search.initing')}</LoadingSearchTips>
+                            <LoadingSearchTips>
+                                {`(${initProgress}%)`}
+                                {t('search.initing')}
+                            </LoadingSearchTips>
                         </LoadingSearch>
                     ) : (
                         <></>
@@ -314,6 +274,7 @@ const SearchIcon = styled.div({
     width: '14px',
     height: '14px',
     color: 'var(--input-text-color) !important',
+    cursor: 'pointer',
 });
 
 const SearchInput = styled.input(
