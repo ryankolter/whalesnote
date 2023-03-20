@@ -178,7 +178,7 @@ const DragArea = styled.div(
         width: '100%',
     },
     `
-    -webkit-app-region: drag;
+    app-region: drag;
 `
 );
 
@@ -280,11 +280,17 @@ const SearchBarAndNote = styled.div(
     })
 );
 
-const SearchBarBox = styled.div({
-    width: '100%',
-    boxSizing: 'border-box',
-    borderRight: '1px solid var(--main-border-color)',
-});
+const SearchBarBox = styled.div(
+    {
+        width: '100%',
+        boxSizing: 'border-box',
+        padding: '18px 0 10px 0',
+        borderRight: '1px solid var(--main-border-color)',
+    },
+    `
+    app-region: drag;
+`
+);
 
 const NoteBox = styled.div({
     width: '100%',

@@ -33,23 +33,25 @@ const ToolBar: React.FC<{
             <BreakCrumb>
                 <SwitchMode mdRenderState={mdRenderState} setMdRenderState={setMdRenderState} />
             </BreakCrumb>
-            <SettingPanelBtnBox>
-                <SettingPanelBtn
-                    className="ri-settings-3-line"
-                    onClick={() => handleOpenSettingClick()}
-                ></SettingPanelBtn>
-            </SettingPanelBtnBox>
-            <ExportNote />
-            <AssistantPanelBtnBox>
-                {curAssistantPanelTab === 'none' ? (
-                    <AssistantPanelBtn
-                        className="ri-side-bar-line"
-                        onClick={() => handleOpenAssistantClick()}
-                    ></AssistantPanelBtn>
-                ) : (
-                    <></>
-                )}
-            </AssistantPanelBtnBox>
+            <AllBtnBox>
+                <SettingPanelBtnBox>
+                    <SettingPanelBtn
+                        className="ri-settings-3-line"
+                        onClick={() => handleOpenSettingClick()}
+                    ></SettingPanelBtn>
+                </SettingPanelBtnBox>
+                <ExportNote />
+                <AssistantPanelBtnBox>
+                    {curAssistantPanelTab === 'none' ? (
+                        <AssistantPanelBtn
+                            className="ri-side-bar-line"
+                            onClick={() => handleOpenAssistantClick()}
+                        ></AssistantPanelBtn>
+                    ) : (
+                        <></>
+                    )}
+                </AssistantPanelBtnBox>
+            </AllBtnBox>
         </TopRowContainer>
     );
 };
@@ -60,31 +62,37 @@ const TopRowContainer = styled.div(
         width: '100%',
         height: '60px',
         display: 'flex',
-        padding: '10px 45px 10px 0',
+        padding: '10px 45px 10px 20px',
         alignItems: 'center',
+        justifyContent: 'space-between',
         boxSizing: 'border-box',
         backgroundColor: 'var(--main-bg-color)',
     },
     `
-    -webkit-app-region: drag;
+    app-region: drag;
 `
 );
 
 const BreakCrumb = styled.div({
-    width: '100%',
-    flex: '1',
-    minWidth: '0',
     display: 'flex',
     alignItems: 'center',
-    padding: '0 20px',
     zIndex: '1000',
 });
 
-const SettingPanelBtnBox = styled.div({
-    width: '20px',
-    height: '20px',
-    margin: '1px 3px 0 0',
+const AllBtnBox = styled.div({
+    display: 'flex',
 });
+
+const SettingPanelBtnBox = styled.div(
+    {
+        width: '20px',
+        height: '20px',
+        margin: '1px 3px 0 0',
+    },
+    `
+    app-region: no-drag;
+`
+);
 
 const SettingPanelBtn = styled.div({
     fontSize: '22px',
@@ -93,11 +101,16 @@ const SettingPanelBtn = styled.div({
     cursor: 'pointer',
 });
 
-const AssistantPanelBtnBox = styled.div({
-    position: 'absolute',
-    top: '20px',
-    right: '20px',
-});
+const AssistantPanelBtnBox = styled.div(
+    {
+        position: 'absolute',
+        top: '20px',
+        right: '20px',
+    },
+    `
+app-region: no-drag;
+`
+);
 
 const AssistantPanelBtn = styled.div({
     fontSize: '22px',

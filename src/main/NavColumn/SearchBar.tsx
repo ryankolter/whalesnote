@@ -257,13 +257,18 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
     );
 };
 
-const SearchBarContainer = styled.div({
-    position: 'relative',
-    width: '100%',
-    padding: '18px 30px 10px 30px',
-    boxSizing: 'border-box',
-    display: 'flex',
-});
+const SearchBarContainer = styled.div(
+    {
+        position: 'relative',
+        width: '100%',
+        boxSizing: 'border-box',
+        padding: '0 30px 0 30px',
+        display: 'flex',
+    },
+    `
+    app-region: no-drag;
+`
+);
 
 const Search = styled.div({
     position: 'relative',

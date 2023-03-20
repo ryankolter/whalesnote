@@ -132,7 +132,7 @@ const AssistantBox = styled.div({
 
 const FloatCloseBtnBox = styled.div({
     position: 'absolute',
-    top: '19px',
+    top: '20px',
     right: '20px',
 });
 

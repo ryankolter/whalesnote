@@ -97,13 +97,18 @@ const SwitchMode: React.FC<{
     );
 };
 
-const SwitchModePanelContainer = styled.div({
-    position: 'relative',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    cursor: 'pointer',
-});
+const SwitchModePanelContainer = styled.div(
+    {
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        cursor: 'pointer',
+    },
+    `
+    app-region: no-drag;
+`
+);
 
 const SwitchModeBtn = styled.div({
     display: 'flex',

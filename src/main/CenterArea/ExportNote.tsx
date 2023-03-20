@@ -27,7 +27,7 @@ import { notes } from '../../lib/notes';
 import { usePopUp } from '../../lib/usePopUp';
 import { AlertPopUp } from '../../components/AlertPopUp';
 
-const ExportNoteFunc: React.FC<{}> = ({}) => {
+const ExportNote: React.FC<{}> = ({}) => {
     const {
         curDataPath,
         currentRepoKey,
@@ -344,7 +344,7 @@ const ExportNoteFunc: React.FC<{}> = ({}) => {
     );
 
     return (
-        <ExportNoteFuncContainer>
+        <ExportNoteContainer>
             <SwitchExportNoteFuncBtnBox ref={switchExportNoteFuncBtnRef}>
                 <SwitchExportNoteFuncBtn className="ri-external-link-line"></SwitchExportNoteFuncBtn>
             </SwitchExportNoteFuncBtnBox>
@@ -394,16 +394,21 @@ const ExportNoteFunc: React.FC<{}> = ({}) => {
                     setExportFinishPopUp(false);
                 }}
             ></AlertPopUp>
-        </ExportNoteFuncContainer>
+        </ExportNoteContainer>
     );
 };
 
-const ExportNoteFuncContainer = styled.div({
-    position: 'relative',
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100%',
-});
+const ExportNoteContainer = styled.div(
+    {
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%',
+    },
+    `
+    app-region: no-drag;
+`
+);
 
 const SwitchExportNoteFuncBtnBox = styled.div({
     height: '100%',
@@ -444,4 +449,4 @@ const ModeOption = styled.div({
     padding: '5px',
 });
 
-export default ExportNoteFunc;
+export default ExportNote;
