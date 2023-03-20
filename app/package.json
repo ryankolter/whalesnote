@@ -54,7 +54,7 @@
         }
     },
     "dependencies": {
-        "fs-extra": "^10.1.0",
+        "fs-extra": "^11.1.0",
         "nodejieba": "^2.6.0",
         "string-width": "^5.1.2"
     },
@@ -76,7 +76,7 @@
         ]
     },
     "devDependencies": {
-        "electron": "^21.2.3",
+        "electron": "^23.1.4",
         "electron-builder": "^23.6.0"
     }
 }
