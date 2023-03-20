@@ -82,11 +82,15 @@ const useCodeMirror = <T extends Element>({
             'html',
             'java',
             'js',
+            'json',
+            'md',
             'php',
             'py',
-            'ruby',
+            'rust',
             'sql',
             'swift',
+            'xml',
+            'yaml',
         ];
         const options = [];
         const newPosOffset = assistant_word.from + 3;
