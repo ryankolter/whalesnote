@@ -41,7 +41,6 @@
     border: none;
     border-radius: 5px;
     margin: 0 5px;
-    padding: 1px 5px;
     font-size: 0.9em;
     color: var(--render-code-text-color) !important;
     background-color: var(--render-code-line-bg-color) !important;
@@ -57,7 +56,7 @@
 }
 
 .wn-theme-rd pre code.hljs {
-    padding: 1.2em !important;
+    padding: 0 1.2em !important;
 }
 
 .wn-theme-rd pre code.hljs::-webkit-scrollbar {

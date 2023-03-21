@@ -60,12 +60,12 @@ body {
 
 .item-selected:before {
     position: absolute;
-    top: 0px;
-    right: -20px;
+    top: -0.5px;
+    right: -19px;
     display: block;
     height: 12px;
     content: "";
-    border-width: 9px 10px 9px 10px;
+    border-width: 9.5px 10px;
     border-style: solid;
     border-color: transparent transparent transparent var(--main-selected-bg-color);
     cursor: pointer;

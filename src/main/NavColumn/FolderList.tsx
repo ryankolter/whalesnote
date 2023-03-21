@@ -665,7 +665,7 @@ const Folders = styled.div(
 
 const FolderItemBox = styled.div(
     {
-        padding: '3px 10px 2px 0',
+        padding: '3px 9px 2px 0',
         overflow: 'hidden',
     },
     `

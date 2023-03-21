@@ -105,17 +105,19 @@ const MarkdownRender: React.FC<{
                         )}</button>`;
                         const textarea = `<textarea style="position: absolute;top: -9999px;left: -9999px;z-index: -9999;" id="copy-${copyId}">${str}</textarea>`;
                         return (
-                            '<pre><code class="hljs" style="position: relative;">' +
+                            '<pre><code class="hljs" style="position: relative;"><pre>' +
                             html +
                             toHtml(lowlight.highlight(lang, str, {})) +
-                            '</code></pre>' +
+                            '</pre></code></pre>' +
                             textarea
                         );
                     } catch (__) {}
                 }
 
                 return (
-                    '<pre><code class="hljs">' + md.current.utils.escapeHtml(str) + '</code></pre>'
+                    '<pre><code class="hljs"><pre>' +
+                    md.current.utils.escapeHtml(str) +
+                    '</pre></code></pre>'
                 );
             },
         })

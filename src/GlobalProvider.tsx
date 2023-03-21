@@ -342,14 +342,16 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
 
     const manualBlur = useCallback(
         (delay: number) => {
-            setTimeout(() => {
-                setBlur(
-                    cryptoRandomString({
-                        length: 24,
-                        type: 'alphanumeric',
-                    })
-                );
-            }, delay);
+            if (delay >= 0) {
+                setTimeout(() => {
+                    setBlur(
+                        cryptoRandomString({
+                            length: 24,
+                            type: 'alphanumeric',
+                        })
+                    );
+                }, delay);
+            }
         },
         [setBlur]
     );

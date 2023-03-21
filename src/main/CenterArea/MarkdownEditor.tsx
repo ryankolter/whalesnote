@@ -97,7 +97,7 @@ const MarkdownEditor: React.FC<{
 
     const onSelectionSet = useCallback(
         async (vu: ViewUpdate) => {
-            if (view.current) {
+            if (view.current && vu.view.hasFocus) {
                 setShowKeySelect(false);
                 const cursorHeadPos = view.current.state.selection.main.head;
                 await updateCursorHeadPos(
@@ -230,6 +230,90 @@ const MarkdownEditor: React.FC<{
         });
     }, []);
 
+    const addBacktick = useCallback((num: number) => {
+        if (view.current && view.current.hasFocus) {
+            const from = view.current.state.selection.main.from;
+            const to = view.current.state.selection.main.to;
+            view.current.dispatch({
+                changes: {
+                    from: from,
+                    to: to,
+                    insert: '`'.repeat(num),
+                },
+            });
+            view.current.dispatch({
+                selection: {
+                    anchor: from + num,
+                    head: from + num,
+                },
+            });
+        }
+    }, []);
+
+    const jumpToNextBlock = useCallback(() => {
+        if (view.current) {
+            const max_position = view.current.state.doc.length;
+            let position = view.current.state.selection.main.head;
+            let flag = false;
+            while (position < max_position) {
+                const current_line = view.current.state.doc.lineAt(position);
+                if (current_line.text.indexOf('```') !== -1) {
+                    flag = true;
+                    position = current_line.to + 1;
+                    break;
+                }
+                position = current_line.to + 1;
+            }
+            if (flag && position <= max_position) {
+                view.current.dispatch({
+                    selection: {
+                        anchor: position,
+                        head: position,
+                    },
+                });
+                const scroll_pos = Math.min(position, view.current.state.doc.length);
+                view.current.dispatch({
+                    effects: EditorView.scrollIntoView(scroll_pos, {
+                        y: 'nearest',
+                    }),
+                });
+            }
+        }
+    }, []);
+
+    const jumpToPreviousBlock = useCallback(() => {
+        if (view.current) {
+            const min_position = 0;
+            let position = view.current.state.selection.main.head;
+            let time = 0;
+            while (position > min_position) {
+                const current_line = view.current.state.doc.lineAt(position);
+                if (current_line.text.indexOf('```') !== -1 && time < 2) {
+                    time++;
+                    if (time === 2) {
+                        position = current_line.to + 1;
+                        break;
+                    }
+                }
+                position = current_line.from - 1;
+            }
+            if (time > 0) {
+                position = Math.max(position, 0);
+                view.current.dispatch({
+                    selection: {
+                        anchor: position,
+                        head: position,
+                    },
+                });
+                view.current.dispatch({
+                    effects: EditorView.scrollIntoView(position, {
+                        y: 'nearest',
+                    }),
+                });
+            }
+        }
+    }, []);
+
     const handleKeyDown = useCallback(
         async (e: KeyboardEvent) => {
             if (platformName === 'darwin' || platformName === 'win32' || platformName === 'linux') {
@@ -244,9 +328,25 @@ const MarkdownEditor: React.FC<{
                 ) {
                     autoScrollToLine();
                 }
+
+                if ((e.key === '1' || e.key === '3') && modKey) {
+                    addBacktick(Number(e.key));
+                } else if (e.key === '2' && modKey && !e.shiftKey) {
+                    jumpToNextBlock();
+                } else if (e.key === '2' && modKey && e.shiftKey) {
+                    jumpToPreviousBlock();
+                }
             }
         },
-        [mdRenderState, platformName, showRepoPanel, autoScrollToLine]
+        [
+            mdRenderState,
+            platformName,
+            showRepoPanel,
+            autoScrollToLine,
+            addBacktick,
+            jumpToNextBlock,
+            jumpToPreviousBlock,
+        ]
     );
 
     const handleScroll = useCallback(
