@@ -50,7 +50,8 @@
             "allowToChangeInstallationDirectory": true
         },
         "linux": {
-            "icon": "../build/icon.png"
+            "icon": "../build/icon.png",
+            "artifactName": "${productName}-${version}-${os}-${arch}.${ext}"
         }
     },
     "dependencies": {
