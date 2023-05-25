@@ -36,6 +36,7 @@ const ExportNote: React.FC<{}> = ({}) => {
         currentTitle,
         theme,
         whalesnote,
+        renderFontSize,
     } = useContext(GlobalContext);
     const { t } = useTranslation();
     const [showSwitchExportNoteFunc, setShowSwitchExportNoteFunc] = useState(false);
@@ -153,7 +154,9 @@ const ExportNote: React.FC<{}> = ({}) => {
         ${renderStyle}
         </style>
         </head>
-        <body style="height:100%; margin:0; font-family: -apple-system, BlinkMacSystemFont, PingFang SC, Helvetica, Tahoma, Arial, "Microsoft YaHei", sans-serif;">
+        <body style="height:100%; margin:0; font-family: -apple-system, BlinkMacSystemFont, PingFang SC, Helvetica, Tahoma, Arial, 'Microsoft YaHei', sans-serif; font-size: ${
+            renderFontSize + 'px'
+        };">
         <div class='${theme}-theme-global wn-theme-rd'>
             ${bodyContent}
         </div>
@@ -164,7 +167,7 @@ const ExportNote: React.FC<{}> = ({}) => {
             });
             setExportFinishPopUp(true);
         },
-        [print_str, theme, setExportFinishPopUp]
+        [print_str, theme, renderFontSize, setExportFinishPopUp]
     );
 
     const saveNoteToMd = useCallback(
