@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import { useRecordValue } from '../../lib/useRecordValue';
 import MarkdownEditor from './MarkdownEditor';
 import MarkdownRender from './MarkdownRender';
-import TipTapEditor from './TipTapEditor';
+// import TipTapEditor from './TipTapEditor';
 import useRenderState from '../../lib/useRenderState';
 import ToolBar from './ToolBar';
 import { notes } from '../../lib/notes';
