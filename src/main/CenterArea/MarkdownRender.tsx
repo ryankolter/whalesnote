@@ -105,7 +105,7 @@ const MarkdownRender: React.FC<{
                         )}</button>`;
                         const textarea = `<textarea style="position: absolute;top: -9999px;left: -9999px;z-index: -9999;" id="copy-${copyId}">${str}</textarea>`;
                         return (
-                            '<pre><code class="hljs" style="position: relative;"><pre>' +
+                            '<pre style="position: relative;"><code class="hljs"><pre>' +
                             html +
                             toHtml(lowlight.highlight(lang, str, {})) +
                             '</pre></code></pre>' +
