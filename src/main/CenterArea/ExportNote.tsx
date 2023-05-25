@@ -263,7 +263,9 @@ const ExportNote: React.FC<{}> = ({}) => {
             ${renderStyle}
             </style>
             </head>
-            <body style="height:100%; margin:0; font-family: -apple-system, BlinkMacSystemFont, PingFang SC, Helvetica, Tahoma, Arial, "Microsoft YaHei", sans-serif;">
+            <body style="height:100%; margin:0; font-family: -apple-system, BlinkMacSystemFont, PingFang SC, Helvetica, Tahoma, Arial, 'Microsoft YaHei', sans-serif; font-size: ${
+                renderFontSize + 'px'
+            };">
             <div class='${theme}-theme-global wn-theme-rd'>
                 ${bodyContent}
             </div>
@@ -281,7 +283,7 @@ const ExportNote: React.FC<{}> = ({}) => {
             }
             setExportFinishPopUp(true);
         },
-        [whalesnote, currentRepoKey, currentFolderKey, theme, setExportFinishPopUp]
+        [whalesnote, currentRepoKey, currentFolderKey, theme, renderFontSize, setExportFinishPopUp]
     );
 
     const saveFolderToMd = useCallback(
