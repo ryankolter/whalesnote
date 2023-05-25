@@ -79,17 +79,17 @@ const ExportNote: React.FC<{}> = ({}) => {
                 if (lang) {
                     try {
                         return (
-                            '<pre><code class="hljs" style="position: relative;">' +
+                            '<pre><code class="hljs" style="position: relative;"><pre>' +
                             toHtml(lowlight.highlight(lang, str, {})) +
-                            '</code></pre>'
+                            '</pre></code></pre>'
                         );
                     } catch (__) {}
                 }
 
                 return (
-                    '<pre><code class="hljs">' +
+                    '<pre><code class="hljs"><pre>' +
                     mdPrint.current.utils.escapeHtml(str) +
-                    '</code></pre>'
+                    '</pre></code></pre>'
                 );
             },
         })
