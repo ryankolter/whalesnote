@@ -305,7 +305,7 @@ const SearchInput = styled.input(
         padding: '6px 0 6px 16px',
         boxSizing: 'border-box',
         color: 'var(--input-text-color) !important',
-        backgroundColor: 'var(--main-bg-color) !important',
+        backgroundColor: 'var(--render-main-bg-color) !important',
     },
     `
     &::-webkit-input-placeholder {

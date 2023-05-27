@@ -128,7 +128,7 @@ const NavColumn: React.FC<Record<string, unknown>> = ({}) => {
                 draggable="true"
             ></ResizeFolderWidth>
             {whalesnote.repos_key && whalesnote.repos_key.length > 0 ? (
-                <>
+                <SearchAndNote>
                     <SearchBarAndNote width={noteWidth}>
                         <SearchBarBox>
                             <SearchBar />
@@ -157,7 +157,7 @@ const NavColumn: React.FC<Record<string, unknown>> = ({}) => {
                         }}
                         draggable="true"
                     ></ResizeNoteWidth>
-                </>
+                </SearchAndNote>
             ) : (
                 <></>
             )}
@@ -268,6 +268,11 @@ const ResizeFolderWidth = styled.div(
         left: props.left - 4,
     })
 );
+
+const SearchAndNote = styled.div({
+    display: 'flex',
+    background: 'var(--render-main-bg-color) !important',
+});
 
 const SearchBarAndNote = styled.div(
     {

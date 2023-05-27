@@ -66,7 +66,7 @@ const TopRowContainer = styled.div(
         alignItems: 'center',
         justifyContent: 'space-between',
         boxSizing: 'border-box',
-        backgroundColor: 'var(--main-bg-color)',
+        backgroundColor: 'var(--render-main-bg-color)',
     },
     `
     app-region: drag;

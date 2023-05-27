@@ -51,13 +51,13 @@
     color: #cc342b;
 }
 
-/* #268bd2 */
+/* #347db0 */
 .light-theme-global .hljs-attr,
 .light-theme-global .hljs-link,
 .light-theme-global .hljs-literal,
 .light-theme-global .hljs-symbol,
 .light-theme-global .hljs-variable.constant_ {
-    color: #268bd2;
+    color: #5597c5;
 }
 
 .light-theme-global .hljs-built_in,
@@ -65,17 +65,17 @@
 .light-theme-global .hljs-keyword.hljs-atrule,
 .light-theme-global .hljs-quote,
 .light-theme-global .hljs-variable.language_ {
-    color: #268bd2;
+    color: #5597c5;
 }
 .light-theme-global .hljs-attribute,
 .light-theme-global .hljs-function .hljs-title,
 .light-theme-global .hljs-section,
 .light-theme-global .hljs-title.function_,
 .light-theme-global .hljs-property {
-    color: #268bd2;
+    color: #5597c5;
 }
 .light-theme-global .ͼq, .light-theme-global .ͼ12 {
-    color: #268bd2;
+    color: #5597c5;
 }
 
 /* #b58900 */

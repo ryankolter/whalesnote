@@ -82,6 +82,7 @@ const SettingPanelContainer = styled.div({
     padding: '20px 30px',
     boxSizing: 'border-box',
     backgroundColor: 'var(--float-panel-bg-color)',
+    borderRadius: '10px',
     zIndex: '4500',
 });
 
