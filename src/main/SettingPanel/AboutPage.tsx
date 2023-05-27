@@ -11,7 +11,7 @@ const AboutPage: React.FC<{}> = ({}) => {
                 <PartContent>
                     <Option>
                         <OptionTitle>{t('setting.about.project.version')}: </OptionTitle>
-                        <OptionWord>1.0.0</OptionWord>
+                        <OptionWord>1.1.0</OptionWord>
                     </Option>
                     <Option>
                         <OptionTitle>{t('setting.about.project.url')}: </OptionTitle>
