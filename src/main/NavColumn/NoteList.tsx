@@ -503,7 +503,7 @@ const Notes = styled.div(
     {
         overflowY: 'auto',
         padding: '10px 0 0 0',
-        borderRight: '1px solid var(--main-border-color)',
+        borderRight: '0.5px solid var(--main-border-color)',
         scrollBehavior: 'smooth',
     },
     `
@@ -573,7 +573,7 @@ const NotesBottomFlexBox = styled.div({
     minHeight: '0',
     width: '100%',
     boxSizing: 'border-box',
-    borderRight: '1px solid var(--main-border-color)',
+    borderRight: '0.5px solid var(--main-border-color)',
 });
 
 const MenuUl = styled.ul(

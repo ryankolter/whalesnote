@@ -285,7 +285,7 @@ const SearchBarBox = styled.div(
         width: '100%',
         boxSizing: 'border-box',
         padding: '18px 0 10px 0',
-        borderRight: '1px solid var(--main-border-color)',
+        borderRight: '0.5px solid var(--main-border-color)',
     },
     `
     app-region: drag;
