@@ -1,7 +1,7 @@
 .ProseMirror {
     height: 100%;
     padding: 0 15px 0 10px;
-    font-family: -apple-system, BlinkMacSystemFont, PingFang SC, Helvetica, Tahoma, Arial, "Microsoft YaHei", sans-serif !important;
+    font-family: PingFang SC, -apple-system, Helvetica, Tahoma, Arial, "Microsoft YaHei", sans-serif !important;
     color: var(--editor-main-text-color) !important;
     background-color: var(--editor-main-bg-color) !important;
     outline: none;

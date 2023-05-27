@@ -166,6 +166,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                 show={showWaitingMask}
                 word={t('tips.please_wait')}
             ></WaitingMaskStatic>
+            <EmptyArea onClick={() => setShowSearchPanel(false)}></EmptyArea>
             <Search>
                 <SearchIcon
                     className="ri-search-line"
@@ -185,6 +186,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                     readOnly={showInitTips}
                 />
             </Search>
+            <EmptyArea onClick={() => setShowSearchPanel(false)}></EmptyArea>
             {showSearchPanel ? (
                 <SearchPanel>
                     {showUpdateIndexBtn ? (
@@ -262,13 +264,17 @@ const SearchBarContainer = styled.div(
         position: 'relative',
         width: '100%',
         boxSizing: 'border-box',
-        padding: '0 30px 0 30px',
         display: 'flex',
     },
     `
     app-region: no-drag;
 `
 );
+
+const EmptyArea = styled.div({
+    width: '30px',
+    height: '32px',
+});
 
 const Search = styled.div({
     position: 'relative',
@@ -291,9 +297,8 @@ const SearchInput = styled.input(
         border: 'none',
         outline: 'none',
         fontFamily:
-            '-apple-system, BlinkMacSystemFont, PingFang SC, Helvetica, Tahoma, Arial, "Microsoft YaHei", sans-serif',
+            'PingFang SC, -apple-system, Helvetica, Tahoma, Arial, "Microsoft YaHei", sans-serif',
         fontSize: '14px',
-        fontWeight: 500,
         lineHeight: '20px',
         letterSpacing: '1px',
         width: '100%',
@@ -305,6 +310,7 @@ const SearchInput = styled.input(
     `
     &::-webkit-input-placeholder {
         color: var(--input-placeholder-text-color) !important;
+        font-size: 13px;
     }
 `
 );
@@ -328,16 +334,16 @@ const LoadingSearchTips = styled.div({
 const SearchPanel = styled.div({
     position: 'absolute',
     top: '40px',
-    left: '0',
+    left: '-5px',
     display: 'flex',
     flexDirection: 'column',
-    width: '100%',
-    height: 'calc(100vh - 140px)',
+    width: 'calc(100% + 10px)',
+    height: 'calc(100vh - 60px)',
     padding: '15px',
     boxSizing: 'border-box',
     zIndex: '3500',
     borderRadius: '10px',
-    border: '1px solid var(--float-panel-border-color)',
+    border: '0.5px solid var(--float-panel-border-color)',
     backgroundColor: 'var(--float-panel-bg-color)',
 });
 

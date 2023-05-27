@@ -10,10 +10,14 @@
     background-color: var(--editor-main-bg-color) !important;
 }
 
+.wn-theme-cm .cm-content {
+    padding-bottom: 20px;
+}
+
 .wn-theme-cm .cm-line {
     font-family: PingFang SC, -apple-system, Helvetica, Tahoma, Arial, "Microsoft YaHei", sans-serif;
     line-height: 1.6em;
-    letter-spacing: 0.5px !important;
+    letter-spacing: 0.2px !important;
 }
 
 .wn-theme-cm .cm-focused {

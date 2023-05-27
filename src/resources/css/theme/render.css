@@ -5,7 +5,7 @@
     top: 50px;
     box-sizing: border-box;
     padding: 0 15px 0 10px;
-    font-family: -apple-system, BlinkMacSystemFont, PingFang SC, Helvetica, Tahoma, Arial, "Microsoft YaHei", sans-serif;
+    font-family: PingFang SC, -apple-system, Helvetica, Tahoma, Arial, "Microsoft YaHei", sans-serif;
     user-select: text;
     overflow-y: auto;
     color: var(--editor-main-text-color) !important;
@@ -30,6 +30,7 @@
     line-height: 1.6em;
     word-break: break-word;
     letter-spacing: 0.5px !important;
+    word-spacing: 1px !important;
 }
 
 .wn-theme-rd pre code.hljs::-webkit-scrollbar-track {
@@ -37,10 +38,11 @@
 }
 
 .wn-theme-rd code {
-    font-family: -apple-system, BlinkMacSystemFont, PingFang SC, Helvetica, Tahoma, Arial, "Microsoft YaHei", sans-serif;
+    font-family: PingFang SC, -apple-system, Helvetica, Tahoma, Arial, "Microsoft YaHei", sans-serif;
     border: none;
     border-radius: 5px;
-    margin: 0 5px;
+    margin: 0 0.2em;
+    padding: 0.1em 0.4em;
     font-size: 0.9em;
     color: var(--render-code-text-color) !important;
     background-color: var(--render-code-line-bg-color) !important;
@@ -56,6 +58,7 @@
 }
 
 .wn-theme-rd pre code.hljs {
+    margin: 0 !important;
     padding: 0 1.2em !important;
 }
 
@@ -68,8 +71,12 @@
     background-color: var(--main-scroller-bg-color);
 }
 
+.wn-theme-rd pre code pre {
+    margin: 1.3em 0 !important;
+}
+
 .wn-theme-rd h1 {
-    font-size: 1.8em !important;
+    font-size: 1.6em !important;
     line-height: 1.4em !important;
 }
 
@@ -79,7 +86,7 @@
     margin-block-start: 1.5em !important;
     margin-block-end: 1em !important;
     padding-bottom: 0.1em !important;
-    border-bottom: solid 1.5px var(--editor-main-text-color);
+    border-bottom: solid 1px var(--editor-main-text-color);
 }
 
 .wn-theme-rd h3 {
@@ -320,6 +327,10 @@
     background: var(--render-line-select-bg-color) !important;
 }
 
+.wn-theme-rd code::selection {
+    background: var(--render-line-select-bg-color) !important;
+}
+
 .wn-theme-rd li::selection {
     background: var(--render-line-select-bg-color) !important;
 }
@@ -400,11 +411,12 @@
     position: absolute;
     top: 2px;
     right: 4px;
+    font-size: 0.7em;
     z-index: 1000;
     color: #333;
     cursor: pointer;
     transition: .7s background-color;
-    margin: 6px 12px 0 0;
+    margin: 2px 2px 0 0;
     border: 0;
     border-radius: 2px;
     color: var(--render-copy-btn-text-color) !important;

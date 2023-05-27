@@ -25,14 +25,14 @@ const useRenderState = () => {
             setRenderLeft('100%');
             window.localStorage.setItem('render_panel_state', 'hidden');
         } else if (mdRenderState === 'half') {
-            setEditorWidth('calc(50% - 15px)');
-            setRenderWidth('calc(50% - 15px)');
-            setRenderLeft('calc(50% + 15px)');
+            setEditorWidth('calc(50% - 10px - 10px)');
+            setRenderWidth('calc(50% - 10px - 10px)');
+            setRenderLeft('calc(50% + 10px - 10px)');
             window.localStorage.setItem('render_panel_state', 'half');
         } else if (mdRenderState === 'all') {
             setEditorWidth('100%');
-            setRenderWidth('calc(100% - 24px)');
-            setRenderLeft('24px');
+            setRenderWidth('calc(100% - 20px - 20px)');
+            setRenderLeft('20px');
             window.localStorage.setItem('render_panel_state', 'all');
         }
     }, [mdRenderState]);

@@ -106,7 +106,7 @@
 
     /* editor */
     --editor-main-text-color: #000000F0;
-    --editor-main-bg-color: #FFFFFF;
+    --editor-main-bg-color: #FAFAFC;
     --editor-htag-text-color: #000000;
     --editor-line-active-bg-color: #6699FF10;
     --editor-line-select-bg-color: #E3F3ED;
@@ -157,7 +157,7 @@
     --toc-text-color: #3F3F3F;
 
     /* other */
-    --input-text-color: #808080;
+    --input-text-color: #3F3F3F;
     --input-placeholder-text-color: #808080;
     --key-tab-bg-color: #F7F7FA;
 }

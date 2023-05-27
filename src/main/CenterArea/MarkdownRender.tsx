@@ -94,16 +94,17 @@ const MarkdownRender: React.FC<{
             linkify: true,
             typographer: true,
             highlight: function (str, lang) {
+                const copyId = cryptoRandomString({
+                    length: 12,
+                    type: 'alphanumeric',
+                });
+                const html = `<button class="copy-btn" type="button" data-clipboard-action="copy" data-clipboard-target="#copy-${copyId}">${t(
+                    'render.copy'
+                )}</button>`;
+                const textarea = `<textarea style="position: absolute;top: -9999px;left: -9999px;z-index: -9999;" id="copy-${copyId}">${str}</textarea>`;
+
                 if (lang) {
                     try {
-                        const copyId = cryptoRandomString({
-                            length: 12,
-                            type: 'alphanumeric',
-                        });
-                        const html = `<button class="copy-btn" type="button" data-clipboard-action="copy" data-clipboard-target="#copy-${copyId}">${t(
-                            'render.copy'
-                        )}</button>`;
-                        const textarea = `<textarea style="position: absolute;top: -9999px;left: -9999px;z-index: -9999;" id="copy-${copyId}">${str}</textarea>`;
                         return (
                             '<pre style="position: relative;"><code class="hljs"><pre>' +
                             html +
@@ -115,9 +116,11 @@ const MarkdownRender: React.FC<{
                 }
 
                 return (
-                    '<pre><code class="hljs"><pre>' +
+                    '<pre style="position: relative;"><code class="hljs"><pre>' +
+                    html +
                     md.current.utils.escapeHtml(str) +
-                    '</pre></code></pre>'
+                    '</pre></code></pre>' +
+                    textarea
                 );
             },
         })

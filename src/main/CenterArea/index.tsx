@@ -211,10 +211,11 @@ const MarkdownArea = styled.div({
     position: 'relative',
     flex: '1',
     minHeight: '0',
-    width: 'calc(100% - 29px)',
-    paddingLeft: '24px',
-    paddingBottom: '28px',
+    width: '100%',
+    paddingLeft: '20px',
+    paddingRight: '20px',
     boxSizing: 'border-box',
+    background: 'var(--editor-main-bg-color) !important',
 });
 
 const EditorPanel = styled.div(
@@ -225,10 +226,6 @@ const EditorPanel = styled.div(
         width: props.widthValue,
     })
 );
-
-const EditorDropZone = styled.div({
-    height: '100%',
-});
 
 const RenderPanel = styled.div(
     {

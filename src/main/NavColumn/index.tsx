@@ -247,7 +247,7 @@ const AllRepo = styled.div(
         boxSizing: 'border-box',
         borderRadius: '8px',
         zIndex: '3400',
-        border: '1px solid var(--float-panel-border-color)',
+        border: '0.5px solid var(--float-panel-border-color)',
         backgroundColor: 'var(--float-panel-bg-color)',
     },
     (props: { left: number }) => ({
