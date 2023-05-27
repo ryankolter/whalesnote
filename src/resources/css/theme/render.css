@@ -59,20 +59,21 @@
 
 .wn-theme-rd pre code.hljs {
     margin: 0 !important;
-    padding: 0 1.2em !important;
-}
-
-.wn-theme-rd pre code.hljs::-webkit-scrollbar {
-    height: 8px;
-}
-
-.wn-theme-rd pre code.hljs::-webkit-scrollbar-thumb {
-    border-radius: 3px;
-    background-color: var(--main-scroller-bg-color);
 }
 
 .wn-theme-rd pre code pre {
-    margin: 1.3em 0 !important;
+    margin: 0 !important;
+    padding: 1em 1.2em !important;
+    overflow-x: auto;
+}
+
+.wn-theme-rd pre code pre::-webkit-scrollbar {
+    height: 8px;
+}
+
+.wn-theme-rd pre code pre::-webkit-scrollbar-thumb {
+    border-radius: 3px;
+    background-color: var(--main-scroller-bg-color);
 }
 
 .wn-theme-rd h1 {
