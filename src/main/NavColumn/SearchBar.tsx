@@ -33,10 +33,10 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
         showWaitingMask,
         showInitTips,
         showUpdateIndexBtn,
+        clickOnSearchResult,
         nextSearchResult,
         prevSearchResult,
         setWord,
-        setCurSearchResultIndex,
         updateMiniSearch,
     ] = useSearch();
 
@@ -224,8 +224,9 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                             searchResults.map((result: SearchResult, index: number) => {
                                 return (
                                     <SearchResultDiv
+                                        id={`search-result-item-${index}`}
                                         onClick={() => {
-                                            setCurSearchResultIndex(index);
+                                            clickOnSearchResult(index);
                                         }}
                                         key={result.id}
                                         style={{
@@ -240,6 +241,15 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                                     </SearchResultDiv>
                                 );
                             })
+                        ) : (
+                            <></>
+                        )}
+                        {searchResults && searchResults.length > 0 ? (
+                            <SearchResultsEnd>
+                                <SearchResultsEndText>
+                                    —— {t('search.results_end')} ——
+                                </SearchResultsEndText>
+                            </SearchResultsEnd>
                         ) : (
                             <></>
                         )}
@@ -415,6 +425,17 @@ const SearchResultList = styled.div(
     }
 `
 );
+
+const SearchResultsEnd = styled.div({
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: '10px 0',
+});
+
+const SearchResultsEndText = styled.div({
+    fontSize: '14px',
+});
 
 const SearchResultDiv = styled.div({
     display: 'flex',

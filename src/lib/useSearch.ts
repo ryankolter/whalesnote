@@ -57,17 +57,56 @@ const useSearch = () => {
         if (searchModuleInitialized.current) searchCommit();
     }, [word]);
 
+    const isInViewPort = useCallback((element: any) => {
+        const { top } = element.getBoundingClientRect();
+        return top >= 130 && top <= window.innerHeight - 80;
+    }, []);
+
+    const clickOnSearchResult = useCallback(
+        (index: number) => {
+            setTimeout(() => {
+                const targetResultEle = document.getElementById(`search-result-item-${index}`);
+                if (targetResultEle && !isInViewPort(targetResultEle)) {
+                    targetResultEle.scrollIntoView({
+                        block: index > curSearchResultIndex ? 'start' : 'end',
+                        behavior: 'smooth',
+                    });
+                }
+            }, 50);
+
+            setCurSearchResultIndex(index);
+        },
+        [curSearchResultIndex, setCurSearchResultIndex]
+    );
+
     const nextSearchResult = useCallback(() => {
         if (curSearchResultIndex < searchResults.length - 1) {
+            setTimeout(() => {
+                const nextResultEle = document.getElementById(
+                    `search-result-item-${curSearchResultIndex + 1}`
+                );
+                if (nextResultEle && !isInViewPort(nextResultEle)) {
+                    nextResultEle.scrollIntoView({ block: 'start', behavior: 'smooth' });
+                }
+            }, 50);
+
             setCurSearchResultIndex((_curSearchResultIndex) => _curSearchResultIndex + 1);
         }
-    }, [curSearchResultIndex, searchResults, setCurSearchResultIndex]);
+    }, [curSearchResultIndex, searchResults, setCurSearchResultIndex, isInViewPort]);
 
     const prevSearchResult = useCallback(() => {
         if (curSearchResultIndex > 0) {
+            setTimeout(() => {
+                const prevResultEle = document.getElementById(
+                    `search-result-item-${curSearchResultIndex - 1}`
+                );
+                if (prevResultEle && !isInViewPort(prevResultEle)) {
+                    prevResultEle.scrollIntoView({ block: 'end', behavior: 'smooth' });
+                }
+            }, 50);
             setCurSearchResultIndex((_curSearchResultIndex) => _curSearchResultIndex - 1);
         }
-    }, [curSearchResultIndex, setCurSearchResultIndex]);
+    }, [curSearchResultIndex, setCurSearchResultIndex, isInViewPort]);
 
     useEffect(() => {
         if (curSearchResultIndex >= 0 && curSearchResultIndex < searchResults.length) {
@@ -269,10 +308,10 @@ const useSearch = () => {
         showWaitingMask,
         showInitTips,
         showUpdateIndexBtn,
+        clickOnSearchResult,
         nextSearchResult,
         prevSearchResult,
         setWord,
-        setCurSearchResultIndex,
         updateMiniSearch,
     ] as const;
 };

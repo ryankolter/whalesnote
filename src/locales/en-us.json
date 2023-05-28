@@ -27,7 +27,8 @@
         "placeholder": "search",
         "generate_search_tree": "Generate",
         "regenerate_search_tree": "Regenerate",
-        "initing": "Search is initializing..."
+        "initing": "Search is initializing...",
+        "results_end": "End"
     },
     "editor": {
         "last_time": "Last Time",

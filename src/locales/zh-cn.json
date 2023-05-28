@@ -27,7 +27,8 @@
         "placeholder": "搜索",
         "generate_search_tree": "生成",
         "regenerate_search_tree": "重新生成",
-        "initing": "搜索初始化中..."
+        "initing": "搜索初始化中...",
+        "results_end": "到底了"
     },
     "editor": {
         "last_time": "上次在",
