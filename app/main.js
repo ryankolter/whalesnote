@@ -227,6 +227,13 @@ const processIPC = () => {
         return file_basename.substring(0, file_basename.lastIndexOf('.'));
     });
 
+    ipcMain.handle('operate:writeGitIgnore', async (event, { file_path, str }) => {
+        console.log('writeGitIgnore: ' + file_path);
+        fse.ensureFileSync(file_path);
+        fse.writeFileSync(file_path, str);
+        return true;
+    });
+
     ipcMain.handle('operate:writeJson', async (event, { file_path, obj }) => {
         console.log('writeJson: ' + file_path);
         fse.ensureFileSync(file_path);

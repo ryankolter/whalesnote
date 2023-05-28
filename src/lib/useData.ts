@@ -129,6 +129,11 @@ const useData = () => {
             obj: history,
         });
 
+        await window.electronAPI.writeGitIgnore({
+            file_path: `${data_path}/.gitignore`,
+            str: 'history_info.json',
+        });
+
         for (const repo_key of whalesnote.repos_key) {
             const repo = whalesnote.repos_obj[repo_key];
             if (repo) {
