@@ -45,14 +45,17 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
             if (setWordTimerObj.current) {
                 clearTimeout(setWordTimerObj.current);
             }
+
+            const timeout = showSearchPanel ? 300 : 0;
+
             setWordTimerObj.current = setTimeout(() => {
                 setWord(e.target.value);
-            }, 300);
+            }, timeout);
             if (searchModuleInitialized.current) {
                 setShowSearchPanel(true);
             }
         },
-        [setWord, setShowSearchPanel]
+        [showSearchPanel, setWord, setShowSearchPanel]
     );
 
     const handleSearchInputFocus = useCallback(() => {
