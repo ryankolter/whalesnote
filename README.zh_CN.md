@@ -38,7 +38,7 @@
 
 ### 白天模式
 
-![note333](https://user-images.githubusercontent.com/44566054/205488150-4eea2f39-49c6-479f-9332-6b43b92d1083.PNG)
+![light_mode](https://github.com/ryankolter/whalesnote/assets/44566054/faa3d3e3-eb0a-4b9f-b5bb-5b19ddbfbe20)
 
 <br>
 
