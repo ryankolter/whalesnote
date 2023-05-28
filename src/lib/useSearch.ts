@@ -62,6 +62,20 @@ const useSearch = () => {
         return top >= 130 && top <= window.innerHeight - 80;
     }, []);
 
+    const switchToResultNote = useCallback(
+        (index: number) => {
+            if (index >= 0 && index < searchResults.length) {
+                setShowSearchResultHighlight(true);
+                /* eslint-disable */
+                const id = searchResults[index]['id'];
+                /* eslint-enable */
+                const arr = id.split('-');
+                switchNote(arr[0], arr[1], arr[2]);
+            }
+        },
+        [searchResults, setShowSearchResultHighlight, switchNote]
+    );
+
     const clickOnSearchResult = useCallback(
         (index: number) => {
             setTimeout(() => {
@@ -74,9 +88,13 @@ const useSearch = () => {
                 }
             }, 50);
 
+            if (index == curSearchResultIndex) {
+                switchToResultNote(index);
+            }
+
             setCurSearchResultIndex(index);
         },
-        [curSearchResultIndex, setCurSearchResultIndex]
+        [curSearchResultIndex, setCurSearchResultIndex, switchToResultNote]
     );
 
     const nextSearchResult = useCallback(() => {
@@ -109,14 +127,7 @@ const useSearch = () => {
     }, [curSearchResultIndex, setCurSearchResultIndex, isInViewPort]);
 
     useEffect(() => {
-        if (curSearchResultIndex >= 0 && curSearchResultIndex < searchResults.length) {
-            setShowSearchResultHighlight(true);
-            /* eslint-disable */
-            const id = searchResults[curSearchResultIndex]['id'];
-            /* eslint-enable */
-            const arr = id.split('-');
-            switchNote(arr[0], arr[1], arr[2]);
-        }
+        switchToResultNote(curSearchResultIndex);
     }, [curSearchResultIndex]);
 
     const loadDictionary = useCallback(async () => {
