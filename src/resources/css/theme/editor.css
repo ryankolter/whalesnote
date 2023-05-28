@@ -124,23 +124,23 @@
 
 /* search */
 .wn-theme-cm .cm-panels {
-    background-color: var(--search-panel-bg-color);
-    color: var(--search-panel-text-color);
+    background-color: var(--editor-search-panel-bg-color);
+    color: var(--editor-search-panel-text-color);
 }
 
 .wn-theme-cm .cm-button {
-    color: var(--search-panel-text-color) !important;
-    background-image: linear-gradient(var(--search-panel-button-bg-start-color), var(--search-panel-button-bg-end-color));
-    border: 1px solid var(--search-panel-button-border-color);
+    color: var(--editor-search-panel-text-color) !important;
+    background-image: linear-gradient(var(--editor-search-panel-button-bg-start-color), var(--editor-search-panel-button-bg-end-color));
+    border: 1px solid var(--editor-search-panel-button-border-color);
     cursor: pointer;
 }
 
 .wn-theme-cm .cm-button:active {
-    background: var(--search-panel-button-border-color) !important;
+    background: var(--editor-search-panel-button-border-color) !important;
 }
 
 .wn-theme-cm .cm-textfield {
-    border: 1px solid var(--search-panel-textfield-border-color);
+    border: 1px solid var(--editor-search-panel-textfield-border-color);
     background-color: inherit;
 }
 

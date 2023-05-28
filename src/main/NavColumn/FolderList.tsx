@@ -425,7 +425,7 @@ const FolderList: React.FC<{}> = ({}) => {
                                                         currentFolderKey === key
                                                             ? {
                                                                   backgroundColor:
-                                                                      'var(--main-selected-bg-color)',
+                                                                      'var(--second-selected-bg-color)',
                                                               }
                                                             : {}
                                                     }
@@ -559,7 +559,7 @@ const FolderList: React.FC<{}> = ({}) => {
                                             currentFolderKey === dragActiveId
                                                 ? {
                                                       backgroundColor:
-                                                          'var(--main-selected-bg-color)',
+                                                          'var(--second-selected-bg-color)',
                                                   }
                                                 : {}
                                         }

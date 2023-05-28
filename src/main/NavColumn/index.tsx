@@ -215,7 +215,7 @@ const CurRepoNameTag = styled.div({
     textOverflow: 'ellipsis',
     wordBreak: 'break-all',
     color: 'var(--main-text-color)',
-    backgroundColor: 'var(--main-selected-bg-color)',
+    backgroundColor: 'var(--main-repo-btn-bg-color)',
 });
 
 const RepoPanelKeyTab = styled.div({
@@ -248,7 +248,7 @@ const AllRepo = styled.div(
         borderRadius: '8px',
         zIndex: '3400',
         border: '0.5px solid var(--float-panel-border-color)',
-        backgroundColor: 'var(--float-panel-bg-color)',
+        backgroundColor: 'var(--repo-panel-bg-color)',
     },
     (props: { left: number }) => ({
         left: props.left - 20,

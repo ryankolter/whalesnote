@@ -229,7 +229,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                                             backgroundColor:
                                                 currentNoteKey === result.id.split('-')[2] &&
                                                 curSearchResultIndex !== -1
-                                                    ? 'var(--main-selected-bg-color)'
+                                                    ? 'var(--second-selected-bg-color)'
                                                     : '',
                                         }}
                                     >
@@ -344,7 +344,7 @@ const SearchPanel = styled.div({
     zIndex: '3500',
     borderRadius: '10px',
     border: '0.5px solid var(--float-panel-border-color)',
-    backgroundColor: 'var(--float-panel-bg-color)',
+    backgroundColor: 'var(--search-panel-bg-color)',
 });
 
 const SearchTool = styled.div({
@@ -381,7 +381,7 @@ const UpdateIndexBtn = styled.div({
     padding: '0 8px',
     borderRadius: ' 4px',
     cursor: 'pointer',
-    backgroundColor: 'var(--main-btn-bg-color)',
+    backgroundColor: 'var(--second-btn-bg-color)',
 });
 
 const UpdateIndexTips = styled.div({
@@ -419,6 +419,7 @@ const SearchResultDiv = styled.div({
     lineHeight: '36px',
     padding: '0 10px',
     fontSize: '14px',
+    borderRadius: '3px',
     cursor: 'pointer',
     overflow: 'hidden',
     textOverflow: 'ellipsis',

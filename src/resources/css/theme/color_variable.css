@@ -17,10 +17,14 @@
     --main-folder-and-repo-bg-color: #21242D; /*#21242D;*/
     --main-folder-add-bg-color: #939395;
     --main-btn-bg-color: #3A404C;
+    --main-repo-btn-bg-color: #3A404C;
     --main-selected-bg-color: #3A404C;
     --main-scroller-bg-color: #C7C7C733;
     --main-tips-bg-color: #21232C;
     --main-waiting-bg-color: rgba(0,0,0,0.4);
+
+    --second-btn-bg-color: #3A404C;
+    --second-selected-bg-color: #3A404C;
 
     /* editor */
     --editor-main-text-color: #999183;
@@ -31,12 +35,12 @@
     --editor-cursor-color: #528BFF;
     
     /* editor search */
-    --search-panel-bg-color: #21252B;
-    --search-panel-text-color: #ABB2BF;
-    --search-panel-button-border-color: #888888;
-    --search-panel-button-bg-start-color: #393939;
-    --search-panel-button-bg-end-color: #111111;
-    --search-panel-textfield-border-color: #555555;
+    --editor-search-panel-bg-color: #21252B;
+    --editor-search-panel-text-color: #ABB2BF;
+    --editor-search-panel-button-border-color: #888888;
+    --editor-search-panel-button-bg-start-color: #393939;
+    --editor-search-panel-button-bg-end-color: #111111;
+    --editor-search-panel-textfield-border-color: #555555;
 
     /* render */
     --render-main-bg-color: #2A2C34;
@@ -51,6 +55,10 @@
     --render-copy-btn-text-color: #A0A0A0;
     --render-copy-btn-bg-color: #3A404C;
     --render-copy-btn-hover-color: #D5D5D5;
+
+    /* repo panel */
+    --repo-panel-bg-color: #21242D;
+    --search-panel-bg-color: #21242D;
 
     /* side bar */
     --sidebar-bg-color: #3C3F42;
@@ -70,7 +78,7 @@
     --menu-bg-color: #2E2A27;
     --menu-hover-color: #3A404C;
 
-    --main-icon-color: rgb(102, 102, 102);
+    --main-icon-color: #666666;
 
     --toc-text-color: #A0A0A0;
 
@@ -96,16 +104,20 @@
 
     /* background */
     --main-bg-color: #FFFFFF;
-    --main-folder-and-repo-bg-color: #F4F4F4;
+    --main-folder-and-repo-bg-color: #F2F2F2;
     --main-folder-add-bg-color: #939395;
-    --main-btn-bg-color: #E3F3ED;
-    --main-selected-bg-color: #E5EEFF;
+    --main-btn-bg-color: #E5EEFF;
+    --main-repo-btn-bg-color: #DADADA;
+    --main-selected-bg-color: #E8E8E8;
     --main-scroller-bg-color: #94949666;
     --main-tips-bg-color: #E3F3ED; /*#72c4a4*/
     --main-waiting-bg-color: rgba(0,0,0,0.3);
 
+    --second-btn-bg-color: #DAE7FC;
+    --second-selected-bg-color: #DDDDDD;
+
     /* editor */
-    --editor-main-text-color: #000000F0;
+    --editor-main-text-color: #050505;
     --editor-main-bg-color: #FAFAFC;
     --editor-htag-text-color: #000000;
     --editor-line-active-bg-color: #6699FF10;
@@ -113,12 +125,12 @@
     --editor-cursor-color: #528BFF;
     
     /* editor search */
-    --search-panel-bg-color: #F7F7F7;
-    --search-panel-text-color: #3F3F3F;
-    --search-panel-button-border-color: #999999;
-    --search-panel-button-bg-start-color: #E3F3ED;
-    --search-panel-button-bg-end-color: #E3F3ED;
-    --search-panel-textfield-border-color: #999999;
+    --editor-search-panel-bg-color: #F7F7F7;
+    --editor-search-panel-text-color: #3F3F3F;
+    --editor-search-panel-button-border-color: #999999;
+    --editor-search-panel-button-bg-start-color: #E3F3ED;
+    --editor-search-panel-button-bg-end-color: #E3F3ED;
+    --editor-search-panel-textfield-border-color: #999999;
 
     /* render */
     --render-main-bg-color: #FAFAFC;
@@ -134,13 +146,17 @@
     --render-copy-btn-bg-color: #DBDCE8;
     --render-copy-btn-hover-color: #000000;
 
+    /* repo panel */
+    --repo-panel-bg-color: #F2F2F2;
+    --search-panel-bg-color: #F2F2F2;
+
     /* side bar */
     --sidebar-bg-color: #F0F0F2;
 
     /* float panel */
     --float-panel-bg-color: #F7F7F7;
     --float-panel-bg-color-no-border: #F7F7F7;
-    --float-panel-border-color: #0059FF88;
+    --float-panel-border-color: #C0C0C0;
     --float-popup-bg-color: #F7F7F7;
     --float-mask-hide-bg-color: rgba(0, 0, 0, 0);
     --float-mask-show-bg-color: rgba(0, 0, 0, 0.4);
@@ -149,10 +165,10 @@
     /* menu panel */
     --menu-text-color: #3F3F3F;
     --menu-border-color: #CCCCCC;
-    --menu-bg-color: #E3F3ED;
+    --menu-bg-color: #ECECEC;
     --menu-hover-color: rgba(102, 102, 102, 0.2);
 
-    --main-icon-color: rgb(146, 184, 255);
+    --main-icon-color: #91B3F3;
 
     --toc-text-color: #3F3F3F;
 
