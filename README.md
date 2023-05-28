@@ -38,7 +38,7 @@
 
 ### light mode
 
-![note333](https://user-images.githubusercontent.com/44566054/205488150-4eea2f39-49c6-479f-9332-6b43b92d1083.PNG)
+![light_mode](https://github.com/ryankolter/whalesnote/assets/44566054/445bbf5f-3e7f-4f3f-a5f8-cca8a766022f)
 
 <br>
 
