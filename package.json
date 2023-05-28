@@ -73,7 +73,7 @@
     },
     "scripts": {
         "start": "cross-env NODE_ENV=development PORT=3005 react-app-rewired start",
-        "build": "rimraf ./app/build && cross-env NODE_ENV=production GENERATE_SOURCEMAP=false react-app-rewired build",
+        "build": "rimraf ./app/build && cross-env NODE_ENV=production GENERATE_SOURCEMAP=false BUILD_PATH='app/build' react-app-rewired build",
         "stats": "cross-env STATS=server npm run start",
         "test": "react-app-rewired test",
         "prepare": "husky install"

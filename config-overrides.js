@@ -2,6 +2,7 @@ const { override } = require('customize-cra');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const WebpackObfuscator = require('webpack-obfuscator');
 const path = require('path');
+const webpack = require('webpack');
 
 const ignoreWarnings = (value) => (config) => {
     config.ignoreWarnings = value;
@@ -13,6 +14,9 @@ const publicPathPlugin = (value) => (config) => {
         ...config.output,
         path: path.join(__dirname, 'app/build'),
     };
+
+    config.plugins.push(new webpack.optimize.LimitChunkCountPlugin({ maxChunks: 3 }));
+
     return config;
 };
 
