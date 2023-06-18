@@ -232,7 +232,9 @@ const useSearch = () => {
                         const folder_info = await window.electronAPI.readJsonSync({
                             file_path: `${curDataPath}/${repo_key}/${folder_key}/folder_info.json`,
                         });
-                        folder_info.folder_name = repo_info.folders_obj[folder_key].folder_name;
+                        if (repo_info.folders_obj[folder_key]) {
+                            folder_info.folder_name = repo_info.folders_obj[folder_key].folder_name;
+                        }
                         if (folder_info) {
                             newWhalesnote.repos_obj[repo_key].folders_obj[folder_key] = folder_info;
                         }
