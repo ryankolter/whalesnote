@@ -39,7 +39,7 @@ const useCodeMirror = <T extends Element>({
                     height: '100%',
                 },
             }),
-        []
+        [],
     );
 
     const docUpdateListener = useMemo(
@@ -53,7 +53,7 @@ const useCodeMirror = <T extends Element>({
                     }
                 }
             }),
-        [onDocChange]
+        [onDocChange],
     );
 
     const cursorActiveListener = useMemo(
@@ -63,7 +63,7 @@ const useCodeMirror = <T extends Element>({
                     onSelectionSet(vu);
                 }
             }),
-        [onSelectionSet]
+        [onSelectionSet],
     );
 
     const myCompletions = useCallback((CompletionContext: any) => {
@@ -85,7 +85,7 @@ const useCodeMirror = <T extends Element>({
             'json',
             'md',
             'php',
-            'py',
+            'python',
             'rust',
             'sql',
             'swift',
@@ -153,7 +153,7 @@ const useCodeMirror = <T extends Element>({
                 override: [myCompletions],
             }),
         ],
-        [docUpdateListener, cursorActiveListener, myCompletions]
+        [docUpdateListener, cursorActiveListener, myCompletions],
     );
 
     useEffect(() => {

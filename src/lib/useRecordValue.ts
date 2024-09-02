@@ -1,5 +1,5 @@
 import { useReducer } from 'react';
-import produce from 'immer';
+import { produce } from 'immer';
 
 const recordValueReducer = produce((state: renderTopTypes, action: any) => {
     switch (action.type) {
@@ -20,7 +20,7 @@ export const useRecordValue = <T>() => {
         repo_key: string,
         folder_key: string,
         note_key: string,
-        value: T
+        value: T,
     ) => {
         if (repo_key && folder_key && note_key) {
             dispatch({

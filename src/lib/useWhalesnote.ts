@@ -1,5 +1,5 @@
 import { useCallback, useReducer, useRef } from 'react';
-import produce from 'immer';
+import { produce } from 'immer';
 import { whalesnoteObjType } from '../commonType';
 
 const whalesnoteReducer = produce((state: whalesnoteObjType, action: any) => {
@@ -110,20 +110,20 @@ const useWhalesnote = () => {
         {
             repos_key: [],
             repos_obj: {},
-        }
+        },
     );
     const renameSaveTimerObj = useRef<Map<string, NodeJS.Timeout>>(new Map());
 
     const initwhalesnote = useCallback(
         (newWhalesnote: whalesnoteObjType) => dispatch({ type: 'init', new_state: newWhalesnote }),
-        []
+        [],
     );
 
     const fetchNotesInfoInFolder = useCallback(
         async (
             cur_data_path: string,
             repo_key: string | undefined,
-            folder_key: string | undefined
+            folder_key: string | undefined,
         ) => {
             if (repo_key && folder_key) {
                 if (!getState().repos_obj[repo_key].folders_obj[folder_key].notes_key) {
@@ -140,7 +140,7 @@ const useWhalesnote = () => {
                 }
             }
         },
-        []
+        [],
     );
 
     const newRepo = useCallback(
@@ -170,7 +170,7 @@ const useWhalesnote = () => {
                 repo_key,
             });
         },
-        []
+        [],
     );
 
     const renameRepo = useCallback(
@@ -190,7 +190,7 @@ const useWhalesnote = () => {
                 new_repo_name,
             });
         },
-        []
+        [],
     );
 
     const reorderRepo = useCallback(
@@ -212,7 +212,7 @@ const useWhalesnote = () => {
                 });
             }
         },
-        []
+        [],
     );
 
     const deleteRepo = useCallback(async (cur_data_path: string, repo_key: string) => {
@@ -296,7 +296,7 @@ const useWhalesnote = () => {
             cur_data_path: string,
             repo_key: string,
             new_folder_key: string,
-            new_folder_name: string
+            new_folder_name: string,
         ) => {
             const repo_info = await window.electronAPI.readJsonSync({
                 file_path: `${cur_data_path}/${repo_key}/repo_info.json`,
@@ -331,7 +331,7 @@ const useWhalesnote = () => {
                 folder_info,
             });
         },
-        []
+        [],
     );
 
     const renameFolder = useCallback(
@@ -339,7 +339,7 @@ const useWhalesnote = () => {
             cur_data_path: string,
             repo_key: string,
             folder_key: string,
-            new_folder_name: string
+            new_folder_name: string,
         ) => {
             const repo_info = await window.electronAPI.readJsonSync({
                 file_path: `${cur_data_path}/${repo_key}/repo_info.json`,
@@ -356,7 +356,7 @@ const useWhalesnote = () => {
                 new_folder_name,
             });
         },
-        []
+        [],
     );
 
     const reorderFolder = useCallback(
@@ -379,7 +379,7 @@ const useWhalesnote = () => {
                 });
             }
         },
-        []
+        [],
     );
 
     const deleteFolder = useCallback(
@@ -450,7 +450,7 @@ const useWhalesnote = () => {
 
             return next_folder_key;
         },
-        []
+        [],
     );
 
     const newNote = useCallback(
@@ -459,7 +459,7 @@ const useWhalesnote = () => {
             repo_key: string,
             folder_key: string,
             new_note_key: string,
-            new_note_title: string
+            new_note_title: string,
         ) => {
             const folder_info = await window.electronAPI.readJsonSync({
                 file_path: `${cur_data_path}/${repo_key}/${folder_key}/folder_info.json`,
@@ -490,7 +490,7 @@ const useWhalesnote = () => {
                 new_note_title,
             });
         },
-        []
+        [],
     );
 
     const renameSaveNow = useCallback(
@@ -499,7 +499,7 @@ const useWhalesnote = () => {
             repo_key: string,
             folder_key: string,
             note_key: string,
-            new_title: string
+            new_title: string,
         ) => {
             const old_title =
                 getState().repos_obj[repo_key].folders_obj[folder_key].notes_obj[note_key].title;
@@ -523,7 +523,7 @@ const useWhalesnote = () => {
                 });
             }
         },
-        []
+        [],
     );
 
     const renameNote = useCallback(
@@ -532,7 +532,7 @@ const useWhalesnote = () => {
             repo_key: string,
             folder_key: string,
             note_key: string,
-            new_title: string
+            new_title: string,
         ) => {
             if (repo_key && folder_key && note_key) {
                 if (renameSaveTimerObj.current.has(note_key)) {
@@ -547,14 +547,14 @@ const useWhalesnote = () => {
                             repo_key,
                             folder_key,
                             note_key,
-                            new_title
+                            new_title,
                         );
                         renameSaveTimerObj.current.delete(note_key);
-                    }, 300)
+                    }, 300),
                 );
             }
         },
-        []
+        [],
     );
 
     const reorderNote = useCallback(
@@ -562,7 +562,7 @@ const useWhalesnote = () => {
             cur_data_path: string,
             repo_key: string,
             folder_key: string,
-            new_notes_key: string[]
+            new_notes_key: string[],
         ) => {
             if (repo_key && folder_key) {
                 const folder_info = await window.electronAPI.readJsonSync({
@@ -583,7 +583,7 @@ const useWhalesnote = () => {
                 });
             }
         },
-        []
+        [],
     );
 
     const deleteNote = useCallback(
@@ -650,7 +650,7 @@ const useWhalesnote = () => {
 
             return next_note_key;
         },
-        []
+        [],
     );
 
     return [

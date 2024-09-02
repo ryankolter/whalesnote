@@ -1,5 +1,5 @@
 import { useReducer, useRef, useCallback } from 'react';
-import produce from 'immer';
+import { produce } from 'immer';
 import { historyTypes } from '../commonType';
 
 const historyReducer = produce((state: historyTypes, action: any) => {
@@ -65,7 +65,7 @@ const useHistory = () => {
         {
             cur_repo_key: '',
             repos_record: {},
-        }
+        },
     );
 
     const historySaveTimerObj = useRef<NodeJS.Timeout>();
@@ -113,7 +113,7 @@ const useHistory = () => {
 
             await addSaveTask(curDataPath, 1200);
         },
-        []
+        [],
     );
 
     const noteSwitch = useCallback(
@@ -121,7 +121,7 @@ const useHistory = () => {
             curDataPath: string,
             repoKey: string | undefined,
             folderKey: string | undefined,
-            noteKey: string | undefined
+            noteKey: string | undefined,
         ) => {
             noteKey = noteKey ? noteKey : undefined;
             dispatch({
@@ -133,7 +133,7 @@ const useHistory = () => {
 
             await addSaveTask(curDataPath, 1200);
         },
-        []
+        [],
     );
 
     return [

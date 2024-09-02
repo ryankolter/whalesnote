@@ -3,11 +3,11 @@ import { GlobalContext } from '../../GlobalProvider';
 import { useTranslation } from 'react-i18next';
 import styled from '@emotion/styled';
 import markdownIt from 'markdown-it';
-import { lowlight } from 'lowlight';
+import { common, createLowlight } from 'lowlight';
 import { toHtml } from 'hast-util-to-html';
 /* eslint-disable */
 //@ts-ignore
-import markdownItEmoji from 'markdown-it-emoji';
+import { full as emoji } from 'markdown-it-emoji';
 //@ts-ignore
 import markdownItFootnote from 'markdown-it-footnote';
 //@ts-ignore
@@ -26,6 +26,8 @@ import markdownItTable from 'markdown-it-multimd-table';
 import { notes } from '../../lib/notes';
 import { usePopUp } from '../../lib/usePopUp';
 import { AlertPopUp } from '../../components/AlertPopUp';
+
+const lowlight = createLowlight(common);
 
 const ExportNote: React.FC<{}> = ({}) => {
     const {
@@ -52,13 +54,13 @@ const ExportNote: React.FC<{}> = ({}) => {
                 switchExportNoteFuncBtnRef.current?.contains(event.target as Node)
             ) {
                 setShowSwitchExportNoteFunc(
-                    (_showSwitchExportNoteFunc) => !_showSwitchExportNoteFunc
+                    (_showSwitchExportNoteFunc) => !_showSwitchExportNoteFunc,
                 );
             } else {
                 setShowSwitchExportNoteFunc(false);
             }
         },
-        [setShowSwitchExportNoteFunc]
+        [setShowSwitchExportNoteFunc],
     );
 
     useEffect(() => {
@@ -94,7 +96,7 @@ const ExportNote: React.FC<{}> = ({}) => {
                 );
             },
         })
-            .use(markdownItEmoji)
+            .use(emoji)
             .use(markdownItFootnote)
             .use(markdownItSub)
             .use(markdownItSup)
@@ -167,7 +169,7 @@ const ExportNote: React.FC<{}> = ({}) => {
             });
             setExportFinishPopUp(true);
         },
-        [print_str, theme, renderFontSize, setExportFinishPopUp]
+        [print_str, theme, renderFontSize, setExportFinishPopUp],
     );
 
     const saveNoteToMd = useCallback(
@@ -178,7 +180,7 @@ const ExportNote: React.FC<{}> = ({}) => {
             });
             setExportFinishPopUp(true);
         },
-        [print_str, setExportFinishPopUp]
+        [print_str, setExportFinishPopUp],
     );
 
     const ExportNoteFunc = useCallback(
@@ -202,7 +204,7 @@ const ExportNote: React.FC<{}> = ({}) => {
                     break;
             }
         },
-        [currentTitle, saveNoteToHtml, saveNoteToMd]
+        [currentTitle, saveNoteToHtml, saveNoteToMd],
     );
 
     const addMultizero = useCallback((num: number | string, count: number) => {
@@ -283,7 +285,7 @@ const ExportNote: React.FC<{}> = ({}) => {
             }
             setExportFinishPopUp(true);
         },
-        [whalesnote, currentRepoKey, currentFolderKey, theme, renderFontSize, setExportFinishPopUp]
+        [whalesnote, currentRepoKey, currentFolderKey, theme, renderFontSize, setExportFinishPopUp],
     );
 
     const saveFolderToMd = useCallback(
@@ -327,7 +329,7 @@ const ExportNote: React.FC<{}> = ({}) => {
             }
             setExportFinishPopUp(true);
         },
-        [whalesnote, currentRepoKey, currentFolderKey, setExportFinishPopUp]
+        [whalesnote, currentRepoKey, currentFolderKey, setExportFinishPopUp],
     );
 
     const ExportNotesInFolderFunc = useCallback(
@@ -345,7 +347,7 @@ const ExportNote: React.FC<{}> = ({}) => {
                     break;
             }
         },
-        [saveFolderToHtml, saveFolderToMd]
+        [saveFolderToHtml, saveFolderToMd],
     );
 
     return (
@@ -412,7 +414,7 @@ const ExportNoteContainer = styled.div(
     },
     `
     app-region: no-drag;
-`
+`,
 );
 
 const SwitchExportNoteFuncBtnBox = styled.div({

@@ -6,11 +6,11 @@ import cryptoRandomString from 'crypto-random-string';
 import ClipboardJS from 'clipboard';
 import markdownIt from 'markdown-it';
 // import hljs from 'highlight.js/lib/common';
-import { lowlight } from 'lowlight';
+import { common, createLowlight } from 'lowlight';
 import { toHtml } from 'hast-util-to-html';
 /* eslint-disable */
 //@ts-ignore
-import markdownItEmoji from 'markdown-it-emoji';
+import { full as emoji } from 'markdown-it-emoji';
 //@ts-ignore
 import markdownItFootnote from 'markdown-it-footnote';
 //@ts-ignore
@@ -22,8 +22,6 @@ import markdownItSup from 'markdown-it-sup';
 //@ts-ignore
 import markdownItTaskLists from 'markdown-it-task-lists';
 //@ts-ignore
-import markwodnItReplaceLink from 'markdown-it-replace-link';
-//@ts-ignore
 import implicitFigures from 'markdown-it-image-figures';
 /* eslint-enable */
 import markdownItAnchor from 'markdown-it-anchor';
@@ -31,6 +29,8 @@ import markdownItTable from 'markdown-it-multimd-table';
 import markdownItTocDoneRight from 'markdown-it-toc-done-right';
 
 import useContextMenu from '../../lib/useContextMenu';
+
+const lowlight = createLowlight(common);
 
 const MarkdownRender: React.FC<{
     cursorInRenderFlag: boolean;
@@ -44,7 +44,7 @@ const MarkdownRender: React.FC<{
         repo_key: string,
         folder_key: string,
         note_key: string,
-        render_scroll_value: number
+        render_scroll_value: number,
     ) => void;
 }> = ({
     cursorInRenderFlag,
@@ -70,7 +70,7 @@ const MarkdownRender: React.FC<{
     const [result, setResult] = useState('');
     const [showRenderScrollPos, setShowRenderScrollPos] = useState(false);
     const [showTocFlag, setShowTocFlag] = useState(
-        Number(window.localStorage.getItem('show_toc_flag')) || 0
+        Number(window.localStorage.getItem('show_toc_flag')) || 0,
     );
 
     const md = useRef<markdownIt>(markdownIt());
@@ -99,7 +99,7 @@ const MarkdownRender: React.FC<{
                     type: 'alphanumeric',
                 });
                 const html = `<button class="copy-btn" type="button" data-clipboard-action="copy" data-clipboard-target="#copy-${copyId}">${t(
-                    'render.copy'
+                    'render.copy',
                 )}</button>`;
                 const textarea = `<textarea style="position: absolute;top: -9999px;left: -9999px;z-index: -9999;" id="copy-${copyId}">${str}</textarea>`;
 
@@ -124,7 +124,7 @@ const MarkdownRender: React.FC<{
                 );
             },
         })
-            .use(markdownItEmoji)
+            .use(emoji)
             .use(markdownItFootnote)
             .use(markdownItSub)
             .use(markdownItSup)
@@ -152,7 +152,7 @@ const MarkdownRender: React.FC<{
                     }
                 },
             })
-            .use(markwodnItReplaceLink, {
+            .use(require('markdown-it-replace-link'), {
                 replaceLink: function (link: string, env: string, token: any) {
                     if (
                         token.type === 'image' &&
@@ -241,7 +241,7 @@ const MarkdownRender: React.FC<{
                 }
             }
         },
-        [platformName, mdRenderState, showRepoPanel, autoScrollToLine, setShowTocFlag]
+        [platformName, mdRenderState, showRepoPanel, autoScrollToLine, setShowTocFlag],
     );
 
     const handleScroll = useCallback(
@@ -281,7 +281,7 @@ const MarkdownRender: React.FC<{
                         currentRepoKey,
                         currentFolderKey,
                         currentNoteKey,
-                        renderScrollValue
+                        renderScrollValue,
                     );
                 }
             }, 100);
@@ -292,7 +292,7 @@ const MarkdownRender: React.FC<{
             setShowRenderScrollPos,
             updateRenderScrollTop,
             cursorInRenderFlag,
-        ]
+        ],
     );
 
     const handleMouseEnter = useCallback(() => {
@@ -380,7 +380,7 @@ const MarkdownRenderContainer = styled.div(
     },
     (props: { fontSizeValue: string }) => ({
         fontSize: props.fontSizeValue + 'px',
-    })
+    }),
 );
 
 const LastScrollPos = styled.div(
@@ -410,7 +410,7 @@ const LastScrollPos = styled.div(
         top: 0;
         width: 0;
     }
-`
+`,
 );
 
 const TocToggleBtn = styled.div({
@@ -449,7 +449,7 @@ const TocDirectory = styled.div(
     &::-webkit-scrollbar {
         display: none;
     }
-`
+`,
 );
 
 const MenuUl = styled.ul(
@@ -466,7 +466,7 @@ const MenuUl = styled.ul(
     (props: { top: string; left: string }) => ({
         top: props.top,
         left: props.left,
-    })
+    }),
 );
 
 const MenuLi = styled.li(
@@ -483,7 +483,7 @@ const MenuLi = styled.li(
         border-radius: 4px;
         background-color: var(--menu-hover-color);
     }
-`
+`,
 );
 
 export default MarkdownRender;
