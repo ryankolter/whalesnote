@@ -24,10 +24,10 @@ const NavColumn: React.FC<Record<string, unknown>> = ({}) => {
     const lastFolderPageX = useRef<number>(0);
     const lastNotePageX = useRef<number>(0);
     const [folderWidth, setFolderWidth] = useState(
-        Number(window.localStorage.getItem('folder_width')) || 160
+        Number(window.localStorage.getItem('folder_width')) || 160,
     );
     const [noteWidth, setNoteWidth] = useState(
-        Number(window.localStorage.getItem('note_width')) || 220
+        Number(window.localStorage.getItem('note_width')) || 220,
     );
 
     const handleKeyDown = useCallback(
@@ -64,7 +64,7 @@ const NavColumn: React.FC<Record<string, unknown>> = ({}) => {
                 }
             }
         },
-        [keySelectNumArray, showKeySelect]
+        [keySelectNumArray, showKeySelect],
     );
 
     useEffect(() => {
@@ -88,10 +88,10 @@ const NavColumn: React.FC<Record<string, unknown>> = ({}) => {
                         }}
                     >
                         <RepoNameLabel>
-                            {whalesnote.repos_obj &&
+                            {whalesnote.repo_map &&
                             currentRepoKey &&
-                            whalesnote.repos_obj[currentRepoKey]
-                                ? whalesnote.repos_obj[currentRepoKey].repo_name
+                            whalesnote.repo_map[currentRepoKey]
+                                ? whalesnote.repo_map[currentRepoKey].repo_name
                                 : ''}
                         </RepoNameLabel>
                         {showKeySelect ? <RepoPanelKeyTab>Z</RepoPanelKeyTab> : <></>}
@@ -127,7 +127,7 @@ const NavColumn: React.FC<Record<string, unknown>> = ({}) => {
                 }}
                 draggable="true"
             ></ResizeFolderWidth>
-            {whalesnote.repos_key && whalesnote.repos_key.length > 0 ? (
+            {whalesnote.repo_keys && whalesnote.repo_keys.length > 0 ? (
                 <SearchAndNote>
                     <SearchBarAndNote width={noteWidth}>
                         <SearchBarBox>
@@ -179,7 +179,7 @@ const DragArea = styled.div(
     },
     `
     app-region: drag;
-`
+`,
 );
 
 const FolderAndRepo = styled.div(
@@ -190,7 +190,7 @@ const FolderAndRepo = styled.div(
     },
     (props: { width: number }) => ({
         width: props.width,
-    })
+    }),
 );
 
 const FolderBox = styled.div({
@@ -252,7 +252,7 @@ const AllRepo = styled.div(
     },
     (props: { left: number }) => ({
         left: props.left - 20,
-    })
+    }),
 );
 
 const ResizeFolderWidth = styled.div(
@@ -266,7 +266,7 @@ const ResizeFolderWidth = styled.div(
     },
     (props: { left: number }) => ({
         left: props.left - 4,
-    })
+    }),
 );
 
 const SearchAndNote = styled.div({
@@ -282,7 +282,7 @@ const SearchBarAndNote = styled.div(
     },
     (props: { width: number }) => ({
         width: props.width,
-    })
+    }),
 );
 
 const SearchBarBox = styled.div(
@@ -294,7 +294,7 @@ const SearchBarBox = styled.div(
     },
     `
     app-region: drag;
-`
+`,
 );
 
 const NoteBox = styled.div({
@@ -314,7 +314,7 @@ const ResizeNoteWidth = styled.div(
     },
     (props: { left: number }) => ({
         left: props.left - 4,
-    })
+    }),
 );
 
 export default NavColumn;

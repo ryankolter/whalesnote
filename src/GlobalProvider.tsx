@@ -8,8 +8,8 @@ import {
     useEffect,
 } from 'react';
 import cryptoRandomString from 'crypto-random-string';
-import { whalesnoteObjType, historyTypes } from './commonType';
-import useData from './lib/useData';
+import { WhaleObject, HistoryInfo } from './commonType';
+import useData from '@/context/DataPathProvider/useData';
 import useDataList from './lib/useDataList';
 import useHistory from './lib/useHistory';
 import useWhalesnote from './lib/useWhalesnote';
@@ -27,43 +27,43 @@ const initContext: {
     setDataSwitchingFlag: Dispatch<SetStateAction<boolean>>;
     dataPathList: string[];
     removeDataPathFromList: (data_path: string) => void;
-    whalesnote: whalesnoteObjType;
-    initwhalesnote: (newWhalesnote: whalesnoteObjType) => void;
+    whalesnote: WhaleObject;
+    initwhalesnote: (newWhalesnote: WhaleObject) => void;
     newRepo: (curDataPath: string, repo_key: string, repo_name: string) => void;
     newFolder: (
         curDataPath: string,
         repo_key: string,
         new_folder_key: string,
-        new_folder_name: string
+        new_folder_name: string,
     ) => void;
     newNote: (
         curDataPath: string,
         repo_key: string,
         folder_key: string,
         new_note_key: string,
-        note_title: string
+        note_title: string,
     ) => void;
     renameRepo: (curDataPath: string, repo_key: string, new_repo_name: string) => void;
     renameFolder: (
         curDataPath: string,
         repo_key: string,
         folder_key: string,
-        new_folder_name: string
+        new_folder_name: string,
     ) => void;
     renameNote: (
         data_path: string,
         repo_key: string,
         folder_key: string,
         note_key: string,
-        new_title: string
+        new_title: string,
     ) => void;
-    reorderRepo: (data_path: string, repo_key: string, new_repos_key: string[]) => void;
-    reorderFolder: (data_path: string, repo_key: string, new_folders_key: string[]) => void;
+    reorderRepo: (data_path: string, repo_key: string, new_repo_keys: string[]) => void;
+    reorderFolder: (data_path: string, repo_key: string, new_folder_keys: string[]) => void;
     reorderNote: (
         data_path: string,
         repo_key: string,
         folder_key: string,
-        new_notes_key: string[]
+        new_note_keys: string[],
     ) => void;
     deleteRepo: (curDataPath: string, repo_key: string) => any;
     deleteFolder: (curDataPath: string, repo_key: string, folder_key: string) => any;
@@ -71,9 +71,9 @@ const initContext: {
         curDataPath: string,
         repo_key: string,
         folder_key: string,
-        note_key: string
+        note_key: string,
     ) => any;
-    history: historyTypes;
+    history: HistoryInfo;
     currentRepoKey: string;
     currentFolderKey: string;
     currentNoteKey: string;
@@ -83,7 +83,7 @@ const initContext: {
     switchNote: (
         repo_key: string,
         folder_key: string | undefined,
-        note_key: string | undefined
+        note_key: string | undefined,
     ) => void;
     changeNotesAfterNew: (
         action_name: string,
@@ -92,7 +92,7 @@ const initContext: {
             repo_key: string;
             folder_key?: string;
             note_key?: string;
-        }
+        },
     ) => void;
     platformName: string;
     whalesnoteId: string;
@@ -131,7 +131,7 @@ const initContext: {
     setDataSwitchingFlag: () => {},
     dataPathList: [],
     removeDataPathFromList: () => {},
-    whalesnote: { repos_key: [], repos_obj: {} },
+    whalesnote: { repo_keys: [], repo_map: {} },
     initwhalesnote: () => {},
     newRepo: () => {},
     newFolder: () => {},
@@ -257,10 +257,10 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
     }, [language]);
 
     const [editorFontSize, setEditorFontSize] = useState<string>(
-        window.localStorage.getItem('editor_font_size') || '15'
+        window.localStorage.getItem('editor_font_size') || '15',
     );
     const [renderFontSize, setRenderFontSize] = useState<string>(
-        window.localStorage.getItem('render_font_size') || '15'
+        window.localStorage.getItem('render_font_size') || '15',
     );
 
     useEffect(() => {
@@ -297,15 +297,15 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
 
     const switchRepo = useCallback(
         async (repo_key: string) => {
-            const folders_key = whalesnote.repos_obj[repo_key].folders_key;
+            const folder_keys = whalesnote.repo_map[repo_key].folder_keys;
             const fetch_folder_key =
                 history.repos_record[repo_key]?.cur_folder_key ||
-                (folders_key.length > 0 ? folders_key[0] : undefined);
+                (folder_keys.length > 0 ? folder_keys[0] : undefined);
             await fetchNotesInfoInFolder(curDataPath, repo_key, fetch_folder_key);
             await fetchNotesInfolder(curDataPath, repo_key, fetch_folder_key);
             await repoSwitch(curDataPath, repo_key);
         },
-        [curDataPath, history, whalesnote]
+        [curDataPath, history, whalesnote],
     );
 
     const switchFolder = useCallback(
@@ -314,7 +314,7 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
             await fetchNotesInfolder(curDataPath, repo_key, folder_key);
             await folderSwitch(curDataPath, repo_key, folder_key);
         },
-        [curDataPath]
+        [curDataPath],
     );
 
     const switchNote = useCallback(
@@ -323,7 +323,7 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
             await fetchNotesInfolder(curDataPath, repo_key, folder_key);
             await noteSwitch(curDataPath, repo_key, folder_key, note_key);
         },
-        [curDataPath]
+        [curDataPath],
     );
 
     const manualFocus = useCallback(
@@ -333,11 +333,11 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
                     cryptoRandomString({
                         length: 24,
                         type: 'alphanumeric',
-                    })
+                    }),
                 );
             }, delay);
         },
-        [setFocus]
+        [setFocus],
     );
 
     const manualBlur = useCallback(
@@ -348,30 +348,32 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
                         cryptoRandomString({
                             length: 24,
                             type: 'alphanumeric',
-                        })
+                        }),
                     );
                 }, delay);
             }
         },
-        [setBlur]
+        [setBlur],
     );
+
+    console.log(whalesnote);
 
     const currentTitle = useMemo(
         () =>
             currentRepoKey &&
             currentFolderKey &&
             currentNoteKey &&
-            whalesnote.repos_key.length > 0 &&
-            whalesnote.repos_obj[currentRepoKey]?.folders_obj &&
-            whalesnote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj &&
-            whalesnote.repos_obj[currentRepoKey].folders_obj[currentFolderKey].notes_obj[
+            whalesnote.repo_keys?.length > 0 &&
+            whalesnote.repo_map[currentRepoKey]?.folder_map &&
+            whalesnote.repo_map[currentRepoKey]?.folder_map[currentFolderKey]?.note_map &&
+            whalesnote.repo_map[currentRepoKey].folder_map[currentFolderKey].note_map[
                 currentNoteKey
             ]?.title
-                ? whalesnote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj[
+                ? whalesnote.repo_map[currentRepoKey]?.folder_map[currentFolderKey]?.note_map[
                       currentNoteKey
                   ].title
                 : i18next.t('note.untitled'),
-        [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, whalesnote]
+        [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, whalesnote],
     );
 
     return (

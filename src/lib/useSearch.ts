@@ -3,7 +3,7 @@ import { GlobalContext } from '../GlobalProvider';
 import { t } from 'i18next';
 import MiniSearch, { AsPlainObject, SearchResult } from 'minisearch';
 import { notes } from './notes';
-import { whalesnoteObjType } from '../commonType';
+import { WhaleObject } from '../commonType';
 
 const useSearch = () => {
     const {
@@ -73,7 +73,7 @@ const useSearch = () => {
                 switchNote(arr[0], arr[1], arr[2]);
             }
         },
-        [searchResults, setShowSearchResultHighlight, switchNote]
+        [searchResults, setShowSearchResultHighlight, switchNote],
     );
 
     const clickOnSearchResult = useCallback(
@@ -94,14 +94,14 @@ const useSearch = () => {
 
             setCurSearchResultIndex(index);
         },
-        [curSearchResultIndex, setCurSearchResultIndex, switchToResultNote]
+        [curSearchResultIndex, setCurSearchResultIndex, switchToResultNote],
     );
 
     const nextSearchResult = useCallback(() => {
         if (curSearchResultIndex < searchResults.length - 1) {
             setTimeout(() => {
                 const nextResultEle = document.getElementById(
-                    `search-result-item-${curSearchResultIndex + 1}`
+                    `search-result-item-${curSearchResultIndex + 1}`,
                 );
                 if (nextResultEle && !isInViewPort(nextResultEle)) {
                     nextResultEle.scrollIntoView({ block: 'start', behavior: 'smooth' });
@@ -116,7 +116,7 @@ const useSearch = () => {
         if (curSearchResultIndex > 0) {
             setTimeout(() => {
                 const prevResultEle = document.getElementById(
-                    `search-result-item-${curSearchResultIndex - 1}`
+                    `search-result-item-${curSearchResultIndex - 1}`,
                 );
                 if (prevResultEle && !isInViewPort(prevResultEle)) {
                     prevResultEle.scrollIntoView({ block: 'end', behavior: 'smooth' });
@@ -212,9 +212,9 @@ const useSearch = () => {
                 file_path: `${curDataPath}/whalesnote_info.json`,
             });
 
-            const newWhalesnote: whalesnoteObjType = {
-                repos_key: [],
-                repos_obj: {},
+            const newWhalesnote: WhaleObject = {
+                repo_keys: [],
+                repo_map: {},
             };
 
             for await (const repo_key of whalesnote_info.repos_key) {
@@ -222,13 +222,13 @@ const useSearch = () => {
                     file_path: `${curDataPath}/${repo_key}/repo_info.json`,
                 });
                 if (repo_info) {
-                    newWhalesnote.repos_key.push(repo_key);
-                    newWhalesnote.repos_obj[repo_key] = {
+                    newWhalesnote.repo_keys.push(repo_key);
+                    newWhalesnote.repo_map[repo_key] = {
                         repo_name: repo_info.repo_name,
-                        folders_key: repo_info.folders_key,
-                        folders_obj: {},
+                        folder_keys: repo_info.folder_keys,
+                        folder_map: {},
                     };
-                    for await (const folder_key of repo_info.folders_key) {
+                    for await (const folder_key of repo_info.folder_keys) {
                         const folder_info = await window.electronAPI.readJsonSync({
                             file_path: `${curDataPath}/${repo_key}/${folder_key}/folder_info.json`,
                         });
@@ -236,7 +236,7 @@ const useSearch = () => {
                             folder_info.folder_name = repo_info.folders_obj[folder_key].folder_name;
                         }
                         if (folder_info) {
-                            newWhalesnote.repos_obj[repo_key].folders_obj[folder_key] = folder_info;
+                            newWhalesnote.repo_map[repo_key].folder_map[folder_key] = folder_info;
                         }
                     }
                 }
@@ -250,20 +250,20 @@ const useSearch = () => {
                 content: string;
             }[] = [];
 
-            for (const repo_key of newWhalesnote.repos_key) {
-                if (newWhalesnote.repos_obj[repo_key]) {
-                    const folders_obj = newWhalesnote.repos_obj[repo_key].folders_obj;
-                    for (const folder_key of newWhalesnote.repos_obj[repo_key].folders_key) {
-                        if (folders_obj[folder_key]) {
-                            const folder_name = folders_obj[folder_key].folder_name;
-                            for (const note_key of folders_obj[folder_key].notes_key) {
+            for (const repo_key of newWhalesnote.repo_keys) {
+                if (newWhalesnote.repo_map[repo_key]) {
+                    const folder_map = newWhalesnote.repo_map[repo_key].folder_map;
+                    for (const folder_key of newWhalesnote.repo_map[repo_key].folder_keys) {
+                        if (folder_map[folder_key]) {
+                            const folder_name = folder_map[folder_key].folder_name;
+                            for (const note_key of folder_map[folder_key].note_keys) {
                                 const content = await window.electronAPI.readMdSync({
                                     file_path: `${curDataPath}/${repo_key}/${folder_key}/${note_key}.md`,
                                 });
                                 if (content) {
                                     const id = `${repo_key}-${folder_key}-${note_key}`;
                                     let title =
-                                        folders_obj[folder_key]?.notes_obj[note_key]?.title || '';
+                                        folder_map[folder_key]?.note_map[note_key]?.title || '';
                                     if (title === t('note.untitled')) title = '';
                                     documents.push({
                                         id,

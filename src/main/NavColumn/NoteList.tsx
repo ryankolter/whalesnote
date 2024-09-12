@@ -43,20 +43,20 @@ const NoteList: React.FC<{}> = ({}) => {
     } = useContext(GlobalContext);
     const { t } = useTranslation();
 
-    const notes_key = useMemo(() => {
-        return whalesnote.repos_obj &&
-            whalesnote.repos_key.length > 0 &&
-            whalesnote.repos_obj[currentRepoKey]?.folders_obj &&
-            whalesnote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_key
-            ? whalesnote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_key
+    const note_keys = useMemo(() => {
+        return whalesnote.repo_map &&
+            whalesnote.repo_keys.length > 0 &&
+            whalesnote.repo_map[currentRepoKey]?.folder_map &&
+            whalesnote.repo_map[currentRepoKey]?.folder_map[currentFolderKey]?.note_keys
+            ? whalesnote.repo_map[currentRepoKey]?.folder_map[currentFolderKey]?.note_keys
             : undefined;
     }, [whalesnote, currentRepoKey, currentFolderKey]);
-    const notes_obj = useMemo(() => {
-        return whalesnote.repos_obj &&
-            whalesnote.repos_key.length > 0 &&
-            whalesnote.repos_obj[currentRepoKey]?.folders_obj &&
-            whalesnote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj
-            ? whalesnote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj
+    const note_map = useMemo(() => {
+        return whalesnote.repo_map &&
+            whalesnote.repo_keys.length > 0 &&
+            whalesnote.repo_map[currentRepoKey]?.folder_map &&
+            whalesnote.repo_map[currentRepoKey]?.folder_map[currentFolderKey]?.note_map
+            ? whalesnote.repo_map[currentRepoKey]?.folder_map[currentFolderKey]?.note_map
             : undefined;
     }, [whalesnote, currentRepoKey, currentFolderKey]);
 
@@ -104,11 +104,11 @@ const NoteList: React.FC<{}> = ({}) => {
                 curDataPath,
                 currentRepoKey,
                 currentFolderKey,
-                note_key
+                note_key,
             );
             await switchNote(currentRepoKey, currentFolderKey, next_note_key);
         },
-        [curDataPath, currentRepoKey, currentFolderKey, switchNote]
+        [curDataPath, currentRepoKey, currentFolderKey, switchNote],
     );
 
     const preNotePage = useCallback(() => {
@@ -133,13 +133,13 @@ const NoteList: React.FC<{}> = ({}) => {
 
     const noteSwitchByIndex = useCallback(
         async (index: number) => {
-            for (const [i, key] of notes_key.entries()) {
+            for (const [i, key] of note_keys.entries()) {
                 if (index === i) {
                     await switchNote(currentRepoKey, currentFolderKey, key);
                 }
             }
         },
-        [currentRepoKey, currentFolderKey, notes_key, switchNote]
+        [currentRepoKey, currentFolderKey, note_keys, switchNote],
     );
 
     useEffect(() => {
@@ -151,11 +151,11 @@ const NoteList: React.FC<{}> = ({}) => {
     useEffect(() => {
         if (keySelectNumArray.length === 2) {
             let new_index = -1;
-            if (notes_key) {
+            if (note_keys) {
                 if (
                     keySelectNumArray[0] >= 65 &&
                     keySelectNumArray[0] <= 72 &&
-                    keySelectNumArray[0] < Math.ceil(notes_key.length / 21) + 65
+                    keySelectNumArray[0] < Math.ceil(note_keys.length / 21) + 65
                 ) {
                     if (keySelectNumArray[1] <= 72 && keySelectNumArray[0] >= 65) {
                         new_index = (keySelectNumArray[0] - 65) * 21 + (keySelectNumArray[1] - 65);
@@ -166,7 +166,7 @@ const NoteList: React.FC<{}> = ({}) => {
                 } else if (
                     keySelectNumArray[0] >= 75 &&
                     keySelectNumArray[0] <= 89 &&
-                    keySelectNumArray[0] < Math.ceil(notes_key.length / 21) + 65 + 4
+                    keySelectNumArray[0] < Math.ceil(note_keys.length / 21) + 65 + 4
                 ) {
                     if (keySelectNumArray[1] <= 72 && keySelectNumArray[1] >= 65) {
                         new_index =
@@ -227,7 +227,7 @@ const NoteList: React.FC<{}> = ({}) => {
                 }
             }
         },
-        [showKeySelect, showSearchPanel, handleNewNote, nextNotePage, preNotePage]
+        [showKeySelect, showSearchPanel, handleNewNote, nextNotePage, preNotePage],
     );
 
     useEffect(() => {
@@ -241,7 +241,7 @@ const NoteList: React.FC<{}> = ({}) => {
         (event: DragStartEvent) => {
             setDragActiveId(String(event.active.id));
         },
-        [setDragActiveId]
+        [setDragActiveId],
     );
 
     const handleDragEnd = useCallback(
@@ -251,15 +251,15 @@ const NoteList: React.FC<{}> = ({}) => {
             if (!over) return;
             if (
                 active.id !== over.id &&
-                notes_key &&
+                note_keys &&
                 currentRepoKey &&
                 currentFolderKey &&
                 currentNoteKey
             ) {
-                const oldIndex = notes_key.indexOf(active.id);
-                const newIndex = notes_key.indexOf(over.id);
-                const new_notes_key: string[] = arrayMove(notes_key, oldIndex, newIndex);
-                reorderNote(curDataPath, currentRepoKey, currentFolderKey, new_notes_key);
+                const oldIndex = note_keys.indexOf(active.id);
+                const newIndex = note_keys.indexOf(over.id);
+                const new_note_keys: string[] = arrayMove(note_keys, oldIndex, newIndex);
+                reorderNote(curDataPath, currentRepoKey, currentFolderKey, new_note_keys);
             }
         },
         [
@@ -267,10 +267,10 @@ const NoteList: React.FC<{}> = ({}) => {
             currentRepoKey,
             currentFolderKey,
             currentNoteKey,
-            notes_key,
+            note_keys,
             reorderNote,
             setDragActiveId,
-        ]
+        ],
     );
 
     const genAlphaCode1 = useCallback((order: number): number => {
@@ -296,17 +296,17 @@ const NoteList: React.FC<{}> = ({}) => {
                     <NewNoteIconImg src={newNoteIcon} alt="" />
                 </NoteAddBtn>
             </NoteAddFloat>
-            {notes_key && notes_obj ? (
+            {note_keys && note_map ? (
                 <DndContext
                     sensors={sensors}
                     modifiers={[restrictToVerticalAxis, restrictToFirstScrollableAncestor]}
                     onDragStart={handleDragStart}
                     onDragEnd={handleDragEnd}
                 >
-                    <SortableContext items={notes_key} strategy={verticalListSortingStrategy}>
+                    <SortableContext items={note_keys} strategy={verticalListSortingStrategy}>
                         <Notes ref={outerRef}>
-                            {notes_key
-                                .filter((key: string) => notes_obj && notes_obj[key])
+                            {note_keys
+                                .filter((key: string) => note_map && note_map[key])
                                 .map((key: string, index: number) => {
                                     return (
                                         <Sortable key={key} id={key}>
@@ -324,7 +324,7 @@ const NoteList: React.FC<{}> = ({}) => {
                                                     switchNote(
                                                         currentRepoKey,
                                                         currentFolderKey,
-                                                        key
+                                                        key,
                                                     )
                                                 }
                                                 onContextMenu={() => {
@@ -332,11 +332,11 @@ const NoteList: React.FC<{}> = ({}) => {
                                                         switchNote(
                                                             currentRepoKey,
                                                             currentFolderKey,
-                                                            key
+                                                            key,
                                                         );
                                                 }}
                                             >
-                                                {notes_obj[key].title}
+                                                {note_map[key].title}
                                                 {showKeySelect &&
                                                 currentNoteKey !== key &&
                                                 index < 21 * 21 ? (
@@ -355,7 +355,7 @@ const NoteList: React.FC<{}> = ({}) => {
                                                             }}
                                                         >
                                                             {String.fromCharCode(
-                                                                genAlphaCode1(index + 1)
+                                                                genAlphaCode1(index + 1),
                                                             )}
                                                         </span>
                                                         <span
@@ -373,7 +373,7 @@ const NoteList: React.FC<{}> = ({}) => {
                                                             }}
                                                         >
                                                             {String.fromCharCode(
-                                                                genAlphaCode2(index + 1)
+                                                                genAlphaCode2(index + 1),
                                                             )}
                                                         </span>
                                                     </NoteKeyTab>
@@ -384,8 +384,8 @@ const NoteList: React.FC<{}> = ({}) => {
                                         </Sortable>
                                     );
                                 })}
-                            {notes_key.filter((key: string) => notes_obj && notes_obj[key])
-                                .length <= 1 ? (
+                            {note_keys.filter((key: string) => note_map && note_map[key]).length <=
+                            1 ? (
                                 <AddNotesTips>
                                     <div>{t('tips.click_btn_to')}</div>
                                     <div>{t('tips.add_new_note')}</div>
@@ -427,7 +427,7 @@ const NoteList: React.FC<{}> = ({}) => {
                     </SortableContext>
                     {dragActiveId ? (
                         <DragOverlay>
-                            {notes_obj ? (
+                            {note_map ? (
                                 <NoteItem
                                     key={dragActiveId}
                                     style={
@@ -443,11 +443,11 @@ const NoteList: React.FC<{}> = ({}) => {
                                             switchNote(
                                                 currentRepoKey,
                                                 currentFolderKey,
-                                                dragActiveId
+                                                dragActiveId,
                                             );
                                     }}
                                 >
-                                    {notes_obj[dragActiveId].title}
+                                    {note_map[dragActiveId].title}
                                 </NoteItem>
                             ) : (
                                 <></>
@@ -510,7 +510,7 @@ const Notes = styled.div(
     &::-webkit-scrollbar {
         display: none;
     }
-`
+`,
 );
 
 const NoteItem = styled.div(
@@ -529,7 +529,7 @@ const NoteItem = styled.div(
     &:hover {
         color: var(--main-text-hover-color);
     }
-`
+`,
 );
 
 const NoteKeyTab = styled.div({
@@ -590,7 +590,7 @@ const MenuUl = styled.ul(
     (props: { top: string; left: string }) => ({
         top: props.top,
         left: props.left,
-    })
+    }),
 );
 
 const MenuLi = styled.li(
@@ -607,7 +607,7 @@ const MenuLi = styled.li(
         border-radius: 4px;
         background-color: var(--menu-hover-color);
     }
-`
+`,
 );
 
 export default NoteList;

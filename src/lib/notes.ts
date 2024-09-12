@@ -4,7 +4,7 @@ export let notes = {};
 export const fetchNotesInfolder = async (
     data_path: string | null,
     repo_key: string | undefined,
-    folder_key: string | undefined
+    folder_key: string | undefined,
 ) => {
     if (repo_key && folder_key) {
         if (!notes[repo_key]) notes[repo_key] = {};
@@ -34,7 +34,7 @@ export const changeNotesAfterNew = async (
         repo_key: string;
         folder_key?: string;
         note_key?: string;
-    }
+    },
 ) => {
     switch (action_name) {
         case 'repo': {
@@ -72,7 +72,7 @@ const saveTask = async (
     data_path: string,
     repo_key: string,
     folder_key: string,
-    note_key: string
+    note_key: string,
 ) => {
     const new_note_content = notes[repo_key][folder_key][note_key];
     await window.electronAPI.writeMd({
@@ -86,7 +86,7 @@ const addSaveTask = (
     repo_key: string,
     folder_key: string,
     note_key: string,
-    delay: number
+    delay: number,
 ) => {
     if (saveTimerObj.has(note_key)) {
         clearTimeout(saveTimerObj.get(note_key) as NodeJS.Timeout);
@@ -97,7 +97,7 @@ const addSaveTask = (
         setTimeout(async () => {
             await saveTask(data_path, repo_key, folder_key, note_key);
             saveTimerObj.delete(note_key);
-        }, delay)
+        }, delay),
     );
 };
 
@@ -106,7 +106,7 @@ export const updateNote = (
     repo_key: string,
     folder_key: string,
     note_key: string,
-    new_note_str: string
+    new_note_str: string,
 ) => {
     if (repo_key && folder_key && note_key) {
         notes[repo_key][folder_key][note_key] = new_note_str;

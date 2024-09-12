@@ -226,27 +226,26 @@ const ExportNote: React.FC<{}> = ({}) => {
                     file_name: '/theme/render.css',
                 })) || '';
             const len =
-                whalesnote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_key
+                whalesnote.repo_map[currentRepoKey]?.folder_map[currentFolderKey]?.note_keys
                     ?.length;
-            for (const [index, note_key] of whalesnote.repos_obj[currentRepoKey]?.folders_obj[
+            for (const [index, note_key] of whalesnote.repo_map[currentRepoKey]?.folder_map[
                 currentFolderKey
-            ]?.notes_key.entries()) {
+            ]?.note_keys.entries()) {
                 let title =
-                    whalesnote.repos_obj[currentRepoKey]?.folders_obj &&
-                    whalesnote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj
-                        ? whalesnote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]
-                              ?.notes_obj[note_key]?.title || ''
+                    whalesnote.repo_map[currentRepoKey]?.folder_map &&
+                    whalesnote.repo_map[currentRepoKey]?.folder_map[currentFolderKey]?.note_map
+                        ? whalesnote.repo_map[currentRepoKey]?.folder_map[currentFolderKey]
+                              ?.note_map[note_key]?.title || ''
                         : '';
                 let repeated_time = 0;
-                for (const comp_note_key of whalesnote.repos_obj[currentRepoKey]?.folders_obj[
+                for (const comp_note_key of whalesnote.repo_map[currentRepoKey]?.folder_map[
                     currentFolderKey
-                ]?.notes_key) {
+                ]?.note_keys) {
                     const comp_title =
-                        whalesnote.repos_obj[currentRepoKey]?.folders_obj &&
-                        whalesnote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]
-                            ?.notes_obj
-                            ? whalesnote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]
-                                  ?.notes_obj[comp_note_key]?.title || ''
+                        whalesnote.repo_map[currentRepoKey]?.folder_map &&
+                        whalesnote.repo_map[currentRepoKey]?.folder_map[currentFolderKey]?.note_map
+                            ? whalesnote.repo_map[currentRepoKey]?.folder_map[currentFolderKey]
+                                  ?.note_map[comp_note_key]?.title || ''
                             : '';
                     if (title === comp_title) repeated_time++;
                 }
@@ -291,27 +290,26 @@ const ExportNote: React.FC<{}> = ({}) => {
     const saveFolderToMd = useCallback(
         async (path: string) => {
             const len =
-                whalesnote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_key
+                whalesnote.repo_map[currentRepoKey]?.folder_map[currentFolderKey]?.note_keys
                     ?.length;
-            for (const [index, note_key] of whalesnote.repos_obj[currentRepoKey]?.folders_obj[
+            for (const [index, note_key] of whalesnote.repo_map[currentRepoKey]?.folder_map[
                 currentFolderKey
-            ]?.notes_key.entries()) {
+            ]?.note_keys.entries()) {
                 let title =
-                    whalesnote.repos_obj[currentRepoKey]?.folders_obj &&
-                    whalesnote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]?.notes_obj
-                        ? whalesnote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]
-                              ?.notes_obj[note_key]?.title || ''
+                    whalesnote.repo_map[currentRepoKey]?.folder_map &&
+                    whalesnote.repo_map[currentRepoKey]?.folder_map[currentFolderKey]?.note_map
+                        ? whalesnote.repo_map[currentRepoKey]?.folder_map[currentFolderKey]
+                              ?.note_map[note_key]?.title || ''
                         : '';
                 let repeated_time = 0;
-                for (const comp_note_key of whalesnote.repos_obj[currentRepoKey]?.folders_obj[
+                for (const comp_note_key of whalesnote.repo_map[currentRepoKey]?.folder_map[
                     currentFolderKey
-                ]?.notes_key) {
+                ]?.note_keys) {
                     const comp_title =
-                        whalesnote.repos_obj[currentRepoKey]?.folders_obj &&
-                        whalesnote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]
-                            ?.notes_obj
-                            ? whalesnote.repos_obj[currentRepoKey]?.folders_obj[currentFolderKey]
-                                  ?.notes_obj[comp_note_key]?.title || ''
+                        whalesnote.repo_map[currentRepoKey]?.folder_map &&
+                        whalesnote.repo_map[currentRepoKey]?.folder_map[currentFolderKey]?.note_map
+                            ? whalesnote.repo_map[currentRepoKey]?.folder_map[currentFolderKey]
+                                  ?.note_map[comp_note_key]?.title || ''
                             : '';
                     if (title === comp_title) repeated_time++;
                 }

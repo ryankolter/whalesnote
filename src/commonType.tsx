@@ -1,44 +1,36 @@
-export type whalesnoteObjType = {
-    repos_key: string[];
-    repos_obj:
-        | {
-              [repo_key: string]: {
-                  repo_name: string;
-                  folders_key: string[];
-                  folders_obj:
-                      | {
-                            [folder_key: string]: {
-                                folder_name: string;
-                                notes_key: string[];
-                                notes_obj:
-                                    | {
-                                          [note_key: string]: {
-                                              title: string;
-                                          };
-                                      }
-                                    | {};
-                            };
-                        }
-                      | {};
-              };
-          }
-        | {};
+export type NoteObject = { title: string };
+export type NoteMap = Record<string, NoteObject>;
+
+export type FolderObject = {
+    folder_name: string;
+    note_keys: string[];
+    note_map: NoteMap;
+};
+export type FolderMap = Record<string, FolderObject>;
+
+export type RepoObject = {
+    repo_name: string;
+    folder_keys: string[];
+    folder_map: FolderMap;
+};
+export type RepoMap = Record<string, RepoObject>;
+
+export type WhaleObject = {
+    repo_keys: string[];
+    repo_map: RepoMap;
 };
 
-export type historyTypes = {
+export type HistoryInfo = {
     cur_repo_key: string;
-    repos_record:
-        | {
-              [key: string]:
-                  | {
-                        cur_folder_key: string;
-                        folders: {
-                            [key: string]: string;
-                        };
-                    }
-                  | {};
-          }
-        | {};
+    repos_record: Record<
+        string,
+        {
+            cur_folder_key: string;
+            folders: {
+                [key: string]: string;
+            };
+        }
+    >;
 };
 
 export type notesTypes = {
@@ -51,7 +43,7 @@ export type notesTypes = {
 
 export type DataTypes = {
     id: string;
-    history: historyTypes;
-    whalesnote: whalesnoteObjType;
+    history: HistoryInfo;
+    whalesnote: WhaleObject;
     notes: notesTypes;
 };

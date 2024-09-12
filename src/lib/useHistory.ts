@@ -1,8 +1,8 @@
 import { useReducer, useRef, useCallback } from 'react';
 import { produce } from 'immer';
-import { historyTypes } from '../commonType';
+import { HistoryInfo } from '../commonType';
 
-const historyReducer = produce((state: historyTypes, action: any) => {
+const historyReducer = produce((state: HistoryInfo, action: any) => {
     switch (action.type) {
         case 'init': {
             state = action.new_state;
@@ -55,13 +55,13 @@ const historyReducer = produce((state: historyTypes, action: any) => {
 });
 
 const useHistory = () => {
-    const lastState = useRef<historyTypes>({
+    const lastState = useRef<HistoryInfo>({
         cur_repo_key: '',
         repos_record: {},
     });
     const getState = useCallback(() => lastState.current, []);
     const [state, dispatch] = useReducer(
-        (state: historyTypes, action: any) => (lastState.current = historyReducer(state, action)),
+        (state: HistoryInfo, action: any) => (lastState.current = historyReducer(state, action)),
         {
             cur_repo_key: '',
             repos_record: {},
@@ -70,7 +70,7 @@ const useHistory = () => {
 
     const historySaveTimerObj = useRef<NodeJS.Timeout>();
 
-    const initHistory = useCallback((new_history: historyTypes) => {
+    const initHistory = useCallback((new_history: HistoryInfo) => {
         dispatch({ type: 'init', new_state: new_history });
     }, []);
 
