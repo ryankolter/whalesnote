@@ -11,17 +11,30 @@ import SettingPanel from './main/SettingPanel';
 
 import SocketServerBtn from './components/socketServerBtn';
 import SocketClientBtn from './socketClientBtn';
+import { useDataPathContext } from './context/DataPathProvider';
+import { useAtomValue } from 'jotai';
+import {
+    assistPanelOpenAtom,
+    assistPanelTabAtom,
+    languageAtom,
+    settingPanelOpenAtom,
+    themeAtom,
+} from './atoms';
+import i18next from 'i18next';
 
 const App = () => {
-    const {
-        curAssistantPanelTab,
-        curSettingPanelTab,
-        dataInitingFlag,
-        dataPathChangeFlag,
-        dataSwitchingFlag,
-        theme,
-        whalesnote,
-    } = useContext(GlobalContext);
+    const { whalesnote, dataInitingFlag, dataPathChangeFlag, dataSwitchingFlag } =
+        useContext(GlobalContext);
+    const theme = useAtomValue(themeAtom);
+
+    const assistPanelOpen = useAtomValue(assistPanelOpenAtom);
+    const settingPanelOpen = useAtomValue(settingPanelOpenAtom);
+    // const { dataInitingFlag, dataPathChangeFlag, dataSwitchingFlag } = useDataPathContext();
+
+    const language = useAtomValue(languageAtom);
+    useEffect(() => {
+        i18next.changeLanguage(language);
+    }, [language]);
 
     return (
         <AppContainer className={`${theme}-theme-global`}>
@@ -31,8 +44,8 @@ const App = () => {
                 <AppUI>
                     <NavColumn />
                     <CenterArea />
-                    {curAssistantPanelTab !== 'none' ? <AssistantPanel /> : <></>}
-                    {curSettingPanelTab !== 'none' ? <SettingPanel /> : <></>}
+                    {assistPanelOpen && <AssistantPanel />}
+                    {settingPanelOpen && <SettingPanel />}
                 </AppUI>
             ) : (
                 <></>

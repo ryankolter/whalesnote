@@ -5,33 +5,22 @@ import { useTranslation } from 'react-i18next';
 import styled from '@emotion/styled';
 
 import { SelectionOptions } from '../../components/SelectionOptions';
-import { t } from 'i18next';
+import { useAtom } from 'jotai';
+import { editorFontSizeAtom, renderFontSizeAtom, languageAtom, themeAtom } from '@/atoms';
 
 const InterfacePage: React.FC<{}> = ({}) => {
-    const {
-        theme,
-        setTheme,
-        language,
-        setLanguage,
-        editorFontSize,
-        renderFontSize,
-        setEditorFontSize,
-        setRenderFontSize,
-    } = useContext(GlobalContext);
     const { t } = useTranslation();
+    const [editorFontSize, setEditorFontSize] = useAtom(editorFontSizeAtom);
+    const [renderFontSize, setRenderFontSize] = useAtom(renderFontSizeAtom);
 
+    const [theme, setTheme] = useAtom(themeAtom);
     const themeList = useMemo(() => ['light', 'dark'], []);
+
+    const [language, setLanguage] = useAtom(languageAtom);
     const languageList = useMemo(() => ['zh-CN', 'en-US'], []);
+
     const editorFontSizeList = useMemo(() => ['12', '13', '14', '15', '16', '17', '18'], []);
     const renderFontSizeList = useMemo(() => ['12', '13', '14', '15', '16', '17', '18'], []);
-
-    const changeTheme = useCallback(
-        (value: string) => {
-            setTheme(value);
-            window.localStorage.setItem('whalesnote_theme', value);
-        },
-        [setEditorFontSize]
-    );
 
     const translateTheme = useCallback((option: string) => {
         if (option === 'light') {
@@ -42,14 +31,6 @@ const InterfacePage: React.FC<{}> = ({}) => {
             return '';
         }
     }, []);
-
-    const changeLanguage = useCallback(
-        (value: string) => {
-            setLanguage(value);
-            window.localStorage.setItem('whalesnote_language', value);
-        },
-        [setEditorFontSize]
-    );
 
     const translateLanguage = useCallback((option: string) => {
         if (option === 'zh-CN') {
@@ -66,7 +47,7 @@ const InterfacePage: React.FC<{}> = ({}) => {
             setEditorFontSize(value);
             window.localStorage.setItem('editor_font_size', value);
         },
-        [setEditorFontSize]
+        [setEditorFontSize],
     );
 
     const changeRenderFontSize = useCallback(
@@ -74,7 +55,7 @@ const InterfacePage: React.FC<{}> = ({}) => {
             setRenderFontSize(value);
             window.localStorage.setItem('render_font_size', value);
         },
-        [setRenderFontSize]
+        [setRenderFontSize],
     );
 
     return (
@@ -86,14 +67,14 @@ const InterfacePage: React.FC<{}> = ({}) => {
                         title={t('setting.interface.mode.language')}
                         currentOption={language}
                         optionList={languageList}
-                        handleOption={changeLanguage}
+                        handleOption={setLanguage}
                         translateFunc={translateLanguage}
                     />
                     <SelectionOptions
                         title={t('setting.interface.mode.theme')}
                         currentOption={theme}
                         optionList={themeList}
-                        handleOption={changeTheme}
+                        handleOption={setTheme}
                         translateFunc={translateTheme}
                     />
                 </PartContent>

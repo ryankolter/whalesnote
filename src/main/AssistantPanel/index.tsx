@@ -5,23 +5,18 @@ import styled from '@emotion/styled';
 
 import MobilePage from './MobilePage';
 import TrashList from './TrashList';
+import { useAtom, useSetAtom } from 'jotai';
+import { assistPanelOpenAtom, assistPanelTabAtom } from '@/atoms';
 
 const AssistantPanel: React.FC<{}> = ({}) => {
-    const { curAssistantPanelTab, setCurAssistantPanelTab } = useContext(GlobalContext);
+    const [assistPanelTab, setAssistPanelTab] = useAtom(assistPanelTabAtom);
+    const setAssistPanelOpen = useSetAtom(assistPanelOpenAtom);
     const { t } = useTranslation();
 
     const resizeAssistantPanelOffsetX = useRef<number>(0);
     const lastPageX = useRef<number>(0);
     const [assistantPanelWidth, setAssistantPanelWidth] = useState(
-        Number(window.localStorage.getItem('assistant_panel_width')) || 360
-    );
-
-    const handleAssistantTabSwitch = useCallback(
-        (tab_name: string) => {
-            setCurAssistantPanelTab(tab_name);
-            window.localStorage.setItem('cur_assistant_panel_tab', tab_name);
-        },
-        [setCurAssistantPanelTab]
+        Number(window.localStorage.getItem('assistant_panel_width')) || 360,
     );
 
     return (
@@ -49,7 +44,7 @@ const AssistantPanel: React.FC<{}> = ({}) => {
                 onDragEnd={(e: React.DragEvent) => {
                     window.localStorage.setItem(
                         'assistant_panel_width',
-                        assistantPanelWidth.toString()
+                        assistantPanelWidth.toString(),
                     );
                 }}
                 draggable="true"
@@ -58,36 +53,41 @@ const AssistantPanel: React.FC<{}> = ({}) => {
                 <FloatCloseBtnBox>
                     <FloatCloseBtn
                         className="ri-side-bar-fill"
-                        onClick={() => setCurAssistantPanelTab('none')}
+                        onClick={() => setAssistPanelOpen(false)}
                     ></FloatCloseBtn>
                 </FloatCloseBtnBox>
-
                 <AssistantTabs>
                     <AssistantTab
                         style={
-                            curAssistantPanelTab === 'mobile_panel'
+                            assistPanelTab === 'mobile'
                                 ? { backgroundColor: 'var(--main-selected-bg-color)' }
                                 : {}
                         }
-                        onClick={(e) => handleAssistantTabSwitch('mobile_panel')}
+                        onClick={(e) => setAssistPanelTab('mobile')}
                     >
                         {t('assistant.mobile.title')}
                     </AssistantTab>
                     <AssistantTab
                         style={
-                            curAssistantPanelTab === 'trash_list'
+                            assistPanelTab === 'trash'
                                 ? { backgroundColor: 'var(--main-selected-bg-color)' }
                                 : {}
                         }
-                        onClick={(e) => handleAssistantTabSwitch('trash_list')}
+                        onClick={(e) => setAssistPanelTab('trash')}
                     >
                         {t('assistant.trash.title')}
                     </AssistantTab>
                 </AssistantTabs>
                 <AssistantContent>
-                    {curAssistantPanelTab == 'mobile_panel' ? <MobilePage /> : <></>}
-                    {curAssistantPanelTab == 'model_panel' ? <></> : <></>}
-                    {curAssistantPanelTab == 'trash_list' ? <TrashList /> : <></>}
+                    {assistPanelTab == 'mobile' ? (
+                        <MobilePage />
+                    ) : assistPanelTab === 'trash' ? (
+                        <TrashList />
+                    ) : assistPanelTab === 'model' ? (
+                        <></>
+                    ) : (
+                        <></>
+                    )}
                 </AssistantContent>
             </AssistantBox>
         </AssistantPanelContainer>
@@ -104,7 +104,7 @@ const AssistantPanelContainer = styled.div(
     },
     (props: { width: number }) => ({
         width: props.width,
-    })
+    }),
 );
 
 const ResizeAssistantPanelWidth = styled.div(
@@ -118,7 +118,7 @@ const ResizeAssistantPanelWidth = styled.div(
     },
     (props: { left: number }) => ({
         left: props.left - 4,
-    })
+    }),
 );
 
 const AssistantBox = styled.div({

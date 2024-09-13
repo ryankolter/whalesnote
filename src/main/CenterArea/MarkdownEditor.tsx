@@ -10,6 +10,8 @@ import useCodeMirror from '../../lib/useCodeMirror';
 import useContextMenu from '../../lib/useContextMenu';
 import useEditorPosition from '../../lib/useEditorPosition';
 import { updateNote } from '../../lib/notes';
+import { useAtomValue } from 'jotai';
+import { editorFontSizeAtom } from '@/atoms';
 
 const MarkdownEditor: React.FC<{
     cursorInRenderFlag: boolean;
@@ -30,7 +32,6 @@ const MarkdownEditor: React.FC<{
         currentRepoKey,
         currentFolderKey,
         currentNoteKey,
-        editorFontSize,
         focus,
         platformName,
         showRepoPanel,
@@ -39,11 +40,13 @@ const MarkdownEditor: React.FC<{
     } = useContext(GlobalContext);
     const { t } = useTranslation();
 
+    const editorFontSize = useAtomValue(editorFontSizeAtom);
+
     const [topLinePos, cursorHeadPos, updateTopLinePos, updateCursorHeadPos] = useEditorPosition(
         curDataPath,
         currentRepoKey,
         currentFolderKey,
-        currentNoteKey
+        currentNoteKey,
     );
 
     const [showEditorScrollPos, setShowEditorScrollPos] = useState(false);
@@ -61,7 +64,7 @@ const MarkdownEditor: React.FC<{
                 currentRepoKey,
                 currentFolderKey,
                 currentNoteKey,
-                new_value
+                new_value,
             );
             setRenderNoteStr(new_value);
 
@@ -80,7 +83,7 @@ const MarkdownEditor: React.FC<{
                     currentRepoKey,
                     currentFolderKey,
                     currentNoteKey,
-                    new_name
+                    new_name,
                 );
             }
         },
@@ -92,7 +95,7 @@ const MarkdownEditor: React.FC<{
             renameNote,
             setRenderNoteStr,
             updateNote,
-        ]
+        ],
     );
 
     const onSelectionSet = useCallback(
@@ -104,11 +107,11 @@ const MarkdownEditor: React.FC<{
                     currentRepoKey,
                     currentFolderKey,
                     currentNoteKey,
-                    cursorHeadPos
+                    cursorHeadPos,
                 );
             }
         },
-        [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey]
+        [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey],
     );
 
     const [editor, view] = useCodeMirror<HTMLDivElement>({
@@ -346,7 +349,7 @@ const MarkdownEditor: React.FC<{
             addBacktick,
             jumpToNextBlock,
             jumpToPreviousBlock,
-        ]
+        ],
     );
 
     const handleScroll = useCallback(
@@ -380,7 +383,7 @@ const MarkdownEditor: React.FC<{
             scrollSaveTimerRef.current = setTimeout(() => {
                 if (view.current) {
                     const fromPos = view.current.elementAtHeight(
-                        Math.abs(view.current.contentDOM.getBoundingClientRect().top) + 50
+                        Math.abs(view.current.contentDOM.getBoundingClientRect().top) + 50,
                     ).from;
 
                     setShowEditorScrollPos(false);
@@ -396,7 +399,7 @@ const MarkdownEditor: React.FC<{
             setEditorScrollRatio,
             setShowEditorScrollPos,
             updateTopLinePos,
-        ]
+        ],
     );
 
     const handleMouseEnter = useCallback(() => {
@@ -480,7 +483,7 @@ const MarkdownEditor: React.FC<{
             .map((file_name) => {
                 const md_link = `![w500](${file_name} "${file_name.substring(
                     0,
-                    file_name.lastIndexOf('.')
+                    file_name.lastIndexOf('.'),
                 )}")`;
                 return md_link;
             })
@@ -530,7 +533,7 @@ const MarkdownEditor: React.FC<{
             }
             await insertImageMdLink(dest_file_name_list);
         },
-        [addMultizero, generateTimeStamp, insertImageMdLink]
+        [addMultizero, generateTimeStamp, insertImageMdLink],
     );
 
     const handleLoadImage = useCallback(
@@ -543,7 +546,7 @@ const MarkdownEditor: React.FC<{
             });
             if (paths.length > 0) await loadImages(paths);
         },
-        [loadImages, showMenu]
+        [loadImages, showMenu],
     );
 
     const handleZoneDrop = useCallback(
@@ -575,7 +578,7 @@ const MarkdownEditor: React.FC<{
             }
             await insertImageMdLink(dest_file_name_list);
         },
-        [curDataPath, addMultizero, generateTimeStamp, insertImageMdLink]
+        [curDataPath, addMultizero, generateTimeStamp, insertImageMdLink],
     );
 
     const { getRootProps } = useDropzone({ onDrop: handleZoneDrop, noClick: true, multiple: true });
@@ -626,7 +629,7 @@ const MarkdownEditorContainer = styled.div(
     },
     (props: { fontSizeValue: string }) => ({
         fontSize: props.fontSizeValue + 'px',
-    })
+    }),
 );
 
 const EditorDragZone = styled.div({
@@ -661,7 +664,7 @@ const LastScrollPos = styled.div(
         top: 0;
         width: 0;
     }
-`
+`,
 );
 
 const MenuUl = styled.ul(
@@ -678,7 +681,7 @@ const MenuUl = styled.ul(
     (props: { top: string; left: string }) => ({
         top: props.top,
         left: props.left,
-    })
+    }),
 );
 
 const MenuLi = styled.li(
@@ -695,7 +698,7 @@ const MenuLi = styled.li(
         border-radius: 4px;
         background-color: var(--menu-hover-color);
     }
-`
+`,
 );
 
 export default MarkdownEditor;

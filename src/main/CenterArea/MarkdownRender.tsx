@@ -14,6 +14,8 @@ import { full as emoji } from 'markdown-it-emoji';
 //@ts-ignore
 import markdownItFootnote from 'markdown-it-footnote';
 //@ts-ignore
+import markdownItReplaceLink from 'markdown-it-replace-link';
+//@ts-ignore
 import markdownItLinkAttributes from 'markdown-it-link-attributes';
 //@ts-ignore
 import markdownItSub from 'markdown-it-sub';
@@ -29,6 +31,8 @@ import markdownItTable from 'markdown-it-multimd-table';
 import markdownItTocDoneRight from 'markdown-it-toc-done-right';
 
 import useContextMenu from '../../lib/useContextMenu';
+import { useAtomValue } from 'jotai';
+import { renderFontSizeAtom } from '@/atoms';
 
 const lowlight = createLowlight(common);
 
@@ -62,10 +66,11 @@ const MarkdownRender: React.FC<{
         currentFolderKey,
         currentNoteKey,
         platformName,
-        renderFontSize,
         showRepoPanel,
     } = useContext(GlobalContext);
     const { t } = useTranslation();
+
+    const renderFontSize = useAtomValue(renderFontSizeAtom);
 
     const [result, setResult] = useState('');
     const [showRenderScrollPos, setShowRenderScrollPos] = useState(false);
@@ -88,84 +93,88 @@ const MarkdownRender: React.FC<{
     }, [showTocFlag]);
 
     md.current = useMemo(() => {
-        return markdownIt({
-            html: true,
-            breaks: true,
-            linkify: true,
-            typographer: true,
-            highlight: function (str, lang) {
-                const copyId = cryptoRandomString({
-                    length: 12,
-                    type: 'alphanumeric',
-                });
-                const html = `<button class="copy-btn" type="button" data-clipboard-action="copy" data-clipboard-target="#copy-${copyId}">${t(
-                    'render.copy',
-                )}</button>`;
-                const textarea = `<textarea style="position: absolute;top: -9999px;left: -9999px;z-index: -9999;" id="copy-${copyId}">${str}</textarea>`;
+        return (
+            markdownIt({
+                html: true,
+                breaks: true,
+                linkify: true,
+                typographer: true,
+                highlight: function (str, lang) {
+                    const copyId = cryptoRandomString({
+                        length: 12,
+                        type: 'alphanumeric',
+                    });
+                    const html = `<button class="copy-btn" type="button" data-clipboard-action="copy" data-clipboard-target="#copy-${copyId}">${t(
+                        'render.copy',
+                    )}</button>`;
+                    const textarea = `<textarea style="position: absolute;top: -9999px;left: -9999px;z-index: -9999;" id="copy-${copyId}">${str}</textarea>`;
 
-                if (lang) {
-                    try {
-                        return (
-                            '<pre style="position: relative;"><code class="hljs"><pre>' +
-                            html +
-                            toHtml(lowlight.highlight(lang, str, {})) +
-                            '</pre></code></pre>' +
-                            textarea
-                        );
-                    } catch (__) {}
-                }
-
-                return (
-                    '<pre style="position: relative;"><code class="hljs"><pre>' +
-                    html +
-                    md.current.utils.escapeHtml(str) +
-                    '</pre></code></pre>' +
-                    textarea
-                );
-            },
-        })
-            .use(emoji)
-            .use(markdownItFootnote)
-            .use(markdownItSub)
-            .use(markdownItSup)
-            .use(markdownItTaskLists)
-            .use(markdownItLinkAttributes, {
-                attrs: {
-                    target: '_blank',
-                },
-            })
-            .use(markdownItTable, {
-                multiline: false,
-                rowspan: true,
-                headerless: false,
-                multibody: true,
-                aotolabel: true,
-            })
-            .use(markdownItAnchor, {})
-            .use(markdownItTocDoneRight, {
-                containerClass: 'render-toc',
-                containerId: 'renderTocId',
-                listType: 'ul',
-                callback: (html, ast) => {
-                    if (TocRef.current) {
-                        TocRef.current.innerHTML = html;
+                    if (lang) {
+                        try {
+                            return (
+                                '<pre style="position: relative;"><code class="hljs"><pre>' +
+                                html +
+                                toHtml(lowlight.highlight(lang, str, {})) +
+                                '</pre></code></pre>' +
+                                textarea
+                            );
+                        } catch (__) {}
                     }
+
+                    return (
+                        '<pre style="position: relative;"><code class="hljs"><pre>' +
+                        html +
+                        md.current.utils.escapeHtml(str) +
+                        '</pre></code></pre>' +
+                        textarea
+                    );
                 },
             })
-            .use(require('markdown-it-replace-link'), {
-                replaceLink: function (link: string, env: string, token: any) {
-                    if (
-                        token.type === 'image' &&
-                        link.indexOf('https://') === -1 &&
-                        link.indexOf('http://') === -1
-                    )
-                        return curDataPath + '/images/' + link;
-                    else return link;
-                },
-            })
-            .use(implicitFigures, {
-                figcaption: 'title',
-            });
+                .use(emoji)
+                .use(markdownItFootnote)
+                .use(markdownItSub)
+                .use(markdownItSup)
+                .use(markdownItTaskLists)
+                .use(markdownItLinkAttributes, {
+                    attrs: {
+                        target: '_blank',
+                    },
+                })
+                .use(markdownItTable, {
+                    multiline: false,
+                    rowspan: true,
+                    headerless: false,
+                    multibody: true,
+                    aotolabel: true,
+                })
+                .use(markdownItAnchor, {})
+                .use(markdownItTocDoneRight, {
+                    containerClass: 'render-toc',
+                    containerId: 'renderTocId',
+                    listType: 'ul',
+                    //@ts-ignore
+                    callback: (html, ast) => {
+                        if (TocRef.current) {
+                            TocRef.current.innerHTML = html;
+                        }
+                    },
+                })
+                //@ts-ignore
+                .use(markdownItReplaceLink, {
+                    replaceLink: function (link: string, env: string, token: any) {
+                        if (
+                            token.type === 'image' &&
+                            link.indexOf('https://') === -1 &&
+                            link.indexOf('http://') === -1
+                        )
+                            return curDataPath + '/images/' + link;
+                        else return link;
+                    },
+                })
+                .use(implicitFigures, {
+                    figcaption: 'title',
+                })
+        );
     }, [curDataPath]);
 
     useEffect(() => {

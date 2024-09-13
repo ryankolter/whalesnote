@@ -1,5 +1,5 @@
 import { notesTypes } from '../commonType';
-export let notes = {};
+export let notes: notesTypes = {};
 
 export const fetchNotesInfolder = async (
     data_path: string | null,

@@ -232,7 +232,7 @@ const NotesScroll = styled.div(
         background-color: var(--main-scroller-bg-color);
         border-radius: 3px;
     }
-`
+`,
 );
 
 const Notes = styled.div(
@@ -246,7 +246,7 @@ const Notes = styled.div(
     &::-webkit-scrollbar {
         display: none;
     }
-`
+`,
 );
 
 const NoteItem = styled.div(
@@ -267,7 +267,7 @@ const NoteItem = styled.div(
     &:hover {
         color: var(--main-text-hover-color);
     }
-`
+`,
 );
 
 const CodeMirrorContainer = styled.div({

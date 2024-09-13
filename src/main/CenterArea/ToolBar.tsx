@@ -4,29 +4,15 @@ import styled from '@emotion/styled';
 
 import SwitchMode from './SwitchMode';
 import ExportNote from './ExportNote';
+import { assistPanelOpenAtom, settingPanelOpenAtom } from '@/atoms';
+import { useAtom, useSetAtom } from 'jotai';
 
 const ToolBar: React.FC<{
     mdRenderState: string;
     setMdRenderState: React.Dispatch<React.SetStateAction<string>>;
 }> = ({ mdRenderState, setMdRenderState }) => {
-    const { setCurSettingPanelTab, curAssistantPanelTab, setCurAssistantPanelTab } =
-        useContext(GlobalContext);
-
-    const handleOpenSettingClick = useCallback(() => {
-        const curTab = window.localStorage.getItem('cur_setting_panel_tab') || 'data_page';
-        setCurSettingPanelTab((curSettingPanelTab: string) => {
-            if (curSettingPanelTab !== 'none') {
-                return 'none';
-            } else {
-                return curTab;
-            }
-        });
-    }, []);
-
-    const handleOpenAssistantClick = useCallback(() => {
-        const curTab = window.localStorage.getItem('cur_assistant_panel_tab') || 'mobile_panel';
-        setCurAssistantPanelTab(curTab);
-    }, []);
+    const [assistPanelOpen, setAssistPanelOpen] = useAtom(assistPanelOpenAtom);
+    const setSettingPanelOpen = useSetAtom(settingPanelOpenAtom);
 
     return (
         <TopRowContainer>
@@ -37,18 +23,18 @@ const ToolBar: React.FC<{
                 <SettingPanelBtnBox>
                     <SettingPanelBtn
                         className="ri-settings-3-line"
-                        onClick={() => handleOpenSettingClick()}
+                        onClick={() => setSettingPanelOpen((_open) => !_open)}
                     ></SettingPanelBtn>
                 </SettingPanelBtnBox>
                 <ExportNote />
                 <AssistantPanelBtnBox>
-                    {curAssistantPanelTab === 'none' ? (
+                    {!assistPanelOpen && (
                         <AssistantPanelBtn
                             className="ri-side-bar-line"
-                            onClick={() => handleOpenAssistantClick()}
-                        ></AssistantPanelBtn>
-                    ) : (
-                        <></>
+                            onClick={() => {
+                                setAssistPanelOpen(true);
+                            }}
+                        />
                     )}
                 </AssistantPanelBtnBox>
             </AllBtnBox>
@@ -70,7 +56,7 @@ const TopRowContainer = styled.div(
     },
     `
     app-region: drag;
-`
+`,
 );
 
 const BreakCrumb = styled.div({
@@ -91,7 +77,7 @@ const SettingPanelBtnBox = styled.div(
     },
     `
     app-region: no-drag;
-`
+`,
 );
 
 const SettingPanelBtn = styled.div({
@@ -109,7 +95,7 @@ const AssistantPanelBtnBox = styled.div(
     },
     `
 app-region: no-drag;
-`
+`,
 );
 
 const AssistantPanelBtn = styled.div({

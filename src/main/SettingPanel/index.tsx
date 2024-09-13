@@ -1,30 +1,23 @@
-import { useCallback, useContext } from 'react';
-import { GlobalContext } from '../../GlobalProvider';
 import { useTranslation } from 'react-i18next';
 import styled from '@emotion/styled';
 
 import InterfacePage from './InterfacePage';
 import DataPage from './DataPage';
 import AboutPage from './AboutPage';
+import { settingPanelOpenAtom, settingPanelTabAtom } from '@/atoms';
+import { useAtom, useSetAtom } from 'jotai';
 
 const SettingPanel: React.FC<{}> = ({}) => {
-    const { curSettingPanelTab, setCurSettingPanelTab } = useContext(GlobalContext);
+    const setSettingPanelOpen = useSetAtom(settingPanelOpenAtom);
+    const [settingPanelTab, setSettingPanelTab] = useAtom(settingPanelTabAtom);
     const { t } = useTranslation();
-
-    const handleSettingTabSwitch = useCallback(
-        (tab_name: string) => {
-            setCurSettingPanelTab(tab_name);
-            window.localStorage.setItem('cur_setting_panel_tab', tab_name);
-        },
-        [setCurSettingPanelTab]
-    );
 
     return (
         <SettingPanelContainer>
             <TopRow>
                 <CloseSettingPanelBtn
                     onClick={() => {
-                        setCurSettingPanelTab('none');
+                        setSettingPanelOpen(false);
                     }}
                 >
                     x
@@ -34,39 +27,45 @@ const SettingPanel: React.FC<{}> = ({}) => {
                 <SettingTabs>
                     <SettingTab
                         style={
-                            curSettingPanelTab === 'data_page'
+                            settingPanelTab === 'dataTab'
                                 ? { backgroundColor: 'var(--main-selected-bg-color)' }
                                 : {}
                         }
-                        onClick={(e) => handleSettingTabSwitch('data_page')}
+                        onClick={(e) => setSettingPanelTab('dataTab')}
                     >
                         {t('setting.data.title')}
                     </SettingTab>
                     <SettingTab
                         style={
-                            curSettingPanelTab === 'interface_page'
+                            settingPanelTab === 'interfaceTab'
                                 ? { backgroundColor: 'var(--main-selected-bg-color)' }
                                 : {}
                         }
-                        onClick={(e) => handleSettingTabSwitch('interface_page')}
+                        onClick={(e) => setSettingPanelTab('interfaceTab')}
                     >
                         {t('setting.interface.title')}
                     </SettingTab>
                     <SettingTab
                         style={
-                            curSettingPanelTab === 'about_page'
+                            settingPanelTab === 'aboutTab'
                                 ? { backgroundColor: 'var(--main-selected-bg-color)' }
                                 : {}
                         }
-                        onClick={(e) => handleSettingTabSwitch('about_page')}
+                        onClick={(e) => setSettingPanelTab('aboutTab')}
                     >
                         {t('setting.about.title')}
                     </SettingTab>
                 </SettingTabs>
                 <SettingContent>
-                    {curSettingPanelTab == 'interface_page' ? <InterfacePage /> : <></>}
-                    {curSettingPanelTab == 'data_page' ? <DataPage /> : <></>}
-                    {curSettingPanelTab == 'about_page' ? <AboutPage /> : <></>}
+                    {settingPanelTab === 'interfaceTab' ? (
+                        <InterfacePage />
+                    ) : settingPanelTab == 'dataTab' ? (
+                        <DataPage />
+                    ) : settingPanelTab == 'aboutTab' ? (
+                        <AboutPage />
+                    ) : (
+                        <></>
+                    )}
                 </SettingContent>
             </SettingBox>
         </SettingPanelContainer>

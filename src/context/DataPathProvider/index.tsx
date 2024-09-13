@@ -2,7 +2,7 @@
 import React, { createContext, Dispatch, SetStateAction, useEffect, useCallback } from 'react';
 import useData from './useData';
 import useDataList from '@/lib/useDataList';
-import { fetchNotesInfolder, initNotes } from '@/lib/notes';
+import { initNotes } from '@/lib/notes';
 
 interface DataPathContextType {
     curDataPath: string;

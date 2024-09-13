@@ -26,6 +26,8 @@ import markdownItTable from 'markdown-it-multimd-table';
 import { notes } from '../../lib/notes';
 import { usePopUp } from '../../lib/usePopUp';
 import { AlertPopUp } from '../../components/AlertPopUp';
+import { useAtomValue } from 'jotai';
+import { renderFontSizeAtom, themeAtom } from '@/atoms';
 
 const lowlight = createLowlight(common);
 
@@ -36,10 +38,12 @@ const ExportNote: React.FC<{}> = ({}) => {
         currentFolderKey,
         currentNoteKey,
         currentTitle,
-        theme,
         whalesnote,
-        renderFontSize,
     } = useContext(GlobalContext);
+
+    const theme = useAtomValue(themeAtom);
+    const renderFontSize = useAtomValue(renderFontSizeAtom);
+
     const { t } = useTranslation();
     const [showSwitchExportNoteFunc, setShowSwitchExportNoteFunc] = useState(false);
 

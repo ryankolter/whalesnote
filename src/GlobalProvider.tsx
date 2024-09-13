@@ -110,18 +110,6 @@ const initContext: {
     setShowKeySelect: Dispatch<SetStateAction<boolean>>;
     keySelectNumArray: number[];
     setKeySelectNumArray: Dispatch<SetStateAction<number[]>>;
-    curSettingPanelTab: string;
-    setCurSettingPanelTab: Dispatch<SetStateAction<string>>;
-    curAssistantPanelTab: string;
-    setCurAssistantPanelTab: Dispatch<SetStateAction<string>>;
-    theme: any;
-    setTheme: Dispatch<SetStateAction<any>>;
-    language: any;
-    setLanguage: Dispatch<SetStateAction<any>>;
-    editorFontSize: string;
-    setEditorFontSize: Dispatch<SetStateAction<string>>;
-    renderFontSize: string;
-    setRenderFontSize: Dispatch<SetStateAction<string>>;
 } = {
     curDataPath: '',
     setCurDataPath: () => {},
@@ -176,18 +164,6 @@ const initContext: {
     setShowKeySelect: () => {},
     keySelectNumArray: [],
     setKeySelectNumArray: () => {},
-    curSettingPanelTab: 'none',
-    setCurSettingPanelTab: () => {},
-    curAssistantPanelTab: 'none',
-    setCurAssistantPanelTab: () => {},
-    theme: '',
-    setTheme: () => {},
-    language: '',
-    setLanguage: () => {},
-    editorFontSize: '15',
-    setEditorFontSize: () => {},
-    renderFontSize: '15',
-    setRenderFontSize: () => {},
 };
 export const GlobalContext = createContext(initContext);
 
@@ -234,34 +210,6 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
     const [showRepoPanel, setShowRepoPanel] = useState(false);
     const [showKeySelect, setShowKeySelect] = useState<boolean>(false);
     const [keySelectNumArray, setKeySelectNumArray] = useState<number[]>([]);
-    const [curSettingPanelTab, setCurSettingPanelTab] = useState('none');
-    const [curAssistantPanelTab, setCurAssistantPanelTab] = useState('none');
-
-    const [theme, setTheme] = useState(() => {
-        const whalesnote_theme = window.localStorage.getItem('whalesnote_theme');
-        if (whalesnote_theme && (whalesnote_theme === 'dark' || whalesnote_theme === 'light')) {
-            return whalesnote_theme;
-        } else {
-            return window.electronAPI.shouldUseDarkMode() ? 'dark' : 'light';
-        }
-    });
-
-    const [language, setLanguage] = useState(() => {
-        return (
-            window.localStorage.getItem('whalesnote_language') || window.electronAPI.getLanguage()
-        );
-    });
-
-    useEffect(() => {
-        i18next.changeLanguage(language);
-    }, [language]);
-
-    const [editorFontSize, setEditorFontSize] = useState<string>(
-        window.localStorage.getItem('editor_font_size') || '15',
-    );
-    const [renderFontSize, setRenderFontSize] = useState<string>(
-        window.localStorage.getItem('render_font_size') || '15',
-    );
 
     useEffect(() => {
         if (data.current) {
@@ -426,18 +374,6 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
                 setShowKeySelect,
                 keySelectNumArray,
                 setKeySelectNumArray,
-                curSettingPanelTab,
-                setCurSettingPanelTab,
-                curAssistantPanelTab,
-                setCurAssistantPanelTab,
-                editorFontSize,
-                setEditorFontSize,
-                renderFontSize,
-                setRenderFontSize,
-                theme,
-                setTheme,
-                language,
-                setLanguage,
             }}
         >
             {children}
