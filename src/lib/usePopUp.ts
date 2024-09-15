@@ -16,7 +16,7 @@ export const usePopUp = (duration: number) => {
                 }, duration);
             }
         },
-        [duration]
+        [duration],
     );
 
     return [popUp, setPopUp, mask] as const;

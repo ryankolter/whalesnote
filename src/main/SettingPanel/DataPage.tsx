@@ -8,13 +8,8 @@ import { usePopUp } from '../../lib/usePopUp';
 import { AlertPopUp } from '../../components/AlertPopUp';
 
 const DataPage: React.FC<{}> = ({}) => {
-    const {
-        curDataPath,
-        dataPathList,
-        removeDataPathFromList,
-        setCurDataPath,
-        setDataSwitchingFlag,
-    } = useContext(GlobalContext);
+    const { curDataPath, dataPathList, removeDataPathFromList, setCurDataPath } =
+        useContext(GlobalContext);
     const { t } = useTranslation();
 
     const [showPathUl, setShowPathUl] = useState(false);
@@ -27,7 +22,6 @@ const DataPage: React.FC<{}> = ({}) => {
         const filePath = await window.electronAPI.openDirectoryDialog();
         setShowPathUl(false);
         if (filePath !== '' && filePath !== curDataPath) {
-            setDataSwitchingFlag(true);
             setTimeout(() => {
                 setCurDataPath(filePath);
             }, 50);
@@ -51,7 +45,7 @@ const DataPage: React.FC<{}> = ({}) => {
                 setShowPathUl(false);
             }
         },
-        [setShowPathUl]
+        [setShowPathUl],
     );
 
     useEffect(() => {
@@ -87,7 +81,6 @@ const DataPage: React.FC<{}> = ({}) => {
                                                     key={index}
                                                     onClick={(e) => {
                                                         setShowPathUl(false);
-                                                        setDataSwitchingFlag(true);
                                                         setTimeout(() => {
                                                             setCurDataPath(dataPath);
                                                         }, 200);
@@ -133,7 +126,7 @@ const DataPage: React.FC<{}> = ({}) => {
                     popupState={removePopUp}
                     maskState={removeMask}
                     content={`${t('setting.data.remove_tips_part_1')}\n${removeDataSpacePath}${t(
-                        'setting.data.remove_tips_part_2'
+                        'setting.data.remove_tips_part_2',
                     )}${t('setting.data.remove_tips_part_3')}`}
                     onCancel={() => setRemovePopUp(false)}
                     onConfirm={removeDataSpaceConfirm}

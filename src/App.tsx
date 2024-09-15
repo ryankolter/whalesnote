@@ -23,13 +23,12 @@ import {
 import i18next from 'i18next';
 
 const App = () => {
-    const { whalesnote, dataInitingFlag, dataPathChangeFlag, dataSwitchingFlag } =
-        useContext(GlobalContext);
+    const { whalesnote, dataInitingFlag, dataPathChangeFlag } = useContext(GlobalContext);
     const theme = useAtomValue(themeAtom);
 
     const assistPanelOpen = useAtomValue(assistPanelOpenAtom);
     const settingPanelOpen = useAtomValue(settingPanelOpenAtom);
-    // const { dataInitingFlag, dataPathChangeFlag, dataSwitchingFlag } = useDataPathContext();
+    // const { dataInitingFlag, dataPathChangeFlag } = useDataPathContext();
 
     const language = useAtomValue(languageAtom);
     useEffect(() => {
@@ -39,7 +38,6 @@ const App = () => {
     return (
         <AppContainer className={`${theme}-theme-global`}>
             <WaitingMask in={dataInitingFlag} timeout={300}></WaitingMask>
-            <WaitingMaskStatic show={dataSwitchingFlag} word={'载入中......'}></WaitingMaskStatic>
             {dataPathChangeFlag > 0 ? (
                 <AppUI>
                     <NavColumn />

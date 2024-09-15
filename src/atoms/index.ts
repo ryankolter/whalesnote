@@ -24,3 +24,5 @@ export const languageAtom = atomWithStorage(
 
 export const editorFontSizeAtom = atomWithStorage('editor_font_size', '15');
 export const renderFontSizeAtom = atomWithStorage('render_font_size', '15');
+
+export const activeWhaleIdAtom = atomWithStorage('active_whale_id', '');

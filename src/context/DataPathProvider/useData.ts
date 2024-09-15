@@ -6,9 +6,8 @@ import createDefaultWhale from './createDefaultWhale';
 const useData = () => {
     const data = useRef<DataTypes>();
     const [curDataPath, setCurDataPath] = useState<string>('');
-    const [dataPathChangeFlag, setDataPathChangeFlag] = useState<number>(0);
-    const [dataInitingFlag, setDataInitingFlag] = useState<boolean>(true);
-    const [dataSwitchingFlag, setDataSwitchingFlag] = useState<boolean>(false);
+    const [dataIsLoading, setDataIsLoading] = useState(true);
+    const [dataInitingFlag, setDataInitingFlag] = useState<boolean>(false);
 
     useEffect(() => {
         (async () => {
@@ -19,7 +18,7 @@ const useData = () => {
             ) {
                 initialPath = await window.electronAPI.getDefaultDataPath();
             }
-            setDataInitingFlag(true);
+            // setDataInitingFlag(true);
             setCurDataPath(initialPath);
         })();
     }, []);
@@ -176,37 +175,18 @@ const useData = () => {
 
     useEffect(() => {
         (async () => {
-            const startTimeStamp = new Date().getTime();
+            setDataIsLoading(true);
             const whaleData = await fetchWhaleData(curDataPath);
             if (!whaleData) return;
 
-            window.localStorage.setItem('whalesnote_current_data_path', curDataPath);
             data.current = whaleData;
-            setDataPathChangeFlag((dataPathChangeFlag) => dataPathChangeFlag + 1);
-
-            const endTimeStamp = new Date().getTime();
-            const diff = endTimeStamp - startTimeStamp;
-            if (diff < 10) {
-                setTimeout(() => {
-                    setDataSwitchingFlag(false);
-                    setDataInitingFlag(false);
-                }, 500);
-            } else {
-                setDataSwitchingFlag(false);
-                setDataInitingFlag(false);
-            }
+            window.localStorage.setItem('whalesnote_current_data_path', curDataPath);
         })();
     }, [curDataPath]);
 
-    return [
-        data,
-        curDataPath,
-        setCurDataPath,
-        dataPathChangeFlag,
-        dataInitingFlag,
-        dataSwitchingFlag,
-        setDataSwitchingFlag,
-    ] as const;
+    console.log(curDataPath);
+
+    return [data, curDataPath, , dataPathChangeFlag, dataInitingFlag] as const;
 };
 
 export default useData;

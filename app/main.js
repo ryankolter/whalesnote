@@ -43,7 +43,7 @@ const createWindow = async () => {
         mainWindow.loadFile(path.join(__dirname, '/build/index.html'));
     } else {
         mainWindow.loadURL('http://localhost:3005');
-        mainWindow.webContents.openDevTools();
+        // mainWindow.webContents.openDevTools();
     }
 
     mainWindow.on('ready-to-show', () => {
@@ -319,7 +319,7 @@ const processIPC = () => {
             fse.ensureDirSync(dest_dir_path);
             fse.copyFileSync(src_file_path, dest_file_path);
             return true;
-        }
+        },
     );
 
     ipcMain.handle('operate:move', async (event, { src_file_path, dest_file_path }) => {

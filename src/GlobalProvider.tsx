@@ -23,8 +23,6 @@ const initContext: {
     setCurDataPath: Dispatch<SetStateAction<string>>;
     dataPathChangeFlag: number;
     dataInitingFlag: boolean;
-    dataSwitchingFlag: boolean;
-    setDataSwitchingFlag: Dispatch<SetStateAction<boolean>>;
     dataPathList: string[];
     removeDataPathFromList: (data_path: string) => void;
     whalesnote: WhaleObject;
@@ -115,8 +113,6 @@ const initContext: {
     setCurDataPath: () => {},
     dataPathChangeFlag: 0,
     dataInitingFlag: false,
-    dataSwitchingFlag: false,
-    setDataSwitchingFlag: () => {},
     dataPathList: [],
     removeDataPathFromList: () => {},
     whalesnote: { repo_keys: [], repo_map: {} },
@@ -168,15 +164,7 @@ const initContext: {
 export const GlobalContext = createContext(initContext);
 
 export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
-    const [
-        data,
-        curDataPath,
-        setCurDataPath,
-        dataPathChangeFlag,
-        dataInitingFlag,
-        dataSwitchingFlag,
-        setDataSwitchingFlag,
-    ] = useData();
+    const [data, curDataPath, setCurDataPath, dataPathChangeFlag, dataInitingFlag] = useData();
     const [dataPathList, addDataPathToList, removeDataPathFromList] = useDataList();
     const [history, { initHistory, repoSwitch, folderSwitch, noteSwitch }] = useHistory();
     const [
@@ -200,7 +188,6 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
     ] = useWhalesnote();
 
     const [platformName, setPlatformName] = useState<string>('');
-    const [whalesnoteId, setWhaltenoteId] = useState<string>('');
 
     const [focus, setFocus] = useState<string>('');
     const [blur, setBlur] = useState<string>('');
@@ -214,7 +201,6 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
     useEffect(() => {
         if (data.current) {
             addDataPathToList(curDataPath);
-            setWhaltenoteId(data.current.id);
             initHistory(data.current.history);
             initwhalesnote(data.current.whalesnote);
             initNotes(data.current.notes);
@@ -331,8 +317,6 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
                 setCurDataPath,
                 dataPathChangeFlag,
                 dataInitingFlag,
-                dataSwitchingFlag,
-                setDataSwitchingFlag,
                 dataPathList,
                 removeDataPathFromList,
                 whalesnote,

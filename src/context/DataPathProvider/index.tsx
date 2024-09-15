@@ -9,8 +9,6 @@ interface DataPathContextType {
     setCurDataPath: Dispatch<SetStateAction<string>>;
     dataPathChangeFlag: number;
     dataInitingFlag: boolean;
-    dataSwitchingFlag: boolean;
-    setDataSwitchingFlag: Dispatch<SetStateAction<boolean>>;
     dataPathList: string[];
     removeDataPathFromList: (data_path: string) => void;
 }
@@ -20,22 +18,12 @@ const DataPathContext = createContext<DataPathContextType>({
     setCurDataPath: () => {},
     dataPathChangeFlag: 0,
     dataInitingFlag: false,
-    dataSwitchingFlag: false,
-    setDataSwitchingFlag: () => {},
     dataPathList: [],
     removeDataPathFromList: () => {},
 });
 
 export const DataProvider = ({ children }: { children: React.ReactNode }) => {
-    const [
-        data,
-        curDataPath,
-        setCurDataPath,
-        dataPathChangeFlag,
-        dataInitingFlag,
-        dataSwitchingFlag,
-        setDataSwitchingFlag,
-    ] = useData();
+    const [data, curDataPath, setCurDataPath, dataPathChangeFlag, dataInitingFlag] = useData();
 
     const [dataPathList, addDataPathToList, removeDataPathFromList] = useDataList();
 
@@ -54,8 +42,6 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
                 setCurDataPath,
                 dataPathChangeFlag,
                 dataInitingFlag,
-                dataSwitchingFlag,
-                setDataSwitchingFlag,
                 dataPathList,
                 removeDataPathFromList,
             }}
