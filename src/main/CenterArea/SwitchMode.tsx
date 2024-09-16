@@ -19,7 +19,7 @@ const SwitchMode: React.FC<{
                 setShowSwitchMdRenderState(false);
             }
         },
-        [setShowSwitchMdRenderState]
+        [setShowSwitchMdRenderState],
     );
 
     useEffect(() => {
@@ -107,7 +107,7 @@ const SwitchModePanelContainer = styled.div(
     },
     `
     app-region: no-drag;
-`
+`,
 );
 
 const SwitchModeBtn = styled.div({
