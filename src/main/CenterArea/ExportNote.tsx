@@ -27,23 +27,20 @@ import { notes } from '../../lib/notes';
 import { usePopUp } from '../../lib/usePopUp';
 import { AlertPopUp } from '../../components/AlertPopUp';
 import { useAtomValue } from 'jotai';
-import { renderFontSizeAtom, themeAtom } from '@/atoms';
-import { join as pathJoin } from 'path';
+import { activeWhaleIdAtom, renderFontSizeAtom, themeAtom } from '@/atoms';
+import { join as pathJoin } from 'path-browserify';
+import { useDataContext } from '@/context/DataProvider';
 
 const lowlight = createLowlight(common);
 
 const ExportNote: React.FC<{}> = ({}) => {
-    const {
-        curDataPath,
-        currentRepoKey,
-        currentFolderKey,
-        currentNoteKey,
-        currentTitle,
-        whalesnote,
-    } = useContext(GlobalContext);
+    const { curDataPath, curRepoKey, curFolderKey, curNoteKey, currentTitle, whalesnote } =
+        useDataContext();
 
     const theme = useAtomValue(themeAtom);
     const renderFontSize = useAtomValue(renderFontSizeAtom);
+
+    const id = useAtomValue(activeWhaleIdAtom);
 
     const { t } = useTranslation();
     const [showSwitchExportNoteFunc, setShowSwitchExportNoteFunc] = useState(false);
@@ -78,63 +75,66 @@ const ExportNote: React.FC<{}> = ({}) => {
     const mdPrint = useRef<markdownIt>(markdownIt());
 
     mdPrint.current = useMemo(() => {
-        return markdownIt({
-            html: true,
-            breaks: true,
-            linkify: true,
-            typographer: true,
-            highlight: function (str, lang) {
-                if (lang) {
-                    try {
-                        return (
-                            '<pre><code class="hljs" style="position: relative;"><pre>' +
-                            toHtml(lowlight.highlight(lang, str, {})) +
-                            '</pre></code></pre>'
-                        );
-                    } catch (__) {}
-                }
+        return (
+            markdownIt({
+                html: true,
+                breaks: true,
+                linkify: true,
+                typographer: true,
+                highlight: function (str, lang) {
+                    if (lang) {
+                        try {
+                            return (
+                                '<pre><code class="hljs" style="position: relative;"><pre>' +
+                                toHtml(lowlight.highlight(lang, str, {})) +
+                                '</pre></code></pre>'
+                            );
+                        } catch (__) {}
+                    }
 
-                return (
-                    '<pre><code class="hljs"><pre>' +
-                    mdPrint.current.utils.escapeHtml(str) +
-                    '</pre></code></pre>'
-                );
-            },
-        })
-            .use(emoji)
-            .use(markdownItFootnote)
-            .use(markdownItSub)
-            .use(markdownItSup)
-            .use(markdownItTaskLists)
-            .use(markdownItLinkAttributes, {
-                attrs: {
-                    target: '_blank',
+                    return (
+                        '<pre><code class="hljs"><pre>' +
+                        mdPrint.current.utils.escapeHtml(str) +
+                        '</pre></code></pre>'
+                    );
                 },
             })
-            .use(markdownItTable, {
-                multiline: false,
-                rowspan: true,
-                headerless: false,
-                multibody: true,
-                aotolabel: true,
-            })
-            .use(markwodnItReplaceLink, {
-                replaceLink: function (link: string, env: string) {
-                    return curDataPath + '/images/' + link;
-                },
-            });
+                .use(emoji)
+                .use(markdownItFootnote)
+                .use(markdownItSub)
+                .use(markdownItSup)
+                .use(markdownItTaskLists)
+                .use(markdownItLinkAttributes, {
+                    attrs: {
+                        target: '_blank',
+                    },
+                })
+                .use(markdownItTable, {
+                    multiline: false,
+                    rowspan: true,
+                    headerless: false,
+                    multibody: true,
+                    aotolabel: true,
+                })
+                //@ts-ignore
+                .use(markwodnItReplaceLink, {
+                    replaceLink: function (link: string, env: string) {
+                        return curDataPath + '/images/' + link;
+                    },
+                })
+        );
     }, [curDataPath]);
 
     const print_str = useMemo(() => {
-        return currentRepoKey &&
-            currentFolderKey &&
-            currentNoteKey &&
-            notes[currentRepoKey] &&
-            notes[currentRepoKey][currentFolderKey] &&
-            notes[currentRepoKey][currentFolderKey][currentNoteKey]
-            ? notes[currentRepoKey][currentFolderKey][currentNoteKey]
+        return curRepoKey &&
+            curFolderKey &&
+            curNoteKey &&
+            notes[id][curRepoKey] &&
+            notes[id][curRepoKey][curFolderKey] &&
+            notes[id][curRepoKey][curFolderKey][curNoteKey]
+            ? notes[id][curRepoKey][curFolderKey][curNoteKey]
             : '';
-    }, [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey]);
+    }, [curDataPath, curRepoKey, curFolderKey, curNoteKey]);
 
     const saveNoteToHtml = useCallback(
         async (path: string) => {
@@ -211,31 +211,32 @@ const ExportNote: React.FC<{}> = ({}) => {
                 (await window.electronAPI.readCssSync(`/hljs_theme/${theme}.css`)) || '';
             const renderStyle = (await window.electronAPI.readCssSync('/theme/render.css')) || '';
             const len =
-                whalesnote.repo_map[currentRepoKey]?.folder_map[currentFolderKey]?.note_keys
-                    ?.length;
-            for (const [index, note_key] of whalesnote.repo_map[currentRepoKey]?.folder_map[
-                currentFolderKey
+                whalesnote.repo_map[curRepoKey]?.folder_map[curFolderKey]?.note_keys?.length;
+            for (const [index, note_key] of whalesnote.repo_map[curRepoKey]?.folder_map[
+                curFolderKey
             ]?.note_keys.entries()) {
                 let title =
-                    whalesnote.repo_map[currentRepoKey]?.folder_map &&
-                    whalesnote.repo_map[currentRepoKey]?.folder_map[currentFolderKey]?.note_map
-                        ? whalesnote.repo_map[currentRepoKey]?.folder_map[currentFolderKey]
-                              ?.note_map[note_key]?.title || ''
+                    whalesnote.repo_map[curRepoKey]?.folder_map &&
+                    whalesnote.repo_map[curRepoKey]?.folder_map[curFolderKey]?.note_map
+                        ? whalesnote.repo_map[curRepoKey]?.folder_map[curFolderKey]?.note_map[
+                              note_key
+                          ]?.title || ''
                         : '';
                 let repeated_time = 0;
-                for (const comp_note_key of whalesnote.repo_map[currentRepoKey]?.folder_map[
-                    currentFolderKey
+                for (const comp_note_key of whalesnote.repo_map[curRepoKey]?.folder_map[
+                    curFolderKey
                 ]?.note_keys) {
                     const comp_title =
-                        whalesnote.repo_map[currentRepoKey]?.folder_map &&
-                        whalesnote.repo_map[currentRepoKey]?.folder_map[currentFolderKey]?.note_map
-                            ? whalesnote.repo_map[currentRepoKey]?.folder_map[currentFolderKey]
-                                  ?.note_map[comp_note_key]?.title || ''
+                        whalesnote.repo_map[curRepoKey]?.folder_map &&
+                        whalesnote.repo_map[curRepoKey]?.folder_map[curFolderKey]?.note_map
+                            ? whalesnote.repo_map[curRepoKey]?.folder_map[curFolderKey]?.note_map[
+                                  comp_note_key
+                              ]?.title || ''
                             : '';
                     if (title === comp_title) repeated_time++;
                 }
                 if (repeated_time > 1) title += '' + note_key;
-                const content = notes[currentRepoKey][currentFolderKey][note_key];
+                const content = notes[id][curRepoKey][curFolderKey][note_key];
                 console.log(content);
                 const bodyContent = mdPrint.current.render(content);
                 console.log(bodyContent);
@@ -270,37 +271,38 @@ const ExportNote: React.FC<{}> = ({}) => {
             }
             setExportFinishPopUp(true);
         },
-        [whalesnote, currentRepoKey, currentFolderKey, theme, renderFontSize, setExportFinishPopUp],
+        [whalesnote, curRepoKey, curFolderKey, theme, renderFontSize, setExportFinishPopUp],
     );
 
     const saveFolderToMd = useCallback(
         async (path: string) => {
             const len =
-                whalesnote.repo_map[currentRepoKey]?.folder_map[currentFolderKey]?.note_keys
-                    ?.length;
-            for (const [index, note_key] of whalesnote.repo_map[currentRepoKey]?.folder_map[
-                currentFolderKey
+                whalesnote.repo_map[curRepoKey]?.folder_map[curFolderKey]?.note_keys?.length;
+            for (const [index, note_key] of whalesnote.repo_map[curRepoKey]?.folder_map[
+                curFolderKey
             ]?.note_keys.entries()) {
                 let title =
-                    whalesnote.repo_map[currentRepoKey]?.folder_map &&
-                    whalesnote.repo_map[currentRepoKey]?.folder_map[currentFolderKey]?.note_map
-                        ? whalesnote.repo_map[currentRepoKey]?.folder_map[currentFolderKey]
-                              ?.note_map[note_key]?.title || ''
+                    whalesnote.repo_map[curRepoKey]?.folder_map &&
+                    whalesnote.repo_map[curRepoKey]?.folder_map[curFolderKey]?.note_map
+                        ? whalesnote.repo_map[curRepoKey]?.folder_map[curFolderKey]?.note_map[
+                              note_key
+                          ]?.title || ''
                         : '';
                 let repeated_time = 0;
-                for (const comp_note_key of whalesnote.repo_map[currentRepoKey]?.folder_map[
-                    currentFolderKey
+                for (const comp_note_key of whalesnote.repo_map[curRepoKey]?.folder_map[
+                    curFolderKey
                 ]?.note_keys) {
                     const comp_title =
-                        whalesnote.repo_map[currentRepoKey]?.folder_map &&
-                        whalesnote.repo_map[currentRepoKey]?.folder_map[currentFolderKey]?.note_map
-                            ? whalesnote.repo_map[currentRepoKey]?.folder_map[currentFolderKey]
-                                  ?.note_map[comp_note_key]?.title || ''
+                        whalesnote.repo_map[curRepoKey]?.folder_map &&
+                        whalesnote.repo_map[curRepoKey]?.folder_map[curFolderKey]?.note_map
+                            ? whalesnote.repo_map[curRepoKey]?.folder_map[curFolderKey]?.note_map[
+                                  comp_note_key
+                              ]?.title || ''
                             : '';
                     if (title === comp_title) repeated_time++;
                 }
                 if (repeated_time > 1) title += '' + note_key;
-                const content = notes[currentRepoKey][currentFolderKey][note_key];
+                const content = notes[id][curRepoKey][curFolderKey][note_key];
                 await window.electronAPI.writeStr(
                     pathJoin(
                         path,
@@ -314,7 +316,7 @@ const ExportNote: React.FC<{}> = ({}) => {
             }
             setExportFinishPopUp(true);
         },
-        [whalesnote, currentRepoKey, currentFolderKey, setExportFinishPopUp],
+        [whalesnote, curRepoKey, curFolderKey, setExportFinishPopUp],
     );
 
     const ExportNotesInFolderFunc = useCallback(

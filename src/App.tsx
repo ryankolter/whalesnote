@@ -1,9 +1,7 @@
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import styled from '@emotion/styled';
 
-import { GlobalContext } from './GlobalProvider';
 import WaitingMask from './components/WaitingMask';
-import WaitingMaskStatic from './components/WaitingMaskStatic';
 import NavColumn from './main/NavColumn';
 import CenterArea from './main/CenterArea';
 import AssistantPanel from './main/AssistantPanel';
@@ -11,43 +9,30 @@ import SettingPanel from './main/SettingPanel';
 
 import SocketServerBtn from './components/socketServerBtn';
 import SocketClientBtn from './socketClientBtn';
-import { useDataPathContext } from './context/DataPathProvider';
 import { useAtomValue } from 'jotai';
-import {
-    assistPanelOpenAtom,
-    assistPanelTabAtom,
-    languageAtom,
-    settingPanelOpenAtom,
-    themeAtom,
-} from './atoms';
+import { assistPanelOpenAtom, languageAtom, settingPanelOpenAtom, themeAtom } from './atoms';
 import i18next from 'i18next';
+import { useDataContext } from './context/DataProvider';
 
 const App = () => {
-    const { whalesnote, dataInitingFlag, dataPathChangeFlag } = useContext(GlobalContext);
     const theme = useAtomValue(themeAtom);
-
+    const language = useAtomValue(languageAtom);
     const assistPanelOpen = useAtomValue(assistPanelOpenAtom);
     const settingPanelOpen = useAtomValue(settingPanelOpenAtom);
-    // const { dataInitingFlag, dataPathChangeFlag } = useDataPathContext();
 
-    const language = useAtomValue(languageAtom);
     useEffect(() => {
         i18next.changeLanguage(language);
     }, [language]);
 
     return (
         <AppContainer className={`${theme}-theme-global`}>
-            <WaitingMask in={dataInitingFlag} timeout={300}></WaitingMask>
-            {dataPathChangeFlag > 0 ? (
-                <AppUI>
-                    <NavColumn />
-                    <CenterArea />
-                    {assistPanelOpen && <AssistantPanel />}
-                    {settingPanelOpen && <SettingPanel />}
-                </AppUI>
-            ) : (
-                <></>
-            )}
+            <AppUI>
+                <NavColumn />
+                <CenterArea />
+                {assistPanelOpen && <AssistantPanel />}
+                {settingPanelOpen && <SettingPanel />}
+            </AppUI>
+            <WaitingMask in={false} timeout={300}></WaitingMask>
             {/* <SocketClientBtn/>
             <SocketServerBtn/> */}
         </AppContainer>

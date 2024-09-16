@@ -2,18 +2,14 @@ import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { GlobalContext } from '../GlobalProvider';
 import { t } from 'i18next';
 import MiniSearch, { AsPlainObject, SearchResult } from 'minisearch';
-import { notes } from './notes';
 import { WhaleObject } from '../commonType';
+import { useDataContext } from '@/context/DataProvider';
 
 const useSearch = () => {
-    const {
-        curDataPath,
-        showSearchPanel,
-        whalesnote,
-        setShowSearchPanel,
-        setShowSearchResultHighlight,
-        switchNote,
-    } = useContext(GlobalContext);
+    const { showSearchPanel, setShowSearchPanel, setShowSearchResultHighlight } =
+        useContext(GlobalContext);
+
+    const { curDataPath, whalesnote, switchNote } = useDataContext();
 
     const miniSearch = useRef<MiniSearch | null>();
 
@@ -207,6 +203,7 @@ const useSearch = () => {
             );
 
             const newWhalesnote: WhaleObject = {
+                path: '',
                 repo_keys: [],
                 repo_map: {},
             };
@@ -300,7 +297,7 @@ const useSearch = () => {
             setShowWaitingMask(false);
             searchCommit();
         }, 50);
-    }, [curDataPath, whalesnote, notes, searchCommit, setNeedGenerateIndex, setShowWaitingMask]);
+    }, [curDataPath, whalesnote, searchCommit, setNeedGenerateIndex, setShowWaitingMask]);
 
     return [
         curSearchResultIndex,

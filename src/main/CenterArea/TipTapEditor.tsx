@@ -19,9 +19,9 @@
 //     const {
 //         blur,
 //         curDataPath,
-//         currentRepoKey,
-//         currentFolderKey,
-//         currentNoteKey,
+//         curRepoKey,
+//         curFolderKey,
+//         curNoteKey,
 //         editorFontSize,
 //         focus,
 //         platformName,
@@ -74,7 +74,7 @@
 //     const onDocChange = useCallback(() => {
 //         if (editorRef.current) {
 //             const new_value = editorRef.current.getMarkdown();
-//             updateNote(curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, new_value);
+//             updateNote(curDataPath, curRepoKey, curFolderKey, curNoteKey, new_value);
 //             setRenderNoteStr(new_value);
 
 //             let line = '';
@@ -102,9 +102,9 @@
 //                 if (replace_line !== '' && !replace_line.startsWith('\\#')) new_name = replace_line;
 //             }
 
-//             renameNote(curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, new_name);
+//             renameNote(curDataPath, curRepoKey, curFolderKey, curNoteKey, new_name);
 //         }
-//     }, [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, setRenderNoteStr]);
+//     }, [curDataPath, curRepoKey, curFolderKey, curNoteKey, setRenderNoteStr]);
 
 //     useEffect(() => {
 //         editorRef.current?.on('update', onDocChange);
@@ -116,21 +116,21 @@
 
 //     useEffect(() => {
 //         const value =
-//             currentRepoKey &&
-//             currentFolderKey &&
-//             currentNoteKey &&
-//             notes[currentRepoKey] &&
-//             notes[currentRepoKey][currentFolderKey] &&
-//             notes[currentRepoKey][currentFolderKey][currentNoteKey]
-//                 ? notes[currentRepoKey][currentFolderKey][currentNoteKey]
+//             curRepoKey &&
+//             curFolderKey &&
+//             curNoteKey &&
+//             notes[curRepoKey] &&
+//             notes[curRepoKey][curFolderKey] &&
+//             notes[curRepoKey][curFolderKey][curNoteKey]
+//                 ? notes[curRepoKey][curFolderKey][curNoteKey]
 //                 : '';
 
 //         editorRef.current?.commands.setContent(value);
-//     }, [currentRepoKey, currentFolderKey, currentNoteKey]);
+//     }, [curRepoKey, curFolderKey, curNoteKey]);
 
 //     const handleScroll = useCallback(
 //         (e: any) => {},
-//         [currentRepoKey, currentFolderKey, currentNoteKey, setEditorScrollRatio]
+//         [curRepoKey, curFolderKey, curNoteKey, setEditorScrollRatio]
 //     );
 
 //     useEffect(() => {

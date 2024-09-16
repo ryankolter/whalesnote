@@ -1,0 +1,311 @@
+// DataContext.tsx
+import React, { createContext, useEffect, useCallback, useState, useMemo } from 'react';
+import { fetchContentInFolder, addContentMap, fetchContentAfterNew } from '@/lib/notes';
+import createDefaultWhale from './createDefaultWhale';
+import { useAtom } from 'jotai';
+import { activeWhaleIdAtom } from '@/atoms';
+import { dataPathExisted, dataPathHasWhale, importWhale } from './importWhale';
+import useWhalesnote from '@/lib/useWhalesnote';
+import useHistory from '@/lib/useHistory';
+import { WhaleObject } from '@/commonType';
+import i18next from 'i18next';
+
+interface DataContextType {
+    dataFetchFinished: boolean;
+    whales: Record<string, WhaleObject>;
+    curDataPath: string;
+    whalesnote: WhaleObject;
+    newRepo: (id: string, repoKey: string, repoName: string) => void;
+    newFolder: (
+        id: string,
+        repoKey: string,
+        new_folder_key: string,
+        new_folder_name: string,
+    ) => void;
+    newNote: (
+        id: string,
+        repoKey: string,
+        folderKey: string,
+        new_note_key: string,
+        note_title: string,
+    ) => void;
+    renameRepo: (id: string, repoKey: string, newRepoName: string) => void;
+    renameFolder: (id: string, repoKey: string, folderKey: string, newFolderName: string) => void;
+    renameNote: (
+        id: string,
+        repoKey: string,
+        folderKey: string,
+        noteKey: string,
+        newNotetitle: string,
+    ) => void;
+    reorderRepo: (id: string, repoKey: string, newRepoKeys: string[]) => void;
+    reorderFolder: (id: string, repoKey: string, newFolderKeys: string[]) => void;
+    reorderNote: (id: string, repoKey: string, folderKey: string, newNoteKeys: string[]) => void;
+    deleteRepo: (id: string, repoKey: string) => any;
+    deleteFolder: (id: string, repoKey: string, folderKey: string) => any;
+    deleteNote: (id: string, repoKey: string, folderKey: string, noteKey: string) => any;
+    curRepoKey: string;
+    curFolderKey: string;
+    curNoteKey: string;
+    currentTitle: string;
+    switchRepo: (repoKey: string) => void;
+    switchFolder: (repoKey: string, folderKey?: string) => void;
+    switchNote: (repoKey: string, folderKey?: string, noteKey?: string) => void;
+    prepareContent: (repoKey: string, folderKey?: string, noteKey?: string) => void;
+}
+
+const DataContext = createContext<DataContextType>({
+    dataFetchFinished: false,
+    whales: {},
+    curDataPath: '',
+    whalesnote: { path: '', repo_keys: [], repo_map: {} },
+    newRepo: () => {},
+    newFolder: () => {},
+    newNote: () => {},
+    renameRepo: () => {},
+    renameFolder: () => {},
+    renameNote: () => {},
+    reorderRepo: () => {},
+    reorderFolder: () => {},
+    reorderNote: () => {},
+    deleteRepo: () => {
+        return '';
+    },
+    deleteFolder: () => {
+        return '';
+    },
+    deleteNote: () => {
+        return '';
+    },
+    curRepoKey: '',
+    curFolderKey: '',
+    curNoteKey: '',
+    currentTitle: '',
+    switchRepo: () => {},
+    switchFolder: () => {},
+    switchNote: () => {},
+    prepareContent: () => {},
+});
+
+export const DataProvider = ({ children }: { children: React.ReactNode }) => {
+    const [dataFetchFinished, setDataFetchFinished] = useState(false);
+    const [dataIsLoading, setDataIsLoading] = useState(true);
+    const [id, setId] = useAtom(activeWhaleIdAtom);
+
+    const { histories, addHistory, updateHistory } = useHistory();
+    const {
+        whales,
+        addWhale,
+        fetchFolderMap,
+        newRepo,
+        newFolder,
+        newNote,
+        renameRepo,
+        renameFolder,
+        renameNote,
+        reorderRepo,
+        reorderFolder,
+        reorderNote,
+        deleteRepo,
+        deleteFolder,
+        deleteNote,
+    } = useWhalesnote();
+
+    useEffect(() => {
+        (async () => {
+            setDataIsLoading(true);
+            let dataPathList: string[] = [];
+            try {
+                dataPathList = JSON.parse(
+                    window.localStorage.getItem('whalesnote_data_path_list') || '[]',
+                );
+            } catch (e) {
+                window.localStorage.setItem('whalesnote_data_path_list', '[]');
+            }
+
+            const priorityList = [];
+            const whaleIdList = [],
+                whalePathList = [];
+            for (let path of dataPathList) {
+                if (!(await dataPathExisted(path))) continue;
+
+                const whaleInfo = await window.electronAPI.readJsonSync(
+                    `${path}/whalesnote_info.json`,
+                );
+                if (!whaleInfo) continue;
+
+                const iterateObj = {
+                    path,
+                    id: whaleInfo.id,
+                    info: whaleInfo,
+                };
+                id === whaleInfo.id
+                    ? priorityList.unshift(iterateObj)
+                    : priorityList.push(iterateObj);
+                whaleIdList.push(whaleInfo.id);
+                whalePathList.push(path);
+            }
+
+            if (!whaleIdList.includes(id)) setId(whaleIdList?.[0] || '');
+
+            if (whalePathList.length < dataPathList.length) {
+                window.localStorage.setItem(
+                    'whalesnote_data_path_list',
+                    JSON.stringify(whalePathList),
+                );
+            }
+
+            if (priorityList.length === 0) {
+                const defaultDataPath = await window.electronAPI.getDefaultDataPath();
+                if (!dataPathHasWhale(defaultDataPath)) await createDefaultWhale(defaultDataPath);
+                const whaleInfo = await window.electronAPI.readJsonSync(
+                    `${defaultDataPath}/whalesnote_info.json`,
+                );
+                priorityList.push({
+                    path: defaultDataPath,
+                    id: whaleInfo.id,
+                    info: whaleInfo,
+                });
+            }
+
+            for (const { id, path, info } of priorityList) {
+                const { whaleObj, historyInfo, contentMap } = await importWhale(path, info);
+                addHistory(id, historyInfo);
+                addWhale(id, whaleObj);
+                addContentMap(id, contentMap);
+            }
+
+            setDataFetchFinished(true);
+            setDataIsLoading(false);
+        })();
+    }, []);
+
+    const whalesnote = useMemo(() => {
+        return whales[id] || { path: '', repo_keys: [], repo_map: {} };
+    }, [whales, id]);
+
+    const switchRepo = useCallback(
+        async (repoKey?: string) => {
+            if (!repoKey) return;
+            if (!whales[id] || !histories[id]) return;
+
+            const folderKeys = whales[id].repo_map[repoKey].folder_keys;
+            const targetFolderKey =
+                histories[id].repos_record[repoKey]?.cur_folder_key || folderKeys?.[0];
+
+            await fetchFolderMap(id, repoKey, targetFolderKey);
+            await fetchContentInFolder(id, whales[id].path, repoKey, targetFolderKey);
+            await updateHistory(id, whales[id].path, repoKey);
+        },
+        [id, whales, histories, fetchFolderMap, updateHistory],
+    );
+
+    const switchFolder = useCallback(
+        async (repoKey?: string, folderKey?: string) => {
+            if (!repoKey || !folderKey) return;
+            if (!whales[id]) return;
+
+            await fetchFolderMap(id, repoKey, folderKey);
+            await fetchContentInFolder(id, whales[id].path, repoKey, folderKey);
+            await updateHistory(id, whales[id].path, repoKey, folderKey);
+        },
+        [id, whales, fetchFolderMap, updateHistory],
+    );
+
+    const switchNote = useCallback(
+        async (
+            repoKey: string | undefined,
+            folderKey: string | undefined,
+            noteKey: string | undefined,
+        ) => {
+            if (!repoKey || !folderKey || !noteKey) return;
+            await fetchFolderMap(id, repoKey, folderKey);
+            await fetchContentInFolder(id, whales[id].path, repoKey, folderKey);
+            await updateHistory(id, whales[id].path, repoKey, folderKey, noteKey);
+        },
+        [id, whales, fetchFolderMap, updateHistory],
+    );
+
+    const prepareContent = useCallback(
+        (
+            repoKey: string | undefined,
+            folderKey: string | undefined,
+            noteKey: string | undefined,
+        ) => {
+            if (!repoKey || !folderKey || !noteKey) return;
+            if (!whales[id]) return;
+            fetchContentAfterNew(id, whales[id].path, repoKey, folderKey, noteKey);
+        },
+        [id, whales],
+    );
+
+    const curDataPath = useMemo(() => {
+        return whales[id]?.path || '';
+    }, [whales, id]);
+
+    const history = useMemo(() => {
+        return histories[id];
+    }, [histories, id]);
+
+    const curRepoKey = useMemo(() => {
+        return history?.cur_repo_key || '';
+    }, [history]);
+
+    const curFolderKey = useMemo(() => {
+        const curRepoKey = history?.cur_repo_key;
+        return history?.repos_record?.[curRepoKey]?.cur_folder_key || '';
+    }, [history]);
+
+    const curNoteKey = useMemo(() => {
+        const curRepoKey = history?.cur_repo_key;
+        const curFolderKey = history?.repos_record[curRepoKey]?.cur_folder_key;
+        return history?.repos_record?.[curRepoKey]?.folders?.[curFolderKey];
+    }, [history]);
+
+    const currentTitle = useMemo(() => {
+        if (!whales[id]) return i18next.t('note.untitled');
+        const keyExisted = curRepoKey && curFolderKey && curNoteKey;
+
+        return keyExisted &&
+            whales[id].repo_keys?.length > 0 &&
+            whales[id].repo_map?.[curRepoKey].folder_map?.[curFolderKey].note_map?.[curNoteKey]
+                .title
+            ? whales[id].repo_map[curRepoKey].folder_map[curFolderKey].note_map[curNoteKey].title
+            : i18next.t('note.untitled');
+    }, [whales, id, curRepoKey, curFolderKey, curNoteKey]);
+
+    return (
+        <DataContext.Provider
+            value={{
+                dataFetchFinished,
+                whales,
+                curDataPath,
+                whalesnote,
+                newRepo,
+                newFolder,
+                newNote,
+                renameRepo,
+                renameFolder,
+                renameNote,
+                reorderRepo,
+                reorderFolder,
+                reorderNote,
+                deleteRepo,
+                deleteFolder,
+                deleteNote,
+                curRepoKey,
+                curFolderKey,
+                curNoteKey,
+                currentTitle,
+                switchRepo,
+                switchFolder,
+                switchNote,
+                prepareContent,
+            }}
+        >
+            {children}
+        </DataContext.Provider>
+    );
+};
+
+export const useDataContext = () => React.useContext(DataContext);

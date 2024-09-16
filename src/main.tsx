@@ -13,11 +13,14 @@ import './resources/css/hljs_theme/dark.css';
 import './i18n';
 
 import App from './App';
+import { DataProvider } from './context/DataProvider';
 
 createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
         <GlobalProvider>
-            <App />
+            <DataProvider>
+                <App />
+            </DataProvider>
         </GlobalProvider>
     </React.StrictMode>,
 );

@@ -8,7 +8,7 @@ src/resources/*
 *.md
 commitlint.config.js
 config-overrides.js
-app/main.js
-app/preload.js
+app/main.ts
+app/preload.ts
 app/build/*
 app/dist/*

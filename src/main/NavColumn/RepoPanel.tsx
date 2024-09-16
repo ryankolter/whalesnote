@@ -21,32 +21,39 @@ import { AlertPopUp } from '../../components/AlertPopUp';
 import { InputPopUp } from '../../components/InputPopUp';
 import { usePopUp } from '../../lib/usePopUp';
 import useContextMenu from '../../lib/useContextMenu';
+import { useDataContext } from '@/context/DataProvider';
+import { activeWhaleIdAtom } from '@/atoms';
+import { useAtomValue } from 'jotai';
 
 const RepoPanel: React.FC<{}> = ({}) => {
     const {
-        curDataPath,
-        currentRepoKey,
-        currentFolderKey,
         keySelectNumArray,
         platformName,
         showRepoPanel,
         showKeySelect,
+        setShowKeySelect,
+        setShowRepoPanel,
+        setKeySelectNumArray,
+    } = useContext(GlobalContext);
+
+    const {
         whalesnote,
-        changeNotesAfterNew,
-        deleteRepo,
-        manualFocus,
         newRepo,
         newFolder,
         newNote,
         renameRepo,
         reorderRepo,
-        setShowKeySelect,
-        setShowRepoPanel,
-        setKeySelectNumArray,
+        deleteRepo,
+        curRepoKey,
+        curFolderKey,
         switchRepo,
         switchFolder,
         switchNote,
-    } = useContext(GlobalContext);
+        prepareContent,
+    } = useDataContext();
+
+    const id = useAtomValue(activeWhaleIdAtom);
+
     const { t } = useTranslation();
 
     const [dragActiveId, setDragActiveId] = useState<string | null>(null);
@@ -58,7 +65,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
         whalesnote.repo_keys
             ?.filter((key) => whalesnote && whalesnote.repo_map && whalesnote.repo_map[key])
             .forEach((key, index) => {
-                if (key === currentRepoKey) page = Math.floor(index / 6.0);
+                if (key === curRepoKey) page = Math.floor(index / 6.0);
             });
         return page;
     });
@@ -79,7 +86,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
             whalesnote.repo_keys
                 ?.filter((key) => whalesnote && whalesnote.repo_map && whalesnote.repo_map[key])
                 .forEach((key, index) => {
-                    if (key === currentRepoKey) page = Math.floor(index / 6.0);
+                    if (key === curRepoKey) page = Math.floor(index / 6.0);
                 });
             if (page && repoScrollRef && repoScrollRef.current) {
                 repoScrollRef.current.scrollLeft =
@@ -137,29 +144,12 @@ const RepoPanel: React.FC<{}> = ({}) => {
                 type: 'alphanumeric',
             });
 
-            await newRepo(curDataPath, repo_key, e.target.value);
-            await changeNotesAfterNew('repo', { data_path: curDataPath, repo_key });
+            await newRepo(id, repo_key, e.target.value);
 
-            await newFolder(curDataPath, repo_key, default_folder_key, t('category.default_name'));
-            await changeNotesAfterNew('folder', {
-                data_path: curDataPath,
-                repo_key,
-                folder_key: default_folder_key,
-            });
+            await newFolder(id, repo_key, default_folder_key, t('category.default_name'));
 
-            await newNote(
-                curDataPath,
-                repo_key,
-                default_folder_key,
-                default_note_key,
-                t('note.untitled'),
-            );
-            await changeNotesAfterNew('note', {
-                data_path: curDataPath,
-                repo_key,
-                folder_key: default_folder_key,
-                note_key: default_note_key,
-            });
+            await newNote(id, repo_key, default_folder_key, default_note_key, t('note.untitled'));
+            await prepareContent(repo_key, default_folder_key, default_note_key);
 
             setTimeout(() => {
                 changeRepoSelectedList(repo_key);
@@ -172,9 +162,8 @@ const RepoPanel: React.FC<{}> = ({}) => {
             allowNewRepo.current = true;
         },
         [
-            curDataPath,
+            id,
             repoScrollRef,
-            changeNotesAfterNew,
             newRepo,
             newFolder,
             newNote,
@@ -200,21 +189,18 @@ const RepoPanel: React.FC<{}> = ({}) => {
     // part3 : rename repo
     useEffect(() => {
         setCurRepoName(
-            whalesnote &&
-                whalesnote.repo_map &&
-                currentRepoKey &&
-                whalesnote.repo_map[currentRepoKey]
-                ? whalesnote.repo_map[currentRepoKey].repo_name
+            whalesnote && whalesnote.repo_map && curRepoKey && whalesnote.repo_map[curRepoKey]
+                ? whalesnote.repo_map[curRepoKey].repo_name
                 : '',
         );
-    }, [currentRepoKey, whalesnote]);
+    }, [curRepoKey, whalesnote]);
 
     const renameRepoConfirm = useCallback(async () => {
-        if (currentRepoKey) {
-            await renameRepo(curDataPath, currentRepoKey, curRepoName);
+        if (curRepoKey) {
+            await renameRepo(id, curRepoKey, curRepoName);
             setRenamePopUp(false);
         }
-    }, [curDataPath, currentRepoKey, curRepoName, renameRepo, setRenamePopUp]);
+    }, [id, curRepoKey, curRepoName, renameRepo, setRenamePopUp]);
 
     const handleRenameRepoKeyDown = useCallback(
         (e: React.KeyboardEvent) => {
@@ -224,37 +210,37 @@ const RepoPanel: React.FC<{}> = ({}) => {
                 setCurRepoName(
                     whalesnote &&
                         whalesnote.repo_map &&
-                        currentRepoKey &&
-                        whalesnote.repo_map[currentRepoKey]
-                        ? whalesnote.repo_map[currentRepoKey].repo_name
+                        curRepoKey &&
+                        whalesnote.repo_map[curRepoKey]
+                        ? whalesnote.repo_map[curRepoKey].repo_name
                         : '',
                 );
             } else if (!composing.current && e.key === 'Enter') {
                 renameRepoConfirm();
             }
         },
-        [currentRepoKey, whalesnote, renameRepoConfirm, setRenamePopUp, setCurRepoName],
+        [curRepoKey, whalesnote, renameRepoConfirm, setRenamePopUp, setCurRepoName],
     );
 
     // part4 : delete repo
     const deleteRepoConfirm = useCallback(async () => {
-        if (currentRepoKey) {
-            const other_repo_key = await deleteRepo(curDataPath, currentRepoKey);
+        if (curRepoKey) {
+            const other_repo_key = await deleteRepo(id, curRepoKey);
             if (other_repo_key) {
                 switchRepoInPanel(other_repo_key);
             }
             setRepoSelectedList(Math.ceil(whalesnote.repo_keys.length / 6) - 1);
             setDeletePopUp(false);
         }
-    }, [curDataPath, currentRepoKey, setDeletePopUp, switchRepoInPanel]);
+    }, [id, curRepoKey, setDeletePopUp, switchRepoInPanel]);
 
     useEffect(() => {
         whalesnote.repo_keys
             ?.filter((key) => whalesnote && whalesnote.repo_map && whalesnote.repo_map[key])
             .forEach((key, index) => {
-                if (key === currentRepoKey) setRepoSelectedList(Math.floor(index / 6.0));
+                if (key === curRepoKey) setRepoSelectedList(Math.floor(index / 6.0));
             });
-    }, [currentRepoKey]);
+    }, [curRepoKey]);
 
     const prevRepoList = useCallback(() => {
         const prevSelectedList = repoSelectedList - 1;
@@ -435,19 +421,18 @@ const RepoPanel: React.FC<{}> = ({}) => {
 
             if (!over) return;
 
-            if (
-                active.id !== over.id &&
-                whalesnote.repo_keys &&
-                currentRepoKey &&
-                currentFolderKey
-            ) {
+            if (active.id !== over.id && whalesnote.repo_keys && curRepoKey && curFolderKey) {
                 const oldIndex = whalesnote.repo_keys.indexOf(String(active.id));
                 const newIndex = whalesnote.repo_keys.indexOf(String(over.id));
-                const new_repo_keys = arrayMove(whalesnote.repo_keys, oldIndex, newIndex);
-                reorderRepo(curDataPath, currentRepoKey, new_repo_keys);
+                const new_repo_keys = arrayMove(
+                    whalesnote.repo_keys,
+                    oldIndex,
+                    newIndex,
+                ) as string[];
+                reorderRepo(id, curRepoKey, new_repo_keys);
             }
         },
-        [curDataPath, currentRepoKey, currentFolderKey, whalesnote, reorderRepo, setDragActiveId],
+        [id, curRepoKey, curFolderKey, whalesnote, reorderRepo, setDragActiveId],
     );
 
     return (
@@ -483,14 +468,14 @@ const RepoPanel: React.FC<{}> = ({}) => {
                                                         key={key}
                                                         onClick={() => switchRepoInPanel(key)}
                                                         onContextMenu={() => {
-                                                            if (currentRepoKey !== key)
+                                                            if (curRepoKey !== key)
                                                                 switchRepoInPanel(key);
                                                         }}
                                                     >
                                                         <RepoItemName
                                                             style={{
                                                                 backgroundColor:
-                                                                    currentRepoKey === key
+                                                                    curRepoKey === key
                                                                         ? 'var(--second-selected-bg-color)'
                                                                         : '',
                                                             }}
@@ -500,7 +485,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
                                                                 <RepoGroupItem
                                                                     style={{
                                                                         color:
-                                                                            currentRepoKey === key
+                                                                            curRepoKey === key
                                                                                 ? 'var(--main-text-selected-color)'
                                                                                 : 'var(--main-text-color)',
                                                                     }}
@@ -533,14 +518,14 @@ const RepoPanel: React.FC<{}> = ({}) => {
                                                         key={key}
                                                         onClick={() => switchRepoInPanel(key)}
                                                         onContextMenu={() => {
-                                                            if (currentRepoKey !== key)
+                                                            if (curRepoKey !== key)
                                                                 switchRepoInPanel(key);
                                                         }}
                                                     >
                                                         <RepoItemName
                                                             style={{
                                                                 backgroundColor:
-                                                                    currentRepoKey === key
+                                                                    curRepoKey === key
                                                                         ? 'var(--second-selected-bg-color)'
                                                                         : '',
                                                             }}
@@ -550,7 +535,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
                                                                 <RepoGroupItem
                                                                     style={{
                                                                         color:
-                                                                            currentRepoKey === key
+                                                                            curRepoKey === key
                                                                                 ? 'var(--main-text-selected-color)'
                                                                                 : 'var(--main-text-color)',
                                                                     }}
@@ -575,14 +560,14 @@ const RepoPanel: React.FC<{}> = ({}) => {
                                                         key={key}
                                                         onClick={() => switchRepoInPanel(key)}
                                                         onContextMenu={() => {
-                                                            if (currentRepoKey !== key)
+                                                            if (curRepoKey !== key)
                                                                 switchRepoInPanel(key);
                                                         }}
                                                     >
                                                         <RepoItemName
                                                             style={{
                                                                 backgroundColor:
-                                                                    currentRepoKey === key
+                                                                    curRepoKey === key
                                                                         ? 'var(--second-selected-bg-color)'
                                                                         : '',
                                                             }}
@@ -594,7 +579,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
                                             );
                                         }
                                     })}
-                                {menu && currentRepoKey ? (
+                                {menu && curRepoKey ? (
                                     <MenuUl top={yPos} left={xPos}>
                                         <MenuLi
                                             className="menu-li-color"
@@ -620,7 +605,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
                                             <RepoItemName
                                                 style={{
                                                     backgroundColor:
-                                                        currentRepoKey === dragActiveId
+                                                        curRepoKey === dragActiveId
                                                             ? 'var(--second-selected-bg-color)'
                                                             : '',
                                                 }}
@@ -639,7 +624,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
                     ) : (
                         <></>
                     )}
-                    {curDataPath && !newRepoKey ? (
+                    {id && !newRepoKey ? (
                         <RepoAdd>
                             <RepoAddBtn onClick={handleAddRepoBtnClick}>
                                 +
@@ -688,9 +673,9 @@ const RepoPanel: React.FC<{}> = ({}) => {
                 content={`${t('repository.delete_tips_part_1')}${
                     whalesnote &&
                     whalesnote.repo_map &&
-                    currentRepoKey &&
-                    whalesnote.repo_map[currentRepoKey]
-                        ? whalesnote.repo_map[currentRepoKey].repo_name
+                    curRepoKey &&
+                    whalesnote.repo_map[curRepoKey]
+                        ? whalesnote.repo_map[curRepoKey].repo_name
                         : ''
                 }${t('repository.delete_tips_part_2')}${t('repository.delete_tips_part_3')}`}
                 onCancel={() => setDeletePopUp(false)}

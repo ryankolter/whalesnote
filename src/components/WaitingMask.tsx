@@ -38,20 +38,18 @@ const WaitingMask: React.FC<{
                     <ClassNames>
                         {({ css, cx }) => (
                             <div
-                                className={cx(
-                                    css`
-                                        position: fixed;
-                                        top: 50%;
-                                        left: 50%;
-                                        display: inline-block;
-                                        border: 4px solid #2c3033;
-                                        border-left-color: var(--main-text-color);
-                                        border-radius: 50%;
-                                        width: 30px;
-                                        height: 30px;
-                                        animation: ${donut_spin} 1.2s linear infinite;
-                                    `
-                                )}
+                                className={cx(css`
+                                    position: fixed;
+                                    top: 50%;
+                                    left: 50%;
+                                    display: inline-block;
+                                    border: 4px solid #2c3033;
+                                    border-left-color: var(--main-text-color);
+                                    border-radius: 50%;
+                                    width: 30px;
+                                    height: 30px;
+                                    animation: ${donut_spin} 1.2s linear infinite;
+                                `)}
                             />
                         )}
                     </ClassNames>

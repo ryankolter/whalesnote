@@ -1,147 +1,103 @@
-import { useReducer, useRef, useCallback } from 'react';
+import { useRef, useCallback, useState } from 'react';
 import { produce } from 'immer';
 import { HistoryInfo } from '../commonType';
 
-const historyReducer = produce((state: HistoryInfo, action: any) => {
-    switch (action.type) {
-        case 'init': {
-            state = action.new_state;
-            return state;
-        }
-        case 'switch_repo': {
-            if (action.repo_key) {
-                state.cur_repo_key = action.repo_key;
-            }
-            return state;
-        }
-        case 'switch_folder': {
-            if (action.repo_key) {
-                if (!state.repos_record) {
-                    state.repos_record = {};
-                }
-                if (!state.repos_record[action.repo_key]) {
-                    state.repos_record[action.repo_key] = {
-                        cur_folder_key: action.folder_key,
-                        folders: {},
-                    };
-                } else {
-                    state.repos_record[action.repo_key].cur_folder_key = action.folder_key;
-                }
-            }
-            return state;
-        }
-        case 'switch_note': {
-            if (action.repo_key && action.folder_key) {
-                state.cur_repo_key = action.repo_key;
-                if (!state.repos_record) {
-                    state.repos_record = {};
-                }
-                if (!state.repos_record[action.repo_key]) {
-                    state.repos_record[action.repo_key] = {
-                        cur_folder_key: action.folder_key,
-                        folders: {
-                            [action.folder_key]: action.note_key,
-                        },
-                    };
-                } else {
-                    state.repos_record[action.repo_key].cur_folder_key = action.folder_key;
-                    state.repos_record[action.repo_key].folders[action.folder_key] =
-                        action.note_key;
-                }
-            }
-            return state;
-        }
-    }
-});
-
 const useHistory = () => {
-    const lastState = useRef<HistoryInfo>({
-        cur_repo_key: '',
-        repos_record: {},
-    });
-    const getState = useCallback(() => lastState.current, []);
-    const [state, dispatch] = useReducer(
-        (state: HistoryInfo, action: any) => (lastState.current = historyReducer(state, action)),
-        {
-            cur_repo_key: '',
-            repos_record: {},
-        },
-    );
-
+    const [histories, setHistories] = useState<Record<string, HistoryInfo>>({});
     const historySaveTimerObj = useRef<NodeJS.Timeout>();
 
-    const initHistory = useCallback((new_history: HistoryInfo) => {
-        dispatch({ type: 'init', new_state: new_history });
-    }, []);
-
-    const saveTask = useCallback(async (curDataPath: string) => {
-        await window.electronAPI.writeJson(`${curDataPath}/history_info.json`, getState());
-    }, []);
-
-    const addSaveTask = (data_path: string, delay: number) => {
-        if (historySaveTimerObj.current) {
-            clearTimeout(historySaveTimerObj.current);
-        }
-
-        historySaveTimerObj.current = setTimeout(async () => {
-            await saveTask(data_path);
-            historySaveTimerObj.current = undefined;
-        }, delay);
-    };
-
-    const repoSwitch = useCallback(async (curDataPath: string, repoKey: string | undefined) => {
-        dispatch({
-            type: 'switch_repo',
-            data_path: curDataPath,
-            repo_key: repoKey,
-        });
-
-        await addSaveTask(curDataPath, 1200);
-    }, []);
-
-    const folderSwitch = useCallback(
-        async (curDataPath: string, repoKey: string | undefined, folderKey: string | undefined) => {
-            dispatch({
-                type: 'switch_folder',
-                data_path: curDataPath,
-                repo_key: repoKey,
-                folder_key: folderKey,
-            });
-
-            await addSaveTask(curDataPath, 1200);
+    const addHistory = useCallback(
+        (id: string, historyInfo: HistoryInfo) => {
+            setHistories(
+                produce(histories, (draft) => {
+                    if (draft[id]) return;
+                    draft[id] = historyInfo;
+                }),
+            );
         },
-        [],
+        [histories],
     );
 
-    const noteSwitch = useCallback(
+    const saveTask = useCallback(
+        async (id: string, dataPath: string) => {
+            if (!histories[id]) return;
+            await window.electronAPI.writeJson(`${dataPath}/history_info.json`, histories[id]);
+        },
+        [histories],
+    );
+
+    const addSaveTask = useCallback(
+        (id: string, dataPath: string, delay: number) => {
+            if (historySaveTimerObj.current) {
+                clearTimeout(historySaveTimerObj.current);
+            }
+
+            historySaveTimerObj.current = setTimeout(async () => {
+                await saveTask(id, dataPath);
+                historySaveTimerObj.current = undefined;
+            }, delay);
+        },
+        [saveTask],
+    );
+
+    const updateHistory = useCallback(
         async (
-            curDataPath: string,
-            repoKey: string | undefined,
-            folderKey: string | undefined,
-            noteKey: string | undefined,
+            id: string,
+            dataPath: string,
+            repoKey: string,
+            folderKey?: string,
+            noteKey?: string,
         ) => {
-            noteKey = noteKey ? noteKey : undefined;
-            dispatch({
-                type: 'switch_note',
-                repo_key: repoKey,
-                folder_key: folderKey,
-                note_key: noteKey,
-            });
+            if (folderKey) {
+                if (noteKey) {
+                    setHistories(
+                        produce(histories, (draft) => {
+                            draft[id].cur_repo_key = repoKey;
+                            if (!draft[id].repos_record) {
+                                draft[id].repos_record = {};
+                            }
+                            if (!draft[id].repos_record[repoKey]) {
+                                draft[id].repos_record[repoKey] = {
+                                    cur_folder_key: folderKey,
+                                    folders: {
+                                        [folderKey]: noteKey,
+                                    },
+                                };
+                            } else {
+                                draft[id].repos_record[repoKey].cur_folder_key = folderKey;
+                                draft[id].repos_record[repoKey].folders[folderKey] = noteKey;
+                            }
+                        }),
+                    );
+                } else {
+                    setHistories(
+                        produce(histories, (draft) => {
+                            if (!draft[id].repos_record) draft[id].repos_record = {};
+                            if (!draft[id].repos_record[repoKey]) {
+                                draft[id].repos_record[repoKey] = {
+                                    cur_folder_key: folderKey,
+                                    folders: {},
+                                };
+                            } else {
+                                draft[id].repos_record[repoKey].cur_folder_key = folderKey;
+                            }
+                        }),
+                    );
+                }
+            } else {
+                setHistories(
+                    produce(histories, (draft) => {
+                        draft[id].cur_repo_key = repoKey;
+                    }),
+                );
+            }
 
-            await addSaveTask(curDataPath, 1200);
+            await addSaveTask(id, dataPath, 1200);
         },
-        [],
+        [histories, addSaveTask],
     );
 
-    return [
-        state,
-        {
-            initHistory,
-            repoSwitch,
-            folderSwitch,
-            noteSwitch,
-        },
-    ] as const;
+    return { histories, addHistory, updateHistory };
 };
 
 export default useHistory;

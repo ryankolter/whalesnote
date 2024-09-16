@@ -11,8 +11,9 @@ import useContextMenu from '../../lib/useContextMenu';
 import useEditorPosition from '../../lib/useEditorPosition';
 import { updateNote } from '../../lib/notes';
 import { useAtomValue } from 'jotai';
-import { editorFontSizeAtom } from '@/atoms';
-import { join as pathJoin } from 'path';
+import { activeWhaleIdAtom, editorFontSizeAtom } from '@/atoms';
+import { join as pathJoin } from 'path-browserify';
+import { useDataContext } from '@/context/DataProvider';
 
 const MarkdownEditor: React.FC<{
     cursorInRenderFlag: boolean;
@@ -27,27 +28,22 @@ const MarkdownEditor: React.FC<{
     setEditorScrollRatio,
     setRenderNoteStr,
 }) => {
-    const {
-        blur,
-        curDataPath,
-        currentRepoKey,
-        currentFolderKey,
-        currentNoteKey,
-        focus,
-        platformName,
-        showRepoPanel,
-        renameNote,
-        setShowKeySelect,
-    } = useContext(GlobalContext);
+    const { blur, focus, platformName, showRepoPanel, setShowKeySelect } =
+        useContext(GlobalContext);
+
+    const { curDataPath, curRepoKey, curFolderKey, curNoteKey, renameNote } = useDataContext();
+
+    const id = useAtomValue(activeWhaleIdAtom);
+
     const { t } = useTranslation();
 
     const editorFontSize = useAtomValue(editorFontSizeAtom);
 
     const [topLinePos, cursorHeadPos, updateTopLinePos, updateCursorHeadPos] = useEditorPosition(
         curDataPath,
-        currentRepoKey,
-        currentFolderKey,
-        currentNoteKey,
+        curRepoKey,
+        curFolderKey,
+        curNoteKey,
     );
 
     const [showEditorScrollPos, setShowEditorScrollPos] = useState(false);
@@ -60,13 +56,7 @@ const MarkdownEditor: React.FC<{
 
     const onDocChange = useCallback(
         async (new_value: string, vu: ViewUpdate) => {
-            await updateNote(
-                curDataPath,
-                currentRepoKey,
-                currentFolderKey,
-                currentNoteKey,
-                new_value,
-            );
+            await updateNote(id, curDataPath, curRepoKey, curFolderKey, curNoteKey, new_value);
             setRenderNoteStr(new_value);
 
             const prev_first_line = vu.startState.doc.lineAt(0).text;
@@ -79,20 +69,14 @@ const MarkdownEditor: React.FC<{
                     new_name = replace_line;
                 }
 
-                await renameNote(
-                    curDataPath,
-                    currentRepoKey,
-                    currentFolderKey,
-                    currentNoteKey,
-                    new_name,
-                );
+                await renameNote(curDataPath, curRepoKey, curFolderKey, curNoteKey, new_name);
             }
         },
         [
             curDataPath,
-            currentRepoKey,
-            currentFolderKey,
-            currentNoteKey,
+            curRepoKey,
+            curFolderKey,
+            curNoteKey,
             renameNote,
             setRenderNoteStr,
             updateNote,
@@ -104,22 +88,17 @@ const MarkdownEditor: React.FC<{
             if (view.current && vu.view.hasFocus) {
                 setShowKeySelect(false);
                 const cursorHeadPos = view.current.state.selection.main.head;
-                await updateCursorHeadPos(
-                    currentRepoKey,
-                    currentFolderKey,
-                    currentNoteKey,
-                    cursorHeadPos,
-                );
+                await updateCursorHeadPos(curRepoKey, curFolderKey, curNoteKey, cursorHeadPos);
             }
         },
-        [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey],
+        [curDataPath, curRepoKey, curFolderKey, curNoteKey],
     );
 
     const [editor, view] = useCodeMirror<HTMLDivElement>({
         curDataPath,
-        currentRepoKey,
-        currentFolderKey,
-        currentNoteKey,
+        curRepoKey,
+        curFolderKey,
+        curNoteKey,
         onDocChange,
         onSelectionSet,
     });
@@ -137,7 +116,7 @@ const MarkdownEditor: React.FC<{
         topLinePos && topLinePos > 10
             ? setShowEditorScrollPos(true)
             : setShowEditorScrollPos(false);
-    }, [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey]);
+    }, [curDataPath, curRepoKey, curFolderKey, curNoteKey]);
 
     useEffect(() => {
         if (view.current && !Number.isNaN(renderScrollRatio)) {
@@ -388,14 +367,14 @@ const MarkdownEditor: React.FC<{
                     ).from;
 
                     setShowEditorScrollPos(false);
-                    updateTopLinePos(currentRepoKey, currentFolderKey, currentNoteKey, fromPos);
+                    updateTopLinePos(curRepoKey, curFolderKey, curNoteKey, fromPos);
                 }
             }, 100);
         },
         [
-            currentRepoKey,
-            currentFolderKey,
-            currentNoteKey,
+            curRepoKey,
+            curFolderKey,
+            curNoteKey,
             cursorInEditor,
             setEditorScrollRatio,
             setShowEditorScrollPos,

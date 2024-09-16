@@ -35,7 +35,7 @@ const createWindow = async (): Promise<void> => {
         titleBarStyle: 'hiddenInset',
         trafficLightPosition: { x: 18, y: 18 },
         webPreferences: {
-            preload: path.join(__dirname, 'preload.js'),
+            preload: path.join(__dirname, './preload.js'),
             nodeIntegration: false,
             contextIsolation: true,
         },

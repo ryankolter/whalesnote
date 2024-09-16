@@ -3,9 +3,9 @@ import { useRecordValue } from './useRecordValue';
 
 const useEditorPosition = (
     curDataPath: string,
-    currentRepoKey: string,
-    currentFolderKey: string,
-    currentNoteKey: string
+    curRepoKey: string,
+    curFolderKey: string,
+    curNoteKey: string,
 ) => {
     const [cursorHeadPositions, { updateRecordValue: updateCursorHeadPos }] =
         useRecordValue<number>();
@@ -13,28 +13,28 @@ const useEditorPosition = (
 
     const cursorHeadPos = useMemo(
         () =>
-            currentRepoKey &&
-            currentFolderKey &&
-            currentNoteKey &&
-            cursorHeadPositions[currentRepoKey] &&
-            cursorHeadPositions[currentRepoKey][currentFolderKey] &&
-            cursorHeadPositions[currentRepoKey][currentFolderKey][currentNoteKey]
-                ? cursorHeadPositions[currentRepoKey][currentFolderKey][currentNoteKey]
+            curRepoKey &&
+            curFolderKey &&
+            curNoteKey &&
+            cursorHeadPositions[curRepoKey] &&
+            cursorHeadPositions[curRepoKey][curFolderKey] &&
+            cursorHeadPositions[curRepoKey][curFolderKey][curNoteKey]
+                ? cursorHeadPositions[curRepoKey][curFolderKey][curNoteKey]
                 : -1,
-        [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, cursorHeadPositions]
+        [curDataPath, curRepoKey, curFolderKey, curNoteKey, cursorHeadPositions],
     );
 
     const topLinePos = useMemo(
         () =>
-            currentRepoKey &&
-            currentFolderKey &&
-            currentNoteKey &&
-            topLinePositions[currentRepoKey] &&
-            topLinePositions[currentRepoKey][currentFolderKey] &&
-            topLinePositions[currentRepoKey][currentFolderKey][currentNoteKey]
-                ? topLinePositions[currentRepoKey][currentFolderKey][currentNoteKey]
+            curRepoKey &&
+            curFolderKey &&
+            curNoteKey &&
+            topLinePositions[curRepoKey] &&
+            topLinePositions[curRepoKey][curFolderKey] &&
+            topLinePositions[curRepoKey][curFolderKey][curNoteKey]
+                ? topLinePositions[curRepoKey][curFolderKey][curNoteKey]
                 : 0,
-        [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, topLinePositions]
+        [curDataPath, curRepoKey, curFolderKey, curNoteKey, topLinePositions],
     );
 
     return [topLinePos, cursorHeadPos, updateTopLinePos, updateCursorHeadPos];

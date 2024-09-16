@@ -24,37 +24,46 @@ import { usePopUp } from '../../lib/usePopUp';
 import useContextMenu from '../../lib/useContextMenu';
 import categoryIcon from '../../resources/icon/categoryIcon.svg';
 import folderIcon from '../../resources/icon/folderIcon.svg';
-import { parse as pathParse } from 'path';
+import { parse as pathParse } from 'path-browserify';
+import { activeWhaleIdAtom } from '@/atoms';
+import { useAtomValue } from 'jotai';
+import { useDataContext } from '@/context/DataProvider';
 
 const FolderList: React.FC<{}> = ({}) => {
+    const id = useAtomValue(activeWhaleIdAtom);
+
     const {
-        curDataPath,
-        currentRepoKey,
-        currentFolderKey,
         keySelectNumArray,
         platformName,
         showKeySelect,
-        whalesnote,
-        changeNotesAfterNew,
-        deleteFolder,
         manualFocus,
+        setKeySelectNumArray,
+        setShowRepoPanel,
+    } = useContext(GlobalContext);
+
+    const {
+        curDataPath,
+        whalesnote,
         newFolder,
         newNote,
         renameFolder,
         reorderFolder,
-        setKeySelectNumArray,
+        deleteFolder,
+        curRepoKey,
+        curFolderKey,
         switchFolder,
         switchNote,
-        setShowRepoPanel,
-    } = useContext(GlobalContext);
+        prepareContent,
+    } = useDataContext();
+
     const { t } = useTranslation();
 
     const folder_keys = useMemo(() => {
-        return whalesnote.repo_map ? whalesnote.repo_map[currentRepoKey]?.folder_keys : undefined;
-    }, [whalesnote, currentRepoKey, currentFolderKey]);
+        return whalesnote.repo_map ? whalesnote.repo_map[curRepoKey]?.folder_keys : undefined;
+    }, [whalesnote, curRepoKey, curFolderKey]);
     const folder_map = useMemo(() => {
-        return whalesnote.repo_map ? whalesnote.repo_map[currentRepoKey]?.folder_map : undefined;
-    }, [whalesnote, currentRepoKey, currentFolderKey]);
+        return whalesnote.repo_map ? whalesnote.repo_map[curRepoKey]?.folder_map : undefined;
+    }, [whalesnote, curRepoKey, curFolderKey]);
 
     const [dragActiveId, setDragActiveId] = useState<string | null>(null);
     const [newFolderKey, setNewFolderKey] = useState('');
@@ -90,34 +99,22 @@ const FolderList: React.FC<{}> = ({}) => {
             if (!allowNewFolder.current) return;
             allowNewFolder.current = false;
 
-            if (!currentRepoKey) return;
+            if (!curRepoKey) return;
 
             const note_key = cryptoRandomString({
                 length: 12,
                 type: 'alphanumeric',
             });
 
-            await newFolder(curDataPath, currentRepoKey, folder_key, e.target.value);
-            await changeNotesAfterNew('folder', {
-                data_path: curDataPath,
-                repo_key: currentRepoKey,
-                folder_key,
-            });
-
-            await newNote(curDataPath, currentRepoKey, folder_key, note_key, t('note.untitled'));
-            await changeNotesAfterNew('note', {
-                data_path: curDataPath,
-                repo_key: currentRepoKey,
-                folder_key,
-                note_key,
-            });
-
-            await switchNote(currentRepoKey, folder_key, note_key);
+            await newFolder(id, curRepoKey, folder_key, e.target.value);
+            await newNote(id, curRepoKey, folder_key, note_key, t('note.untitled'));
+            await prepareContent(curRepoKey, folder_key, note_key);
+            await switchNote(curRepoKey, folder_key, note_key);
 
             const note_content = '';
 
             await window.electronAPI.writeStr(
-                `${curDataPath}/${currentRepoKey}/${folder_key}/${note_key}.md`,
+                `${id}/${curRepoKey}/${folder_key}/${note_key}.md`,
                 note_content,
             );
 
@@ -126,7 +123,7 @@ const FolderList: React.FC<{}> = ({}) => {
             manualFocus(500);
             allowNewFolder.current = true;
         },
-        [curDataPath, currentRepoKey, newFolder, changeNotesAfterNew, switchFolder, manualFocus],
+        [id, curRepoKey, newFolder, newNote, prepareContent, switchNote, manualFocus],
     );
 
     const handleNewFolderKeyDown = useCallback(
@@ -145,22 +142,22 @@ const FolderList: React.FC<{}> = ({}) => {
     // part2 : rename folder
     useEffect(() => {
         setCurFolderName(
-            folder_map && currentFolderKey && folder_map[currentFolderKey]
-                ? folder_map[currentFolderKey].folder_name
+            folder_map && curFolderKey && folder_map[curFolderKey]
+                ? folder_map[curFolderKey].folder_name
                 : '',
         );
-    }, [folder_map, currentFolderKey]);
+    }, [folder_map, curFolderKey]);
 
     const handleRenameFolder = useCallback(() => {
         setRenamePopUp(true);
     }, [setRenamePopUp]);
 
     const renameFolderConfirm = useCallback(async () => {
-        if (currentRepoKey && currentFolderKey) {
-            await renameFolder(curDataPath, currentRepoKey, currentFolderKey, curFolderName);
+        if (curRepoKey && curFolderKey) {
+            await renameFolder(id, curRepoKey, curFolderKey, curFolderName);
             setRenamePopUp(false);
         }
-    }, [curDataPath, currentRepoKey, currentFolderKey, curFolderName, setRenamePopUp]);
+    }, [id, curRepoKey, curFolderKey, curFolderName, setRenamePopUp]);
 
     // part3 : delete folder
     const handleDeleteFolder = () => {
@@ -168,16 +165,12 @@ const FolderList: React.FC<{}> = ({}) => {
     };
 
     const deleteFolderConfirm = useCallback(async () => {
-        if (currentRepoKey && currentFolderKey) {
-            const next_folder_key = await deleteFolder(
-                curDataPath,
-                currentRepoKey,
-                currentFolderKey,
-            );
-            await switchFolder(currentRepoKey, next_folder_key);
+        if (curRepoKey && curFolderKey) {
+            const next_folder_key = await deleteFolder(id, curRepoKey, curFolderKey);
+            await switchFolder(curRepoKey, next_folder_key);
             setDeletePopUp(false);
         }
-    }, [curDataPath, whalesnote, currentRepoKey, currentFolderKey, switchFolder, setDeletePopUp]);
+    }, [id, whalesnote, curRepoKey, curFolderKey, switchFolder, setDeletePopUp]);
 
     // part4 : scroll folder
     const preFolderPage = useCallback(() => {
@@ -204,11 +197,11 @@ const FolderList: React.FC<{}> = ({}) => {
         (index: number) => {
             folder_keys?.forEach((key: string, i: number) => {
                 if (index === i) {
-                    switchFolder(currentRepoKey, key);
+                    switchFolder(curRepoKey, key);
                 }
             });
         },
-        [curDataPath, folder_keys, switchFolder],
+        [id, folder_keys, switchFolder],
     );
 
     useEffect(() => {
@@ -248,7 +241,7 @@ const FolderList: React.FC<{}> = ({}) => {
         if (keySelectNumArray.length === 1) {
             setKeySelectNumArray([]);
         }
-    }, [currentRepoKey, currentFolderKey]);
+    }, [curRepoKey, curFolderKey]);
 
     // part5 : batch import markdown file
     const loadMarkdowns = useCallback(
@@ -272,17 +265,12 @@ const FolderList: React.FC<{}> = ({}) => {
                             content = '# ' + file_name + '\n\n' + content;
                         }
 
-                        await newNote(
-                            curDataPath,
-                            currentRepoKey,
-                            currentFolderKey,
-                            new_note_key,
-                            new_note_title,
-                        );
+                        await newNote(id, curRepoKey, curFolderKey, new_note_key, new_note_title);
                         await updateNote(
+                            id,
                             curDataPath,
-                            currentRepoKey,
-                            currentFolderKey,
+                            curRepoKey,
+                            curFolderKey,
                             new_note_key,
                             content,
                         );
@@ -290,7 +278,7 @@ const FolderList: React.FC<{}> = ({}) => {
                 }
             }
         },
-        [curDataPath, currentRepoKey, currentFolderKey, newNote, updateNote],
+        [id, curDataPath, curRepoKey, curFolderKey, newNote, updateNote],
     );
 
     const handleBatchImport = useCallback(async () => {
@@ -354,14 +342,14 @@ const FolderList: React.FC<{}> = ({}) => {
             setDragActiveId(null);
             const { active, over } = e;
             if (!over) return;
-            if (active.id !== over.id && folder_keys && currentRepoKey) {
-                const oldIndex = folder_keys.indexOf(active.id);
-                const newIndex = folder_keys.indexOf(over.id);
+            if (active.id !== over.id && folder_keys && curRepoKey) {
+                const oldIndex = folder_keys.indexOf(active.id as string);
+                const newIndex = folder_keys.indexOf(over.id as string);
                 const new_folder_keys: string[] = arrayMove(folder_keys, oldIndex, newIndex);
-                reorderFolder(curDataPath, currentRepoKey, new_folder_keys);
+                reorderFolder(id, curRepoKey, new_folder_keys);
             }
         },
-        [curDataPath, currentRepoKey, folder_keys, reorderFolder, setDragActiveId],
+        [id, curRepoKey, folder_keys, reorderFolder, setDragActiveId],
     );
 
     const genAlphaCode1 = (order: number): number => {
@@ -392,7 +380,7 @@ const FolderList: React.FC<{}> = ({}) => {
                     onDragEnd={handleDragEnd}
                 >
                     <SortableContext items={folder_keys} strategy={verticalListSortingStrategy}>
-                        <Folders ref={innerRef} key={currentRepoKey}>
+                        <Folders ref={innerRef} key={curRepoKey}>
                             {folder_keys
                                 .filter((key: string) => folder_map && folder_map[key])
                                 .map((key: string, index: number) => {
@@ -401,24 +389,22 @@ const FolderList: React.FC<{}> = ({}) => {
                                             <FolderItemBox
                                                 key={`item-${key}`}
                                                 onClick={() => {
-                                                    if (currentFolderKey !== key) {
-                                                        switchFolder(currentRepoKey, key);
+                                                    if (curFolderKey !== key) {
+                                                        switchFolder(curRepoKey, key);
                                                     }
                                                 }}
                                                 onContextMenu={() => {
-                                                    if (currentFolderKey !== key) {
-                                                        switchFolder(currentRepoKey, key);
+                                                    if (curFolderKey !== key) {
+                                                        switchFolder(curRepoKey, key);
                                                     }
                                                 }}
                                             >
                                                 <FolderItem
                                                     className={
-                                                        currentFolderKey === key
-                                                            ? 'item-selected'
-                                                            : ''
+                                                        curFolderKey === key ? 'item-selected' : ''
                                                     }
                                                     style={
-                                                        currentFolderKey === key
+                                                        curFolderKey === key
                                                             ? {
                                                                   backgroundColor:
                                                                       'var(--second-selected-bg-color)',
@@ -433,7 +419,7 @@ const FolderList: React.FC<{}> = ({}) => {
                                                         {folder_map[key].folder_name}
                                                     </FolderName>
                                                     {showKeySelect &&
-                                                    currentFolderKey !== key &&
+                                                    curFolderKey !== key &&
                                                     index < 21 * 10 ? (
                                                         <FolderKeyTab>
                                                             <span
@@ -477,7 +463,7 @@ const FolderList: React.FC<{}> = ({}) => {
                                         </Sortable>
                                     );
                                 })}
-                            {menu && currentFolderKey ? (
+                            {menu && curFolderKey ? (
                                 <MenuUl top={yPos} left={xPos}>
                                     <MenuLi
                                         className="menu-li-color"
@@ -501,7 +487,7 @@ const FolderList: React.FC<{}> = ({}) => {
                             ) : (
                                 <></>
                             )}
-                            {curDataPath && !newFolderKey ? (
+                            {id && !newFolderKey ? (
                                 <FolderAddBtn
                                     className="ri-folder-add-fill"
                                     onClick={() => handleNewFolder()}
@@ -549,10 +535,10 @@ const FolderList: React.FC<{}> = ({}) => {
                                     <FolderItem
                                         key={dragActiveId}
                                         className={
-                                            currentFolderKey === dragActiveId ? 'item-selected' : ''
+                                            curFolderKey === dragActiveId ? 'item-selected' : ''
                                         }
                                         style={
-                                            currentFolderKey === dragActiveId
+                                            curFolderKey === dragActiveId
                                                 ? {
                                                       backgroundColor:
                                                           'var(--second-selected-bg-color)',
@@ -583,8 +569,8 @@ const FolderList: React.FC<{}> = ({}) => {
                 popupState={deletePopup}
                 maskState={deleteMask}
                 content={`${t('category.delete_tips_part_1')}${
-                    folder_map && currentFolderKey && folder_map[currentFolderKey]
-                        ? folder_map[currentFolderKey].folder_name
+                    folder_map && curFolderKey && folder_map[curFolderKey]
+                        ? folder_map[curFolderKey].folder_name
                         : ''
                 }${t('category.delete_tips_part_2')}${t('category.delete_tips_part_3')}`}
                 onCancel={() => setDeletePopUp(false)}

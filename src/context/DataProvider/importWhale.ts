@@ -1,4 +1,4 @@
-import { DataTypes, HistoryInfo, Notes, WhaleObject } from '@/commonType';
+import { DataTypes, HistoryInfo, ContentMap, WhaleObject } from '@/commonType';
 
 export const dataPathExisted = async (path: string) => {
     if (!path) return false;
@@ -9,17 +9,20 @@ export const dataPathHasWhale = async (path: string) => {
     return await window.electronAPI.checkPathExist(path + '/whalesnote_info.json');
 };
 
-export const importWhale = async (path: string) => {
-    //please be sure that the path is a valid path with whale
-
+export const importWhale = async (
+    path: string,
+    whaleInfo: {
+        id: string;
+        repos_key: string[];
+    },
+) => {
     //process whaleObj
     const whaleObj: WhaleObject = {
+        path,
         repo_keys: [],
         repo_map: {},
     };
     const validRepoKeys: string[] = [];
-
-    const whaleInfo = await window.electronAPI.readJsonSync(`${path}/whalesnote_info.json`);
 
     for (const repo_key of whaleInfo.repos_key) {
         const repoInfo = await window.electronAPI.readJsonSync(
@@ -108,9 +111,9 @@ export const importWhale = async (path: string) => {
         await window.electronAPI.writeJson(`${path}/history_info.json`, historyInfo);
     }
 
-    let notes: Notes = {};
+    let contentMap: ContentMap = {};
     if (initRepoKey && initFolderKey) {
-        notes = {
+        contentMap = {
             [initRepoKey]: {
                 [initFolderKey]: {},
             },
@@ -121,15 +124,14 @@ export const importWhale = async (path: string) => {
                 `${path}/${initRepoKey}/${initFolderKey}/${initNoteKey}.md`,
             );
             if (note_content) {
-                notes[initRepoKey][initFolderKey][initNoteKey] = note_content;
+                contentMap[initRepoKey][initFolderKey][initNoteKey] = note_content;
             }
         }
     }
 
     const data: DataTypes = {
-        id: whaleInfo.id,
-        obj: whaleObj,
-        notes,
+        whaleObj,
+        contentMap,
         historyInfo,
     };
 

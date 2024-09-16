@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import styled from '@emotion/styled';
 
 import InterfacePage from './InterfacePage';
-import DataPage from './DataPage';
+// import DataPage from './DataPage';
 import AboutPage from './AboutPage';
 import { settingPanelOpenAtom, settingPanelTabAtom } from '@/atoms';
 import { useAtom, useSetAtom } from 'jotai';
@@ -60,7 +60,8 @@ const SettingPanel: React.FC<{}> = ({}) => {
                     {settingPanelTab === 'interfaceTab' ? (
                         <InterfacePage />
                     ) : settingPanelTab == 'dataTab' ? (
-                        <DataPage />
+                        // <DataPage />
+                        <></>
                     ) : settingPanelTab == 'aboutTab' ? (
                         <AboutPage />
                     ) : (

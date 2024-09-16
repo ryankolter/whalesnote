@@ -7,16 +7,17 @@ import { SearchResult } from 'minisearch';
 
 import useSearch from '../../lib/useSearch';
 import WaitingMaskStatic from '../../components/WaitingMaskStatic';
+import { useAtomValue } from 'jotai';
+import { activeWhaleIdAtom } from '@/atoms';
+import { useDataContext } from '@/context/DataProvider';
 
 const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
-    const {
-        curDataPath,
-        currentNoteKey,
-        platformName,
-        showSearchPanel,
-        setShowKeySelect,
-        setShowSearchPanel,
-    } = useContext(GlobalContext);
+    const id = useAtomValue(activeWhaleIdAtom);
+
+    const { platformName, showSearchPanel, setShowKeySelect, setShowSearchPanel } =
+        useContext(GlobalContext);
+    const { curNoteKey } = useDataContext();
+
     const { t } = useTranslation();
 
     const searchBarRef = useRef<HTMLDivElement>(null);
@@ -55,7 +56,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                 setShowSearchPanel(true);
             }
         },
-        [showSearchPanel, setWord, setShowSearchPanel]
+        [showSearchPanel, setWord, setShowSearchPanel],
     );
 
     const handleSearchInputFocus = useCallback(() => {
@@ -75,7 +76,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
             searchInputRef.current.value = '';
         }
         searchModuleInitialized.current = false;
-    }, [curDataPath]);
+    }, [id]);
 
     const handleKeyDown = useCallback(
         async (e: KeyboardEvent) => {
@@ -130,7 +131,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
             prevSearchResult,
             setShowKeySelect,
             setShowSearchPanel,
-        ]
+        ],
     );
 
     const handleClick = useCallback(
@@ -139,7 +140,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                 setShowSearchPanel(false);
             }
         },
-        [setShowSearchPanel]
+        [setShowSearchPanel],
     );
 
     useEffect(() => {
@@ -231,7 +232,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                                         key={result.id}
                                         style={{
                                             backgroundColor:
-                                                currentNoteKey === result.id.split('-')[2] &&
+                                                curNoteKey === result.id.split('-')[2] &&
                                                 curSearchResultIndex !== -1
                                                     ? 'var(--second-selected-bg-color)'
                                                     : '',
@@ -281,7 +282,7 @@ const SearchBarContainer = styled.div(
     },
     `
     app-region: no-drag;
-`
+`,
 );
 
 const EmptyArea = styled.div({
@@ -325,7 +326,7 @@ const SearchInput = styled.input(
         color: var(--input-placeholder-text-color) !important;
         font-size: 13px;
     }
-`
+`,
 );
 
 const LoadingSearch = styled.div({
@@ -423,7 +424,7 @@ const SearchResultList = styled.div(
     &::-webkit-scrollbar {
         display: none;
     }
-`
+`,
 );
 
 const SearchResultsEnd = styled.div({

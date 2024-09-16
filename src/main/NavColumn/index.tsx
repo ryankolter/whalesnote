@@ -6,18 +6,19 @@ import SearchBar from './SearchBar';
 import FolderList from './FolderList';
 import NoteList from './NoteList';
 import RepoPanel from './RepoPanel';
+import { useDataContext } from '@/context/DataProvider';
 
 const NavColumn: React.FC<Record<string, unknown>> = ({}) => {
     const {
-        currentRepoKey,
         keySelectNumArray,
         platformName,
         showKeySelect,
         showRepoPanel,
-        whalesnote,
         setKeySelectNumArray,
         setShowRepoPanel,
     } = useContext(GlobalContext);
+
+    const { curRepoKey, whalesnote } = useDataContext();
 
     const resizeFolderOffsetX = useRef<number>(0);
     const resizeNoteOffsetX = useRef<number>(0);
@@ -88,10 +89,8 @@ const NavColumn: React.FC<Record<string, unknown>> = ({}) => {
                         }}
                     >
                         <RepoNameLabel>
-                            {whalesnote.repo_map &&
-                            currentRepoKey &&
-                            whalesnote.repo_map[currentRepoKey]
-                                ? whalesnote.repo_map[currentRepoKey].repo_name
+                            {whalesnote.repo_map && curRepoKey && whalesnote.repo_map[curRepoKey]
+                                ? whalesnote.repo_map[curRepoKey].repo_name
                                 : ''}
                         </RepoNameLabel>
                         {showKeySelect ? <RepoPanelKeyTab>Z</RepoPanelKeyTab> : <></>}

@@ -6,11 +6,13 @@ specifiers:
   fs-extra: ^11.2.0
   nodejieba: ^3.4.2
   string-width: ^7.2.0
+  typescript: ^5.6.2
 
 dependencies:
   fs-extra: 11.2.0
   nodejieba: 3.4.2
   string-width: 7.2.0
+  typescript: 5.6.2
 
 devDependencies:
   electron: 32.1.0
@@ -1812,7 +1814,6 @@ packages:
     resolution: {integrity: sha512-NW8ByodCSNCwZeghjN3o+JX5OFH0Ojg6sadjEKY4huZ52TqbJTJnDo5+Tw98lSy63NZvi4n+ez5m2u5d4PkZyw==}
     engines: {node: '>=14.17'}
     hasBin: true
-    dev: true
 
   /undici-types/6.19.8:
     resolution: {integrity: sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==}

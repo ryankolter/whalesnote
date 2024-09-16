@@ -14,9 +14,10 @@ import { languages } from '@codemirror/language-data';
 
 import { usePopUp } from '../../lib/usePopUp';
 import { AlertPopUp } from '../../components/AlertPopUp';
+import { useDataContext } from '@/context/DataProvider';
 
 const TrashList: React.FC<{}> = ({}) => {
-    const { curDataPath } = useContext(GlobalContext);
+    const { curDataPath } = useDataContext();
     const { t } = useTranslation();
     const editor = useRef<HTMLDivElement>(null);
     const view = useRef<EditorView>();

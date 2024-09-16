@@ -33,6 +33,7 @@ import markdownItTocDoneRight from 'markdown-it-toc-done-right';
 import useContextMenu from '../../lib/useContextMenu';
 import { useAtomValue } from 'jotai';
 import { renderFontSizeAtom } from '@/atoms';
+import { useDataContext } from '@/context/DataProvider';
 
 const lowlight = createLowlight(common);
 
@@ -60,14 +61,9 @@ const MarkdownRender: React.FC<{
     setRenderScrollRatio,
     updateRenderScrollTop,
 }) => {
-    const {
-        curDataPath,
-        currentRepoKey,
-        currentFolderKey,
-        currentNoteKey,
-        platformName,
-        showRepoPanel,
-    } = useContext(GlobalContext);
+    const { platformName, showRepoPanel } = useContext(GlobalContext);
+    const { curDataPath, curRepoKey, curFolderKey, curNoteKey } = useDataContext();
+
     const { t } = useTranslation();
 
     const renderFontSize = useAtomValue(renderFontSizeAtom);
@@ -195,7 +191,7 @@ const MarkdownRender: React.FC<{
 
             clipboard.current.off('error');
         };
-    }, [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, renderNoteStr]);
+    }, [curDataPath, curRepoKey, curFolderKey, curNoteKey, renderNoteStr]);
 
     useEffect(() => {
         if (renderRef.current) {
@@ -204,7 +200,7 @@ const MarkdownRender: React.FC<{
             setShowRenderScrollPos(false);
             if (renderScrollTop > renderRef.current.offsetHeight) setShowRenderScrollPos(true);
         }
-    }, [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey]);
+    }, [curDataPath, curRepoKey, curFolderKey, curNoteKey]);
 
     useEffect(() => {
         if (renderRef && renderRef.current) {
@@ -286,12 +282,7 @@ const MarkdownRender: React.FC<{
                 setShowRenderScrollPos(false);
                 if (renderRef.current) {
                     const renderScrollValue = renderRef.current.scrollTop;
-                    updateRenderScrollTop(
-                        currentRepoKey,
-                        currentFolderKey,
-                        currentNoteKey,
-                        renderScrollValue,
-                    );
+                    updateRenderScrollTop(curRepoKey, curFolderKey, curNoteKey, renderScrollValue);
                 }
             }, 100);
         },

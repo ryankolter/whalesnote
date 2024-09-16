@@ -10,27 +10,31 @@ import { languages } from '@codemirror/language-data';
 import { Completion, autocompletion } from '@codemirror/autocomplete';
 
 import { notes } from './notes';
+import { useAtomValue } from 'jotai';
+import { activeWhaleIdAtom } from '@/atoms';
 
 interface Props {
     curDataPath: string;
-    currentRepoKey: string;
-    currentFolderKey: string;
-    currentNoteKey: string;
+    curRepoKey: string;
+    curFolderKey: string;
+    curNoteKey: string;
     onDocChange?: (new_value: string, viewUpdate: ViewUpdate) => void;
     onSelectionSet?: (vu: ViewUpdate) => void;
 }
 
 const useCodeMirror = <T extends Element>({
     curDataPath,
-    currentRepoKey,
-    currentFolderKey,
-    currentNoteKey,
+    curRepoKey,
+    curFolderKey,
+    curNoteKey,
     onDocChange,
     onSelectionSet,
 }: Props): [MutableRefObject<T | null>, MutableRefObject<EditorView | null>] => {
     const editor = useRef<T | null>(null);
     const view = useRef<EditorView | null>(null);
     const forbidUpdate = useRef<boolean>(false);
+
+    const id = useAtomValue(activeWhaleIdAtom);
 
     const defaultThemeOption = useMemo(
         () =>
@@ -159,13 +163,14 @@ const useCodeMirror = <T extends Element>({
     useEffect(() => {
         if (editor.current) {
             const value =
-                currentRepoKey &&
-                currentFolderKey &&
-                currentNoteKey &&
-                notes[currentRepoKey] &&
-                notes[currentRepoKey][currentFolderKey] &&
-                notes[currentRepoKey][currentFolderKey][currentNoteKey]
-                    ? notes[currentRepoKey][currentFolderKey][currentNoteKey]
+                curRepoKey &&
+                curFolderKey &&
+                curNoteKey &&
+                notes[id] &&
+                notes[id][curRepoKey] &&
+                notes[id][curRepoKey][curFolderKey] &&
+                notes[id][curRepoKey][curFolderKey][curNoteKey]
+                    ? notes[id][curRepoKey][curFolderKey][curNoteKey]
                     : '';
             const defaultState = EditorState.create({
                 doc: value,
@@ -196,13 +201,14 @@ const useCodeMirror = <T extends Element>({
         }, 500);
 
         const value =
-            currentRepoKey &&
-            currentFolderKey &&
-            currentNoteKey &&
-            notes[currentRepoKey] &&
-            notes[currentRepoKey][currentFolderKey] &&
-            notes[currentRepoKey][currentFolderKey][currentNoteKey]
-                ? notes[currentRepoKey][currentFolderKey][currentNoteKey]
+            curRepoKey &&
+            curFolderKey &&
+            curNoteKey &&
+            notes[id] &&
+            notes[id][curRepoKey] &&
+            notes[id][curRepoKey][curFolderKey] &&
+            notes[id][curRepoKey][curFolderKey][curNoteKey]
+                ? notes[id][curRepoKey][curFolderKey][curNoteKey]
                 : '';
 
         const newState = EditorState.create({
@@ -227,7 +233,7 @@ const useCodeMirror = <T extends Element>({
                 ]),
             });
         }, 250);
-    }, [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey]);
+    }, [curDataPath, curRepoKey, curFolderKey, curNoteKey]);
 
     return [editor, view];
 };

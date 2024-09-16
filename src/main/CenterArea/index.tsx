@@ -9,15 +9,13 @@ import MarkdownRender from './MarkdownRender';
 import useRenderState from '../../lib/useRenderState';
 import ToolBar from './ToolBar';
 import { notes } from '../../lib/notes';
+import { useDataContext } from '@/context/DataProvider';
+import { useAtomValue } from 'jotai';
+import { activeWhaleIdAtom } from '@/atoms';
 
 const CenterArea: React.FC<{}> = ({}) => {
     const {
-        curDataPath,
-        currentRepoKey,
-        currentFolderKey,
-        currentNoteKey,
         platformName,
-        whalesnote,
         showKeySelect,
         showRepoPanel,
         showSearchPanel,
@@ -29,6 +27,10 @@ const CenterArea: React.FC<{}> = ({}) => {
         setShowRepoPanel,
         setShowSearchPanel,
     } = useContext(GlobalContext);
+
+    const { curDataPath, curRepoKey, curFolderKey, curNoteKey } = useDataContext();
+
+    const id = useAtomValue(activeWhaleIdAtom);
 
     const [
         editorWidth,
@@ -49,29 +51,29 @@ const CenterArea: React.FC<{}> = ({}) => {
 
     const renderScrollTop = useMemo(
         () =>
-            currentRepoKey &&
-            currentFolderKey &&
-            currentNoteKey &&
-            renderScrollTops[currentRepoKey] &&
-            renderScrollTops[currentRepoKey][currentFolderKey] &&
-            renderScrollTops[currentRepoKey][currentFolderKey][currentNoteKey]
-                ? renderScrollTops[currentRepoKey][currentFolderKey][currentNoteKey]
+            curRepoKey &&
+            curFolderKey &&
+            curNoteKey &&
+            renderScrollTops[curRepoKey] &&
+            renderScrollTops[curRepoKey][curFolderKey] &&
+            renderScrollTops[curRepoKey][curFolderKey][curNoteKey]
+                ? renderScrollTops[curRepoKey][curFolderKey][curNoteKey]
                 : 0,
-        [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey, renderScrollTops]
+        [curDataPath, curRepoKey, curFolderKey, curNoteKey, renderScrollTops],
     );
 
     useEffect(() => {
         const str =
-            currentRepoKey &&
-            currentFolderKey &&
-            currentNoteKey &&
-            notes[currentRepoKey] &&
-            notes[currentRepoKey][currentFolderKey] &&
-            notes[currentRepoKey][currentFolderKey][currentNoteKey]
-                ? notes[currentRepoKey][currentFolderKey][currentNoteKey]
+            curRepoKey &&
+            curFolderKey &&
+            curNoteKey &&
+            notes[id][curRepoKey] &&
+            notes[id][curRepoKey][curFolderKey] &&
+            notes[id][curRepoKey][curFolderKey][curNoteKey]
+                ? notes[id][curRepoKey][curFolderKey][curNoteKey]
                 : '';
         setRenderNoteStr(str);
-    }, [curDataPath, currentRepoKey, currentFolderKey, currentNoteKey]);
+    }, [curDataPath, curRepoKey, curFolderKey, curNoteKey]);
 
     const handleKeyDown = useCallback(
         async (e: any) => {
@@ -83,7 +85,7 @@ const CenterArea: React.FC<{}> = ({}) => {
                     if (showKeySelect) {
                         setShowKeySelect(false);
                         setKeySelectNumArray([]);
-                        if (currentNoteKey && !showRepoPanel) {
+                        if (curNoteKey && !showRepoPanel) {
                             manualFocus(0);
                         }
                     } else {
@@ -107,7 +109,7 @@ const CenterArea: React.FC<{}> = ({}) => {
                     }
                     if (
                         (showKeySelect || (showSearchPanel && showSearchResultHighlight)) &&
-                        currentNoteKey &&
+                        curNoteKey &&
                         mdRenderState !== 'all'
                     ) {
                         manualFocus(0);
@@ -117,7 +119,7 @@ const CenterArea: React.FC<{}> = ({}) => {
             }
         },
         [
-            currentNoteKey,
+            curNoteKey,
             showKeySelect,
             showRepoPanel,
             showSearchPanel,
@@ -127,7 +129,7 @@ const CenterArea: React.FC<{}> = ({}) => {
             setShowKeySelect,
             setShowRepoPanel,
             nextMdRenderState,
-        ]
+        ],
     );
 
     useEffect(() => {
@@ -224,7 +226,7 @@ const EditorPanel = styled.div(
     },
     (props: { widthValue: string }) => ({
         width: props.widthValue,
-    })
+    }),
 );
 
 const RenderPanel = styled.div(
@@ -237,7 +239,7 @@ const RenderPanel = styled.div(
     (props: { leftValue: string; widthValue: string }) => ({
         left: props.leftValue,
         width: props.widthValue,
-    })
+    }),
 );
 
 export default CenterArea;
