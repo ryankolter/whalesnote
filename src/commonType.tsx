@@ -33,7 +33,7 @@ export type HistoryInfo = {
     >;
 };
 
-export type notesTypes = {
+export type Notes = {
     [key: string]: {
         [key: string]: {
             [key: string]: string;
@@ -43,7 +43,7 @@ export type notesTypes = {
 
 export type DataTypes = {
     id: string;
-    history: HistoryInfo;
-    whalesnote: WhaleObject;
-    notes: notesTypes;
+    obj: WhaleObject;
+    notes: Notes;
+    historyInfo: HistoryInfo;
 };

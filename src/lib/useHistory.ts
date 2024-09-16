@@ -75,10 +75,7 @@ const useHistory = () => {
     }, []);
 
     const saveTask = useCallback(async (curDataPath: string) => {
-        await window.electronAPI.writeJson({
-            file_path: `${curDataPath}/history_info.json`,
-            obj: getState(),
-        });
+        await window.electronAPI.writeJson(`${curDataPath}/history_info.json`, getState());
     }, []);
 
     const addSaveTask = (data_path: string, delay: number) => {

@@ -5,12 +5,9 @@ const createDefaultWhale = async (dataPath: string) => {
     //create whalesnote_info
     const id = cryptoRandomString({ length: 24, type: 'alphanumeric' });
     const repo_id = cryptoRandomString({ length: 12, type: 'alphanumeric' });
-    await window.electronAPI.writeJson({
-        file_path: `${dataPath}/whalesnote_info.json`,
-        obj: {
-            id,
-            repos_key: [repo_id],
-        },
+    await window.electronAPI.writeJson(`${dataPath}/whalesnote_info.json`, {
+        id,
+        repos_key: [repo_id],
     });
 
     //create repo_info, folder_info and note.md
@@ -32,18 +29,12 @@ const createDefaultWhale = async (dataPath: string) => {
             [folder_id]: folder_info,
         },
     };
-    await window.electronAPI.writeJson({
-        file_path: `${dataPath}/${repo_id}/repo_info.json`,
-        obj: repo_info,
-    });
-    await window.electronAPI.writeJson({
-        file_path: `${dataPath}/${repo_id}/${folder_id}/folder_info.json`,
-        obj: folder_info,
-    });
-    await window.electronAPI.writeMd({
-        file_path: `${dataPath}/${repo_id}/${folder_id}/${note_id}.md`,
-        str: '',
-    });
+    await window.electronAPI.writeJson(`${dataPath}/${repo_id}/repo_info.json`, repo_info);
+    await window.electronAPI.writeJson(
+        `${dataPath}/${repo_id}/${folder_id}/folder_info.json`,
+        folder_info,
+    );
+    await window.electronAPI.writeStr(`${dataPath}/${repo_id}/${folder_id}/${note_id}.md`, '');
 
     //create history
     const history = {
@@ -57,14 +48,8 @@ const createDefaultWhale = async (dataPath: string) => {
             },
         },
     };
-    await window.electronAPI.writeJson({
-        file_path: `${dataPath}/history_info.json`,
-        obj: history,
-    });
-    await window.electronAPI.writeGitIgnore({
-        file_path: `${dataPath}/.gitignore`,
-        str: 'history_info.json',
-    });
+    await window.electronAPI.writeJson(`${dataPath}/history_info.json`, history);
+    await window.electronAPI.writeStr(`${dataPath}/.gitignore`, 'history_info.json');
 };
 
 export default createDefaultWhale;

@@ -24,6 +24,7 @@ import { usePopUp } from '../../lib/usePopUp';
 import useContextMenu from '../../lib/useContextMenu';
 import categoryIcon from '../../resources/icon/categoryIcon.svg';
 import folderIcon from '../../resources/icon/folderIcon.svg';
+import { parse as pathParse } from 'path';
 
 const FolderList: React.FC<{}> = ({}) => {
     const {
@@ -115,10 +116,10 @@ const FolderList: React.FC<{}> = ({}) => {
 
             const note_content = '';
 
-            await window.electronAPI.writeMd({
-                file_path: `${curDataPath}/${currentRepoKey}/${folder_key}/${note_key}.md`,
-                str: note_content,
-            });
+            await window.electronAPI.writeStr(
+                `${curDataPath}/${currentRepoKey}/${folder_key}/${note_key}.md`,
+                note_content,
+            );
 
             setNewFolderKey('');
             setNewFolderName('');
@@ -253,12 +254,9 @@ const FolderList: React.FC<{}> = ({}) => {
     const loadMarkdowns = useCallback(
         async (paths: string[]) => {
             for await (const path of paths) {
-                let content = await window.electronAPI.readMdSync({
-                    file_path: path,
-                });
-                const file_name = await window.electronAPI.getFileNameFromPath({
-                    file_path: path,
-                });
+                let content = await window.electronAPI.readMdSync(path);
+
+                const file_name = pathParse(path).name;
                 if (content) {
                     const index = content.indexOf('\n');
                     if (index !== -1) {
@@ -296,9 +294,7 @@ const FolderList: React.FC<{}> = ({}) => {
     );
 
     const handleBatchImport = useCallback(async () => {
-        const paths = await window.electronAPI.openSelectMarkdownsDialog({
-            file_types: ['md'],
-        });
+        const paths = await window.electronAPI.openSelectMarkdownsDialog(['md']);
         if (paths.length > 0) await loadMarkdowns(paths);
     }, [loadMarkdowns]);
 

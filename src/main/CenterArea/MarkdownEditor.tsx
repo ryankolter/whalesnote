@@ -12,6 +12,7 @@ import useEditorPosition from '../../lib/useEditorPosition';
 import { updateNote } from '../../lib/notes';
 import { useAtomValue } from 'jotai';
 import { editorFontSizeAtom } from '@/atoms';
+import { join as pathJoin } from 'path';
 
 const MarkdownEditor: React.FC<{
     cursorInRenderFlag: boolean;
@@ -448,10 +449,6 @@ const MarkdownEditor: React.FC<{
         'image/svg+xml',
     ]);
 
-    const openImagePath = useCallback(async (path: string) => {
-        await window.electronAPI.openFolder({ folder_path: path });
-    }, []);
-
     const addMultizero = useCallback((num: number | string, count: number) => {
         return String(num).padStart(count, '0');
     }, []);
@@ -522,11 +519,10 @@ const MarkdownEditor: React.FC<{
                     (len > 1 ? '_' + addMultizero(index, String(len).length) : '') +
                     '.' +
                     path.substring(path.lastIndexOf('.') + 1);
-                const result = await window.electronAPI.copy({
-                    src_file_path: path,
-                    dest_dir_path: curDataPath + '/images',
-                    dest_file_name: dest_file_name,
-                });
+                const result = await window.electronAPI.copy(
+                    path,
+                    pathJoin(curDataPath + '/images', dest_file_name),
+                );
                 if (result) {
                     dest_file_name_list.push(dest_file_name);
                 }
@@ -541,9 +537,9 @@ const MarkdownEditor: React.FC<{
             e.stopPropagation();
             e.preventDefault();
             showMenu(false);
-            const paths = await window.electronAPI.openSelectImagesDialog({
-                file_types: validImageFileType.current,
-            });
+            const paths = await window.electronAPI.openSelectImagesDialog(
+                validImageFileType.current,
+            );
             if (paths.length > 0) await loadImages(paths);
         },
         [loadImages, showMenu],
@@ -566,11 +562,10 @@ const MarkdownEditor: React.FC<{
                     '.' +
                     file.name.split('.').pop().toLowerCase();
 
-                const result = await window.electronAPI.copy({
-                    src_file_path: file.path,
-                    dest_dir_path: curDataPath + '/images',
-                    dest_file_name: dest_file_name,
-                });
+                const result = await window.electronAPI.copy(
+                    file.path,
+                    pathJoin(curDataPath + '/images', dest_file_name),
+                );
 
                 if (result) {
                     dest_file_name_list.push(dest_file_name);

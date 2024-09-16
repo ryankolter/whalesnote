@@ -9,15 +9,15 @@ export const fetchNotesInfolder = async (
     if (repo_key && folder_key) {
         if (!notes[repo_key]) notes[repo_key] = {};
         if (!notes[repo_key][folder_key]) {
-            const folder_info = await window.electronAPI.readJsonSync({
-                file_path: `${data_path}/${repo_key}/${folder_key}/folder_info.json`,
-            });
+            const folder_info = await window.electronAPI.readJsonSync(
+                `${data_path}/${repo_key}/${folder_key}/folder_info.json`,
+            );
             if (folder_info && folder_info.notes_obj) {
                 notes[repo_key][folder_key] = {};
                 for (const note_key of Object.keys(folder_info.notes_obj)) {
-                    const note_content = await window.electronAPI.readMdSync({
-                        file_path: `${data_path}/${repo_key}/${folder_key}/${note_key}.md`,
-                    });
+                    const note_content = await window.electronAPI.readMdSync(
+                        `${data_path}/${repo_key}/${folder_key}/${note_key}.md`,
+                    );
                     if (note_content) {
                         notes[repo_key][folder_key][note_key] = note_content;
                     }
@@ -53,9 +53,9 @@ export const changeNotesAfterNew = async (
         }
         case 'note': {
             const { data_path, repo_key, folder_key, note_key } = obj;
-            const note_content = await window.electronAPI.readMdSync({
-                file_path: `${data_path}/${repo_key}/${folder_key}/${note_key}.md`,
-            });
+            const note_content = await window.electronAPI.readMdSync(
+                `${data_path}/${repo_key}/${folder_key}/${note_key}.md`,
+            );
             notes[repo_key][folder_key][note_key] = note_content;
             break;
         }
@@ -75,10 +75,10 @@ const saveTask = async (
     note_key: string,
 ) => {
     const new_note_content = notes[repo_key][folder_key][note_key];
-    await window.electronAPI.writeMd({
-        file_path: `${data_path}/${repo_key}/${folder_key}/${note_key}.md`,
-        str: new_note_content,
-    });
+    await window.electronAPI.writeStr(
+        `${data_path}/${repo_key}/${folder_key}/${note_key}.md`,
+        new_note_content,
+    );
 };
 
 const addSaveTask = (

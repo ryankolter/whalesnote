@@ -12,6 +12,8 @@ export const settingPanelTabAtom = atomWithStorage<SettingPanelTab>(
     'interfaceTab',
 );
 
+export const dataPathListAtom = atomWithStorage('whalesnote_data_path_list', []);
+
 export const themeAtom = atomWithStorage(
     'whalesnote_theme',
     window.electronAPI.shouldUseDarkMode() ? 'dark' : 'light',

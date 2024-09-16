@@ -28,6 +28,7 @@ import { usePopUp } from '../../lib/usePopUp';
 import { AlertPopUp } from '../../components/AlertPopUp';
 import { useAtomValue } from 'jotai';
 import { renderFontSizeAtom, themeAtom } from '@/atoms';
+import { join as pathJoin } from 'path';
 
 const lowlight = createLowlight(common);
 
@@ -139,17 +140,10 @@ const ExportNote: React.FC<{}> = ({}) => {
         async (path: string) => {
             const bodyContent = mdPrint.current.render(print_str);
             const colorStyle =
-                (await window.electronAPI.readCssSync({
-                    file_name: '/theme/color_variable.css',
-                })) || '';
+                (await window.electronAPI.readCssSync('/theme/color_variable.css')) || '';
             const hljsStyle =
-                (await window.electronAPI.readCssSync({
-                    file_name: `/hljs_theme/${theme}.css`,
-                })) || '';
-            const renderStyle =
-                (await window.electronAPI.readCssSync({
-                    file_name: '/theme/render.css',
-                })) || '';
+                (await window.electronAPI.readCssSync(`/hljs_theme/${theme}.css`)) || '';
+            const renderStyle = (await window.electronAPI.readCssSync('/theme/render.css')) || '';
             const outerHtml = `<!DOCTYPE html><html style="height: 100%">
         <head>
         <meta charset="UTF-8">
@@ -167,10 +161,7 @@ const ExportNote: React.FC<{}> = ({}) => {
             ${bodyContent}
         </div>
         </body></html>`;
-            await window.electronAPI.writeStr({
-                file_path: path,
-                str: outerHtml,
-            });
+            await window.electronAPI.writeStr(path, outerHtml);
             setExportFinishPopUp(true);
         },
         [print_str, theme, renderFontSize, setExportFinishPopUp],
@@ -178,10 +169,7 @@ const ExportNote: React.FC<{}> = ({}) => {
 
     const saveNoteToMd = useCallback(
         async (path: string) => {
-            await window.electronAPI.writeMd({
-                file_path: path,
-                str: print_str,
-            });
+            await window.electronAPI.writeStr(path, print_str);
             setExportFinishPopUp(true);
         },
         [print_str, setExportFinishPopUp],
@@ -191,17 +179,17 @@ const ExportNote: React.FC<{}> = ({}) => {
         async (type: string) => {
             switch (type) {
                 case 'html':
-                    const htmlFilePath = await window.electronAPI.openSaveDialog({
-                        file_name: currentTitle.replace(/[\\\/:*?"<>|]+/g, '_'),
-                        file_types: ['html'],
-                    });
+                    const htmlFilePath = await window.electronAPI.openSaveDialog(
+                        currentTitle.replace(/[\\\/:*?"<>|]+/g, '_'),
+                        ['html'],
+                    );
                     if (htmlFilePath !== '') await saveNoteToHtml(htmlFilePath);
                     break;
                 case 'md':
-                    const mdFilePath = await window.electronAPI.openSaveDialog({
-                        file_name: currentTitle.replace(/[\\\/:*?"<>|]+/g, '_'),
-                        file_types: ['md'],
-                    });
+                    const mdFilePath = await window.electronAPI.openSaveDialog(
+                        currentTitle.replace(/[\\\/:*?"<>|]+/g, '_'),
+                        ['md'],
+                    );
                     if (mdFilePath !== '') await saveNoteToMd(mdFilePath);
                     break;
                 case 'default':
@@ -218,17 +206,10 @@ const ExportNote: React.FC<{}> = ({}) => {
     const saveFolderToHtml = useCallback(
         async (path: string) => {
             const colorStyle =
-                (await window.electronAPI.readCssSync({
-                    file_name: '/theme/color_variable.css',
-                })) || '';
+                (await window.electronAPI.readCssSync('/theme/color_variable.css')) || '';
             const hljsStyle =
-                (await window.electronAPI.readCssSync({
-                    file_name: `/hljs_theme/${theme}.css`,
-                })) || '';
-            const renderStyle =
-                (await window.electronAPI.readCssSync({
-                    file_name: '/theme/render.css',
-                })) || '';
+                (await window.electronAPI.readCssSync(`/hljs_theme/${theme}.css`)) || '';
+            const renderStyle = (await window.electronAPI.readCssSync('/theme/render.css')) || '';
             const len =
                 whalesnote.repo_map[currentRepoKey]?.folder_map[currentFolderKey]?.note_keys
                     ?.length;
@@ -276,15 +257,16 @@ const ExportNote: React.FC<{}> = ({}) => {
             </div>
             </body></html>`;
 
-                await window.electronAPI.writeStrToFile({
-                    folder_path: path,
-                    file_name:
+                await window.electronAPI.writeStr(
+                    pathJoin(
+                        path,
                         addMultizero(index, String(len).length) +
-                        '.' +
-                        title.replace(/[\\\/:*?"<>|]+/g, '_') +
-                        '.html',
-                    str: outerHtml,
-                });
+                            '.' +
+                            title.replace(/[\\\/:*?"<>|]+/g, '_') +
+                            '.html',
+                    ),
+                    outerHtml,
+                );
             }
             setExportFinishPopUp(true);
         },
@@ -319,15 +301,16 @@ const ExportNote: React.FC<{}> = ({}) => {
                 }
                 if (repeated_time > 1) title += '' + note_key;
                 const content = notes[currentRepoKey][currentFolderKey][note_key];
-                await window.electronAPI.writeStrToFile({
-                    folder_path: path,
-                    file_name:
+                await window.electronAPI.writeStr(
+                    pathJoin(
+                        path,
                         addMultizero(index, String(len).length) +
-                        '.' +
-                        title.replace(/[\\\/:*?"<>|]+/g, '_') +
-                        '.md',
-                    str: content,
-                });
+                            '.' +
+                            title.replace(/[\\\/:*?"<>|]+/g, '_') +
+                            '.md',
+                    ),
+                    content,
+                );
             }
             setExportFinishPopUp(true);
         },

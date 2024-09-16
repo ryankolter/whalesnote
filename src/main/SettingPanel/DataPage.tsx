@@ -29,7 +29,7 @@ const DataPage: React.FC<{}> = ({}) => {
     }, []);
 
     const openDataPath = useCallback(async (data_path: string) => {
-        await window.electronAPI.openParentFolder({ folder_path: data_path });
+        await window.electronAPI.openParentFolder(data_path);
     }, []);
 
     const removeDataSpaceConfirm = useCallback(() => {

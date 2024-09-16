@@ -7,10 +7,8 @@ const useDataList = () => {
         const new_data_path_list = [];
         for (const data_path of data_path_list) {
             if (
-                (await window.electronAPI.checkFolderExist({ folder_path: data_path })) &&
-                (await window.electronAPI.checkFileExist({
-                    file_path: data_path + '/whalesnote_info.json',
-                }))
+                (await window.electronAPI.checkPathExist(data_path)) &&
+                (await window.electronAPI.checkPathExist(data_path + '/whalesnote_info.json'))
             ) {
                 new_data_path_list.push(data_path);
             }
@@ -28,7 +26,7 @@ const useDataList = () => {
                 setDataPathList((dataPathList) => [...dataPathList, data_path]);
             }
         },
-        [dataPathList, setDataPathList]
+        [dataPathList, setDataPathList],
     );
 
     const removeDataPathFromList = useCallback(
@@ -39,7 +37,7 @@ const useDataList = () => {
             }
             setDataPathList(newDataPathList);
         },
-        [dataPathList, setDataPathList]
+        [dataPathList, setDataPathList],
     );
 
     useEffect(() => {
@@ -47,7 +45,7 @@ const useDataList = () => {
             let data_path_list: string[] = [];
             try {
                 data_path_list = JSON.parse(
-                    window.localStorage.getItem('whalesnote_data_path_list') || '[]'
+                    window.localStorage.getItem('whalesnote_data_path_list') || '[]',
                 );
             } catch (e) {
                 window.localStorage.setItem('whalesnote_data_path_list', '[]');

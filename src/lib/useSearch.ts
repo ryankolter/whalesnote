@@ -139,9 +139,7 @@ const useSearch = () => {
 
     const loadSearchJson = useCallback(async () => {
         window.electronAPI
-            .readJsonAsync({
-                file_path: `${curDataPath}/search.json`,
-            })
+            .readJsonAsync(`${curDataPath}/search.json`)
             .then((search: AsPlainObject) => {
                 setInitProgress(75);
                 setNeedGenerateIndex(false);
@@ -149,19 +147,15 @@ const useSearch = () => {
                     miniSearch.current = MiniSearch.loadJS(search, {
                         fields: ['title', 'content'],
                         storeFields: ['id', 'type', 'title', 'folder_name'],
-                        tokenize: (string, _fieldName) => {
-                            const result = window.electronAPI.nodejieba({
-                                word: string,
-                            });
+                        tokenize: (str, _fieldName) => {
+                            const result = window.electronAPI.nodejieba(str);
                             return result;
                         },
                         searchOptions: {
                             boost: { title: 2 },
                             fuzzy: 0.2,
-                            tokenize: (string: string) => {
-                                let result = window.electronAPI.nodejieba({
-                                    word: string,
-                                });
+                            tokenize: (str: string) => {
+                                let result = window.electronAPI.nodejieba(str);
                                 result = result.filter((w: string) => w !== ' ');
                                 return result;
                             },
@@ -208,9 +202,9 @@ const useSearch = () => {
 
         setTimeout(async () => {
             await loadDictionary();
-            const whalesnote_info = await window.electronAPI.readJsonSync({
-                file_path: `${curDataPath}/whalesnote_info.json`,
-            });
+            const whalesnote_info = await window.electronAPI.readJsonSync(
+                `${curDataPath}/whalesnote_info.json`,
+            );
 
             const newWhalesnote: WhaleObject = {
                 repo_keys: [],
@@ -218,9 +212,9 @@ const useSearch = () => {
             };
 
             for await (const repo_key of whalesnote_info.repos_key) {
-                const repo_info = await window.electronAPI.readJsonSync({
-                    file_path: `${curDataPath}/${repo_key}/repo_info.json`,
-                });
+                const repo_info = await window.electronAPI.readJsonSync(
+                    `${curDataPath}/${repo_key}/repo_info.json`,
+                );
                 if (repo_info) {
                     newWhalesnote.repo_keys.push(repo_key);
                     newWhalesnote.repo_map[repo_key] = {
@@ -229,9 +223,9 @@ const useSearch = () => {
                         folder_map: {},
                     };
                     for await (const folder_key of repo_info.folder_keys) {
-                        const folder_info = await window.electronAPI.readJsonSync({
-                            file_path: `${curDataPath}/${repo_key}/${folder_key}/folder_info.json`,
-                        });
+                        const folder_info = await window.electronAPI.readJsonSync(
+                            `${curDataPath}/${repo_key}/${folder_key}/folder_info.json`,
+                        );
                         if (repo_info.folders_obj[folder_key]) {
                             folder_info.folder_name = repo_info.folders_obj[folder_key].folder_name;
                         }
@@ -257,9 +251,9 @@ const useSearch = () => {
                         if (folder_map[folder_key]) {
                             const folder_name = folder_map[folder_key].folder_name;
                             for (const note_key of folder_map[folder_key].note_keys) {
-                                const content = await window.electronAPI.readMdSync({
-                                    file_path: `${curDataPath}/${repo_key}/${folder_key}/${note_key}.md`,
-                                });
+                                const content = await window.electronAPI.readMdSync(
+                                    `${curDataPath}/${repo_key}/${folder_key}/${note_key}.md`,
+                                );
                                 if (content) {
                                     const id = `${repo_key}-${folder_key}-${note_key}`;
                                     let title =
@@ -281,19 +275,15 @@ const useSearch = () => {
             miniSearch.current = new MiniSearch({
                 fields: ['title', 'content'],
                 storeFields: ['id', 'type', 'title', 'folder_name'],
-                tokenize: (string, _fieldName) => {
-                    const result: string[] = window.electronAPI.nodejieba({
-                        word: string,
-                    });
+                tokenize: (str, _fieldName) => {
+                    const result: string[] = window.electronAPI.nodejieba(str);
                     return result;
                 },
                 searchOptions: {
                     boost: { title: 2 },
                     fuzzy: 0.2,
-                    tokenize: (string: string) => {
-                        let result = window.electronAPI.nodejieba({
-                            word: string,
-                        });
+                    tokenize: (str: string) => {
+                        let result = window.electronAPI.nodejieba(str);
                         result = result.filter((w: string) => w !== ' ');
                         return result;
                     },
@@ -301,10 +291,10 @@ const useSearch = () => {
             });
             miniSearch.current.addAll(documents);
 
-            await window.electronAPI.writeStr({
-                file_path: `${curDataPath}/search.json`,
-                str: JSON.stringify(miniSearch.current),
-            });
+            await window.electronAPI.writeStr(
+                `${curDataPath}/search.json`,
+                JSON.stringify(miniSearch.current),
+            );
 
             setNeedGenerateIndex(false);
             setShowWaitingMask(false);

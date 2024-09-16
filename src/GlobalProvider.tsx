@@ -164,7 +164,7 @@ const initContext: {
 export const GlobalContext = createContext(initContext);
 
 export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
-    const [data, curDataPath, setCurDataPath, dataPathChangeFlag, dataInitingFlag] = useData();
+    const [data, curDataPath, setCurDataPath, dataIsLoading] = useData();
     const [dataPathList, addDataPathToList, removeDataPathFromList] = useDataList();
     const [history, { initHistory, repoSwitch, folderSwitch, noteSwitch }] = useHistory();
     const [

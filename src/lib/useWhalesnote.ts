@@ -1,415 +1,289 @@
-import { useCallback, useReducer, useRef } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { produce } from 'immer';
 import { WhaleObject } from '../commonType';
 
-const whalesnoteReducer = produce((state: WhaleObject, action: any) => {
-    switch (action.type) {
-        case 'init': {
-            state = action.new_state;
-            return state;
-        }
-
-        case 'fetch_note_into_in_folder': {
-            state.repo_map[action.repo_key].folder_map[action.folder_key] = {
-                ...state.repo_map[action.repo_key].folder_map[action.folder_key],
-                note_keys: action.folder_info.notes_key,
-                note_map: action.folder_info.notes_obj,
-            };
-            return state;
-        }
-
-        case 'new_repo': {
-            state.repo_keys = [...state.repo_keys, action.repo_key];
-            state.repo_map[action.repo_key] = {
-                ...action.repo_info,
-                folder_map: {},
-            };
-            return state;
-        }
-        case 'rename_repo': {
-            state.repo_map[action.repo_key].repo_name = action.new_repo_name;
-            return state;
-        }
-        case 'reorder_repo': {
-            state.repo_keys = action.new_repo_keys;
-            return state;
-        }
-        case 'delete_repo': {
-            state.repo_keys = action.remain_repo_keys;
-            delete state.repo_map[action.repo_key];
-            return state;
-        }
-
-        case 'new_folder': {
-            state.repo_map[action.repo_key].folder_keys = [
-                ...state.repo_map[action.repo_key].folder_keys,
-                action.new_folder_key,
-            ];
-            state.repo_map[action.repo_key].folder_map[action.new_folder_key] = action.folder_info;
-            return state;
-        }
-        case 'rename_folder': {
-            state.repo_map[action.repo_key].folder_map[action.folder_key].folder_name =
-                action.new_folder_name;
-            return state;
-        }
-        case 'reorder_folder': {
-            state.repo_map[action.repo_key].folder_keys = action.new_folder_keys;
-            return state;
-        }
-        case 'delete_folder': {
-            state.repo_map[action.repo_key].folder_keys = action.remaining_folder_keys;
-            delete state.repo_map[action.repo_key].folder_map[action.folder_key];
-            return state;
-        }
-
-        case 'new_note': {
-            state.repo_map[action.repo_key].folder_map[action.folder_key].note_keys = [
-                ...state.repo_map[action.repo_key].folder_map[action.folder_key].note_keys,
-                action.new_note_key,
-            ];
-            state.repo_map[action.repo_key].folder_map[action.folder_key].note_map[
-                action.new_note_key
-            ] = {
-                title: action.new_note_title,
-            };
-
-            return state;
-        }
-        case 'rename_note': {
-            state.repo_map[action.repo_key].folder_map[action.folder_key].note_map[
-                action.note_key
-            ].title = action.new_title;
-            return state;
-        }
-        case 'reorder_note': {
-            state.repo_map[action.repo_key].folder_map[action.folder_key].note_keys =
-                action.new_note_keys;
-            return state;
-        }
-        case 'delete_note': {
-            state.repo_map[action.repo_key].folder_map[action.folder_key].note_keys =
-                action.remaining_note_keys;
-            delete state.repo_map[action.repo_key].folder_map[action.folder_key].note_map[
-                action.note_key
-            ];
-            return state;
-        }
-    }
-});
-
 const useWhalesnote = () => {
-    const lastState = useRef<WhaleObject>({
-        repo_keys: [],
-        repo_map: {},
-    });
-    const getState = useCallback(() => lastState.current, []);
-    const [state, dispatch] = useReducer(
-        (state: WhaleObject, action: any) => (lastState.current = whalesnoteReducer(state, action)),
-        {
-            repo_keys: [],
-            repo_map: {},
-        },
-    );
+    const [whales, setWhales] = useState<Record<string, WhaleObject>>({});
+
     const renameSaveTimerObj = useRef<Map<string, NodeJS.Timeout>>(new Map());
 
-    const initwhalesnote = useCallback(
-        (newWhalesnote: WhaleObject) => dispatch({ type: 'init', new_state: newWhalesnote }),
-        [],
+    const addWhale = useCallback(
+        (id: string, obj: WhaleObject) => {
+            if (whales[id]) return;
+            produce(whales, (draft) => {
+                draft[id] = obj;
+            });
+        },
+        [whales],
     );
 
-    const fetchNotesInfoInFolder = useCallback(
-        async (
-            cur_data_path: string,
-            repo_key: string | undefined,
-            folder_key: string | undefined,
-        ) => {
-            if (repo_key && folder_key) {
-                if (!getState().repo_map[repo_key].folder_map[folder_key].note_keys) {
-                    const folder_info = await window.electronAPI.readJsonSync({
-                        file_path: `${cur_data_path}/${repo_key}/${folder_key}/folder_info.json`,
-                    });
+    const fetchFolderMap = useCallback(
+        async (id: string, repo_key: string | undefined, folder_key: string | undefined) => {
+            if (!repo_key || !folder_key) return;
 
-                    dispatch({
-                        type: 'fetch_note_into_in_folder',
-                        repo_key,
-                        folder_key,
-                        folder_info,
-                    });
-                }
-            }
+            const folderInfo = await window.electronAPI.readJsonSync(
+                `${cur_data_path}/${repo_key}/${folder_key}/folderInfo.json`,
+            );
+            if (!folderInfo) return;
+
+            produce(whales, (draft) => {
+                const folderMap = draft[id].repo_map[repo_key].folder_map;
+                folderMap[folder_key] = {
+                    folder_name: folderMap[folder_key].folder_name,
+                    note_keys: folderInfo.notes_key,
+                    note_map: folderInfo.notes_obj,
+                };
+            });
         },
-        [],
+        [whales],
     );
 
     const newRepo = useCallback(
-        async (cur_data_path: string, repo_key: string, repo_name: string) => {
-            const whalesnote_info = await window.electronAPI.readJsonSync({
-                file_path: `${cur_data_path}/whalesnote_info.json`,
-            });
-            whalesnote_info.repos_key.push(repo_key);
-            await window.electronAPI.writeJson({
-                file_path: `${cur_data_path}/whalesnote_info.json`,
-                obj: whalesnote_info,
-            });
+        async (id: string, repo_key: string | undefined, repo_name: string) => {
+            if (!repo_key) return;
 
-            const repo_info = {
+            const whaleInfo = await window.electronAPI.readJsonSync(
+                `${cur_data_path}/whaleInfo.json`,
+            );
+            if (!whaleInfo) return;
+
+            whaleInfo.repos_key.push(repo_key);
+            await window.electronAPI.writeJson(`${cur_data_path}/whaleInfo.json`, whaleInfo);
+
+            const repoInfo = {
                 repo_name,
                 folders_key: [],
                 folders_obj: {},
             };
-            await window.electronAPI.writeJson({
-                file_path: `${cur_data_path}/${repo_key}/repo_info.json`,
-                obj: repo_info,
-            });
+            await window.electronAPI.writeJson(
+                `${cur_data_path}/${repo_key}/repo_info.json`,
+                repoInfo,
+            );
 
-            dispatch({
-                type: 'new_repo',
-                repo_info,
-                repo_key,
+            produce(whales, (draft) => {
+                draft[id].repo_keys.push(repo_key);
+                draft[id].repo_map[repo_key] = {
+                    repo_name,
+                    folder_keys: [],
+                    folder_map: {},
+                };
             });
         },
-        [],
+        [whales],
     );
 
     const renameRepo = useCallback(
-        async (cur_data_path: string, repo_key: string, new_repo_name: string) => {
-            const repo_info = await window.electronAPI.readJsonSync({
-                file_path: `${cur_data_path}/${repo_key}/repo_info.json`,
-            });
+        async (id: string, repo_key: string | undefined, new_repo_name: string) => {
+            if (!repo_key) return;
+            const repo_info = await window.electronAPI.readJsonSync(
+                `${cur_data_path}/${repo_key}/repo_info.json`,
+            );
             repo_info.repo_name = new_repo_name;
-            await window.electronAPI.writeJson({
-                file_path: `${cur_data_path}/${repo_key}/repo_info.json`,
-                obj: repo_info,
-            });
+            await window.electronAPI.writeJson(
+                `${cur_data_path}/${repo_key}/repo_info.json`,
+                repo_info,
+            );
 
-            dispatch({
-                type: 'rename_repo',
-                repo_key,
-                new_repo_name,
+            produce(whales, (draft) => {
+                draft[id].repo_map[repo_key].repo_name = new_repo_name;
             });
         },
-        [],
+        [whales],
     );
 
     const reorderRepo = useCallback(
-        async (cur_data_path: string, repo_key: string, new_repo_keys: string[]) => {
-            if (repo_key) {
-                const whalesnote_info = await window.electronAPI.readJsonSync({
-                    file_path: `${cur_data_path}/whalesnote_info.json`,
-                });
-                whalesnote_info.repos_key = new_repo_keys;
-                await window.electronAPI.writeJson({
-                    file_path: `${cur_data_path}/whalesnote_info.json`,
-                    obj: whalesnote_info,
-                });
-                dispatch({
-                    type: 'reorder_repo',
-                    cur_data_path,
-                    repo_key,
-                    new_repo_keys,
-                });
-            }
+        async (id: string, repo_key: string | undefined, new_repo_keys: string[]) => {
+            if (!repo_key) return;
+            const whaleInfo = await window.electronAPI.readJsonSync(
+                `${cur_data_path}/whaleInfo.json`,
+            );
+            whaleInfo.repos_key = new_repo_keys;
+            await window.electronAPI.writeJson(`${cur_data_path}/whaleInfo.json`, whaleInfo);
+
+            produce(whales, (draft) => {
+                draft[id].repo_keys = new_repo_keys;
+            });
         },
-        [],
+        [whales],
     );
 
-    const deleteRepo = useCallback(async (cur_data_path: string, repo_key: string) => {
-        let trash = await window.electronAPI.readJsonSync({
-            file_path: `${cur_data_path}/trash.json`,
-        });
-        trash = trash ? trash : {};
+    const deleteRepo = useCallback(
+        async (id: string, repo_key: string | undefined) => {
+            if (!repo_key) return;
+            const trash =
+                (await window.electronAPI.readJsonSync(`${cur_data_path}/trash.json`)) || {};
 
-        const repo_info = await window.electronAPI.readJsonSync({
-            file_path: `${cur_data_path}/${repo_key}/repo_info.json`,
-        });
-        for (const folder_key of repo_info.folder_keys) {
-            const folder_info = await window.electronAPI.readJsonSync({
-                file_path: `${cur_data_path}/${repo_key}/${folder_key}/folder_info.json`,
-            });
-            for (const note_key of folder_info.note_keys) {
-                const note_content = await window.electronAPI.readMdSync({
-                    file_path: `${cur_data_path}/${repo_key}/${folder_key}/${note_key}.md`,
-                });
+            const repo_info = await window.electronAPI.readJsonSync(
+                `${cur_data_path}/${repo_key}/repo_info.json`,
+            );
+            for (const folder_key of repo_info.folder_keys) {
+                const folderInfo = await window.electronAPI.readJsonSync(
+                    `${cur_data_path}/${repo_key}/${folder_key}/folderInfo.json`,
+                );
+                for (const note_key of folderInfo.note_keys) {
+                    const note_content = await window.electronAPI.readMdSync(
+                        `${cur_data_path}/${repo_key}/${folder_key}/${note_key}.md`,
+                    );
 
-                trash[
-                    `${repo_key}-${folder_key}-${note_key}-${folder_info.notes_obj[note_key]?.title}`
-                ] = note_content;
-            }
-        }
-        await window.electronAPI.writeJson({
-            file_path: `${cur_data_path}/trash.json`,
-            obj: trash,
-        });
-
-        const whalesnote_info = await window.electronAPI.readJsonSync({
-            file_path: `${cur_data_path}/whalesnote_info.json`,
-        });
-        const remain_repo_keys: string[] = [];
-        let other_repo_key = undefined;
-        whalesnote_info.repos_key.forEach((key: string, index: number) => {
-            if (key === repo_key) {
-                if (whalesnote_info.repos_key.length > 1) {
-                    if (index === whalesnote_info.repos_key.length - 1) {
-                        other_repo_key = whalesnote_info.repos_key[index - 1];
-                    } else {
-                        other_repo_key = whalesnote_info.repos_key[index + 1];
-                    }
+                    trash[
+                        `${repo_key}-${folder_key}-${note_key}-${folderInfo.notes_obj[note_key]?.title}`
+                    ] = note_content;
                 }
-            } else {
-                remain_repo_keys.push(key);
             }
-        });
-        whalesnote_info.repos_key = remain_repo_keys;
-        await window.electronAPI.writeJson({
-            file_path: `${cur_data_path}/whalesnote_info.json`,
-            obj: whalesnote_info,
-        });
+            await window.electronAPI.writeJson(`${cur_data_path}/trash.json`, trash);
 
-        const history_info = await window.electronAPI.readJsonSync({
-            file_path: `${cur_data_path}/history_info.json`,
-        });
-        if (history_info.repos_record[repo_key]) {
-            delete history_info.repos_record[repo_key];
-        }
-        await window.electronAPI.writeJson({
-            file_path: `${cur_data_path}/history_info.json`,
-            obj: history_info,
-        });
+            const whaleInfo = await window.electronAPI.readJsonSync(
+                `${cur_data_path}/whaleInfo.json`,
+            );
+            const remainRepoKeys: string[] = [];
+            let otherRepoKey = undefined;
+            whaleInfo.repos_key.forEach((key: string, index: number) => {
+                if (key === repo_key) {
+                    if (whaleInfo.repos_key.length > 1) {
+                        if (index === whaleInfo.repos_key.length - 1) {
+                            otherRepoKey = whaleInfo.repos_key[index - 1];
+                        } else {
+                            otherRepoKey = whaleInfo.repos_key[index + 1];
+                        }
+                    }
+                } else {
+                    remainRepoKeys.push(key);
+                }
+            });
+            whaleInfo.repos_key = remainRepoKeys;
+            await window.electronAPI.writeJson(`${cur_data_path}/whaleInfo.json`, whaleInfo);
 
-        await window.electronAPI.remove({
-            file_path: `${cur_data_path}/${repo_key}`,
-        });
+            const history_info = await window.electronAPI.readJsonSync(
+                `${cur_data_path}/history_info.json`,
+            );
+            if (history_info.repos_record[repo_key]) {
+                delete history_info.repos_record[repo_key];
+            }
+            await window.electronAPI.writeJson(`${cur_data_path}/history_info.json`, history_info);
 
-        dispatch({
-            type: 'delete_repo',
-            repo_key,
-            remain_repo_keys,
-        });
+            await window.electronAPI.remove(`${cur_data_path}/${repo_key}`);
 
-        return other_repo_key;
-    }, []);
+            produce(whales, (draft) => {
+                draft[id].repo_keys = remainRepoKeys;
+                delete draft[id].repo_map[repo_key];
+            });
+
+            return otherRepoKey;
+        },
+        [whales],
+    );
 
     const newFolder = useCallback(
         async (
-            cur_data_path: string,
-            repo_key: string,
+            id: string,
+            repo_key: string | undefined,
             new_folder_key: string,
             new_folder_name: string,
         ) => {
-            const repo_info = await window.electronAPI.readJsonSync({
-                file_path: `${cur_data_path}/${repo_key}/repo_info.json`,
-            });
+            if (!repo_key) return;
+
+            const repo_info = await window.electronAPI.readJsonSync(
+                `${cur_data_path}/${repo_key}/repo_info.json`,
+            );
             repo_info.folder_keys.push(new_folder_key);
             repo_info.folders_obj[new_folder_key] = {
                 folder_name: new_folder_name,
             };
-            await window.electronAPI.writeJson({
-                file_path: `${cur_data_path}/${repo_key}/repo_info.json`,
-                obj: repo_info,
-            });
+            await window.electronAPI.writeJson(
+                `${cur_data_path}/${repo_key}/repo_info.json`,
+                repo_info,
+            );
 
             const save_folder_info = {
                 note_keys: [],
                 note_map: {},
             };
-            await window.electronAPI.writeJson({
-                file_path: `${cur_data_path}/${repo_key}/${new_folder_key}/folder_info.json`,
-                obj: save_folder_info,
-            });
+            await window.electronAPI.writeJson(
+                `${cur_data_path}/${repo_key}/${new_folder_key}/folderInfo.json`,
+                save_folder_info,
+            );
 
-            const folder_info = {
+            const folderInfo = {
                 ...save_folder_info,
                 folder_name: new_folder_name,
             };
 
-            dispatch({
-                type: 'new_folder',
-                repo_key,
-                new_folder_key,
-                folder_info,
+            produce(whales, (draft) => {
+                draft[id].repo_map[repo_key].folder_keys.push(new_folder_key);
+                draft[id].repo_map[repo_key].folder_map[new_folder_key] = folderInfo;
             });
         },
-        [],
+        [whales],
     );
 
     const renameFolder = useCallback(
         async (
-            cur_data_path: string,
-            repo_key: string,
-            folder_key: string,
+            id: string,
+            repo_key: string | undefined,
+            folder_key: string | undefined,
             new_folder_name: string,
         ) => {
-            const repo_info = await window.electronAPI.readJsonSync({
-                file_path: `${cur_data_path}/${repo_key}/repo_info.json`,
-            });
+            if (!repo_key || !folder_key) return;
+
+            const repo_info = await window.electronAPI.readJsonSync(
+                `${cur_data_path}/${repo_key}/repo_info.json`,
+            );
             repo_info.folders_obj[folder_key].folder_name = new_folder_name;
-            await window.electronAPI.writeJson({
-                file_path: `${cur_data_path}/${repo_key}/repo_info.json`,
-                obj: repo_info,
-            });
-            dispatch({
-                type: 'rename_folder',
-                repo_key,
-                folder_key,
-                new_folder_name,
+            await window.electronAPI.writeJson(
+                `${cur_data_path}/${repo_key}/repo_info.json`,
+                repo_info,
+            );
+            produce(whales, (draft) => {
+                draft[id].repo_map[repo_key].folder_map[folder_key].folder_name = new_folder_name;
             });
         },
-        [],
+        [whales],
     );
 
     const reorderFolder = useCallback(
-        async (cur_data_path: string, repo_key: string, new_folder_keys: string[]) => {
-            if (repo_key) {
-                const repo_info = await window.electronAPI.readJsonSync({
-                    file_path: `${cur_data_path}/${repo_key}/repo_info.json`,
-                });
-                repo_info.folder_keys = new_folder_keys;
-                await window.electronAPI.writeJson({
-                    file_path: `${cur_data_path}/${repo_key}/repo_info.json`,
-                    obj: repo_info,
-                });
-
-                dispatch({
-                    type: 'reorder_folder',
-                    cur_data_path,
-                    repo_key,
-                    new_folder_keys,
-                });
-            }
+        async (id: string, repo_key: string | undefined, new_folder_keys: string[]) => {
+            if (!repo_key) return;
+            const repo_info = await window.electronAPI.readJsonSync(
+                `${cur_data_path}/${repo_key}/repo_info.json`,
+            );
+            repo_info.folder_keys = new_folder_keys;
+            await window.electronAPI.writeJson(
+                `${cur_data_path}/${repo_key}/repo_info.json`,
+                repo_info,
+            );
+            produce(whales, (draft) => {
+                draft[id].repo_map[repo_key].folder_keys = new_folder_keys;
+            });
         },
-        [],
+        [whales],
     );
 
     const deleteFolder = useCallback(
-        async (cur_data_path: string, repo_key: string, folder_key: string) => {
-            const folder_info = await window.electronAPI.readJsonSync({
-                file_path: `${cur_data_path}/${repo_key}/${folder_key}/folder_info.json`,
-            });
+        async (id: string, repo_key: string | undefined, folder_key: string | undefined) => {
+            if (!repo_key || !folder_key) return;
 
-            let trash = await window.electronAPI.readJsonSync({
-                file_path: `${cur_data_path}/trash.json`,
-            });
+            const folderInfo = await window.electronAPI.readJsonSync(
+                `${cur_data_path}/${repo_key}/${folder_key}/folderInfo.json`,
+            );
 
-            trash = trash ? trash : {};
+            const trash =
+                (await window.electronAPI.readJsonSync(`${cur_data_path}/trash.json`)) ||
+                ({} as Record<string, string>);
 
-            for (const note_key of folder_info.note_keys) {
-                const note_content = await window.electronAPI.readMdSync({
-                    file_path: `${cur_data_path}/${repo_key}/${folder_key}/${note_key}.md`,
-                });
+            for (const note_key of folderInfo.note_keys) {
+                const note_content = await window.electronAPI.readMdSync(
+                    `${cur_data_path}/${repo_key}/${folder_key}/${note_key}.md`,
+                );
                 trash[
-                    `${repo_key}-${folder_key}-${note_key}-${folder_info.notes_obj[note_key].title}`
+                    `${repo_key}-${folder_key}-${note_key}-${folderInfo.notes_obj[note_key].title}`
                 ] = note_content;
             }
 
-            await window.electronAPI.writeJson({
-                file_path: `${cur_data_path}/trash.json`,
-                obj: trash,
-            });
+            await window.electronAPI.writeJson(`${cur_data_path}/trash.json`, trash);
 
-            const repo_info = await window.electronAPI.readJsonSync({
-                file_path: `${cur_data_path}/${repo_key}/repo_info.json`,
-            });
+            const repo_info = await window.electronAPI.readJsonSync(
+                `${cur_data_path}/${repo_key}/repo_info.json`,
+            );
 
             const remaining_folder_keys: string[] = [];
             let next_folder_key = undefined;
@@ -431,220 +305,200 @@ const useWhalesnote = () => {
             repo_info.folder_keys = remaining_folder_keys;
             delete repo_info.folders_obj[folder_key];
 
-            await window.electronAPI.writeJson({
-                file_path: `${cur_data_path}/${repo_key}/repo_info.json`,
-                obj: repo_info,
-            });
+            await window.electronAPI.writeJson(
+                `${cur_data_path}/${repo_key}/repo_info.json`,
+                repo_info,
+            );
 
-            await window.electronAPI.remove({
-                file_path: `${cur_data_path}/${repo_key}/${folder_key}`,
-            });
+            await window.electronAPI.remove(`${cur_data_path}/${repo_key}/${folder_key}`);
 
-            dispatch({
-                type: 'delete_folder',
-                repo_key,
-                folder_key,
-                remaining_folder_keys,
+            produce(whales, (draft) => {
+                draft[id].repo_map[repo_key].folder_keys = remaining_folder_keys;
+                delete draft[id].repo_map[repo_key].folder_map[folder_key];
             });
 
             return next_folder_key;
         },
-        [],
+        [whales],
     );
 
     const newNote = useCallback(
         async (
-            cur_data_path: string,
-            repo_key: string,
-            folder_key: string,
-            new_note_key: string,
+            id: string,
+            repo_key: string | undefined,
+            folder_key: string | undefined,
+            new_note_key: string | undefined,
             new_note_title: string,
         ) => {
-            const folder_info = await window.electronAPI.readJsonSync({
-                file_path: `${cur_data_path}/${repo_key}/${folder_key}/folder_info.json`,
-            });
+            if (!repo_key || !folder_key || !new_note_key) return;
 
-            folder_info.note_keys.push(new_note_key);
-            folder_info.notes_obj[new_note_key] = {
+            const folderInfo = await window.electronAPI.readJsonSync(
+                `${cur_data_path}/${repo_key}/${folder_key}/folderInfo.json`,
+            );
+
+            folderInfo.note_keys.push(new_note_key);
+            folderInfo.notes_obj[new_note_key] = {
                 title: new_note_title,
             };
 
-            await window.electronAPI.writeJson({
-                file_path: `${cur_data_path}/${repo_key}/${folder_key}/folder_info.json`,
-                obj: folder_info,
-            });
+            await window.electronAPI.writeJson(
+                `${cur_data_path}/${repo_key}/${folder_key}/folderInfo.json`,
+                folderInfo,
+            );
 
             const note_content = '';
 
-            await window.electronAPI.writeMd({
-                file_path: `${cur_data_path}/${repo_key}/${folder_key}/${new_note_key}.md`,
-                str: note_content,
-            });
+            await window.electronAPI.writeStr(
+                `${cur_data_path}/${repo_key}/${folder_key}/${new_note_key}.md`,
+                note_content,
+            );
 
-            dispatch({
-                type: 'new_note',
-                repo_key,
-                folder_key,
-                new_note_key,
-                new_note_title,
+            produce(whales, (draft) => {
+                draft[id].repo_map[repo_key].folder_map[folder_key].note_keys.push(new_note_key);
+                draft[id].repo_map[repo_key].folder_map[folder_key].note_map[new_note_key] = {
+                    title: new_note_title,
+                };
             });
         },
-        [],
+        [whales],
     );
 
     const renameSaveNow = useCallback(
         async (
-            cur_data_path: string,
-            repo_key: string,
-            folder_key: string,
+            id: string,
+            repo_key: string | undefined,
+            folder_key: string | undefined,
             note_key: string,
             new_title: string,
         ) => {
-            const old_title =
-                getState().repo_map[repo_key].folder_map[folder_key].note_map[note_key].title;
-            if (old_title !== new_title) {
-                const folder_info = await window.electronAPI.readJsonSync({
-                    file_path: `${cur_data_path}/${repo_key}/${folder_key}/folder_info.json`,
-                });
-                folder_info.notes_obj[note_key].title = new_title;
-                await window.electronAPI.writeJson({
-                    file_path: `${cur_data_path}/${repo_key}/${folder_key}/folder_info.json`,
-                    obj: folder_info,
-                });
+            if (!repo_key || !folder_key || !note_key) return;
 
-                dispatch({
-                    type: 'rename_note',
-                    cur_data_path,
-                    repo_key,
-                    folder_key,
-                    note_key,
-                    new_title,
+            const old_title =
+                whales[id].repo_map[repo_key].folder_map[folder_key].note_map[note_key].title;
+            if (old_title !== new_title) {
+                const folderInfo = await window.electronAPI.readJsonSync(
+                    `${cur_data_path}/${repo_key}/${folder_key}/folderInfo.json`,
+                );
+                folderInfo.notes_obj[note_key].title = new_title;
+                await window.electronAPI.writeJson(
+                    `${cur_data_path}/${repo_key}/${folder_key}/folderInfo.json`,
+                    folderInfo,
+                );
+
+                produce(whales, (draft) => {
+                    draft[id].repo_map[repo_key].folder_map[folder_key].note_map[note_key].title =
+                        new_title;
                 });
             }
         },
-        [],
+        [whales],
     );
 
     const renameNote = useCallback(
         async (
-            cur_data_path: string,
-            repo_key: string,
-            folder_key: string,
-            note_key: string,
+            id: string,
+            repo_key: string | undefined,
+            folder_key: string | undefined,
+            note_key: string | undefined,
             new_title: string,
         ) => {
-            if (repo_key && folder_key && note_key) {
-                if (renameSaveTimerObj.current.has(note_key)) {
-                    clearTimeout(renameSaveTimerObj.current.get(note_key) as NodeJS.Timeout);
-                }
-
-                renameSaveTimerObj.current.set(
-                    note_key,
-                    setTimeout(async () => {
-                        await renameSaveNow(
-                            cur_data_path,
-                            repo_key,
-                            folder_key,
-                            note_key,
-                            new_title,
-                        );
-                        renameSaveTimerObj.current.delete(note_key);
-                    }, 300),
-                );
+            if (!repo_key || !folder_key || !note_key) return;
+            if (renameSaveTimerObj.current.has(note_key)) {
+                clearTimeout(renameSaveTimerObj.current.get(note_key) as NodeJS.Timeout);
             }
+
+            renameSaveTimerObj.current.set(
+                note_key,
+                setTimeout(async () => {
+                    await renameSaveNow(cur_data_path, repo_key, folder_key, note_key, new_title);
+                    renameSaveTimerObj.current.delete(note_key);
+                }, 300),
+            );
         },
-        [],
+        [whales],
     );
 
     const reorderNote = useCallback(
         async (
-            cur_data_path: string,
-            repo_key: string,
-            folder_key: string,
+            id: string,
+            repo_key: string | undefined,
+            folder_key: string | undefined,
             new_note_keys: string[],
         ) => {
-            if (repo_key && folder_key) {
-                const folder_info = await window.electronAPI.readJsonSync({
-                    file_path: `${cur_data_path}/${repo_key}/${folder_key}/folder_info.json`,
-                });
-                folder_info.note_keys = new_note_keys;
-                await window.electronAPI.writeJson({
-                    file_path: `${cur_data_path}/${repo_key}/${folder_key}/folder_info.json`,
-                    obj: folder_info,
-                });
+            if (!repo_key || !folder_key) return;
+            const folderInfo = await window.electronAPI.readJsonSync(
+                `${cur_data_path}/${repo_key}/${folder_key}/folderInfo.json`,
+            );
+            folderInfo.note_keys = new_note_keys;
+            await window.electronAPI.writeJson(
+                `${cur_data_path}/${repo_key}/${folder_key}/folderInfo.json`,
+                folderInfo,
+            );
 
-                dispatch({
-                    type: 'reorder_note',
-                    cur_data_path,
-                    repo_key,
-                    folder_key,
-                    new_note_keys,
-                });
-            }
+            produce(whales, (draft) => {
+                draft[id].repo_map[repo_key].folder_map[folder_key].note_keys = new_note_keys;
+            });
         },
-        [],
+        [whales],
     );
 
     const deleteNote = useCallback(
-        async (cur_data_path: string, repo_key: string, folder_key: string, note_key: string) => {
-            const folder_info = await window.electronAPI.readJsonSync({
-                file_path: `${cur_data_path}/${repo_key}/${folder_key}/folder_info.json`,
-            });
+        async (
+            id: string,
+            repo_key: string | undefined,
+            folder_key: string | undefined,
+            note_key: string | undefined,
+        ) => {
+            if (!repo_key || !folder_key || !note_key) return;
 
-            const note_content = await window.electronAPI.readMdSync({
-                file_path: `${cur_data_path}/${repo_key}/${folder_key}/${note_key}.md`,
-            });
+            const folderInfo = await window.electronAPI.readJsonSync(
+                `${cur_data_path}/${repo_key}/${folder_key}/folderInfo.json`,
+            );
 
-            let trash = await window.electronAPI.readJsonSync({
-                file_path: `${cur_data_path}/trash.json`,
-            });
+            const note_content = await window.electronAPI.readMdSync(
+                `${cur_data_path}/${repo_key}/${folder_key}/${note_key}.md`,
+            );
 
-            trash = trash ? trash : {};
+            const trash =
+                (await window.electronAPI.readJsonSync(`${cur_data_path}/trash.json`)) || {};
 
-            trash[
-                `${repo_key}-${folder_key}-${note_key}-${folder_info.notes_obj[note_key].title}`
-            ] = note_content;
+            trash[`${repo_key}-${folder_key}-${note_key}-${folderInfo.notes_obj[note_key].title}`] =
+                note_content;
 
-            await window.electronAPI.writeJson({
-                file_path: `${cur_data_path}/trash.json`,
-                obj: trash,
-            });
+            await window.electronAPI.writeJson(`${cur_data_path}/trash.json`, trash);
 
-            const remaining_note_keys: string[] = [];
+            const remainNoteKeys: string[] = [];
             let next_note_key = undefined;
 
-            folder_info.note_keys.forEach((key: string, index: number) => {
+            folderInfo.note_keys.forEach((key: string, index: number) => {
                 if (key === note_key) {
-                    if (folder_info.note_keys.length > 1) {
-                        if (index === folder_info.note_keys.length - 1) {
-                            next_note_key = folder_info.note_keys[index - 1];
+                    if (folderInfo.note_keys.length > 1) {
+                        if (index === folderInfo.note_keys.length - 1) {
+                            next_note_key = folderInfo.note_keys[index - 1];
                         } else {
-                            next_note_key = folder_info.note_keys[index + 1];
+                            next_note_key = folderInfo.note_keys[index + 1];
                         }
                     }
                 } else {
-                    remaining_note_keys.push(key);
+                    remainNoteKeys.push(key);
                 }
             });
 
-            folder_info.note_keys = remaining_note_keys;
-            delete folder_info.notes_obj[note_key];
+            folderInfo.note_keys = remainNoteKeys;
+            delete folderInfo.notes_obj[note_key];
 
-            await window.electronAPI.writeJson({
-                file_path: `${cur_data_path}/${repo_key}/${folder_key}/folder_info.json`,
-                obj: folder_info,
-            });
+            await window.electronAPI.writeJson(
+                `${cur_data_path}/${repo_key}/${folder_key}/folderInfo.json`,
+                folderInfo,
+            );
 
-            await window.electronAPI.remove({
-                file_path: `${cur_data_path}/${repo_key}/${folder_key}/${note_key}.md`,
-            });
+            await window.electronAPI.remove(
+                `${cur_data_path}/${repo_key}/${folder_key}/${note_key}.md`,
+            );
 
-            dispatch({
-                type: 'delete_note',
-                repo_key,
-                folder_key,
-                note_key,
-                remaining_note_keys,
+            produce(whales, (draft) => {
+                draft[id].repo_map[repo_key].folder_map[folder_key].note_keys = remainNoteKeys;
+                delete draft[id].repo_map[repo_key].folder_map[folder_key].note_map[note_key];
             });
 
             return next_note_key;
@@ -652,25 +506,23 @@ const useWhalesnote = () => {
         [],
     );
 
-    return [
-        state,
-        {
-            initwhalesnote,
-            fetchNotesInfoInFolder,
-            newRepo,
-            renameRepo,
-            reorderRepo,
-            deleteRepo,
-            newFolder,
-            renameFolder,
-            reorderFolder,
-            deleteFolder,
-            newNote,
-            renameNote,
-            reorderNote,
-            deleteNote,
-        },
-    ] as const;
+    return {
+        whales,
+        addWhale,
+        fetchFolderMap,
+        newRepo,
+        renameRepo,
+        reorderRepo,
+        deleteRepo,
+        newFolder,
+        renameFolder,
+        reorderFolder,
+        deleteFolder,
+        newNote,
+        renameNote,
+        reorderNote,
+        deleteNote,
+    };
 };
 
 export default useWhalesnote;

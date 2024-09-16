@@ -26,9 +26,7 @@ const TrashList: React.FC<{}> = ({}) => {
     const [emptyPopUp, setEmptyPopUp, emptyMask] = usePopUp(500);
 
     const handleEmptyTrash = useCallback(async () => {
-        const result = await window.electronAPI.remove({
-            file_path: `${curDataPath}/trash.json`,
-        });
+        const result = await window.electronAPI.remove(`${curDataPath}/trash.json`);
 
         if (result) {
             setCurTrashKey('---');
@@ -43,9 +41,7 @@ const TrashList: React.FC<{}> = ({}) => {
 
     useEffect(() => {
         (async () => {
-            const read_trash = await window.electronAPI.readJsonSync({
-                file_path: `${curDataPath}/trash.json`,
-            });
+            const read_trash = await window.electronAPI.readJsonSync(`${curDataPath}/trash.json`);
 
             trash.current = read_trash ? read_trash : {};
             const len = Object.keys(trash.current).length;
