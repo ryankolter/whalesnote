@@ -6,3 +6,4 @@ src/resources
 *.json
 *.html
 *.md
+*.typescriptreact.snippet

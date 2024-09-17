@@ -69,7 +69,7 @@ const MarkdownEditor: React.FC<{
                     new_name = replace_line;
                 }
 
-                await renameNote(curDataPath, curRepoKey, curFolderKey, curNoteKey, new_name);
+                await renameNote(id, curRepoKey, curFolderKey, curNoteKey, new_name);
             }
         },
         [
@@ -77,6 +77,7 @@ const MarkdownEditor: React.FC<{
             curRepoKey,
             curFolderKey,
             curNoteKey,
+            id,
             renameNote,
             setRenderNoteStr,
             updateNote,
@@ -508,7 +509,7 @@ const MarkdownEditor: React.FC<{
             }
             await insertImageMdLink(dest_file_name_list);
         },
-        [addMultizero, generateTimeStamp, insertImageMdLink],
+        [curDataPath, addMultizero, generateTimeStamp, insertImageMdLink],
     );
 
     const handleLoadImage = useCallback(

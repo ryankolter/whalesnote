@@ -15,32 +15,42 @@ interface DataContextType {
     whales: Record<string, WhaleObject>;
     curDataPath: string;
     whalesnote: WhaleObject;
-    newRepo: (id: string, repoKey: string, repoName: string) => void;
+    newRepo: (id: string, repoKey: string, repoName: string) => Promise<void>;
     newFolder: (
         id: string,
         repoKey: string,
         new_folder_key: string,
         new_folder_name: string,
-    ) => void;
+    ) => Promise<void>;
     newNote: (
         id: string,
         repoKey: string,
         folderKey: string,
         new_note_key: string,
         note_title: string,
-    ) => void;
-    renameRepo: (id: string, repoKey: string, newRepoName: string) => void;
-    renameFolder: (id: string, repoKey: string, folderKey: string, newFolderName: string) => void;
+    ) => Promise<void>;
+    renameRepo: (id: string, repoKey: string, newRepoName: string) => Promise<void>;
+    renameFolder: (
+        id: string,
+        repoKey: string,
+        folderKey: string,
+        newFolderName: string,
+    ) => Promise<void>;
     renameNote: (
         id: string,
         repoKey: string,
         folderKey: string,
         noteKey: string,
         newNotetitle: string,
-    ) => void;
-    reorderRepo: (id: string, repoKey: string, newRepoKeys: string[]) => void;
-    reorderFolder: (id: string, repoKey: string, newFolderKeys: string[]) => void;
-    reorderNote: (id: string, repoKey: string, folderKey: string, newNoteKeys: string[]) => void;
+    ) => Promise<void>;
+    reorderRepo: (id: string, repoKey: string, newRepoKeys: string[]) => Promise<void>;
+    reorderFolder: (id: string, repoKey: string, newFolderKeys: string[]) => Promise<void>;
+    reorderNote: (
+        id: string,
+        repoKey: string,
+        folderKey: string,
+        newNoteKeys: string[],
+    ) => Promise<void>;
     deleteRepo: (id: string, repoKey: string) => any;
     deleteFolder: (id: string, repoKey: string, folderKey: string) => any;
     deleteNote: (id: string, repoKey: string, folderKey: string, noteKey: string) => any;
@@ -48,10 +58,10 @@ interface DataContextType {
     curFolderKey: string;
     curNoteKey: string;
     currentTitle: string;
-    switchRepo: (repoKey: string) => void;
-    switchFolder: (repoKey: string, folderKey?: string) => void;
-    switchNote: (repoKey: string, folderKey?: string, noteKey?: string) => void;
-    prepareContent: (repoKey: string, folderKey?: string, noteKey?: string) => void;
+    switchRepo: (repoKey: string) => Promise<void>;
+    switchFolder: (repoKey: string, folderKey?: string) => Promise<void>;
+    switchNote: (repoKey: string, folderKey?: string, noteKey?: string) => Promise<void>;
+    prepareContent: (repoKey: string, folderKey?: string, noteKey?: string) => Promise<void>;
 }
 
 const DataContext = createContext<DataContextType>({
@@ -59,15 +69,15 @@ const DataContext = createContext<DataContextType>({
     whales: {},
     curDataPath: '',
     whalesnote: { path: '', repo_keys: [], repo_map: {} },
-    newRepo: () => {},
-    newFolder: () => {},
-    newNote: () => {},
-    renameRepo: () => {},
-    renameFolder: () => {},
-    renameNote: () => {},
-    reorderRepo: () => {},
-    reorderFolder: () => {},
-    reorderNote: () => {},
+    newRepo: async () => {},
+    newFolder: async () => {},
+    newNote: async () => {},
+    renameRepo: async () => {},
+    renameFolder: async () => {},
+    renameNote: async () => {},
+    reorderRepo: async () => {},
+    reorderFolder: async () => {},
+    reorderNote: async () => {},
     deleteRepo: () => {
         return '';
     },
@@ -81,10 +91,10 @@ const DataContext = createContext<DataContextType>({
     curFolderKey: '',
     curNoteKey: '',
     currentTitle: '',
-    switchRepo: () => {},
-    switchFolder: () => {},
-    switchNote: () => {},
-    prepareContent: () => {},
+    switchRepo: async () => {},
+    switchFolder: async () => {},
+    switchNote: async () => {},
+    prepareContent: async () => {},
 });
 
 export const DataProvider = ({ children }: { children: React.ReactNode }) => {

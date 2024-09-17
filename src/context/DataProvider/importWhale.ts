@@ -91,6 +91,7 @@ export const importWhale = async (
             const folderInfo = await window.electronAPI.readJsonSync(
                 `${path}/${initRepoKey}/${initFolderKey}/folder_info.json`,
             );
+
             //init noteKey List
             initNoteKeys = folderInfo.notes_key;
             whaleObj.repo_map[initRepoKey].folder_map[initFolderKey] = {
