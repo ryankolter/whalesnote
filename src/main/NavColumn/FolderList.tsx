@@ -25,21 +25,15 @@ import useContextMenu from '../../lib/useContextMenu';
 import categoryIcon from '../../resources/icon/categoryIcon.svg';
 import folderIcon from '../../resources/icon/folderIcon.svg';
 import { parse as pathParse } from 'path-browserify';
-import { activeWhaleIdAtom } from '@/atoms';
-import { useAtomValue } from 'jotai';
+import { activeWhaleIdAtom, platformAtom, repoPanelVisibleAtom } from '@/atoms';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { useDataContext } from '@/context/DataProvider';
 
 const FolderList: React.FC<{}> = ({}) => {
     const id = useAtomValue(activeWhaleIdAtom);
 
-    const {
-        keySelectNumArray,
-        platformName,
-        showKeySelect,
-        manualFocus,
-        setKeySelectNumArray,
-        setShowRepoPanel,
-    } = useContext(GlobalContext);
+    const { keySelectNumArray, showKeySelect, manualFocus, setKeySelectNumArray } =
+        useContext(GlobalContext);
 
     const {
         curDataPath,
@@ -57,6 +51,9 @@ const FolderList: React.FC<{}> = ({}) => {
     } = useDataContext();
 
     const { t } = useTranslation();
+
+    const platform = useAtomValue(platformAtom);
+    const setRepoPanelVisible = useSetAtom(repoPanelVisibleAtom);
 
     const folder_keys = useMemo(() => {
         return whalesnote.repo_map ? whalesnote.repo_map[curRepoKey]?.folder_keys : undefined;
@@ -289,8 +286,8 @@ const FolderList: React.FC<{}> = ({}) => {
     // part6 : key event
     const handleKeyDown = useCallback(
         async (e: KeyboardEvent) => {
-            if (platformName === 'darwin' || platformName === 'win32' || platformName === 'linux') {
-                const modKey = platformName === 'darwin' ? e.metaKey : e.ctrlKey;
+            if (platform === 'darwin' || platform === 'win32' || platform === 'linux') {
+                const modKey = platform === 'darwin' ? e.metaKey : e.ctrlKey;
 
                 if (e.key === 'n' && modKey && e.shiftKey) {
                     handleNewFolder();
@@ -513,20 +510,20 @@ const FolderList: React.FC<{}> = ({}) => {
                             )}
                             <FoldersInnerFixedBox
                                 onClick={() => {
-                                    setShowRepoPanel(false);
+                                    setRepoPanelVisible(false);
                                 }}
-                            ></FoldersInnerFixedBox>
+                            />
                         </Folders>
                         <FoldersBottomFlexBox
                             onClick={() => {
-                                setShowRepoPanel(false);
+                                setRepoPanelVisible(false);
                             }}
-                        ></FoldersBottomFlexBox>
+                        />
                         <FoldersBottomFixedBox
                             onClick={() => {
-                                setShowRepoPanel(false);
+                                setRepoPanelVisible(false);
                             }}
-                        ></FoldersBottomFixedBox>
+                        />
                     </SortableContext>
                     {dragActiveId ? (
                         <DragOverlay>

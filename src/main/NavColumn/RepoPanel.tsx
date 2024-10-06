@@ -22,19 +22,12 @@ import { InputPopUp } from '../../components/InputPopUp';
 import { usePopUp } from '../../lib/usePopUp';
 import useContextMenu from '../../lib/useContextMenu';
 import { useDataContext } from '@/context/DataProvider';
-import { activeWhaleIdAtom } from '@/atoms';
-import { useAtomValue } from 'jotai';
+import { activeWhaleIdAtom, platformAtom, repoPanelVisibleAtom } from '@/atoms';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 
 const RepoPanel: React.FC<{}> = ({}) => {
-    const {
-        keySelectNumArray,
-        platformName,
-        showRepoPanel,
-        showKeySelect,
-        setShowKeySelect,
-        setShowRepoPanel,
-        setKeySelectNumArray,
-    } = useContext(GlobalContext);
+    const { keySelectNumArray, showKeySelect, setShowKeySelect, setKeySelectNumArray } =
+        useContext(GlobalContext);
 
     const {
         whalesnote,
@@ -52,7 +45,9 @@ const RepoPanel: React.FC<{}> = ({}) => {
         prepareContent,
     } = useDataContext();
 
+    const platform = useAtomValue(platformAtom);
     const id = useAtomValue(activeWhaleIdAtom);
+    const [repoPanelVisible, setRepoPanelVisible] = useAtom(repoPanelVisibleAtom);
 
     const { t } = useTranslation();
 
@@ -300,8 +295,8 @@ const RepoPanel: React.FC<{}> = ({}) => {
 
     const handleKeyDown = useCallback(
         async (e: KeyboardEvent) => {
-            if (platformName === 'darwin' || platformName === 'win32' || platformName === 'linux') {
-                const modKey = platformName === 'darwin' ? e.metaKey : e.ctrlKey;
+            if (platform === 'darwin' || platform === 'win32' || platform === 'linux') {
+                const modKey = platform === 'darwin' ? e.metaKey : e.ctrlKey;
 
                 // normal number 1-6
                 const number_re = /^[1-6]$/;
@@ -309,7 +304,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
                     e.key.match(number_re) &&
                     !modKey &&
                     keySelectNumArray.length === 0 &&
-                    showRepoPanel &&
+                    repoPanelVisible &&
                     showKeySelect
                 ) {
                     const index = Number(e.key) + 6 * repoSelectedList - 1;
@@ -341,7 +336,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
 
                 //alpha z
                 if (e.key === 'z' && !modKey && showKeySelect) {
-                    setShowRepoPanel((_showRepoPanel) => !_showRepoPanel);
+                    setRepoPanelVisible((_showRepoPanel) => !_showRepoPanel);
                 }
 
                 // esc
@@ -350,7 +345,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
                         setShowKeySelect(false);
                         setKeySelectNumArray([]);
                     }
-                    setShowRepoPanel(false);
+                    setRepoPanelVisible(false);
                 }
             }
         },
@@ -358,14 +353,14 @@ const RepoPanel: React.FC<{}> = ({}) => {
             keySelectNumArray,
             repoSelectedList,
             showKeySelect,
-            showRepoPanel,
+            repoPanelVisible,
             whalesnote,
             nextRepoList,
             nextRepoPage,
             prevRepoList,
             prevRepoPage,
             setShowKeySelect,
-            setShowRepoPanel,
+            setRepoPanelVisible,
             setKeySelectNumArray,
             switchRepoInPanel,
         ],

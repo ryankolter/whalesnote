@@ -4,12 +4,15 @@ import { t } from 'i18next';
 import MiniSearch, { AsPlainObject, SearchResult } from 'minisearch';
 import { WhaleObject } from '../commonType';
 import { useDataContext } from '@/context/DataProvider';
+import { useAtom } from 'jotai';
+import { searchPanelVisibleAtom } from '@/atoms';
 
 const useSearch = () => {
-    const { showSearchPanel, setShowSearchPanel, setShowSearchResultHighlight } =
-        useContext(GlobalContext);
+    const { setShowSearchResultHighlight } = useContext(GlobalContext);
 
     const { curDataPath, whalesnote, switchNote } = useDataContext();
+
+    const [searchPanelVisible, setSearchPanelVisible] = useAtom(searchPanelVisibleAtom);
 
     const miniSearch = useRef<MiniSearch | null>();
 
@@ -46,7 +49,7 @@ const useSearch = () => {
         setShowSearchResultHighlight(false);
         setCurSearchResultIndex(-1);
         if (word === '') {
-            setShowSearchPanel(false);
+            setSearchPanelVisible(false);
             setSearchResults([]);
             return;
         }
@@ -187,11 +190,11 @@ const useSearch = () => {
 
     useEffect(() => {
         (async () => {
-            if (showSearchPanel) {
+            if (searchPanelVisible) {
                 await initSearchModule();
             }
         })();
-    }, [showSearchPanel]);
+    }, [searchPanelVisible]);
 
     const updateMiniSearch = useCallback(() => {
         setShowWaitingMask(true);
@@ -216,10 +219,10 @@ const useSearch = () => {
                     newWhalesnote.repo_keys.push(repo_key);
                     newWhalesnote.repo_map[repo_key] = {
                         repo_name: repo_info.repo_name,
-                        folder_keys: repo_info.folder_keys,
+                        folder_keys: repo_info.folders_key,
                         folder_map: {},
                     };
-                    for await (const folder_key of repo_info.folder_keys) {
+                    for await (const folder_key of repo_info.folders_key) {
                         const folder_info = await window.electronAPI.readJsonSync(
                             `${curDataPath}/${repo_key}/${folder_key}/folder_info.json`,
                         );

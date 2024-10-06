@@ -20,21 +20,23 @@ import { Sortable } from '../../components/Sortable';
 import useContextMenu from '../../lib/useContextMenu';
 import newNoteIcon from '../../resources/icon/newNoteIcon.svg';
 import { useDataContext } from '@/context/DataProvider';
-import { useAtomValue } from 'jotai';
-import { activeWhaleIdAtom } from '@/atoms';
+import { useAtomValue, useSetAtom } from 'jotai';
+import {
+    activeWhaleIdAtom,
+    platformAtom,
+    repoPanelVisibleAtom,
+    searchPanelVisibleAtom,
+} from '@/atoms';
 
 const NoteList: React.FC<{}> = ({}) => {
     const id = useAtomValue(activeWhaleIdAtom);
 
     const {
         keySelectNumArray,
-        platformName,
         showKeySelect,
-        showSearchPanel,
         manualFocus,
         setKeySelectNumArray,
         setShowKeySelect,
-        setShowRepoPanel,
     } = useContext(GlobalContext);
 
     const {
@@ -49,6 +51,10 @@ const NoteList: React.FC<{}> = ({}) => {
     } = useDataContext();
 
     const { t } = useTranslation();
+
+    const platform = useAtomValue(platformAtom);
+    const searchPanelVisible = useAtomValue(searchPanelVisibleAtom);
+    const setRepoPanelVisible = useSetAtom(repoPanelVisibleAtom);
 
     const note_keys = useMemo(() => {
         return whalesnote.repo_map &&
@@ -200,8 +206,8 @@ const NoteList: React.FC<{}> = ({}) => {
 
     const handleKeyDown = useCallback(
         async (e: any) => {
-            if (platformName === 'darwin' || platformName === 'win32' || platformName === 'linux') {
-                const modKey = platformName === 'darwin' ? e.metaKey : e.ctrlKey;
+            if (platform === 'darwin' || platform === 'win32' || platform === 'linux') {
+                const modKey = platform === 'darwin' ? e.metaKey : e.ctrlKey;
 
                 if (e.key === 'n' && modKey && !e.shiftKey) {
                     handleNewNote();
@@ -212,7 +218,7 @@ const NoteList: React.FC<{}> = ({}) => {
                     (e.key === 'ArrowDown' || e.key === 'k') &&
                     !modKey &&
                     showKeySelect &&
-                    !showSearchPanel
+                    !searchPanelVisible
                 ) {
                     nextNotePage();
                 }
@@ -222,13 +228,13 @@ const NoteList: React.FC<{}> = ({}) => {
                     (e.key === 'ArrowUp' || e.key === 'i') &&
                     !modKey &&
                     showKeySelect &&
-                    !showSearchPanel
+                    !searchPanelVisible
                 ) {
                     preNotePage();
                 }
             }
         },
-        [showKeySelect, showSearchPanel, handleNewNote, nextNotePage, preNotePage],
+        [showKeySelect, searchPanelVisible, handleNewNote, nextNotePage, preNotePage],
     );
 
     useEffect(() => {
@@ -394,15 +400,15 @@ const NoteList: React.FC<{}> = ({}) => {
                             )}
                             <NotesInnerFixedBox
                                 onClick={() => {
-                                    setShowRepoPanel(false);
+                                    setRepoPanelVisible(false);
                                 }}
-                            ></NotesInnerFixedBox>
+                            />
                         </Notes>
                         <NotesBottomFlexBox
                             onClick={() => {
-                                setShowRepoPanel(false);
+                                setRepoPanelVisible(false);
                             }}
-                        ></NotesBottomFlexBox>
+                        />
                     </SortableContext>
                     {dragActiveId ? (
                         <DragOverlay>

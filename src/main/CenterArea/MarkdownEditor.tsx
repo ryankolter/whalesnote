@@ -11,7 +11,7 @@ import useContextMenu from '../../lib/useContextMenu';
 import useEditorPosition from '../../lib/useEditorPosition';
 import { updateNote } from '../../lib/notes';
 import { useAtomValue } from 'jotai';
-import { activeWhaleIdAtom, editorFontSizeAtom } from '@/atoms';
+import { activeWhaleIdAtom, editorFontSizeAtom, platformAtom, repoPanelVisibleAtom } from '@/atoms';
 import { join as pathJoin } from 'path-browserify';
 import { useDataContext } from '@/context/DataProvider';
 
@@ -28,12 +28,13 @@ const MarkdownEditor: React.FC<{
     setEditorScrollRatio,
     setRenderNoteStr,
 }) => {
-    const { blur, focus, platformName, showRepoPanel, setShowKeySelect } =
-        useContext(GlobalContext);
+    const { blur, focus, setShowKeySelect } = useContext(GlobalContext);
 
     const { curDataPath, curRepoKey, curFolderKey, curNoteKey, renameNote } = useDataContext();
 
+    const platform = useAtomValue(platformAtom);
     const id = useAtomValue(activeWhaleIdAtom);
+    const repoPanelVisible = useAtomValue(repoPanelVisibleAtom);
 
     const { t } = useTranslation();
 
@@ -300,15 +301,15 @@ const MarkdownEditor: React.FC<{
 
     const handleKeyDown = useCallback(
         async (e: KeyboardEvent) => {
-            if (platformName === 'darwin' || platformName === 'win32' || platformName === 'linux') {
-                const modKey = platformName === 'darwin' ? e.metaKey : e.ctrlKey;
+            if (platform === 'darwin' || platform === 'win32' || platform === 'linux') {
+                const modKey = platform === 'darwin' ? e.metaKey : e.ctrlKey;
 
                 if (
                     e.key === 'j' &&
                     modKey &&
                     !e.shiftKey &&
                     mdRenderState !== 'all' &&
-                    !showRepoPanel
+                    !repoPanelVisible
                 ) {
                     autoScrollToLine();
                 }
@@ -324,8 +325,8 @@ const MarkdownEditor: React.FC<{
         },
         [
             mdRenderState,
-            platformName,
-            showRepoPanel,
+            platform,
+            repoPanelVisible,
             autoScrollToLine,
             addBacktick,
             jumpToNextBlock,

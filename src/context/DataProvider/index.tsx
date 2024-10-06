@@ -237,14 +237,14 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
     );
 
     const prepareContent = useCallback(
-        (
+        async (
             repoKey: string | undefined,
             folderKey: string | undefined,
             noteKey: string | undefined,
         ) => {
             if (!repoKey || !folderKey || !noteKey) return;
             if (!whales[id]) return;
-            fetchContentAfterNew(id, whales[id].path, repoKey, folderKey, noteKey);
+            await fetchContentAfterNew(id, whales[id].path, repoKey, folderKey, noteKey);
         },
         [id, whales],
     );

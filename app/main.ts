@@ -352,7 +352,7 @@ const processIPC = (): void => {
     ipcMain.handle('plugin:loadNodejiebaDict', async () => {
         const dictFilePath = app.isPackaged
             ? path.join(__dirname, '../extraResources/dict')
-            : path.join(__dirname, '../src/resources/dict');
+            : path.join(__dirname, '../../src/resources/dict');
         nodejieba.load({
             dict: path.join(dictFilePath, '/jieba.dict.utf8'),
             hmmDict: path.join(dictFilePath, '/hmm_model.utf8'),

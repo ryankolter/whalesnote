@@ -1,5 +1,4 @@
-import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { GlobalContext } from '../../GlobalProvider';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from '@emotion/styled';
 import cryptoRandomString from 'crypto-random-string';
@@ -32,7 +31,7 @@ import markdownItTocDoneRight from 'markdown-it-toc-done-right';
 
 import useContextMenu from '../../lib/useContextMenu';
 import { useAtomValue } from 'jotai';
-import { renderFontSizeAtom } from '@/atoms';
+import { platformAtom, renderFontSizeAtom, repoPanelVisibleAtom } from '@/atoms';
 import { useDataContext } from '@/context/DataProvider';
 
 const lowlight = createLowlight(common);
@@ -61,12 +60,13 @@ const MarkdownRender: React.FC<{
     setRenderScrollRatio,
     updateRenderScrollTop,
 }) => {
-    const { platformName, showRepoPanel } = useContext(GlobalContext);
     const { curDataPath, curRepoKey, curFolderKey, curNoteKey } = useDataContext();
 
     const { t } = useTranslation();
 
+    const platform = useAtomValue(platformAtom);
     const renderFontSize = useAtomValue(renderFontSizeAtom);
+    const repoPanelVisible = useAtomValue(repoPanelVisibleAtom);
 
     const [result, setResult] = useState('');
     const [showRenderScrollPos, setShowRenderScrollPos] = useState(false);
@@ -229,15 +229,15 @@ const MarkdownRender: React.FC<{
 
     const handleKeyDown = useCallback(
         async (e: KeyboardEvent) => {
-            if (platformName === 'darwin' || platformName === 'win32' || platformName === 'linux') {
-                const modKey = platformName === 'darwin' ? e.metaKey : e.ctrlKey;
+            if (platform === 'darwin' || platform === 'win32' || platform === 'linux') {
+                const modKey = platform === 'darwin' ? e.metaKey : e.ctrlKey;
 
                 if (
                     e.key === 'J' &&
                     modKey &&
                     !e.shiftKey &&
                     mdRenderState === 'all' &&
-                    !showRepoPanel
+                    !repoPanelVisible
                 ) {
                     autoScrollToLine();
                 }
@@ -246,7 +246,7 @@ const MarkdownRender: React.FC<{
                 }
             }
         },
-        [platformName, mdRenderState, showRepoPanel, autoScrollToLine, setShowTocFlag],
+        [platform, mdRenderState, repoPanelVisible, autoScrollToLine, setShowTocFlag],
     );
 
     const handleScroll = useCallback(

@@ -7,18 +7,16 @@ import FolderList from './FolderList';
 import NoteList from './NoteList';
 import RepoPanel from './RepoPanel';
 import { useDataContext } from '@/context/DataProvider';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { platformAtom, repoPanelVisibleAtom } from '@/atoms';
 
 const NavColumn: React.FC<Record<string, unknown>> = ({}) => {
-    const {
-        keySelectNumArray,
-        platformName,
-        showKeySelect,
-        showRepoPanel,
-        setKeySelectNumArray,
-        setShowRepoPanel,
-    } = useContext(GlobalContext);
+    const { keySelectNumArray, showKeySelect, setKeySelectNumArray } = useContext(GlobalContext);
 
     const { curRepoKey, whalesnote } = useDataContext();
+
+    const platform = useAtomValue(platformAtom);
+    const [repoPanelVisible, setRepoPanelVisible] = useAtom(repoPanelVisibleAtom);
 
     const resizeFolderOffsetX = useRef<number>(0);
     const resizeNoteOffsetX = useRef<number>(0);
@@ -33,8 +31,8 @@ const NavColumn: React.FC<Record<string, unknown>> = ({}) => {
 
     const handleKeyDown = useCallback(
         async (e: KeyboardEvent) => {
-            if (platformName === 'darwin' || platformName === 'win32' || platformName === 'linux') {
-                const modKey = platformName === 'darwin' ? e.metaKey : e.ctrlKey;
+            if (platform === 'darwin' || platform === 'win32' || platform === 'linux') {
+                const modKey = platform === 'darwin' ? e.metaKey : e.ctrlKey;
 
                 const lowercase_re = /^[a-hm-y]$/;
                 if (e.key.match(lowercase_re) && !modKey && showKeySelect) {
@@ -85,7 +83,7 @@ const NavColumn: React.FC<Record<string, unknown>> = ({}) => {
                 <RepoBox>
                     <CurRepoNameTag
                         onClick={() => {
-                            setShowRepoPanel((_showAllRepo) => !_showAllRepo);
+                            setRepoPanelVisible((_showAllRepo) => !_showAllRepo);
                         }}
                     >
                         <RepoNameLabel>
@@ -99,7 +97,7 @@ const NavColumn: React.FC<Record<string, unknown>> = ({}) => {
                 <AllRepo
                     style={{
                         maxWidth: `calc(100% - ${folderWidth}px - 40px)`,
-                        bottom: `${showRepoPanel ? '20px' : '-400px'}`,
+                        bottom: `${repoPanelVisible ? '20px' : '-400px'}`,
                     }}
                     left={folderWidth}
                 >

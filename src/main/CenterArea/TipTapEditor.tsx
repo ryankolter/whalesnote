@@ -24,8 +24,6 @@
 //         curNoteKey,
 //         editorFontSize,
 //         focus,
-//         platformName,
-//         showRepoPanel,
 //         renameNote,
 //         setShowKeySelect,
 //     } = useContext(GlobalContext);

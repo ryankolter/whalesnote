@@ -10,27 +10,30 @@ import useRenderState from '../../lib/useRenderState';
 import ToolBar from './ToolBar';
 import { notes } from '../../lib/notes';
 import { useDataContext } from '@/context/DataProvider';
-import { useAtomValue } from 'jotai';
-import { activeWhaleIdAtom } from '@/atoms';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import {
+    activeWhaleIdAtom,
+    platformAtom,
+    repoPanelVisibleAtom,
+    searchPanelVisibleAtom,
+} from '@/atoms';
 
 const CenterArea: React.FC<{}> = ({}) => {
     const {
-        platformName,
         showKeySelect,
-        showRepoPanel,
-        showSearchPanel,
         showSearchResultHighlight,
         manualBlur,
         manualFocus,
         setKeySelectNumArray,
         setShowKeySelect,
-        setShowRepoPanel,
-        setShowSearchPanel,
     } = useContext(GlobalContext);
 
     const { curDataPath, curRepoKey, curFolderKey, curNoteKey } = useDataContext();
 
+    const platform = useAtomValue(platformAtom);
     const id = useAtomValue(activeWhaleIdAtom);
+    const [searchPanelVisible, setSearchPanelVisible] = useAtom(searchPanelVisibleAtom);
+    const [repoPanelVisible, setRepoPanelVisible] = useAtom(repoPanelVisibleAtom);
 
     const [
         editorWidth,
@@ -77,15 +80,15 @@ const CenterArea: React.FC<{}> = ({}) => {
 
     const handleKeyDown = useCallback(
         async (e: any) => {
-            if (platformName === 'darwin' || platformName === 'win32' || platformName === 'linux') {
-                const modKey = platformName === 'darwin' ? e.metaKey : e.ctrlKey;
+            if (platform === 'darwin' || platform === 'win32' || platform === 'linux') {
+                const modKey = platform === 'darwin' ? e.metaKey : e.ctrlKey;
 
                 // show A0,A1,...,AA,AB,...,Z tips for keyborard
                 if (e.key === ',' && modKey) {
                     if (showKeySelect) {
                         setShowKeySelect(false);
                         setKeySelectNumArray([]);
-                        if (curNoteKey && !showRepoPanel) {
+                        if (curNoteKey && !repoPanelVisible) {
                             manualFocus(0);
                         }
                     } else {
@@ -108,26 +111,26 @@ const CenterArea: React.FC<{}> = ({}) => {
                         setKeySelectNumArray([]);
                     }
                     if (
-                        (showKeySelect || (showSearchPanel && showSearchResultHighlight)) &&
+                        (showKeySelect || (searchPanelVisible && showSearchResultHighlight)) &&
                         curNoteKey &&
                         mdRenderState !== 'all'
                     ) {
                         manualFocus(0);
                     }
-                    setShowRepoPanel(false);
+                    setRepoPanelVisible(false);
                 }
             }
         },
         [
             curNoteKey,
             showKeySelect,
-            showRepoPanel,
-            showSearchPanel,
+            repoPanelVisible,
+            searchPanelVisible,
             showSearchResultHighlight,
             manualFocus,
             manualBlur,
             setShowKeySelect,
-            setShowRepoPanel,
+            setRepoPanelVisible,
             nextMdRenderState,
         ],
     );
@@ -156,8 +159,8 @@ const CenterArea: React.FC<{}> = ({}) => {
             <ToolBar mdRenderState={mdRenderState} setMdRenderState={setMdRenderState} />
             <MarkdownArea
                 onClick={() => {
-                    setShowRepoPanel(false);
-                    setShowSearchPanel(false);
+                    setRepoPanelVisible(false);
+                    setSearchPanelVisible(false);
                 }}
             >
                 {/* <TipTapEditor

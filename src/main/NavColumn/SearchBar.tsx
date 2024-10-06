@@ -7,18 +7,20 @@ import { SearchResult } from 'minisearch';
 
 import useSearch from '../../lib/useSearch';
 import WaitingMaskStatic from '../../components/WaitingMaskStatic';
-import { useAtomValue } from 'jotai';
-import { activeWhaleIdAtom } from '@/atoms';
+import { useAtom, useAtomValue } from 'jotai';
+import { activeWhaleIdAtom, platformAtom, searchPanelVisibleAtom } from '@/atoms';
 import { useDataContext } from '@/context/DataProvider';
 
 const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
     const id = useAtomValue(activeWhaleIdAtom);
 
-    const { platformName, showSearchPanel, setShowKeySelect, setShowSearchPanel } =
-        useContext(GlobalContext);
+    const { setShowKeySelect } = useContext(GlobalContext);
     const { curNoteKey } = useDataContext();
 
     const { t } = useTranslation();
+
+    const platform = useAtomValue(platformAtom);
+    const [searchPanelVisible, setSearchPanelVisible] = useAtom(searchPanelVisibleAtom);
 
     const searchBarRef = useRef<HTMLDivElement>(null);
     const searchInputRef = useRef<HTMLInputElement>(null);
@@ -43,32 +45,24 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
 
     const handleSearchInputChange = useCallback(
         (e: any) => {
-            if (setWordTimerObj.current) {
-                clearTimeout(setWordTimerObj.current);
-            }
+            if (setWordTimerObj.current) clearTimeout(setWordTimerObj.current);
 
-            const timeout = showSearchPanel ? 300 : 0;
+            setWordTimerObj.current = setTimeout(
+                () => setWord(e.target.value),
+                searchPanelVisible ? 300 : 0,
+            );
 
-            setWordTimerObj.current = setTimeout(() => {
-                setWord(e.target.value);
-            }, timeout);
-            if (searchModuleInitialized.current) {
-                setShowSearchPanel(true);
-            }
+            if (searchModuleInitialized.current) setSearchPanelVisible(true);
         },
-        [showSearchPanel, setWord, setShowSearchPanel],
+        [searchPanelVisible, setWord, setSearchPanelVisible],
     );
 
     const handleSearchInputFocus = useCallback(() => {
-        if (!showSearchPanel) {
-            if (searchModuleInitialized.current) {
-                setShowSearchPanel(true);
-            }
-            if (searchInputRef.current) {
-                searchInputRef.current.setSelectionRange(0, searchInputRef.current.value.length);
-            }
-        }
-    }, [showSearchPanel, setShowSearchPanel]);
+        if (searchPanelVisible) return;
+
+        if (searchModuleInitialized.current) setSearchPanelVisible(true);
+        searchInputRef.current?.setSelectionRange(0, searchInputRef.current.value.length);
+    }, [searchPanelVisible, setSearchPanelVisible]);
 
     useEffect(() => {
         setWord('');
@@ -80,8 +74,8 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
 
     const handleKeyDown = useCallback(
         async (e: KeyboardEvent) => {
-            if (platformName === 'darwin' || platformName === 'win32' || platformName === 'linux') {
-                const modKey = platformName === 'darwin' ? e.metaKey : e.ctrlKey;
+            if (platform === 'darwin' || platform === 'win32' || platform === 'linux') {
+                const modKey = platform === 'darwin' ? e.metaKey : e.ctrlKey;
 
                 if ((e.key === 'f' || e.key === 'F') && modKey && e.shiftKey) {
                     searchInputRef.current?.focus();
@@ -92,8 +86,8 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                     (!composing.current && e.key === 'Enter' && curSearchResultIndex !== -1) ||
                     e.key === 'Escape'
                 ) {
-                    if (showSearchPanel) {
-                        setShowSearchPanel(false);
+                    if (searchPanelVisible) {
+                        setSearchPanelVisible(false);
                         if (searchInputRef.current) {
                             searchInputRef.current.blur();
                         }
@@ -105,42 +99,42 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                         !searchModuleInitialized.current &&
                         document.activeElement?.id === 'search-input-id'
                     ) {
-                        setShowSearchPanel(true);
-                    } else if (showSearchPanel) {
+                        setSearchPanelVisible(true);
+                    } else if (searchPanelVisible) {
                         nextSearchResult();
                     }
                 }
 
                 // arrow bottom 40
-                if (e.key === 'ArrowDown' && !modKey && showSearchPanel) {
+                if (e.key === 'ArrowDown' && !modKey && searchPanelVisible) {
                     e.preventDefault();
                     nextSearchResult();
                 }
 
                 // arrow top 38
-                if (e.key === 'ArrowUp' && !modKey && showSearchPanel) {
+                if (e.key === 'ArrowUp' && !modKey && searchPanelVisible) {
                     e.preventDefault();
                     prevSearchResult();
                 }
             }
         },
         [
-            showSearchPanel,
+            searchPanelVisible,
             curSearchResultIndex,
             nextSearchResult,
             prevSearchResult,
             setShowKeySelect,
-            setShowSearchPanel,
+            setSearchPanelVisible,
         ],
     );
 
     const handleClick = useCallback(
         (event: MouseEvent) => {
             if (!searchBarRef.current?.contains(event.target as Node)) {
-                setShowSearchPanel(false);
+                setSearchPanelVisible(false);
             }
         },
-        [setShowSearchPanel],
+        [setSearchPanelVisible],
     );
 
     useEffect(() => {
@@ -170,12 +164,12 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                 show={showWaitingMask}
                 word={t('tips.please_wait')}
             ></WaitingMaskStatic>
-            <EmptyArea onClick={() => setShowSearchPanel(false)}></EmptyArea>
+            <EmptyArea onClick={() => setSearchPanelVisible(false)}></EmptyArea>
             <Search>
                 <SearchIcon
                     className="ri-search-line"
                     onClick={() => {
-                        setShowSearchPanel(true);
+                        setSearchPanelVisible(true);
                         if (searchModuleInitialized.current) {
                             searchInputRef.current?.focus();
                         }
@@ -190,8 +184,8 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
                     readOnly={showInitTips}
                 />
             </Search>
-            <EmptyArea onClick={() => setShowSearchPanel(false)}></EmptyArea>
-            {showSearchPanel ? (
+            <EmptyArea onClick={() => setSearchPanelVisible(false)}></EmptyArea>
+            {searchPanelVisible ? (
                 <SearchPanel>
                     {showUpdateIndexBtn ? (
                         <SearchTool>
