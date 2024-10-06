@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
-const useContextMenu = (outerRef: any) => {
+export const useContextMenu = (outerRef: any) => {
     const [xPos, setXPos] = useState('0px');
     const [yPos, setYPos] = useState('0px');
     const [menu, showMenu] = useState(false);
@@ -16,7 +16,7 @@ const useContextMenu = (outerRef: any) => {
                 showMenu(false);
             }
         },
-        [showMenu, outerRef, setXPos, setYPos]
+        [showMenu, outerRef, setXPos, setYPos],
     );
 
     const handleClick = useCallback(() => {
@@ -34,5 +34,3 @@ const useContextMenu = (outerRef: any) => {
 
     return { xPos, yPos, menu, showMenu };
 };
-
-export default useContextMenu;

@@ -13,10 +13,8 @@ import styled from '@emotion/styled';
 import { useDropzone } from 'react-dropzone';
 import { EditorView, ViewUpdate } from '@codemirror/view';
 
-import useCodeMirror from '@/lib/useCodeMirror';
-import useContextMenu from '@/lib/useContextMenu';
-import useEditorPosition from '@/lib/useEditorPosition';
-import { updateNote } from '@/lib/notes';
+import { useCodeMirror, useEditorPosition } from './_hooks';
+import { updateNote, useContextMenu } from '@/lib';
 import { useAtomValue, useSetAtom } from 'jotai';
 import {
     activeWhaleIdAtom,
@@ -27,11 +25,7 @@ import {
 } from '@/atoms';
 import { join as pathJoin } from 'path-browserify';
 import { useDataContext } from '@/context/DataProvider';
-
-export interface MarkdownEditorRef {
-    focus: () => void;
-    blur: () => void;
-}
+import { MdEditorRef } from '@/interface';
 
 interface IMarkdownEditor {
     cursorInRenderFlag: boolean;
@@ -41,7 +35,7 @@ interface IMarkdownEditor {
     setRenderNoteStr: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const MarkdownEditor = forwardRef<MarkdownEditorRef, IMarkdownEditor>((props, ref) => {
+const MdEditor = forwardRef<MdEditorRef, IMarkdownEditor>((props, ref) => {
     const {
         cursorInRenderFlag,
         mdRenderState,
@@ -699,4 +693,4 @@ const MenuLi = styled.li(
 `,
 );
 
-export default MarkdownEditor;
+export default MdEditor;

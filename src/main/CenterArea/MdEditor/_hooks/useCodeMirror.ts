@@ -9,7 +9,7 @@ import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
 import { languages } from '@codemirror/language-data';
 import { Completion, autocompletion } from '@codemirror/autocomplete';
 
-import { notes } from './notes';
+import { notes } from '../../../../lib/notes';
 import { useAtomValue } from 'jotai';
 import { activeWhaleIdAtom } from '@/atoms';
 
@@ -22,7 +22,7 @@ interface Props {
     onSelectionSet?: (vu: ViewUpdate) => void;
 }
 
-const useCodeMirror = <T extends Element>({
+export const useCodeMirror = <T extends Element>({
     curDataPath,
     curRepoKey,
     curFolderKey,
@@ -237,5 +237,3 @@ const useCodeMirror = <T extends Element>({
 
     return [editor, view];
 };
-
-export default useCodeMirror;

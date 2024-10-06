@@ -22,8 +22,7 @@ import markwodnItReplaceLink from 'markdown-it-replace-link';
 /* eslint-enable */
 import markdownItTable from 'markdown-it-multimd-table';
 
-import { notes } from '@/lib/notes';
-import { usePopUp } from '@/lib/usePopUp';
+import { notes, usePopUp } from '@/lib';
 import { AlertPopUp } from '@/components/AlertPopUp';
 import { useAtomValue } from 'jotai';
 import { activeWhaleIdAtom, renderFontSizeAtom, themeAtom } from '@/atoms';

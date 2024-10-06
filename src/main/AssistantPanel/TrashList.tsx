@@ -11,7 +11,7 @@ import { indentUnit } from '@codemirror/language';
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
 import { languages } from '@codemirror/language-data';
 
-import { usePopUp } from '@/lib/usePopUp';
+import { usePopUp } from '@/lib';
 import { AlertPopUp } from '@/components/AlertPopUp';
 import { useDataContext } from '@/context/DataProvider';
 

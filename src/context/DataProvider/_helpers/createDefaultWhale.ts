@@ -1,7 +1,7 @@
 import cryptoRandomString from 'crypto-random-string';
 import i18next from '@/i18n';
 
-const createDefaultWhale = async (dataPath: string) => {
+export const createDefaultWhale = async (dataPath: string) => {
     //create whalesnote_info
     const id = cryptoRandomString({ length: 24, type: 'alphanumeric' });
     const repo_id = cryptoRandomString({ length: 12, type: 'alphanumeric' });
@@ -52,5 +52,3 @@ const createDefaultWhale = async (dataPath: string) => {
     await window.electronAPI.writeJson(`${dataPath}/history_info.json`, history);
     await window.electronAPI.writeStr(`${dataPath}/.gitignore`, 'history_info.json');
 };
-
-export default createDefaultWhale;

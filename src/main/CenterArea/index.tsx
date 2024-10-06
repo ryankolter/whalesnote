@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { useRecordValue } from '@/lib/useRecordValue';
-import MarkdownEditor, { MarkdownEditorRef } from './MarkdownEditor';
-import MarkdownRender from './MarkdownRender';
-// import TipTapEditor from './TipTapEditor';
-import useRenderState from '@/lib/useRenderState';
+import { useRecordValue, notes } from '@/lib';
+import { useRenderState } from './_hooks';
+
+import MdEditor from './MdEditor';
+import MdRender from './MdRender';
 import ToolBar from './Toolbar';
-import { notes } from '@/lib/notes';
 import { useDataContext } from '@/context/DataProvider';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {
@@ -162,7 +161,7 @@ const CenterArea: React.FC<{}> = () => {
             >
                 {mdRenderState === 'hidden' || mdRenderState === 'half' ? (
                     <EditorPanel widthValue={editorWidth}>
-                        <MarkdownEditor
+                        <MdEditor
                             ref={editorRef}
                             cursorInRenderFlag={cursorInRenderFlag}
                             mdRenderState={mdRenderState}
@@ -176,7 +175,7 @@ const CenterArea: React.FC<{}> = () => {
                 )}
                 {mdRenderState === 'all' || mdRenderState === 'half' ? (
                     <RenderPanel leftValue={renderLeft} widthValue={renderWidth}>
-                        <MarkdownRender
+                        <MdRender
                             cursorInRenderFlag={cursorInRenderFlag}
                             setCursorInRenderFlag={setCursorInRenderFlag}
                             mdRenderState={mdRenderState}

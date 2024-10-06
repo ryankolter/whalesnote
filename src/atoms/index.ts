@@ -1,6 +1,6 @@
 export * from './storage';
 
-import { MarkdownEditorRef } from '@/main/CenterArea/MarkdownEditor';
+import { MdEditorRef } from '@/interface';
 import { atom } from 'jotai';
 import { RefObject } from 'react';
 
@@ -14,4 +14,4 @@ export const repoPanelVisibleAtom = atom(false);
 export const keySelectActiveAtom = atom(false);
 export const keySelectNumArrAtom = atom([]);
 
-export const editorRefAtom = atom<RefObject<MarkdownEditorRef>>(() => ({ current: null }));
+export const editorRefAtom = atom<RefObject<MdEditorRef>>(() => ({ current: null }));

@@ -18,8 +18,7 @@ import { Sortable } from '@/components/Sortable';
 import { TextInput } from '@/components/TextInput';
 import { AlertPopUp } from '@/components/AlertPopUp';
 import { InputPopUp } from '@/components/InputPopUp';
-import { usePopUp } from '@/lib/usePopUp';
-import useContextMenu from '@/lib/useContextMenu';
+import { usePopUp, useContextMenu } from '@/lib';
 import { useDataContext } from '@/context/DataProvider';
 import {
     activeWhaleIdAtom,

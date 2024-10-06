@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-const useDataList = () => {
+export const useDataList = () => {
     const [dataPathList, setDataPathList] = useState<string[]>([]);
 
     const validateDataPathList = useCallback(async (data_path_list: string[]) => {
@@ -61,5 +61,3 @@ const useDataList = () => {
 
     return [dataPathList, addDataPathToList, removeDataPathFromList] as const;
 };
-
-export default useDataList;

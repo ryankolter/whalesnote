@@ -1,15 +1,18 @@
 // DataContext.tsx
 import React, { createContext, useEffect, useCallback, useState, useMemo } from 'react';
-import { fetchContentInFolder, addContentMap, fetchContentAfterNew } from '@/lib/notes';
-import createDefaultWhale from './createDefaultWhale';
+import { fetchContentInFolder, addContentMap, fetchContentAfterNew } from '@/lib';
 import { useAtom } from 'jotai';
 import { activeWhaleIdAtom } from '@/atoms';
-import { dataPathExisted, dataPathHasWhale, importWhale } from './importWhale';
-import useWhalesnote from '@/lib/useWhalesnote';
-import useHistory from '@/lib/useHistory';
-import { WhaleObject } from '@/commonType';
+import {
+    createDefaultWhale,
+    dataPathExisted,
+    dataPathHasWhale,
+    importWhale,
+    updateWhale,
+} from './_helpers';
+import { useHistory, useWhalesnote } from './_hooks';
+import { WhaleObject } from '@/interface';
 import i18next from 'i18next';
-import { updateWhale } from './updateWhale';
 
 interface DataContextType {
     dataFetchFinished: boolean;

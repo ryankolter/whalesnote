@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { t } from 'i18next';
 import MiniSearch, { AsPlainObject, SearchResult } from 'minisearch';
-import { WhaleObject } from '../commonType';
+import { WhaleObject } from '@/interface';
 import { useDataContext } from '@/context/DataProvider';
 import { useAtom, useSetAtom } from 'jotai';
 import { searchListFocusedAtom, searchPanelVisibleAtom } from '@/atoms';

@@ -16,7 +16,7 @@ import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-ki
 import { restrictToFirstScrollableAncestor, restrictToVerticalAxis } from '@dnd-kit/modifiers';
 
 import { Sortable } from '@/components/Sortable';
-import useContextMenu from '@/lib/useContextMenu';
+import { useContextMenu } from '@/lib';
 import newNoteIcon from '../../resources/icon/newNoteIcon.svg';
 import { useDataContext } from '@/context/DataProvider';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';

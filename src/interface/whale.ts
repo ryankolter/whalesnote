@@ -1,6 +1,8 @@
+//Note
 export type NoteObject = { title: string };
 export type NoteMap = Record<string, NoteObject>;
 
+//Folder
 export type FolderObject = {
     folder_name: string;
     note_keys: string[];
@@ -8,6 +10,7 @@ export type FolderObject = {
 };
 export type FolderMap = Record<string, FolderObject>;
 
+//Repo
 export type RepoObject = {
     repo_name: string;
     folder_keys: string[];
@@ -15,12 +18,14 @@ export type RepoObject = {
 };
 export type RepoMap = Record<string, RepoObject>;
 
+//Whale
 export type WhaleObject = {
     path: string;
     repo_keys: string[];
     repo_map: RepoMap;
 };
 
+//History
 export type HistoryInfo = {
     cur_repo_key: string;
     repos_record: Record<
@@ -34,6 +39,7 @@ export type HistoryInfo = {
     >;
 };
 
+//Content
 export type ContentMap = {
     [key: string]: {
         [key: string]: {

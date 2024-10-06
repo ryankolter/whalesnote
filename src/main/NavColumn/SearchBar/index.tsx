@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import styled from '@emotion/styled';
 import { SearchResult } from 'minisearch';
 
-import useSearch from '@/lib/useSearch';
+import useSearch from './useSearch';
 import WaitingMaskStatic from '@/components/WaitingMaskStatic';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {

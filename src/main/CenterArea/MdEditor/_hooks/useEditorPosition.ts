@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
-import { useRecordValue } from './useRecordValue';
+import { useRecordValue } from '@/lib';
 
-const useEditorPosition = (
+export const useEditorPosition = (
     curDataPath: string,
     curRepoKey: string,
     curFolderKey: string,
@@ -39,5 +39,3 @@ const useEditorPosition = (
 
     return [topLinePos, cursorHeadPos, updateTopLinePos, updateCursorHeadPos];
 };
-
-export default useEditorPosition;

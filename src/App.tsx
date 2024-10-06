@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import styled from '@emotion/styled';
 
 import WaitingMask from './components/WaitingMask';
@@ -12,7 +12,6 @@ import SocketClientBtn from './socketClientBtn';
 import { useAtomValue } from 'jotai';
 import { assistPanelOpenAtom, languageAtom, settingPanelOpenAtom, themeAtom } from './atoms';
 import i18next from 'i18next';
-import { MarkdownEditorRef } from './main/CenterArea/MarkdownEditor';
 
 const App = () => {
     const theme = useAtomValue(themeAtom);
@@ -23,8 +22,6 @@ const App = () => {
     useEffect(() => {
         i18next.changeLanguage(language);
     }, [language]);
-
-    const editorRef = useRef<MarkdownEditorRef>(null);
 
     return (
         <AppContainer className={`${theme}-theme-global`}>

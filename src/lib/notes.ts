@@ -1,4 +1,4 @@
-import { ContentMap } from '../commonType';
+import { ContentMap } from '@/interface';
 export let notes: Record<string, ContentMap> = {};
 
 export const addContentMap = (id: string, contentMap: ContentMap) => {

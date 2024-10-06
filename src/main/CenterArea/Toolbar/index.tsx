@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
-import SwitchMode from '../SwitchMode';
-import ExportNote from '../ExportNote';
+import SwitchMode from './SwitchMode';
+import ExportNote from './ExportNote';
 import { assistPanelOpenAtom, settingPanelOpenAtom } from '@/atoms';
 import { useAtom, useSetAtom } from 'jotai';
 

@@ -1,8 +1,8 @@
 import { useRef, useCallback, useState, useEffect } from 'react';
 import { Draft, produce } from 'immer';
-import { HistoryInfo } from '../commonType';
+import { HistoryInfo } from '@/interface';
 
-const useHistory = () => {
+export const useHistory = () => {
     const [histories, setHistories] = useState<Record<string, HistoryInfo>>({});
     const historySaveTimerObj = useRef<NodeJS.Timeout>();
 
@@ -94,5 +94,3 @@ const useHistory = () => {
 
     return { histories, addHistory, updateHistory };
 };
-
-export default useHistory;

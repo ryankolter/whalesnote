@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
-const useRenderState = () => {
+export const useRenderState = () => {
     const [editorWidth, setEditorWidth] = useState('100%');
     const [renderWidth, setRenderWidth] = useState('0');
     const [renderLeft, setRenderLeft] = useState('100%');
@@ -46,5 +46,3 @@ const useRenderState = () => {
         nextMdRenderState,
     };
 };
-
-export default useRenderState;

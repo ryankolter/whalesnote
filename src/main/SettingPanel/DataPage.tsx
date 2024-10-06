@@ -3,7 +3,7 @@
 
 // import styled from '@emotion/styled';
 
-// import { usePopUp } from '@/lib/usePopUp';
+// import { usePopUp } from '@/lib';
 // import { AlertPopUp } from '@/components/AlertPopUp';
 // import { useDataContext } from '@/context/DataProvider';
 

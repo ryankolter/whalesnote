@@ -13,14 +13,12 @@ import {
 } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { restrictToFirstScrollableAncestor, restrictToVerticalAxis } from '@dnd-kit/modifiers';
-import { updateNote } from '@/lib/notes';
+import { updateNote, useContextMenu, usePopUp } from '@/lib';
 
 import { Sortable } from '@/components/Sortable';
 import { TextInput } from '@/components/TextInput';
 import { AlertPopUp } from '@/components/AlertPopUp';
 import { InputPopUp } from '@/components/InputPopUp';
-import { usePopUp } from '@/lib/usePopUp';
-import useContextMenu from '@/lib/useContextMenu';
 import categoryIcon from '../../resources/icon/categoryIcon.svg';
 import folderIcon from '../../resources/icon/folderIcon.svg';
 import { parse as pathParse } from 'path-browserify';

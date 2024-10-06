@@ -29,14 +29,14 @@ import markdownItAnchor from 'markdown-it-anchor';
 import markdownItTable from 'markdown-it-multimd-table';
 import markdownItTocDoneRight from 'markdown-it-toc-done-right';
 
-import useContextMenu from '@/lib/useContextMenu';
+import { useContextMenu } from '@/lib';
 import { useAtomValue } from 'jotai';
 import { platformAtom, renderFontSizeAtom, repoPanelVisibleAtom } from '@/atoms';
 import { useDataContext } from '@/context/DataProvider';
 
 const lowlight = createLowlight(common);
 
-const MarkdownRender: React.FC<{
+const MdRender: React.FC<{
     cursorInRenderFlag: boolean;
     editorScrollRatio: number;
     mdRenderState: string;
@@ -475,4 +475,4 @@ const MenuLi = styled.li(
 `,
 );
 
-export default MarkdownRender;
+export default MdRender;

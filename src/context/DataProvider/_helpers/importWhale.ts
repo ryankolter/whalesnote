@@ -1,4 +1,4 @@
-import { DataTypes, HistoryInfo, ContentMap, WhaleObject } from '@/commonType';
+import { DataTypes, HistoryInfo, ContentMap, WhaleObject } from '@/interface';
 
 export const dataPathExisted = async (path: string) => {
     if (!path) return false;

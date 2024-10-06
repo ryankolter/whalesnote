@@ -1,8 +1,8 @@
 import { useCallback, useRef, useState } from 'react';
 import { Draft, produce } from 'immer';
-import { WhaleObject } from '../commonType';
+import { WhaleObject } from '@/interface';
 
-const useWhalesnote = () => {
+export const useWhalesnote = () => {
     const [whales, setWhales] = useState<Record<string, WhaleObject>>({});
 
     const renameSaveTimerObj = useRef<Map<string, NodeJS.Timeout>>(new Map());
@@ -560,5 +560,3 @@ const useWhalesnote = () => {
         deleteNote,
     };
 };
-
-export default useWhalesnote;
