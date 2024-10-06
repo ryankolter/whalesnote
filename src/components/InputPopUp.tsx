@@ -24,7 +24,7 @@ export const InputPopUp: React.FC<{
                     onKeyDown={onKeyDown}
                     onCancel={onCancel}
                     onConfirm={onConfirm}
-                ></InputPopUpBox>
+                />
             ) : (
                 <></>
             )}

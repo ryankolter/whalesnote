@@ -121,7 +121,7 @@ const FolderList: React.FC<{}> = ({}) => {
             setNewFolderName('');
             setTimeout(() => {
                 editorRef.current?.focus();
-            }, 500);
+            }, 300);
             allowNewFolder.current = true;
         },
         [id, curRepoKey, newFolder, newNote, prepareContent, switchNote, editorRef],

@@ -92,7 +92,7 @@ const NoteList: React.FC<{}> = ({}) => {
         await switchNote(curRepoKey, curFolderKey, new_note_key);
         setTimeout(() => {
             editorRef.current?.focus();
-        }, 500);
+        }, 300);
         setTimeout(() => {
             scrollToBottom();
         }, 50);
