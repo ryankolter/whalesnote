@@ -9,7 +9,7 @@
 // import { createMarkdownEditor, MarkdownEditor } from 'tiptap-markdown';
 // const TiptapMarkdownEditor = createMarkdownEditor(Editor);
 
-// import { notes, updateNote } from '../../lib/notes';
+// import { notes, updateNote } from '@/lib/notes';
 
 // const TipTapEditor: React.FC<{
 //     setEditorScrollRatio: React.Dispatch<React.SetStateAction<number>>;
@@ -25,7 +25,7 @@
 //         editorFontSize,
 //         focus,
 //         renameNote,
-//         setShowKeySelect,
+//         setKeySelectActive,
 //     } = useContext(GlobalContext);
 //     const { t } = useTranslation();
 

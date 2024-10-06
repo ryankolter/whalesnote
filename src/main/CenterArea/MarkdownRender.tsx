@@ -29,7 +29,7 @@ import markdownItAnchor from 'markdown-it-anchor';
 import markdownItTable from 'markdown-it-multimd-table';
 import markdownItTocDoneRight from 'markdown-it-toc-done-right';
 
-import useContextMenu from '../../lib/useContextMenu';
+import useContextMenu from '@/lib/useContextMenu';
 import { useAtomValue } from 'jotai';
 import { platformAtom, renderFontSizeAtom, repoPanelVisibleAtom } from '@/atoms';
 import { useDataContext } from '@/context/DataProvider';
@@ -70,9 +70,7 @@ const MarkdownRender: React.FC<{
 
     const [result, setResult] = useState('');
     const [showRenderScrollPos, setShowRenderScrollPos] = useState(false);
-    const [showTocFlag, setShowTocFlag] = useState(
-        Number(window.localStorage.getItem('show_toc_flag')) || 0,
-    );
+    const [tocVisible, setTocVisible] = useState(false);
 
     const md = useRef<markdownIt>(markdownIt());
     const scrollSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -83,10 +81,6 @@ const MarkdownRender: React.FC<{
     const renderContainerRef = useRef<HTMLDivElement>(null);
     const renderRef = useRef<HTMLDivElement>(null);
     const { xPos, yPos, menu } = useContextMenu(renderRef);
-
-    useEffect(() => {
-        window.localStorage.setItem('show_toc_flag', String(showTocFlag));
-    }, [showTocFlag]);
 
     md.current = useMemo(() => {
         return (
@@ -232,21 +226,16 @@ const MarkdownRender: React.FC<{
             if (platform === 'darwin' || platform === 'win32' || platform === 'linux') {
                 const modKey = platform === 'darwin' ? e.metaKey : e.ctrlKey;
 
-                if (
-                    e.key === 'J' &&
-                    modKey &&
-                    !e.shiftKey &&
-                    mdRenderState === 'all' &&
-                    !repoPanelVisible
-                ) {
-                    autoScrollToLine();
+                if (e.key === 'J' && modKey && !e.shiftKey) {
+                    if (mdRenderState === 'all' && !repoPanelVisible) autoScrollToLine();
                 }
-                if (e.key === '.' && modKey && !e.shiftKey) {
-                    setShowTocFlag((showTocFlag) => 1 - showTocFlag);
+
+                if (e.key === '.' && modKey && e.shiftKey) {
+                    setTocVisible((state) => !state);
                 }
             }
         },
-        [platform, mdRenderState, repoPanelVisible, autoScrollToLine, setShowTocFlag],
+        [platform, mdRenderState, repoPanelVisible, autoScrollToLine, setTocVisible],
     );
 
     const handleScroll = useCallback(
@@ -332,7 +321,7 @@ const MarkdownRender: React.FC<{
                 }}
                 dangerouslySetInnerHTML={{ __html: result }}
             ></div>
-            <TocToggleBtn onClick={() => setShowTocFlag((showTocFlag) => 1 - showTocFlag)}>
+            <TocToggleBtn onClick={() => setTocVisible((state) => !state)}>
                 <svg width="9.5px" height="11.5px">
                     <path
                         fillRule="evenodd"
@@ -357,7 +346,7 @@ const MarkdownRender: React.FC<{
             <TocDirectory
                 ref={TocRef}
                 className="toc-scroller"
-                tocHeight={showTocFlag ? '40%' : '0'}
+                tocHeight={tocVisible ? '40%' : '0'}
             ></TocDirectory>
             {menu ? (
                 <MenuUl top={yPos} left={xPos}>

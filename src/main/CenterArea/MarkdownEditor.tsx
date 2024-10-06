@@ -6,12 +6,18 @@ import styled from '@emotion/styled';
 import { useDropzone } from 'react-dropzone';
 import { EditorView, ViewUpdate } from '@codemirror/view';
 
-import useCodeMirror from '../../lib/useCodeMirror';
-import useContextMenu from '../../lib/useContextMenu';
-import useEditorPosition from '../../lib/useEditorPosition';
-import { updateNote } from '../../lib/notes';
-import { useAtomValue } from 'jotai';
-import { activeWhaleIdAtom, editorFontSizeAtom, platformAtom, repoPanelVisibleAtom } from '@/atoms';
+import useCodeMirror from '@/lib/useCodeMirror';
+import useContextMenu from '@/lib/useContextMenu';
+import useEditorPosition from '@/lib/useEditorPosition';
+import { updateNote } from '@/lib/notes';
+import { useAtomValue, useSetAtom } from 'jotai';
+import {
+    activeWhaleIdAtom,
+    editorFontSizeAtom,
+    keySelectActiveAtom,
+    platformAtom,
+    repoPanelVisibleAtom,
+} from '@/atoms';
 import { join as pathJoin } from 'path-browserify';
 import { useDataContext } from '@/context/DataProvider';
 
@@ -28,13 +34,14 @@ const MarkdownEditor: React.FC<{
     setEditorScrollRatio,
     setRenderNoteStr,
 }) => {
-    const { blur, focus, setShowKeySelect } = useContext(GlobalContext);
+    const { blur, focus } = useContext(GlobalContext);
 
     const { curDataPath, curRepoKey, curFolderKey, curNoteKey, renameNote } = useDataContext();
 
     const platform = useAtomValue(platformAtom);
     const id = useAtomValue(activeWhaleIdAtom);
     const repoPanelVisible = useAtomValue(repoPanelVisibleAtom);
+    const setKeySelectActive = useSetAtom(keySelectActiveAtom);
 
     const { t } = useTranslation();
 
@@ -88,7 +95,7 @@ const MarkdownEditor: React.FC<{
     const onSelectionSet = useCallback(
         async (vu: ViewUpdate) => {
             if (view.current && vu.view.hasFocus) {
-                setShowKeySelect(false);
+                setKeySelectActive(false);
                 const cursorHeadPos = view.current.state.selection.main.head;
                 await updateCursorHeadPos(curRepoKey, curFolderKey, curNoteKey, cursorHeadPos);
             }

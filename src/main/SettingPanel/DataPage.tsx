@@ -4,8 +4,8 @@
 
 // import styled from '@emotion/styled';
 
-// import { usePopUp } from '../../lib/usePopUp';
-// import { AlertPopUp } from '../../components/AlertPopUp';
+// import { usePopUp } from '@/lib/usePopUp';
+// import { AlertPopUp } from '@/components/AlertPopUp';
 // import { useDataContext } from '@/context/DataProvider';
 
 // const DataPage: React.FC<{}> = ({}) => {

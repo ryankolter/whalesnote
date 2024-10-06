@@ -1,26 +1,29 @@
-import { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { GlobalContext } from '../../GlobalProvider';
+import { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import styled from '@emotion/styled';
 import { SearchResult } from 'minisearch';
 
-import useSearch from '../../lib/useSearch';
-import WaitingMaskStatic from '../../components/WaitingMaskStatic';
-import { useAtom, useAtomValue } from 'jotai';
-import { activeWhaleIdAtom, platformAtom, searchPanelVisibleAtom } from '@/atoms';
+import useSearch from '@/lib/useSearch';
+import WaitingMaskStatic from '@/components/WaitingMaskStatic';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import {
+    activeWhaleIdAtom,
+    keySelectActiveAtom,
+    platformAtom,
+    searchPanelVisibleAtom,
+} from '@/atoms';
 import { useDataContext } from '@/context/DataProvider';
 
 const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
-    const id = useAtomValue(activeWhaleIdAtom);
-
-    const { setShowKeySelect } = useContext(GlobalContext);
-    const { curNoteKey } = useDataContext();
-
     const { t } = useTranslation();
 
+    const { curNoteKey } = useDataContext();
+
+    const id = useAtomValue(activeWhaleIdAtom);
     const platform = useAtomValue(platformAtom);
     const [searchPanelVisible, setSearchPanelVisible] = useAtom(searchPanelVisibleAtom);
+    const setKeySelectActive = useSetAtom(keySelectActiveAtom);
 
     const searchBarRef = useRef<HTMLDivElement>(null);
     const searchInputRef = useRef<HTMLInputElement>(null);
@@ -66,9 +69,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
 
     useEffect(() => {
         setWord('');
-        if (searchInputRef.current) {
-            searchInputRef.current.value = '';
-        }
+        if (searchInputRef.current) searchInputRef.current.value = '';
         searchModuleInitialized.current = false;
     }, [id]);
 
@@ -79,7 +80,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
 
                 if ((e.key === 'f' || e.key === 'F') && modKey && e.shiftKey) {
                     searchInputRef.current?.focus();
-                    setShowKeySelect(false);
+                    setKeySelectActive(false);
                 }
 
                 if (
@@ -123,7 +124,7 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
             curSearchResultIndex,
             nextSearchResult,
             prevSearchResult,
-            setShowKeySelect,
+            setKeySelectActive,
             setSearchPanelVisible,
         ],
     );

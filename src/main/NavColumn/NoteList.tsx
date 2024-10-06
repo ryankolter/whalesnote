@@ -16,28 +16,22 @@ import {
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { restrictToFirstScrollableAncestor, restrictToVerticalAxis } from '@dnd-kit/modifiers';
 
-import { Sortable } from '../../components/Sortable';
-import useContextMenu from '../../lib/useContextMenu';
+import { Sortable } from '@/components/Sortable';
+import useContextMenu from '@/lib/useContextMenu';
 import newNoteIcon from '../../resources/icon/newNoteIcon.svg';
 import { useDataContext } from '@/context/DataProvider';
-import { useAtomValue, useSetAtom } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {
     activeWhaleIdAtom,
+    keySelectActiveAtom,
+    keySelectNumArrAtom,
     platformAtom,
     repoPanelVisibleAtom,
     searchPanelVisibleAtom,
 } from '@/atoms';
 
 const NoteList: React.FC<{}> = ({}) => {
-    const id = useAtomValue(activeWhaleIdAtom);
-
-    const {
-        keySelectNumArray,
-        showKeySelect,
-        manualFocus,
-        setKeySelectNumArray,
-        setShowKeySelect,
-    } = useContext(GlobalContext);
+    const { manualFocus } = useContext(GlobalContext);
 
     const {
         whalesnote,
@@ -53,8 +47,11 @@ const NoteList: React.FC<{}> = ({}) => {
     const { t } = useTranslation();
 
     const platform = useAtomValue(platformAtom);
+    const id = useAtomValue(activeWhaleIdAtom);
     const searchPanelVisible = useAtomValue(searchPanelVisibleAtom);
     const setRepoPanelVisible = useSetAtom(repoPanelVisibleAtom);
+    const [keySelectActive, setKeySelectActive] = useAtom(keySelectActiveAtom);
+    const [keySelectNumArr, setKeySelectNumArr] = useAtom(keySelectNumArrAtom);
 
     const note_keys = useMemo(() => {
         return whalesnote.repo_map &&
@@ -98,7 +95,7 @@ const NoteList: React.FC<{}> = ({}) => {
         setTimeout(() => {
             scrollToBottom();
         }, 50);
-        setShowKeySelect(false);
+        setKeySelectActive(false);
     }, [
         id,
         curRepoKey,
@@ -106,7 +103,7 @@ const NoteList: React.FC<{}> = ({}) => {
         manualFocus,
         newNote,
         scrollToBottom,
-        setShowKeySelect,
+        setKeySelectActive,
         switchNote,
     ]);
 
@@ -156,31 +153,29 @@ const NoteList: React.FC<{}> = ({}) => {
     }, [noteScrollTop]);
 
     useEffect(() => {
-        if (keySelectNumArray.length === 2) {
+        if (keySelectNumArr.length === 2) {
             let new_index = -1;
             if (note_keys) {
                 if (
-                    keySelectNumArray[0] >= 65 &&
-                    keySelectNumArray[0] <= 72 &&
-                    keySelectNumArray[0] < Math.ceil(note_keys.length / 21) + 65
+                    keySelectNumArr[0] >= 65 &&
+                    keySelectNumArr[0] <= 72 &&
+                    keySelectNumArr[0] < Math.ceil(note_keys.length / 21) + 65
                 ) {
-                    if (keySelectNumArray[1] <= 72 && keySelectNumArray[0] >= 65) {
-                        new_index = (keySelectNumArray[0] - 65) * 21 + (keySelectNumArray[1] - 65);
-                    } else if (keySelectNumArray[1] >= 75 && keySelectNumArray[1] <= 89) {
-                        new_index =
-                            (keySelectNumArray[0] - 65) * 21 + (keySelectNumArray[1] - 65) - 4;
+                    if (keySelectNumArr[1] <= 72 && keySelectNumArr[0] >= 65) {
+                        new_index = (keySelectNumArr[0] - 65) * 21 + (keySelectNumArr[1] - 65);
+                    } else if (keySelectNumArr[1] >= 75 && keySelectNumArr[1] <= 89) {
+                        new_index = (keySelectNumArr[0] - 65) * 21 + (keySelectNumArr[1] - 65) - 4;
                     }
                 } else if (
-                    keySelectNumArray[0] >= 75 &&
-                    keySelectNumArray[0] <= 89 &&
-                    keySelectNumArray[0] < Math.ceil(note_keys.length / 21) + 65 + 4
+                    keySelectNumArr[0] >= 75 &&
+                    keySelectNumArr[0] <= 89 &&
+                    keySelectNumArr[0] < Math.ceil(note_keys.length / 21) + 65 + 4
                 ) {
-                    if (keySelectNumArray[1] <= 72 && keySelectNumArray[1] >= 65) {
+                    if (keySelectNumArr[1] <= 72 && keySelectNumArr[1] >= 65) {
+                        new_index = (keySelectNumArr[0] - 65 - 4) * 21 + (keySelectNumArr[1] - 65);
+                    } else if (keySelectNumArr[1] >= 75 && keySelectNumArr[1] <= 89) {
                         new_index =
-                            (keySelectNumArray[0] - 65 - 4) * 21 + (keySelectNumArray[1] - 65);
-                    } else if (keySelectNumArray[1] >= 75 && keySelectNumArray[1] <= 89) {
-                        new_index =
-                            (keySelectNumArray[0] - 65 - 4) * 21 + (keySelectNumArray[1] - 65) - 4;
+                            (keySelectNumArr[0] - 65 - 4) * 21 + (keySelectNumArr[1] - 65) - 4;
                     }
                 }
             }
@@ -194,13 +189,13 @@ const NoteList: React.FC<{}> = ({}) => {
                     setNoteScrollTop(offset);
                 }
             }
-            setKeySelectNumArray([]);
+            setKeySelectNumArr([]);
         }
-    }, [keySelectNumArray, noteSwitchByIndex, setKeySelectNumArray]);
+    }, [keySelectNumArr, noteSwitchByIndex, setKeySelectNumArr]);
 
     useEffect(() => {
-        if (keySelectNumArray.length === 1) {
-            setKeySelectNumArray([]);
+        if (keySelectNumArr.length === 1) {
+            setKeySelectNumArr([]);
         }
     }, [curRepoKey, curFolderKey, curNoteKey]);
 
@@ -217,7 +212,7 @@ const NoteList: React.FC<{}> = ({}) => {
                 if (
                     (e.key === 'ArrowDown' || e.key === 'k') &&
                     !modKey &&
-                    showKeySelect &&
+                    keySelectActive &&
                     !searchPanelVisible
                 ) {
                     nextNotePage();
@@ -227,14 +222,14 @@ const NoteList: React.FC<{}> = ({}) => {
                 if (
                     (e.key === 'ArrowUp' || e.key === 'i') &&
                     !modKey &&
-                    showKeySelect &&
+                    keySelectActive &&
                     !searchPanelVisible
                 ) {
                     preNotePage();
                 }
             }
         },
-        [showKeySelect, searchPanelVisible, handleNewNote, nextNotePage, preNotePage],
+        [keySelectActive, searchPanelVisible, handleNewNote, nextNotePage, preNotePage],
     );
 
     useEffect(() => {
@@ -322,15 +317,15 @@ const NoteList: React.FC<{}> = ({}) => {
                                                 }}
                                             >
                                                 {note_map[key].title}
-                                                {showKeySelect &&
+                                                {keySelectActive &&
                                                 curNoteKey !== key &&
                                                 index < 21 * 21 ? (
                                                     <NoteKeyTab>
                                                         <span
                                                             style={{
                                                                 color:
-                                                                    keySelectNumArray.length >= 1 &&
-                                                                    keySelectNumArray[0] ===
+                                                                    keySelectNumArr.length >= 1 &&
+                                                                    keySelectNumArr[0] ===
                                                                         genAlphaCode1(index + 1)
                                                                         ? 'var(--main-text-selected-color)'
                                                                         : '',
@@ -346,9 +341,8 @@ const NoteList: React.FC<{}> = ({}) => {
                                                         <span
                                                             style={{
                                                                 color:
-                                                                    keySelectNumArray.length ===
-                                                                        2 &&
-                                                                    keySelectNumArray[1] ===
+                                                                    keySelectNumArr.length === 2 &&
+                                                                    keySelectNumArr[1] ===
                                                                         genAlphaCode2(index + 1)
                                                                         ? 'var(--main-text-selected-color)'
                                                                         : '',

@@ -1,5 +1,4 @@
-import { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { GlobalContext } from '../../GlobalProvider';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 
 import SearchBar from './SearchBar';
@@ -7,16 +6,21 @@ import FolderList from './FolderList';
 import NoteList from './NoteList';
 import RepoPanel from './RepoPanel';
 import { useDataContext } from '@/context/DataProvider';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { platformAtom, repoPanelVisibleAtom } from '@/atoms';
+import { useAtom, useAtomValue } from 'jotai';
+import {
+    keySelectActiveAtom,
+    keySelectNumArrAtom,
+    platformAtom,
+    repoPanelVisibleAtom,
+} from '@/atoms';
 
 const NavColumn: React.FC<Record<string, unknown>> = ({}) => {
-    const { keySelectNumArray, showKeySelect, setKeySelectNumArray } = useContext(GlobalContext);
-
     const { curRepoKey, whalesnote } = useDataContext();
 
     const platform = useAtomValue(platformAtom);
     const [repoPanelVisible, setRepoPanelVisible] = useAtom(repoPanelVisibleAtom);
+    const keySelectActive = useAtomValue(keySelectActiveAtom);
+    const [keySelectNumArr, setKeySelectNumArr] = useAtom(keySelectNumArrAtom);
 
     const resizeFolderOffsetX = useRef<number>(0);
     const resizeNoteOffsetX = useRef<number>(0);
@@ -35,35 +39,35 @@ const NavColumn: React.FC<Record<string, unknown>> = ({}) => {
                 const modKey = platform === 'darwin' ? e.metaKey : e.ctrlKey;
 
                 const lowercase_re = /^[a-hm-y]$/;
-                if (e.key.match(lowercase_re) && !modKey && showKeySelect) {
+                if (e.key.match(lowercase_re) && !modKey && keySelectActive) {
                     const num = e.key.charCodeAt(0) - 32;
-                    if (keySelectNumArray.length === 0) {
-                        setKeySelectNumArray((state: any) => state.concat([num]));
+                    if (keySelectNumArr.length === 0) {
+                        setKeySelectNumArr((state: any) => state.concat([num]));
                     } else {
-                        setKeySelectNumArray((state: any) => state.concat([num]));
+                        setKeySelectNumArr((state: any) => state.concat([num]));
                     }
                 }
 
                 const uppercase_re = /^[A-HM-Y]$/;
-                if (e.key.match(uppercase_re) && !modKey && showKeySelect) {
+                if (e.key.match(uppercase_re) && !modKey && keySelectActive) {
                     const num = e.key.charCodeAt(0);
-                    if (keySelectNumArray.length === 0) {
-                        setKeySelectNumArray((state: any) => state.concat([num]));
+                    if (keySelectNumArr.length === 0) {
+                        setKeySelectNumArr((state: any) => state.concat([num]));
                     } else {
-                        setKeySelectNumArray((state: any) => state.concat([num]));
+                        setKeySelectNumArr((state: any) => state.concat([num]));
                     }
                 }
 
                 const number_re = /^[0-9]$/;
-                if (e.key.match(number_re) && !modKey && showKeySelect) {
+                if (e.key.match(number_re) && !modKey && keySelectActive) {
                     const num = e.key.charCodeAt(0);
-                    if (keySelectNumArray.length === 1) {
-                        setKeySelectNumArray((state: any) => state.concat([num]));
+                    if (keySelectNumArr.length === 1) {
+                        setKeySelectNumArr((state: any) => state.concat([num]));
                     }
                 }
             }
         },
-        [keySelectNumArray, showKeySelect],
+        [keySelectNumArr, keySelectActive],
     );
 
     useEffect(() => {
@@ -91,7 +95,7 @@ const NavColumn: React.FC<Record<string, unknown>> = ({}) => {
                                 ? whalesnote.repo_map[curRepoKey].repo_name
                                 : ''}
                         </RepoNameLabel>
-                        {showKeySelect ? <RepoPanelKeyTab>Z</RepoPanelKeyTab> : <></>}
+                        {keySelectActive ? <RepoPanelKeyTab>Z</RepoPanelKeyTab> : <></>}
                     </CurRepoNameTag>
                 </RepoBox>
                 <AllRepo

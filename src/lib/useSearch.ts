@@ -4,14 +4,13 @@ import { t } from 'i18next';
 import MiniSearch, { AsPlainObject, SearchResult } from 'minisearch';
 import { WhaleObject } from '../commonType';
 import { useDataContext } from '@/context/DataProvider';
-import { useAtom } from 'jotai';
-import { searchPanelVisibleAtom } from '@/atoms';
+import { useAtom, useSetAtom } from 'jotai';
+import { searchListFocusedAtom, searchPanelVisibleAtom } from '@/atoms';
 
 const useSearch = () => {
-    const { setShowSearchResultHighlight } = useContext(GlobalContext);
+    const setSearchListFocused = useSetAtom(searchListFocusedAtom);
 
     const { curDataPath, whalesnote, switchNote } = useDataContext();
-
     const [searchPanelVisible, setSearchPanelVisible] = useAtom(searchPanelVisibleAtom);
 
     const miniSearch = useRef<MiniSearch | null>();
@@ -46,7 +45,7 @@ const useSearch = () => {
     }, [word, querySearchResult, setSearchResults]);
 
     useEffect(() => {
-        setShowSearchResultHighlight(false);
+        setSearchListFocused(false);
         setCurSearchResultIndex(-1);
         if (word === '') {
             setSearchPanelVisible(false);
@@ -64,7 +63,7 @@ const useSearch = () => {
     const switchToResultNote = useCallback(
         (index: number) => {
             if (index >= 0 && index < searchResults.length) {
-                setShowSearchResultHighlight(true);
+                setSearchListFocused(true);
                 /* eslint-disable */
                 const id = searchResults[index]['id'];
                 /* eslint-enable */
@@ -72,7 +71,7 @@ const useSearch = () => {
                 switchNote(arr[0], arr[1], arr[2]);
             }
         },
-        [searchResults, setShowSearchResultHighlight, switchNote],
+        [searchResults, setSearchListFocused, switchNote],
     );
 
     const clickOnSearchResult = useCallback(
@@ -190,9 +189,7 @@ const useSearch = () => {
 
     useEffect(() => {
         (async () => {
-            if (searchPanelVisible) {
-                await initSearchModule();
-            }
+            if (searchPanelVisible) await initSearchModule();
         })();
     }, [searchPanelVisible]);
 
@@ -201,38 +198,35 @@ const useSearch = () => {
 
         setTimeout(async () => {
             await loadDictionary();
-            const whalesnote_info = await window.electronAPI.readJsonSync(
+            const whaleInfo = await window.electronAPI.readJsonSync(
                 `${curDataPath}/whalesnote_info.json`,
             );
 
-            const newWhalesnote: WhaleObject = {
-                path: '',
+            const whale: WhaleObject = {
+                path: curDataPath,
                 repo_keys: [],
                 repo_map: {},
             };
 
-            for await (const repo_key of whalesnote_info.repo_keys) {
-                const repo_info = await window.electronAPI.readJsonSync(
+            for await (const repo_key of whaleInfo.repo_keys) {
+                const repoInfo = await window.electronAPI.readJsonSync(
                     `${curDataPath}/${repo_key}/repo_info.json`,
                 );
-                if (repo_info) {
-                    newWhalesnote.repo_keys.push(repo_key);
-                    newWhalesnote.repo_map[repo_key] = {
-                        repo_name: repo_info.repo_name,
-                        folder_keys: repo_info.folder_keys,
-                        folder_map: {},
+                if (!repoInfo) continue;
+
+                whale.repo_keys.push(repo_key);
+                whale.repo_map[repo_key] = repoInfo;
+
+                for await (const folder_key of repoInfo.folder_keys) {
+                    const folderInfo = await window.electronAPI.readJsonSync(
+                        `${curDataPath}/${repo_key}/${folder_key}/folder_info.json`,
+                    );
+                    if (!folderInfo) continue;
+
+                    whale.repo_map[repo_key].folder_map[folder_key] = {
+                        ...whale.repo_map[repo_key].folder_map[folder_key],
+                        ...folderInfo,
                     };
-                    for await (const folder_key of repo_info.folder_keys) {
-                        const folder_info = await window.electronAPI.readJsonSync(
-                            `${curDataPath}/${repo_key}/${folder_key}/folder_info.json`,
-                        );
-                        if (repo_info.folder_map[folder_key]) {
-                            folder_info.folder_name = repo_info.folder_map[folder_key].folder_name;
-                        }
-                        if (folder_info) {
-                            newWhalesnote.repo_map[repo_key].folder_map[folder_key] = folder_info;
-                        }
-                    }
                 }
             }
 
@@ -244,34 +238,29 @@ const useSearch = () => {
                 content: string;
             }[] = [];
 
-            for (const repo_key of newWhalesnote.repo_keys) {
-                if (newWhalesnote.repo_map[repo_key]) {
-                    const folder_map = newWhalesnote.repo_map[repo_key].folder_map;
-                    for (const folder_key of newWhalesnote.repo_map[repo_key].folder_keys) {
-                        if (folder_map[folder_key]) {
-                            const folder_name = folder_map[folder_key].folder_name;
-                            for (const note_key of folder_map[folder_key].note_keys) {
-                                const content = await window.electronAPI.readMdSync(
-                                    `${curDataPath}/${repo_key}/${folder_key}/${note_key}.md`,
-                                );
-                                if (content) {
-                                    const id = `${repo_key}-${folder_key}-${note_key}`;
-                                    let title =
-                                        folder_map[folder_key]?.note_map[note_key]?.title || '';
-                                    if (title === t('note.untitled')) title = '';
-                                    documents.push({
-                                        id,
-                                        type: 'note',
-                                        title,
-                                        folder_name,
-                                        content,
-                                    });
-                                }
-                            }
-                        }
+            let folderMap;
+            for (const repoKey of whale.repo_keys) {
+                folderMap = whale.repo_map[repoKey].folder_map;
+                for (const folderKey of whale.repo_map[repoKey].folder_keys) {
+                    for (const noteKey of folderMap[folderKey].note_keys) {
+                        const content = await window.electronAPI.readMdSync(
+                            `${curDataPath}/${repoKey}/${folderKey}/${noteKey}.md`,
+                        );
+                        if (!content) continue;
+
+                        let title = folderMap[folderKey]?.note_map[noteKey]?.title || '';
+                        if (title === t('note.untitled')) title = '';
+                        documents.push({
+                            id: `${repoKey}-${folderKey}-${noteKey}`,
+                            type: 'note',
+                            title,
+                            folder_name: folderMap[folderKey].folder_name,
+                            content,
+                        });
                     }
                 }
             }
+
             miniSearch.current = new MiniSearch({
                 fields: ['title', 'content'],
                 storeFields: ['id', 'type', 'title', 'folder_name'],

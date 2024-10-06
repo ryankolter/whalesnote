@@ -14,26 +14,31 @@ import {
 } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { restrictToFirstScrollableAncestor, restrictToVerticalAxis } from '@dnd-kit/modifiers';
-import { updateNote } from '../../lib/notes';
+import { updateNote } from '@/lib/notes';
 
-import { Sortable } from '../../components/Sortable';
-import { TextInput } from '../../components/TextInput';
-import { AlertPopUp } from '../../components/AlertPopUp';
-import { InputPopUp } from '../../components/InputPopUp';
-import { usePopUp } from '../../lib/usePopUp';
-import useContextMenu from '../../lib/useContextMenu';
+import { Sortable } from '@/components/Sortable';
+import { TextInput } from '@/components/TextInput';
+import { AlertPopUp } from '@/components/AlertPopUp';
+import { InputPopUp } from '@/components/InputPopUp';
+import { usePopUp } from '@/lib/usePopUp';
+import useContextMenu from '@/lib/useContextMenu';
 import categoryIcon from '../../resources/icon/categoryIcon.svg';
 import folderIcon from '../../resources/icon/folderIcon.svg';
 import { parse as pathParse } from 'path-browserify';
-import { activeWhaleIdAtom, platformAtom, repoPanelVisibleAtom } from '@/atoms';
-import { useAtomValue, useSetAtom } from 'jotai';
+import {
+    activeWhaleIdAtom,
+    keySelectActiveAtom,
+    keySelectNumArrAtom,
+    platformAtom,
+    repoPanelVisibleAtom,
+} from '@/atoms';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { useDataContext } from '@/context/DataProvider';
 
 const FolderList: React.FC<{}> = ({}) => {
     const id = useAtomValue(activeWhaleIdAtom);
 
-    const { keySelectNumArray, showKeySelect, manualFocus, setKeySelectNumArray } =
-        useContext(GlobalContext);
+    const { manualFocus } = useContext(GlobalContext);
 
     const {
         curDataPath,
@@ -54,6 +59,8 @@ const FolderList: React.FC<{}> = ({}) => {
 
     const platform = useAtomValue(platformAtom);
     const setRepoPanelVisible = useSetAtom(repoPanelVisibleAtom);
+    const keySelectActive = useAtomValue(keySelectActiveAtom);
+    const [keySelectNumArr, setKeySelectNumArr] = useAtom(keySelectNumArrAtom);
 
     const folder_keys = useMemo(() => {
         return whalesnote.repo_map ? whalesnote.repo_map[curRepoKey]?.folder_keys : undefined;
@@ -208,16 +215,16 @@ const FolderList: React.FC<{}> = ({}) => {
     }, [folderScrollTop]);
 
     useEffect(() => {
-        if (keySelectNumArray.length === 2) {
+        if (keySelectNumArr.length === 2) {
             let new_index = -1;
 
-            if (keySelectNumArray[0] >= 65 && keySelectNumArray[0] <= 72) {
-                if (keySelectNumArray[1] >= 48 && keySelectNumArray[1] <= 57) {
-                    new_index = (keySelectNumArray[0] - 65) * 10 + (keySelectNumArray[1] - 48);
+            if (keySelectNumArr[0] >= 65 && keySelectNumArr[0] <= 72) {
+                if (keySelectNumArr[1] >= 48 && keySelectNumArr[1] <= 57) {
+                    new_index = (keySelectNumArr[0] - 65) * 10 + (keySelectNumArr[1] - 48);
                 }
-            } else if (keySelectNumArray[0] >= 75 && keySelectNumArray[0] <= 89) {
-                if (keySelectNumArray[1] >= 48 && keySelectNumArray[1] <= 57) {
-                    new_index = (keySelectNumArray[0] - 65 - 4) * 10 + (keySelectNumArray[1] - 48);
+            } else if (keySelectNumArr[0] >= 75 && keySelectNumArr[0] <= 89) {
+                if (keySelectNumArr[1] >= 48 && keySelectNumArr[1] <= 57) {
+                    new_index = (keySelectNumArr[0] - 65 - 4) * 10 + (keySelectNumArr[1] - 48);
                 }
             }
 
@@ -230,13 +237,13 @@ const FolderList: React.FC<{}> = ({}) => {
                     setFolderScrollTop(offset);
                 }
             }
-            setKeySelectNumArray([]);
+            setKeySelectNumArr([]);
         }
-    }, [keySelectNumArray, folderSwitchByIndex]);
+    }, [keySelectNumArr, folderSwitchByIndex]);
 
     useEffect(() => {
-        if (keySelectNumArray.length === 1) {
-            setKeySelectNumArray([]);
+        if (keySelectNumArr.length === 1) {
+            setKeySelectNumArr([]);
         }
     }, [curRepoKey, curFolderKey]);
 
@@ -294,17 +301,17 @@ const FolderList: React.FC<{}> = ({}) => {
                 }
 
                 // arrow down or K
-                if ((e.key === 'ArrowDown' || e.key === 'k') && modKey && showKeySelect) {
+                if ((e.key === 'ArrowDown' || e.key === 'k') && modKey && keySelectActive) {
                     nextFolderPage();
                 }
 
                 // arrow up or I
-                if ((e.key === 'ArrowUp' || e.key === 'i') && modKey && showKeySelect) {
+                if ((e.key === 'ArrowUp' || e.key === 'i') && modKey && keySelectActive) {
                     preFolderPage();
                 }
             }
         },
-        [keySelectNumArray, showKeySelect, folder_keys, nextFolderPage, preFolderPage],
+        [keySelectNumArr, keySelectActive, folder_keys, nextFolderPage, preFolderPage],
     );
 
     useEffect(() => {
@@ -415,16 +422,16 @@ const FolderList: React.FC<{}> = ({}) => {
                                                     <FolderName>
                                                         {folder_map[key].folder_name}
                                                     </FolderName>
-                                                    {showKeySelect &&
+                                                    {keySelectActive &&
                                                     curFolderKey !== key &&
                                                     index < 21 * 10 ? (
                                                         <FolderKeyTab>
                                                             <span
                                                                 style={{
                                                                     color:
-                                                                        keySelectNumArray.length >=
+                                                                        keySelectNumArr.length >=
                                                                             1 &&
-                                                                        keySelectNumArray[0] ===
+                                                                        keySelectNumArr[0] ===
                                                                             genAlphaCode1(index + 1)
                                                                             ? 'var(--main-text-selected-color)'
                                                                             : '',
@@ -437,9 +444,9 @@ const FolderList: React.FC<{}> = ({}) => {
                                                             <span
                                                                 style={{
                                                                     color:
-                                                                        keySelectNumArray.length ===
+                                                                        keySelectNumArr.length ===
                                                                             2 &&
-                                                                        keySelectNumArray[1] ===
+                                                                        keySelectNumArr[1] ===
                                                                             genNumberCode2(
                                                                                 index + 1,
                                                                             )

@@ -2,38 +2,37 @@ import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'r
 import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 
-import { useRecordValue } from '../../lib/useRecordValue';
+import { useRecordValue } from '@/lib/useRecordValue';
 import MarkdownEditor from './MarkdownEditor';
 import MarkdownRender from './MarkdownRender';
 // import TipTapEditor from './TipTapEditor';
-import useRenderState from '../../lib/useRenderState';
+import useRenderState from '@/lib/useRenderState';
 import ToolBar from './ToolBar';
-import { notes } from '../../lib/notes';
+import { notes } from '@/lib/notes';
 import { useDataContext } from '@/context/DataProvider';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {
     activeWhaleIdAtom,
+    keySelectActiveAtom,
+    keySelectNumArrAtom,
     platformAtom,
     repoPanelVisibleAtom,
+    searchListFocusedAtom,
     searchPanelVisibleAtom,
 } from '@/atoms';
 
 const CenterArea: React.FC<{}> = ({}) => {
-    const {
-        showKeySelect,
-        showSearchResultHighlight,
-        manualBlur,
-        manualFocus,
-        setKeySelectNumArray,
-        setShowKeySelect,
-    } = useContext(GlobalContext);
+    const { manualBlur, manualFocus } = useContext(GlobalContext);
 
     const { curDataPath, curRepoKey, curFolderKey, curNoteKey } = useDataContext();
 
     const platform = useAtomValue(platformAtom);
     const id = useAtomValue(activeWhaleIdAtom);
     const [searchPanelVisible, setSearchPanelVisible] = useAtom(searchPanelVisibleAtom);
+    const searchListFocused = useAtomValue(searchListFocusedAtom);
     const [repoPanelVisible, setRepoPanelVisible] = useAtom(repoPanelVisibleAtom);
+    const [keySelectActive, setKeySelectActive] = useAtom(keySelectActiveAtom);
+    const setKeySelectNumArr = useSetAtom(keySelectNumArrAtom);
 
     const [
         editorWidth,
@@ -85,33 +84,33 @@ const CenterArea: React.FC<{}> = ({}) => {
 
                 // show A0,A1,...,AA,AB,...,Z tips for keyborard
                 if (e.key === ',' && modKey) {
-                    if (showKeySelect) {
-                        setShowKeySelect(false);
-                        setKeySelectNumArray([]);
+                    if (keySelectActive) {
+                        setKeySelectActive(false);
+                        setKeySelectNumArr([]);
                         if (curNoteKey && !repoPanelVisible) {
                             manualFocus(0);
                         }
                     } else {
-                        setShowKeySelect(true);
-                        setKeySelectNumArray([]);
+                        setKeySelectActive(true);
+                        setKeySelectNumArr([]);
                         //只有这里才会让它初始化为显示框框
                         manualBlur(0);
                     }
                 }
 
                 //switch among hidden, half, all
-                if (e.key === '/' && modKey && !e.shiftKey) {
+                if (e.key === '.' && modKey && !e.shiftKey) {
                     nextMdRenderState();
                 }
 
                 //normal enter and extra enter
                 if (!composing.current && e.key === 'Enter') {
-                    if (showKeySelect) {
-                        setShowKeySelect(false);
-                        setKeySelectNumArray([]);
+                    if (keySelectActive) {
+                        setKeySelectActive(false);
+                        setKeySelectNumArr([]);
                     }
                     if (
-                        (showKeySelect || (searchPanelVisible && showSearchResultHighlight)) &&
+                        (keySelectActive || (searchPanelVisible && searchListFocused)) &&
                         curNoteKey &&
                         mdRenderState !== 'all'
                     ) {
@@ -123,13 +122,13 @@ const CenterArea: React.FC<{}> = ({}) => {
         },
         [
             curNoteKey,
-            showKeySelect,
+            keySelectActive,
             repoPanelVisible,
             searchPanelVisible,
-            showSearchResultHighlight,
+            searchListFocused,
             manualFocus,
             manualBlur,
-            setShowKeySelect,
+            setKeySelectActive,
             setRepoPanelVisible,
             nextMdRenderState,
         ],

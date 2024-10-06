@@ -1,5 +1,4 @@
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { GlobalContext } from '../../GlobalProvider';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import styled from '@emotion/styled';
@@ -15,20 +14,23 @@ import {
 } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 
-import { Sortable } from '../../components/Sortable';
-import { TextInput } from '../../components/TextInput';
-import { AlertPopUp } from '../../components/AlertPopUp';
-import { InputPopUp } from '../../components/InputPopUp';
-import { usePopUp } from '../../lib/usePopUp';
-import useContextMenu from '../../lib/useContextMenu';
+import { Sortable } from '@/components/Sortable';
+import { TextInput } from '@/components/TextInput';
+import { AlertPopUp } from '@/components/AlertPopUp';
+import { InputPopUp } from '@/components/InputPopUp';
+import { usePopUp } from '@/lib/usePopUp';
+import useContextMenu from '@/lib/useContextMenu';
 import { useDataContext } from '@/context/DataProvider';
-import { activeWhaleIdAtom, platformAtom, repoPanelVisibleAtom } from '@/atoms';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import {
+    activeWhaleIdAtom,
+    keySelectActiveAtom,
+    keySelectNumArrAtom,
+    platformAtom,
+    repoPanelVisibleAtom,
+} from '@/atoms';
+import { useAtom, useAtomValue } from 'jotai';
 
 const RepoPanel: React.FC<{}> = ({}) => {
-    const { keySelectNumArray, showKeySelect, setShowKeySelect, setKeySelectNumArray } =
-        useContext(GlobalContext);
-
     const {
         whalesnote,
         newRepo,
@@ -48,6 +50,8 @@ const RepoPanel: React.FC<{}> = ({}) => {
     const platform = useAtomValue(platformAtom);
     const id = useAtomValue(activeWhaleIdAtom);
     const [repoPanelVisible, setRepoPanelVisible] = useAtom(repoPanelVisibleAtom);
+    const [keySelectActive, setKeySelectActive] = useAtom(keySelectActiveAtom);
+    const [keySelectNumArr, setKeySelectNumArr] = useAtom(keySelectNumArrAtom);
 
     const { t } = useTranslation();
 
@@ -76,7 +80,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
     const sensors = useSensors(useSensor(MouseSensor, { activationConstraint: { distance: 5 } }));
 
     useEffect(() => {
-        if (showKeySelect) {
+        if (keySelectActive) {
             let page = 0;
             whalesnote.repo_keys
                 ?.filter((key) => whalesnote && whalesnote.repo_map && whalesnote.repo_map[key])
@@ -303,14 +307,14 @@ const RepoPanel: React.FC<{}> = ({}) => {
                 if (
                     e.key.match(number_re) &&
                     !modKey &&
-                    keySelectNumArray.length === 0 &&
+                    keySelectNumArr.length === 0 &&
                     repoPanelVisible &&
-                    showKeySelect
+                    keySelectActive
                 ) {
                     const index = Number(e.key) + 6 * repoSelectedList - 1;
                     if (whalesnote.repo_keys && index < whalesnote.repo_keys.length) {
                         switchRepoInPanel(whalesnote.repo_keys[index]);
-                        setShowKeySelect(true);
+                        setKeySelectActive(true);
                     }
                 }
 
@@ -335,33 +339,33 @@ const RepoPanel: React.FC<{}> = ({}) => {
                 }
 
                 //alpha z
-                if (e.key === 'z' && !modKey && showKeySelect) {
+                if (e.key === 'z' && !modKey && keySelectActive) {
                     setRepoPanelVisible((_showRepoPanel) => !_showRepoPanel);
                 }
 
                 // esc
                 if (e.key === 'Escape') {
-                    if (showKeySelect) {
-                        setShowKeySelect(false);
-                        setKeySelectNumArray([]);
+                    if (keySelectActive) {
+                        setKeySelectActive(false);
+                        setKeySelectNumArr([]);
                     }
                     setRepoPanelVisible(false);
                 }
             }
         },
         [
-            keySelectNumArray,
+            keySelectNumArr,
             repoSelectedList,
-            showKeySelect,
+            keySelectActive,
             repoPanelVisible,
             whalesnote,
             nextRepoList,
             nextRepoPage,
             prevRepoList,
             prevRepoPage,
-            setShowKeySelect,
+            setKeySelectActive,
             setRepoPanelVisible,
-            setKeySelectNumArray,
+            setKeySelectNumArr,
             switchRepoInPanel,
         ],
     );
@@ -476,7 +480,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
                                                             }}
                                                         >
                                                             {whalesnote.repo_map[key].repo_name}
-                                                            {showKeySelect ? (
+                                                            {keySelectActive ? (
                                                                 <RepoGroupItem
                                                                     style={{
                                                                         color:
@@ -491,7 +495,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
                                                                 <></>
                                                             )}
                                                         </RepoItemName>
-                                                        {showKeySelect ? (
+                                                        {keySelectActive ? (
                                                             <RepoGroupSelect></RepoGroupSelect>
                                                         ) : (
                                                             <></>
@@ -526,7 +530,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
                                                             }}
                                                         >
                                                             {whalesnote.repo_map[key].repo_name}
-                                                            {showKeySelect ? (
+                                                            {keySelectActive ? (
                                                                 <RepoGroupItem
                                                                     style={{
                                                                         color:

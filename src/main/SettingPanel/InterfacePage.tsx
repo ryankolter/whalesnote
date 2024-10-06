@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import styled from '@emotion/styled';
 
-import { SelectionOptions } from '../../components/SelectionOptions';
+import { SelectionOptions } from '@/components/SelectionOptions';
 import { useAtom } from 'jotai';
 import { editorFontSizeAtom, renderFontSizeAtom, languageAtom, themeAtom } from '@/atoms';
 
