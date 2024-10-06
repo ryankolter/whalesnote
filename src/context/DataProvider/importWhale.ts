@@ -13,10 +13,9 @@ export const importWhale = async (
     path: string,
     whaleInfo: {
         id: string;
-        repos_key: string[];
+        repo_keys: string[];
     },
 ) => {
-    //process whaleObj
     const whaleObj: WhaleObject = {
         path,
         repo_keys: [],
@@ -24,7 +23,7 @@ export const importWhale = async (
     };
     const validRepoKeys: string[] = [];
 
-    for (const repo_key of whaleInfo.repos_key) {
+    for (const repo_key of whaleInfo.repo_keys) {
         const repoInfo = await window.electronAPI.readJsonSync(
             `${path}/${repo_key}/repo_info.json`,
         );
@@ -32,14 +31,14 @@ export const importWhale = async (
             whaleObj.repo_keys.push(repo_key);
             whaleObj.repo_map[repo_key] = {
                 repo_name: repoInfo.repo_name,
-                folder_keys: repoInfo.folders_key,
-                folder_map: repoInfo.folders_obj,
+                folder_keys: repoInfo.folder_keys,
+                folder_map: repoInfo.folder_map,
             };
             validRepoKeys.push(repo_key);
         }
     }
-    if (validRepoKeys.length < whaleInfo.repos_key.length) {
-        whaleInfo.repos_key = validRepoKeys;
+    if (validRepoKeys.length < whaleInfo.repo_keys.length) {
+        whaleInfo.repo_keys = validRepoKeys;
         await window.electronAPI.writeJson(`${path}/whalesnote_info.json`, whaleInfo);
     }
 
@@ -93,11 +92,11 @@ export const importWhale = async (
             );
 
             //init noteKey List
-            initNoteKeys = folderInfo.notes_key;
+            initNoteKeys = folderInfo.note_keys;
             whaleObj.repo_map[initRepoKey].folder_map[initFolderKey] = {
                 ...whaleObj.repo_map[initRepoKey].folder_map[initFolderKey],
                 note_keys: initNoteKeys,
-                note_map: folderInfo.notes_obj,
+                note_map: folderInfo.note_map,
             };
         }
     } else {

@@ -7,16 +7,15 @@ const createDefaultWhale = async (dataPath: string) => {
     const repo_id = cryptoRandomString({ length: 12, type: 'alphanumeric' });
     await window.electronAPI.writeJson(`${dataPath}/whalesnote_info.json`, {
         id,
-        repos_key: [repo_id],
+        repo_keys: [repo_id],
     });
 
     //create repo_info, folder_info and note.md
     const folder_id = cryptoRandomString({ length: 12, type: 'alphanumeric' });
     const note_id = cryptoRandomString({ length: 12, type: 'alphanumeric' });
     const folder_info = {
-        folder_name: i18next.t('category.default_name'),
-        notes_key: [note_id],
-        notes_obj: {
+        note_keys: [note_id],
+        note_map: {
             [note_id]: {
                 title: i18next.t('note.untitled'),
             },
@@ -24,9 +23,11 @@ const createDefaultWhale = async (dataPath: string) => {
     };
     const repo_info = {
         repo_name: i18next.t('repository.default_name'),
-        folders_key: [folder_id],
-        folders_obj: {
-            [folder_id]: folder_info,
+        folder_keys: [folder_id],
+        folder_map: {
+            [folder_id]: {
+                folder_name: i18next.t('category.default_name'),
+            },
         },
     };
     await window.electronAPI.writeJson(`${dataPath}/${repo_id}/repo_info.json`, repo_info);

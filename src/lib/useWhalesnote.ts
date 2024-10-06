@@ -41,8 +41,8 @@ const useWhalesnote = () => {
                 const folderMap = draft[id].repo_map[repoKey].folder_map;
                 folderMap[folderKey] = {
                     folder_name: folderMap[folderKey].folder_name,
-                    note_keys: folderInfo.notes_key,
-                    note_map: folderInfo.notes_obj,
+                    note_keys: folderInfo.note_keys,
+                    note_map: folderInfo.note_map,
                 };
             });
         },
@@ -59,7 +59,7 @@ const useWhalesnote = () => {
             );
             if (!whaleInfo) return;
 
-            whaleInfo.repos_key.push(repoKey);
+            whaleInfo.repo_keys.push(repoKey);
             await window.electronAPI.writeJson(
                 `${whales[id].path}/whalesnote_info.json`,
                 whaleInfo,
@@ -67,8 +67,8 @@ const useWhalesnote = () => {
 
             const repoInfo = {
                 repo_name,
-                folders_key: [],
-                folders_obj: {},
+                folder_keys: [],
+                folder_map: {},
             };
             await window.electronAPI.writeJson(
                 `${whales[id].path}/${repoKey}/repo_info.json`,
@@ -113,7 +113,7 @@ const useWhalesnote = () => {
             const whaleInfo = await window.electronAPI.readJsonSync(
                 `${whales[id].path}/whalesnote_info.json`,
             );
-            whaleInfo.repos_key = new_repo_keys;
+            whaleInfo.repo_keys = new_repo_keys;
             await window.electronAPI.writeJson(
                 `${whales[id].path}/whalesnote_info.json`,
                 whaleInfo,
@@ -137,17 +137,17 @@ const useWhalesnote = () => {
             const repoInfo = await window.electronAPI.readJsonSync(
                 `${whales[id].path}/${repoKey}/repo_info.json`,
             );
-            for (const folderKey of repoInfo.folders_key) {
+            for (const folderKey of repoInfo.folder_keys) {
                 const folderInfo = await window.electronAPI.readJsonSync(
                     `${whales[id].path}/${repoKey}/${folderKey}/folder_info.json`,
                 );
-                for (const noteKey of folderInfo.notes_key) {
+                for (const noteKey of folderInfo.note_keys) {
                     const note_content = await window.electronAPI.readMdSync(
                         `${whales[id].path}/${repoKey}/${folderKey}/${noteKey}.md`,
                     );
 
                     trash[
-                        `${repoKey}-${folderKey}-${noteKey}-${folderInfo.notes_obj[noteKey]?.title}`
+                        `${repoKey}-${folderKey}-${noteKey}-${folderInfo.note_map[noteKey]?.title}`
                     ] = note_content;
                 }
             }
@@ -158,20 +158,20 @@ const useWhalesnote = () => {
             );
             const remainRepoKeys: string[] = [];
             let otherRepoKey = undefined;
-            whaleInfo.repos_key.forEach((key: string, index: number) => {
+            whaleInfo.repo_keys.forEach((key: string, index: number) => {
                 if (key === repoKey) {
-                    if (whaleInfo.repos_key.length > 1) {
-                        if (index === whaleInfo.repos_key.length - 1) {
-                            otherRepoKey = whaleInfo.repos_key[index - 1];
+                    if (whaleInfo.repo_keys.length > 1) {
+                        if (index === whaleInfo.repo_keys.length - 1) {
+                            otherRepoKey = whaleInfo.repo_keys[index - 1];
                         } else {
-                            otherRepoKey = whaleInfo.repos_key[index + 1];
+                            otherRepoKey = whaleInfo.repo_keys[index + 1];
                         }
                     }
                 } else {
                     remainRepoKeys.push(key);
                 }
             });
-            whaleInfo.repos_key = remainRepoKeys;
+            whaleInfo.repo_keys = remainRepoKeys;
             await window.electronAPI.writeJson(
                 `${whales[id].path}/whalesnote_info.json`,
                 whaleInfo,
@@ -213,8 +213,8 @@ const useWhalesnote = () => {
             const repoInfo = await window.electronAPI.readJsonSync(
                 `${whales[id].path}/${repoKey}/repo_info.json`,
             );
-            repoInfo.folders_key.push(newFolderKey);
-            repoInfo.folders_obj[newFolderKey] = {
+            repoInfo.folder_keys.push(newFolderKey);
+            repoInfo.folder_map[newFolderKey] = {
                 folder_name: newFolderName,
             };
             await window.electronAPI.writeJson(
@@ -223,8 +223,8 @@ const useWhalesnote = () => {
             );
 
             const saveFolderInfo = {
-                notes_key: [],
-                notes_obj: {},
+                note_keys: [],
+                note_map: {},
             };
             await window.electronAPI.writeJson(
                 `${whales[id].path}/${repoKey}/${newFolderKey}/folder_info.json`,
@@ -232,8 +232,8 @@ const useWhalesnote = () => {
             );
 
             const folderInfo = {
-                note_keys: saveFolderInfo.notes_key,
-                note_map: saveFolderInfo.notes_obj,
+                note_keys: saveFolderInfo.note_keys,
+                note_map: saveFolderInfo.note_map,
                 folder_name: newFolderName,
             };
             produceWhales((draft) => {
@@ -257,7 +257,7 @@ const useWhalesnote = () => {
             const repoInfo = await window.electronAPI.readJsonSync(
                 `${whales[id].path}/${repoKey}/repo_info.json`,
             );
-            repoInfo.folders_obj[folderKey].folder_name = newFolderName;
+            repoInfo.folder_map[folderKey].folder_name = newFolderName;
             await window.electronAPI.writeJson(
                 `${whales[id].path}/${repoKey}/repo_info.json`,
                 repoInfo,
@@ -277,7 +277,7 @@ const useWhalesnote = () => {
             const repoInfo = await window.electronAPI.readJsonSync(
                 `${whales[id].path}/${repoKey}/repo_info.json`,
             );
-            repoInfo.folders_key = newFolderKeys;
+            repoInfo.folder_keys = newFolderKeys;
             await window.electronAPI.writeJson(
                 `${whales[id].path}/${repoKey}/repo_info.json`,
                 repoInfo,
@@ -302,11 +302,11 @@ const useWhalesnote = () => {
                 (await window.electronAPI.readJsonSync(`${whales[id].path}/trash.json`)) ||
                 ({} as Record<string, string>);
 
-            for (const noteKey of folderInfo.notes_key) {
+            for (const noteKey of folderInfo.note_keys) {
                 const note_content = await window.electronAPI.readMdSync(
                     `${whales[id].path}/${repoKey}/${folderKey}/${noteKey}.md`,
                 );
-                trash[`${repoKey}-${folderKey}-${noteKey}-${folderInfo.notes_obj[noteKey].title}`] =
+                trash[`${repoKey}-${folderKey}-${noteKey}-${folderInfo.note_map[noteKey].title}`] =
                     note_content;
             }
 
@@ -319,13 +319,13 @@ const useWhalesnote = () => {
             const remaining_folder_keys: string[] = [];
             let next_folder_key = undefined;
 
-            repoInfo.folders_key.forEach((key: string, index: number) => {
+            repoInfo.folder_keys.forEach((key: string, index: number) => {
                 if (key === folderKey) {
-                    if (repoInfo.folders_key.length > 1) {
-                        if (index === repoInfo.folders_key.length - 1) {
-                            next_folder_key = repoInfo.folders_key[index - 1];
+                    if (repoInfo.folder_keys.length > 1) {
+                        if (index === repoInfo.folder_keys.length - 1) {
+                            next_folder_key = repoInfo.folder_keys[index - 1];
                         } else {
-                            next_folder_key = repoInfo.folders_key[index + 1];
+                            next_folder_key = repoInfo.folder_keys[index + 1];
                         }
                     }
                 } else {
@@ -333,8 +333,8 @@ const useWhalesnote = () => {
                 }
             });
 
-            repoInfo.folders_key = remaining_folder_keys;
-            delete repoInfo.folders_obj[folderKey];
+            repoInfo.folder_keys = remaining_folder_keys;
+            delete repoInfo.folder_map[folderKey];
 
             await window.electronAPI.writeJson(
                 `${whales[id].path}/${repoKey}/repo_info.json`,
@@ -367,8 +367,8 @@ const useWhalesnote = () => {
             const folderInfo = await window.electronAPI.readJsonSync(
                 `${whales[id].path}/${repoKey}/${folderKey}/folder_info.json`,
             );
-            folderInfo.notes_key.push(newNoteKey);
-            folderInfo.notes_obj[newNoteKey] = {
+            folderInfo.note_keys.push(newNoteKey);
+            folderInfo.note_map[newNoteKey] = {
                 title: newNoteTitle,
             };
 
@@ -410,7 +410,7 @@ const useWhalesnote = () => {
                 const folderInfo = await window.electronAPI.readJsonSync(
                     `${whales[id].path}/${repoKey}/${folderKey}/folder_info.json`,
                 );
-                folderInfo.notes_obj[noteKey].title = newNoteTitle;
+                folderInfo.note_map[noteKey].title = newNoteTitle;
                 await window.electronAPI.writeJson(
                     `${whales[id].path}/${repoKey}/${folderKey}/folder_info.json`,
                     folderInfo,
@@ -464,7 +464,7 @@ const useWhalesnote = () => {
             const folderInfo = await window.electronAPI.readJsonSync(
                 `${whales[id].path}/${repoKey}/${folderKey}/folder_info.json`,
             );
-            folderInfo.notes_key = newNoteKeys;
+            folderInfo.note_keys = newNoteKeys;
             await window.electronAPI.writeJson(
                 `${whales[id].path}/${repoKey}/${folderKey}/folder_info.json`,
                 folderInfo,
@@ -498,7 +498,7 @@ const useWhalesnote = () => {
             const trash =
                 (await window.electronAPI.readJsonSync(`${whales[id].path}/trash.json`)) || {};
 
-            trash[`${repoKey}-${folderKey}-${noteKey}-${folderInfo.notes_obj[noteKey].title}`] =
+            trash[`${repoKey}-${folderKey}-${noteKey}-${folderInfo.note_map[noteKey].title}`] =
                 note_content;
 
             await window.electronAPI.writeJson(`${whales[id].path}/trash.json`, trash);
@@ -506,13 +506,13 @@ const useWhalesnote = () => {
             const remainNoteKeys: string[] = [];
             let next_note_key = undefined;
 
-            folderInfo.notes_key.forEach((key: string, index: number) => {
+            folderInfo.note_keys.forEach((key: string, index: number) => {
                 if (key === noteKey) {
-                    if (folderInfo.notes_key.length > 1) {
-                        if (index === folderInfo.notes_key.length - 1) {
-                            next_note_key = folderInfo.notes_key[index - 1];
+                    if (folderInfo.note_keys.length > 1) {
+                        if (index === folderInfo.note_keys.length - 1) {
+                            next_note_key = folderInfo.note_keys[index - 1];
                         } else {
-                            next_note_key = folderInfo.notes_key[index + 1];
+                            next_note_key = folderInfo.note_keys[index + 1];
                         }
                     }
                 } else {
@@ -520,8 +520,8 @@ const useWhalesnote = () => {
                 }
             });
 
-            folderInfo.notes_key = remainNoteKeys;
-            delete folderInfo.notes_obj[noteKey];
+            folderInfo.note_keys = remainNoteKeys;
+            delete folderInfo.note_map[noteKey];
 
             await window.electronAPI.writeJson(
                 `${whales[id].path}/${repoKey}/${folderKey}/folder_info.json`,

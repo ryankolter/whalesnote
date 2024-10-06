@@ -211,7 +211,7 @@ const useSearch = () => {
                 repo_map: {},
             };
 
-            for await (const repo_key of whalesnote_info.repos_key) {
+            for await (const repo_key of whalesnote_info.repo_keys) {
                 const repo_info = await window.electronAPI.readJsonSync(
                     `${curDataPath}/${repo_key}/repo_info.json`,
                 );
@@ -219,15 +219,15 @@ const useSearch = () => {
                     newWhalesnote.repo_keys.push(repo_key);
                     newWhalesnote.repo_map[repo_key] = {
                         repo_name: repo_info.repo_name,
-                        folder_keys: repo_info.folders_key,
+                        folder_keys: repo_info.folder_keys,
                         folder_map: {},
                     };
-                    for await (const folder_key of repo_info.folders_key) {
+                    for await (const folder_key of repo_info.folder_keys) {
                         const folder_info = await window.electronAPI.readJsonSync(
                             `${curDataPath}/${repo_key}/${folder_key}/folder_info.json`,
                         );
-                        if (repo_info.folders_obj[folder_key]) {
-                            folder_info.folder_name = repo_info.folders_obj[folder_key].folder_name;
+                        if (repo_info.folder_map[folder_key]) {
+                            folder_info.folder_name = repo_info.folder_map[folder_key].folder_name;
                         }
                         if (folder_info) {
                             newWhalesnote.repo_map[repo_key].folder_map[folder_key] = folder_info;

@@ -9,6 +9,7 @@ import useWhalesnote from '@/lib/useWhalesnote';
 import useHistory from '@/lib/useHistory';
 import { WhaleObject } from '@/commonType';
 import i18next from 'i18next';
+import { updateWhale } from './updateWhale';
 
 interface DataContextType {
     dataFetchFinished: boolean;
@@ -143,6 +144,8 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
                     `${path}/whalesnote_info.json`,
                 );
                 if (!whaleInfo) continue;
+
+                await updateWhale(path, whaleInfo);
 
                 const iterateObj = {
                     path,

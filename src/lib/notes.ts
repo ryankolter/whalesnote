@@ -21,9 +21,9 @@ export const fetchContentInFolder = async (
         const folder_info = await window.electronAPI.readJsonSync(
             `${dataPath}/${repoKey}/${folderKey}/folder_info.json`,
         );
-        if (folder_info && folder_info.notes_obj) {
+        if (folder_info && folder_info.note_map) {
             cMap[repoKey][folderKey] = {};
-            for (const noteKey of Object.keys(folder_info.notes_obj)) {
+            for (const noteKey of Object.keys(folder_info.note_map)) {
                 const note_content = await window.electronAPI.readMdSync(
                     `${dataPath}/${repoKey}/${folderKey}/${noteKey}.md`,
                 );
