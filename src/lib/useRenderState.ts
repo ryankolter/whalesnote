@@ -5,7 +5,7 @@ const useRenderState = () => {
     const [renderWidth, setRenderWidth] = useState('0');
     const [renderLeft, setRenderLeft] = useState('100%');
     const [mdRenderState, setMdRenderState] = useState(
-        window.localStorage.getItem('render_panel_state') || 'half'
+        window.localStorage.getItem('render_panel_state') || 'half',
     );
 
     const nextMdRenderState = useCallback(() => {
@@ -37,14 +37,14 @@ const useRenderState = () => {
         }
     }, [mdRenderState]);
 
-    return [
+    return {
         editorWidth,
         renderWidth,
         renderLeft,
         mdRenderState,
         setMdRenderState,
         nextMdRenderState,
-    ] as const;
+    };
 };
 
 export default useRenderState;

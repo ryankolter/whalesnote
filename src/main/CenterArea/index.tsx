@@ -6,7 +6,7 @@ import MarkdownEditor, { MarkdownEditorRef } from './MarkdownEditor';
 import MarkdownRender from './MarkdownRender';
 // import TipTapEditor from './TipTapEditor';
 import useRenderState from '@/lib/useRenderState';
-import ToolBar from './ToolBar';
+import ToolBar from './Toolbar';
 import { notes } from '@/lib/notes';
 import { useDataContext } from '@/context/DataProvider';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
@@ -32,14 +32,14 @@ const CenterArea: React.FC<{}> = () => {
     const [keySelectActive, setKeySelectActive] = useAtom(keySelectActiveAtom);
     const setKeySelectNumArr = useSetAtom(keySelectNumArrAtom);
 
-    const [
+    const {
         editorWidth,
         renderWidth,
         renderLeft,
         mdRenderState,
         setMdRenderState,
         nextMdRenderState,
-    ] = useRenderState();
+    } = useRenderState();
     const [cursorInRenderFlag, setCursorInRenderFlag] = useState(false);
     const [editorScrollRatio, setEditorScrollRatio] = useState(0);
     const [renderScrollRatio, setRenderScrollRatio] = useState(0);
@@ -160,11 +160,6 @@ const CenterArea: React.FC<{}> = () => {
                     setSearchPanelVisible(false);
                 }}
             >
-                {/* <TipTapEditor
-                    setRenderNoteStr={setRenderNoteStr}
-                    setEditorScrollRatio={setEditorScrollRatio}
-                    setRenderScrollRatio={setRenderScrollRatio}
-                /> */}
                 {mdRenderState === 'hidden' || mdRenderState === 'half' ? (
                     <EditorPanel widthValue={editorWidth}>
                         <MarkdownEditor
