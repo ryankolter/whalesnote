@@ -14,7 +14,7 @@ import {
     repoPanelVisibleAtom,
 } from '@/atoms';
 
-const NavColumn: React.FC<Record<string, unknown>> = ({}) => {
+const NavColumn: React.FC<{}> = ({}) => {
     const { curRepoKey, whalesnote } = useDataContext();
 
     const platform = useAtomValue(platformAtom);

@@ -1,5 +1,4 @@
-import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { GlobalContext } from '../../GlobalProvider';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from '@emotion/styled';
 import cryptoRandomString from 'crypto-random-string';
@@ -27,6 +26,7 @@ import folderIcon from '../../resources/icon/folderIcon.svg';
 import { parse as pathParse } from 'path-browserify';
 import {
     activeWhaleIdAtom,
+    editorRefAtom,
     keySelectActiveAtom,
     keySelectNumArrAtom,
     platformAtom,
@@ -36,10 +36,7 @@ import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { useDataContext } from '@/context/DataProvider';
 
 const FolderList: React.FC<{}> = ({}) => {
-    const id = useAtomValue(activeWhaleIdAtom);
-
-    const { manualFocus } = useContext(GlobalContext);
-
+    const { t } = useTranslation();
     const {
         curDataPath,
         whalesnote,
@@ -55,12 +52,12 @@ const FolderList: React.FC<{}> = ({}) => {
         prepareContent,
     } = useDataContext();
 
-    const { t } = useTranslation();
-
     const platform = useAtomValue(platformAtom);
+    const id = useAtomValue(activeWhaleIdAtom);
     const setRepoPanelVisible = useSetAtom(repoPanelVisibleAtom);
     const keySelectActive = useAtomValue(keySelectActiveAtom);
     const [keySelectNumArr, setKeySelectNumArr] = useAtom(keySelectNumArrAtom);
+    const editorRef = useAtomValue(editorRefAtom);
 
     const folder_keys = useMemo(() => {
         return whalesnote.repo_map ? whalesnote.repo_map[curRepoKey]?.folder_keys : undefined;
@@ -124,10 +121,12 @@ const FolderList: React.FC<{}> = ({}) => {
 
             setNewFolderKey('');
             setNewFolderName('');
-            manualFocus(500);
+            setTimeout(() => {
+                editorRef.current?.focus();
+            }, 500);
             allowNewFolder.current = true;
         },
-        [id, curRepoKey, newFolder, newNote, prepareContent, switchNote, manualFocus],
+        [id, curRepoKey, newFolder, newNote, prepareContent, switchNote, editorRef],
     );
 
     const handleNewFolderKeyDown = useCallback(

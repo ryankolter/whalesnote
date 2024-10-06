@@ -1,5 +1,3 @@
-import { useCallback, useContext } from 'react';
-import { GlobalContext } from '../../GlobalProvider';
 import styled from '@emotion/styled';
 
 import SwitchMode from './SwitchMode';

@@ -1,5 +1,12 @@
-import React, { useCallback, useContext, useEffect, useRef, useState, MouseEvent } from 'react';
-import { GlobalContext } from '../../GlobalProvider';
+import React, {
+    useCallback,
+    useEffect,
+    useRef,
+    useState,
+    MouseEvent,
+    useImperativeHandle,
+    forwardRef,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 
 import styled from '@emotion/styled';
@@ -21,20 +28,27 @@ import {
 import { join as pathJoin } from 'path-browserify';
 import { useDataContext } from '@/context/DataProvider';
 
-const MarkdownEditor: React.FC<{
+export interface MarkdownEditorRef {
+    focus: () => void;
+    blur: () => void;
+}
+
+interface IMarkdownEditor {
     cursorInRenderFlag: boolean;
     mdRenderState: string;
     renderScrollRatio: number;
     setEditorScrollRatio: React.Dispatch<React.SetStateAction<number>>;
     setRenderNoteStr: React.Dispatch<React.SetStateAction<string>>;
-}> = ({
-    cursorInRenderFlag,
-    mdRenderState,
-    renderScrollRatio,
-    setEditorScrollRatio,
-    setRenderNoteStr,
-}) => {
-    const { blur, focus } = useContext(GlobalContext);
+}
+
+const MarkdownEditor = forwardRef<MarkdownEditorRef, IMarkdownEditor>((props, ref) => {
+    const {
+        cursorInRenderFlag,
+        mdRenderState,
+        renderScrollRatio,
+        setEditorScrollRatio,
+        setRenderNoteStr,
+    } = props;
 
     const { curDataPath, curRepoKey, curFolderKey, curNoteKey, renameNote } = useDataContext();
 
@@ -112,13 +126,14 @@ const MarkdownEditor: React.FC<{
         onSelectionSet,
     });
 
-    useEffect(() => {
-        if (focus !== '') view.current?.focus();
-    }, [focus]);
-
-    useEffect(() => {
-        if (blur !== '') view.current?.contentDOM.blur();
-    }, [blur]);
+    useImperativeHandle(ref, () => ({
+        focus: () => {
+            view.current?.focus();
+        },
+        blur: () => {
+            view.current?.contentDOM.blur();
+        },
+    }));
 
     useEffect(() => {
         autoScroll.current = true;
@@ -601,7 +616,7 @@ const MarkdownEditor: React.FC<{
             )}
         </MarkdownEditorContainer>
     );
-};
+});
 
 const MarkdownEditorContainer = styled.div(
     {

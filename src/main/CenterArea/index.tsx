@@ -1,9 +1,8 @@
-import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { GlobalContext } from '../../GlobalProvider';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 
 import { useRecordValue } from '@/lib/useRecordValue';
-import MarkdownEditor from './MarkdownEditor';
+import MarkdownEditor, { MarkdownEditorRef } from './MarkdownEditor';
 import MarkdownRender from './MarkdownRender';
 // import TipTapEditor from './TipTapEditor';
 import useRenderState from '@/lib/useRenderState';
@@ -13,6 +12,7 @@ import { useDataContext } from '@/context/DataProvider';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {
     activeWhaleIdAtom,
+    editorRefAtom,
     keySelectActiveAtom,
     keySelectNumArrAtom,
     platformAtom,
@@ -21,9 +21,7 @@ import {
     searchPanelVisibleAtom,
 } from '@/atoms';
 
-const CenterArea: React.FC<{}> = ({}) => {
-    const { manualBlur, manualFocus } = useContext(GlobalContext);
-
+const CenterArea: React.FC<{}> = () => {
     const { curDataPath, curRepoKey, curFolderKey, curNoteKey } = useDataContext();
 
     const platform = useAtomValue(platformAtom);
@@ -50,6 +48,7 @@ const CenterArea: React.FC<{}> = ({}) => {
         useRecordValue<number>();
 
     const composing = useRef(false);
+    const editorRef = useAtomValue(editorRefAtom);
 
     const renderScrollTop = useMemo(
         () =>
@@ -88,13 +87,13 @@ const CenterArea: React.FC<{}> = ({}) => {
                         setKeySelectActive(false);
                         setKeySelectNumArr([]);
                         if (curNoteKey && !repoPanelVisible) {
-                            manualFocus(0);
+                            editorRef.current?.focus();
                         }
                     } else {
                         setKeySelectActive(true);
                         setKeySelectNumArr([]);
                         //只有这里才会让它初始化为显示框框
-                        manualBlur(0);
+                        editorRef.current?.blur();
                     }
                 }
 
@@ -114,7 +113,7 @@ const CenterArea: React.FC<{}> = ({}) => {
                         curNoteKey &&
                         mdRenderState !== 'all'
                     ) {
-                        manualFocus(0);
+                        editorRef.current?.focus();
                     }
                     setRepoPanelVisible(false);
                 }
@@ -122,12 +121,11 @@ const CenterArea: React.FC<{}> = ({}) => {
         },
         [
             curNoteKey,
+            editorRef,
             keySelectActive,
             repoPanelVisible,
             searchPanelVisible,
             searchListFocused,
-            manualFocus,
-            manualBlur,
             setKeySelectActive,
             setRepoPanelVisible,
             nextMdRenderState,
@@ -170,6 +168,7 @@ const CenterArea: React.FC<{}> = ({}) => {
                 {mdRenderState === 'hidden' || mdRenderState === 'half' ? (
                     <EditorPanel widthValue={editorWidth}>
                         <MarkdownEditor
+                            ref={editorRef}
                             cursorInRenderFlag={cursorInRenderFlag}
                             mdRenderState={mdRenderState}
                             renderScrollRatio={renderScrollRatio}

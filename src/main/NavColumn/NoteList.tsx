@@ -1,5 +1,4 @@
-import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { GlobalContext } from '../../GlobalProvider';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import styled from '@emotion/styled';
@@ -23,6 +22,7 @@ import { useDataContext } from '@/context/DataProvider';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {
     activeWhaleIdAtom,
+    editorRefAtom,
     keySelectActiveAtom,
     keySelectNumArrAtom,
     platformAtom,
@@ -31,7 +31,7 @@ import {
 } from '@/atoms';
 
 const NoteList: React.FC<{}> = ({}) => {
-    const { manualFocus } = useContext(GlobalContext);
+    const { t } = useTranslation();
 
     const {
         whalesnote,
@@ -44,14 +44,13 @@ const NoteList: React.FC<{}> = ({}) => {
         switchNote,
     } = useDataContext();
 
-    const { t } = useTranslation();
-
     const platform = useAtomValue(platformAtom);
     const id = useAtomValue(activeWhaleIdAtom);
     const searchPanelVisible = useAtomValue(searchPanelVisibleAtom);
     const setRepoPanelVisible = useSetAtom(repoPanelVisibleAtom);
     const [keySelectActive, setKeySelectActive] = useAtom(keySelectActiveAtom);
     const [keySelectNumArr, setKeySelectNumArr] = useAtom(keySelectNumArrAtom);
+    const editorRef = useAtomValue(editorRefAtom);
 
     const note_keys = useMemo(() => {
         return whalesnote.repo_map &&
@@ -91,7 +90,9 @@ const NoteList: React.FC<{}> = ({}) => {
         const new_note_title = t('note.untitled');
         await newNote(id, curRepoKey, curFolderKey, new_note_key, new_note_title);
         await switchNote(curRepoKey, curFolderKey, new_note_key);
-        manualFocus(500);
+        setTimeout(() => {
+            editorRef.current?.focus();
+        }, 500);
         setTimeout(() => {
             scrollToBottom();
         }, 50);
@@ -100,7 +101,7 @@ const NoteList: React.FC<{}> = ({}) => {
         id,
         curRepoKey,
         curFolderKey,
-        manualFocus,
+        editorRef,
         newNote,
         scrollToBottom,
         setKeySelectActive,

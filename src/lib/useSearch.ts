@@ -1,5 +1,4 @@
-import { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { GlobalContext } from '../GlobalProvider';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { t } from 'i18next';
 import MiniSearch, { AsPlainObject, SearchResult } from 'minisearch';
 import { WhaleObject } from '../commonType';

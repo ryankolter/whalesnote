@@ -1,5 +1,4 @@
-import React, { useCallback, useContext, useRef, useState } from 'react';
-import { GlobalContext } from '../../GlobalProvider';
+import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from '@emotion/styled';
 

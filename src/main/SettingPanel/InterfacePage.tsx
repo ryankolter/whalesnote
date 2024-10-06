@@ -1,5 +1,4 @@
-import { useCallback, useContext, useMemo } from 'react';
-import { GlobalContext } from '../../GlobalProvider';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import styled from '@emotion/styled';
@@ -10,53 +9,38 @@ import { editorFontSizeAtom, renderFontSizeAtom, languageAtom, themeAtom } from 
 
 const InterfacePage: React.FC<{}> = ({}) => {
     const { t } = useTranslation();
-    const [editorFontSize, setEditorFontSize] = useAtom(editorFontSizeAtom);
-    const [renderFontSize, setRenderFontSize] = useAtom(renderFontSizeAtom);
 
     const [theme, setTheme] = useAtom(themeAtom);
-    const themeList = useMemo(() => ['light', 'dark'], []);
-
     const [language, setLanguage] = useAtom(languageAtom);
+    const themeList = useMemo(() => ['light', 'dark'], []);
     const languageList = useMemo(() => ['zh-CN', 'en-US'], []);
 
+    const [editorFontSize, setEditorFontSize] = useAtom(editorFontSizeAtom);
+    const [renderFontSize, setRenderFontSize] = useAtom(renderFontSizeAtom);
     const editorFontSizeList = useMemo(() => ['12', '13', '14', '15', '16', '17', '18'], []);
     const renderFontSizeList = useMemo(() => ['12', '13', '14', '15', '16', '17', '18'], []);
 
     const translateTheme = useCallback((option: string) => {
-        if (option === 'light') {
-            return t('setting.interface.mode.light');
-        } else if (option === 'dark') {
-            return t('setting.interface.mode.dark');
-        } else {
-            return '';
+        switch (option) {
+            case 'light':
+                return t('setting.interface.mode.light');
+            case 'dark':
+                return t('setting.interface.mode.dark');
+            default:
+                return '';
         }
     }, []);
 
     const translateLanguage = useCallback((option: string) => {
-        if (option === 'zh-CN') {
-            return '简体中文';
-        } else if (option === 'en-US') {
-            return 'English';
-        } else {
-            return '';
+        switch (option) {
+            case 'zh-CN':
+                return '简体中文';
+            case 'en-US':
+                return 'English';
+            default:
+                return '';
         }
     }, []);
-
-    const changeEditorFontSize = useCallback(
-        (value: string) => {
-            setEditorFontSize(value);
-            window.localStorage.setItem('editor_font_size', value);
-        },
-        [setEditorFontSize],
-    );
-
-    const changeRenderFontSize = useCallback(
-        (value: string) => {
-            setRenderFontSize(value);
-            window.localStorage.setItem('render_font_size', value);
-        },
-        [setRenderFontSize],
-    );
 
     return (
         <DataSpaceContainer>
@@ -86,13 +70,13 @@ const InterfacePage: React.FC<{}> = ({}) => {
                         title={t('setting.interface.style.edit_font_size')}
                         currentOption={editorFontSize}
                         optionList={editorFontSizeList}
-                        handleOption={changeEditorFontSize}
+                        handleOption={setEditorFontSize}
                     />
                     <SelectionOptions
                         title={t('setting.interface.style.preview_font_size')}
                         currentOption={renderFontSize}
                         optionList={renderFontSizeList}
-                        handleOption={changeRenderFontSize}
+                        handleOption={setRenderFontSize}
                     />
                 </PartContent>
             </ChildPart>

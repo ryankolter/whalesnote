@@ -1,6 +1,5 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { GlobalProvider } from './GlobalProvider';
 
 import './resources/icon/iconfont/remixicon.css';
 import './resources/css/theme/color_variable.css';
@@ -17,10 +16,8 @@ import { DataProvider } from './context/DataProvider';
 
 createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-        <GlobalProvider>
-            <DataProvider>
-                <App />
-            </DataProvider>
-        </GlobalProvider>
+        <DataProvider>
+            <App />
+        </DataProvider>
     </React.StrictMode>,
 );
