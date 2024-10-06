@@ -64,8 +64,8 @@
 //                             <CurrentPath>
 //                                 <PathValue>
 //                                     <UnicodeSpan>{curDataPath}</UnicodeSpan>
-//                                     {curDataPath.indexOf('/whalesnote/noteData') !== -1 ||
-//                                     curDataPath.indexOf('\\whalesnote\\noteData') !== -1
+//                                     {curDataPath.indexOf('/whalesnote/workspace1') !== -1 ||
+//                                     curDataPath.indexOf('\\whalesnote\\workspace1') !== -1
 //                                         ? ' - ' + t('setting.data.default')
 //                                         : ''}
 //                                 </PathValue>
@@ -86,9 +86,9 @@
 //                                                     }}
 //                                                 >
 //                                                     <UnicodeSpan>{dataPath}</UnicodeSpan>
-//                                                     {dataPath.indexOf('/whalesnote/noteData') !==
+//                                                     {dataPath.indexOf('/whalesnote/workspace1') !==
 //                                                         -1 ||
-//                                                     dataPath.indexOf('\\whalesnote\\noteData') !==
+//                                                     dataPath.indexOf('\\whalesnote\\workspace1') !==
 //                                                         -1
 //                                                         ? ' - ' + t('setting.data.default')
 //                                                         : ''}

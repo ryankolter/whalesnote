@@ -66,6 +66,10 @@ interface DataContextType {
     switchFolder: (repoKey: string, folderKey?: string) => Promise<void>;
     switchNote: (repoKey: string, folderKey?: string, noteKey?: string) => Promise<void>;
     prepareContent: (repoKey: string, folderKey?: string, noteKey?: string) => Promise<void>;
+    workspaceItemList: {
+        id: string;
+        name: string;
+    }[];
 }
 
 const DataContext = createContext<DataContextType>({
@@ -99,6 +103,7 @@ const DataContext = createContext<DataContextType>({
     switchFolder: async () => {},
     switchNote: async () => {},
     prepareContent: async () => {},
+    workspaceItemList: [],
 });
 
 export const DataProvider = ({ children }: { children: React.ReactNode }) => {
@@ -137,10 +142,8 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
                 window.localStorage.setItem('whalesnote_data_path_list', '[]');
             }
 
-            const priorityList = [];
-            const whaleIdList = [],
-                whalePathList = [];
-            for (let path of dataPathList) {
+            const priorityWhaleList = [];
+            for (const path of dataPathList) {
                 if (!(await dataPathExisted(path))) continue;
 
                 const whaleInfo = await window.electronAPI.readJsonSync(
@@ -150,41 +153,45 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
 
                 await updateWhale(path, whaleInfo);
 
-                const iterateObj = {
+                const iterWhaleObj = {
                     path,
                     id: whaleInfo.id,
                     info: whaleInfo,
                 };
                 id === whaleInfo.id
-                    ? priorityList.unshift(iterateObj)
-                    : priorityList.push(iterateObj);
-                whaleIdList.push(whaleInfo.id);
-                whalePathList.push(path);
+                    ? priorityWhaleList.unshift(iterWhaleObj)
+                    : priorityWhaleList.push(iterWhaleObj);
             }
 
-            if (!whaleIdList.includes(id)) setId(whaleIdList?.[0] || '');
-
-            if (whalePathList.length < dataPathList.length) {
+            if (priorityWhaleList.length < dataPathList.length) {
                 window.localStorage.setItem(
                     'whalesnote_data_path_list',
-                    JSON.stringify(whalePathList),
+                    JSON.stringify(priorityWhaleList),
                 );
             }
 
-            if (priorityList.length === 0) {
+            if (priorityWhaleList.length === 0) {
                 const defaultDataPath = await window.electronAPI.getDefaultDataPath();
                 if (!dataPathHasWhale(defaultDataPath)) await createDefaultWhale(defaultDataPath);
                 const whaleInfo = await window.electronAPI.readJsonSync(
                     `${defaultDataPath}/whalesnote_info.json`,
                 );
-                priorityList.push({
+                priorityWhaleList.push({
                     path: defaultDataPath,
                     id: whaleInfo.id,
                     info: whaleInfo,
                 });
+
+                window.localStorage.setItem(
+                    'whalesnote_data_path_list',
+                    JSON.stringify(priorityWhaleList),
+                );
             }
 
-            for (const { id, path, info } of priorityList) {
+            if (!priorityWhaleList.find((obj) => obj.id === id))
+                setId(priorityWhaleList?.[0].id || '');
+
+            for (const { path, id, info } of priorityWhaleList) {
                 const { whaleObj, historyInfo, contentMap } = await importWhale(path, info);
                 addHistory(id, historyInfo);
                 addWhale(id, whaleObj);
@@ -195,6 +202,15 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
             setDataIsLoading(false);
         })();
     }, []);
+
+    const workspaceItemList = useMemo(
+        () =>
+            Object.entries(whales).map(([id, whale]) => ({
+                id,
+                name: whale.path.substring(whale.path.lastIndexOf('/') + 1),
+            })),
+        [whales],
+    );
 
     const whalesnote = useMemo(() => {
         return whales[id] || { path: '', repo_keys: [], repo_map: {} };
@@ -317,6 +333,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
                 switchFolder,
                 switchNote,
                 prepareContent,
+                workspaceItemList,
             }}
         >
             {children}

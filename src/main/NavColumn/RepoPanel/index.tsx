@@ -27,7 +27,8 @@ import { useManageRepo } from './useManageRepo';
 const RepoPanel: React.FC<{}> = ({}) => {
     const { t } = useTranslation();
 
-    const { whalesnote, reorderRepo, curRepoKey, curFolderKey, switchRepo } = useDataContext();
+    const { whalesnote, reorderRepo, curRepoKey, curFolderKey, switchRepo, workspaceItemList } =
+        useDataContext();
 
     const id = useAtomValue(activeWhaleIdAtom);
     const keySelectActive = useAtomValue(keySelectActiveAtom);
@@ -139,6 +140,11 @@ const RepoPanel: React.FC<{}> = ({}) => {
 
     return (
         <RepoListContainer>
+            {/* <div className="">
+                {workspaceItemList.map((item) => {
+                    return <div className="">{item.name}</div>;
+                })}
+            </div> */}
             <ReposScroll ref={repoScrollRef}>
                 <Repos ref={outerRef}>
                     {whalesnote.repo_keys && (

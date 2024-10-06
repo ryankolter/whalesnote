@@ -159,7 +159,7 @@ const processIPC = (): void => {
     });
 
     ipcMain.handle('get:defaultDataPath', async () => {
-        const default_data_Path = path.join(app.getPath('userData'), 'noteData');
+        const default_data_Path = path.join(app.getPath('userData'), 'workspace1');
         fse.ensureDirSync(default_data_Path);
         return default_data_Path;
     });
