@@ -1,10 +1,14 @@
+import { basename } from 'path-browserify';
+
 export const updateWhaleKeyName = async (path: string, whaleInfo: any) => {
     if (whaleInfo['repos_key'] === undefined) return whaleInfo;
 
     const newWhaleInfo = {
-        id: whaleInfo.id,
+        ...whaleInfo,
+        name: basename(path),
         repo_keys: whaleInfo.repos_key,
     };
+    delete newWhaleInfo['repos_key'];
 
     for (const repo_key of newWhaleInfo.repo_keys) {
         const repoInfoPath = `${path}/${repo_key}/repo_info.json`;

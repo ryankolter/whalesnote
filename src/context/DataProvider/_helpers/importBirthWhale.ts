@@ -1,4 +1,4 @@
-import { DataTypes, HistoryInfo, ContentMap, WhaleObject } from '@/interface';
+import { DataTypes, HistoryInfo, ContentMap, Whale } from '@/interface';
 
 export const dataPathExisted = async (path: string) => {
     if (!path) return false;
@@ -9,34 +9,33 @@ export const dataPathHasWhale = async (path: string) => {
     return await window.electronAPI.checkPathExist(path + '/whalesnote_info.json');
 };
 
-export const importWhale = async (
-    path: string,
-    whaleInfo: {
-        id: string;
-        repo_keys: string[];
-    },
-) => {
-    const whaleObj: WhaleObject = {
-        path,
+export const importBirthWhale = async (birthWhale: {
+    id: string;
+    name: string;
+    path: string;
+    repo_keys: string[];
+}) => {
+    const { path, repo_keys } = birthWhale;
+
+    const whale: Whale = {
+        ...birthWhale,
         repo_keys: [],
         repo_map: {},
     };
 
     const validRepoKeys = [];
-
-    for (const repo_key of whaleInfo.repo_keys) {
-        const repoInfo = await window.electronAPI.readJsonSync(
-            `${path}/${repo_key}/repo_info.json`,
-        );
+    for (const repoKey of repo_keys) {
+        const repoInfo = await window.electronAPI.readJsonSync(`${path}/${repoKey}/repo_info.json`);
         if (!repoInfo) continue;
 
-        whaleObj.repo_keys.push(repo_key);
-        whaleObj.repo_map[repo_key] = repoInfo;
-        validRepoKeys.push(repo_key);
+        whale.repo_keys.push(repoKey);
+        whale.repo_map[repoKey] = repoInfo;
+        validRepoKeys.push(repoKey);
     }
 
-    if (validRepoKeys.length < whaleInfo.repo_keys.length) {
-        whaleInfo.repo_keys = validRepoKeys;
+    if (validRepoKeys.length < repo_keys.length) {
+        birthWhale.repo_keys = validRepoKeys;
+        const { path, ...whaleInfo } = birthWhale;
         await window.electronAPI.writeJson(`${path}/whalesnote_info.json`, whaleInfo);
     }
 
@@ -48,7 +47,7 @@ export const importWhale = async (
 
     if (validRepoKeys.length > 0) {
         //init repoKey
-        if (historyInfo.cur_repo_key && whaleObj.repo_map[historyInfo.cur_repo_key]) {
+        if (historyInfo.cur_repo_key && whale.repo_map[historyInfo.cur_repo_key]) {
             initRepoKey = historyInfo.cur_repo_key;
         } else {
             initRepoKey = validRepoKeys[0];
@@ -64,11 +63,11 @@ export const importWhale = async (
             };
         }
 
-        const folder_keys = whaleObj.repo_map[initRepoKey].folder_keys;
+        const folder_keys = whale.repo_map[initRepoKey].folder_keys;
         if (folder_keys.length > 0) {
             //init folderKey
             const historyFolderKey = historyInfo.repos_record[initRepoKey]?.cur_folder_key; //TODO: check historyFolderKey is really exist in the file system
-            const folder_map = whaleObj.repo_map[initRepoKey].folder_map;
+            const folder_map = whale.repo_map[initRepoKey].folder_map;
             if (historyFolderKey && folder_map[historyFolderKey]) {
                 initFolderKey = historyFolderKey;
             } else {
@@ -91,8 +90,8 @@ export const importWhale = async (
 
             //init noteKey List
             initNoteKeys = folderInfo.note_keys;
-            whaleObj.repo_map[initRepoKey].folder_map[initFolderKey] = {
-                ...whaleObj.repo_map[initRepoKey].folder_map[initFolderKey],
+            whale.repo_map[initRepoKey].folder_map[initFolderKey] = {
+                ...whale.repo_map[initRepoKey].folder_map[initFolderKey],
                 note_keys: initNoteKeys,
                 note_map: folderInfo.note_map,
             };
@@ -127,7 +126,7 @@ export const importWhale = async (
     }
 
     const data: DataTypes = {
-        whaleObj,
+        whale,
         contentMap,
         historyInfo,
     };

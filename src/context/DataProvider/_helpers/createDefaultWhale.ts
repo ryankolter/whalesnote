@@ -1,5 +1,6 @@
 import cryptoRandomString from 'crypto-random-string';
 import i18next from '@/i18n';
+import { basename } from 'path-browserify';
 
 export const createDefaultWhale = async (dataPath: string) => {
     //create whalesnote_info
@@ -7,6 +8,7 @@ export const createDefaultWhale = async (dataPath: string) => {
     const repo_id = cryptoRandomString({ length: 12, type: 'alphanumeric' });
     await window.electronAPI.writeJson(`${dataPath}/whalesnote_info.json`, {
         id,
+        name: basename(dataPath),
         repo_keys: [repo_id],
     });
 

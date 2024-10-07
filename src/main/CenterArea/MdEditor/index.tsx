@@ -23,7 +23,7 @@ import {
     platformAtom,
     repoPanelVisibleAtom,
 } from '@/atoms';
-import { join as pathJoin } from 'path-browserify';
+import { join } from 'path-browserify';
 import { useDataContext } from '@/context/DataProvider';
 import { MdEditorRef } from '@/interface';
 
@@ -518,7 +518,7 @@ const MdEditor = forwardRef<MdEditorRef, IMarkdownEditor>((props, ref) => {
                     path.substring(path.lastIndexOf('.') + 1);
                 const result = await window.electronAPI.copy(
                     path,
-                    pathJoin(curDataPath + '/images', dest_file_name),
+                    join(curDataPath + '/images', dest_file_name),
                 );
                 if (result) {
                     dest_file_name_list.push(dest_file_name);
@@ -561,7 +561,7 @@ const MdEditor = forwardRef<MdEditorRef, IMarkdownEditor>((props, ref) => {
 
                 const result = await window.electronAPI.copy(
                     file.path,
-                    pathJoin(curDataPath + '/images', dest_file_name),
+                    join(curDataPath + '/images', dest_file_name),
                 );
 
                 if (result) {

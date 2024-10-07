@@ -19,7 +19,9 @@ export type RepoObject = {
 export type RepoMap = Record<string, RepoObject>;
 
 //Whale
-export type WhaleObject = {
+export type Whale = {
+    id: string;
+    name: string;
     path: string;
     repo_keys: string[];
     repo_map: RepoMap;
@@ -49,7 +51,7 @@ export type ContentMap = {
 };
 
 export type DataTypes = {
-    whaleObj: WhaleObject;
+    whale: Whale;
     contentMap: ContentMap;
     historyInfo: HistoryInfo;
 };

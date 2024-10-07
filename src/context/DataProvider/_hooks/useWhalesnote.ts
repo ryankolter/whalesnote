@@ -1,23 +1,20 @@
 import { useCallback, useRef, useState } from 'react';
 import { Draft, produce } from 'immer';
-import { WhaleObject } from '@/interface';
+import { Whale } from '@/interface';
 
 export const useWhalesnote = () => {
-    const [whales, setWhales] = useState<Record<string, WhaleObject>>({});
+    const [whales, setWhales] = useState<Record<string, Whale>>({});
 
     const renameSaveTimerObj = useRef<Map<string, NodeJS.Timeout>>(new Map());
 
-    const produceWhales = useCallback(
-        (draftFn: (draft: Draft<Record<string, WhaleObject>>) => void) => {
-            setWhales((_whales) => {
-                return produce(_whales, draftFn);
-            });
-        },
-        [],
-    );
+    const produceWhales = useCallback((draftFn: (draft: Draft<Record<string, Whale>>) => void) => {
+        setWhales((_whales) => {
+            return produce(_whales, draftFn);
+        });
+    }, []);
 
     const addWhale = useCallback(
-        (id: string, obj: WhaleObject) => {
+        (id: string, obj: Whale) => {
             if (whales[id]) return false;
             produceWhales((draft) => {
                 draft[id] = obj;

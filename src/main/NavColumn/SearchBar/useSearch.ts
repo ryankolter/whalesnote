@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { t } from 'i18next';
 import MiniSearch, { AsPlainObject, SearchResult } from 'minisearch';
-import { WhaleObject } from '@/interface';
+import { Whale } from '@/interface';
 import { useDataContext } from '@/context/DataProvider';
 import { useAtom, useSetAtom } from 'jotai';
 import { searchListFocusedAtom, searchPanelVisibleAtom } from '@/atoms';
@@ -208,7 +208,9 @@ const useSearch = () => {
                 `${whalesnote.path}/whalesnote_info.json`,
             );
 
-            const whale: WhaleObject = {
+            const whale: Whale = {
+                id: whaleInfo.id,
+                name: whaleInfo.id,
                 path: whalesnote.path,
                 repo_keys: [],
                 repo_map: {},

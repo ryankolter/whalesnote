@@ -2,23 +2,23 @@
 import React, { createContext, useEffect, useCallback, useState, useMemo } from 'react';
 import { fetchContentInFolder, addContentMap, fetchContentAfterNew } from '@/lib';
 import { useAtom } from 'jotai';
-import { activeWhaleIdAtom } from '@/atoms';
+import { activeWhaleIdAtom, dataPathListAtom } from '@/atoms';
 import {
     createDefaultWhale,
     dataPathExisted,
     dataPathHasWhale,
-    importWhale,
+    importBirthWhale,
     updateWhaleKeyName,
 } from './_helpers';
 import { useHistory, useWhalesnote } from './_hooks';
-import { WhaleObject } from '@/interface';
+import { Whale } from '@/interface';
 import i18next from 'i18next';
 
 interface DataContextType {
-    dataFetchFinished: boolean;
-    whales: Record<string, WhaleObject>;
+    dataIsLoading: boolean;
+    whales: Record<string, Whale>;
     curDataPath: string;
-    whalesnote: WhaleObject;
+    whalesnote: Whale;
     newRepo: (id: string, repoKey: string, repoName: string) => Promise<void>;
     newFolder: (
         id: string,
@@ -73,10 +73,10 @@ interface DataContextType {
 }
 
 const DataContext = createContext<DataContextType>({
-    dataFetchFinished: false,
+    dataIsLoading: false,
     whales: {},
     curDataPath: '',
-    whalesnote: { path: '', repo_keys: [], repo_map: {} },
+    whalesnote: { id: '', name: '', path: '', repo_keys: [], repo_map: {} },
     newRepo: async () => {},
     newFolder: async () => {},
     newNote: async () => {},
@@ -107,9 +107,9 @@ const DataContext = createContext<DataContextType>({
 });
 
 export const DataProvider = ({ children }: { children: React.ReactNode }) => {
-    const [dataFetchFinished, setDataFetchFinished] = useState(false);
     const [dataIsLoading, setDataIsLoading] = useState(true);
     const [id, setId] = useAtom(activeWhaleIdAtom);
+    const [dataPathList, setDataPathList] = useAtom(dataPathListAtom);
 
     const { histories, addHistory, updateHistory } = useHistory();
     const {
@@ -131,83 +131,59 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
     } = useWhalesnote();
 
     useEffect(() => {
+        if (dataPathList.length === 0) return;
+
         (async () => {
             setDataIsLoading(true);
-            let dataPathList: string[] = [];
-            try {
-                dataPathList = JSON.parse(
-                    window.localStorage.getItem('whalesnote_data_path_list') || '[]',
-                );
-            } catch (e) {
-                window.localStorage.setItem('whalesnote_data_path_list', '[]');
-            }
-
-            const priorityWhaleList = [];
+            const birthWhaleList = [];
             for (const path of dataPathList) {
                 if (!(await dataPathExisted(path))) continue;
 
                 let whaleInfo = await window.electronAPI.readJsonSync(
                     `${path}/whalesnote_info.json`,
                 );
-                if (!whaleInfo) continue;
+
+                if (!whaleInfo || !whaleInfo.id || whales[whaleInfo.id]) continue;
 
                 whaleInfo = await updateWhaleKeyName(path, whaleInfo);
-
-                const iterWhaleObj = {
+                const birthWhale = {
+                    ...whaleInfo,
                     path,
-                    id: whaleInfo.id,
-                    info: whaleInfo,
                 };
+
                 id === whaleInfo.id
-                    ? priorityWhaleList.unshift(iterWhaleObj)
-                    : priorityWhaleList.push(iterWhaleObj);
+                    ? birthWhaleList.unshift(birthWhale)
+                    : birthWhaleList.push(birthWhale);
             }
 
-            if (priorityWhaleList.length < dataPathList.length) {
-                window.localStorage.setItem(
-                    'whalesnote_data_path_list',
-                    JSON.stringify(priorityWhaleList),
-                );
+            if (Object.keys(whales).length === 0) {
+                if (birthWhaleList.length === 0) {
+                    const defaultDataPath = await window.electronAPI.getDefaultDataPath();
+                    if (!(await dataPathHasWhale(defaultDataPath)))
+                        await createDefaultWhale(defaultDataPath);
+                    setDataPathList([defaultDataPath]);
+                    return;
+                }
+
+                if (!birthWhaleList.find((whale) => whale.id === id))
+                    setId(birthWhaleList[0].id || '');
             }
 
-            if (priorityWhaleList.length === 0) {
-                const defaultDataPath = await window.electronAPI.getDefaultDataPath();
-                if (!dataPathHasWhale(defaultDataPath)) await createDefaultWhale(defaultDataPath);
-                const whaleInfo = await window.electronAPI.readJsonSync(
-                    `${defaultDataPath}/whalesnote_info.json`,
-                );
-                priorityWhaleList.push({
-                    path: defaultDataPath,
-                    id: whaleInfo.id,
-                    info: whaleInfo,
-                });
-
-                window.localStorage.setItem(
-                    'whalesnote_data_path_list',
-                    JSON.stringify(priorityWhaleList),
-                );
+            for (const birthWhale of birthWhaleList) {
+                const { whale, historyInfo, contentMap } = await importBirthWhale(birthWhale);
+                addHistory(whale.id, historyInfo);
+                addWhale(whale.id, whale);
+                addContentMap(whale.id, contentMap);
             }
-
-            if (!priorityWhaleList.find((obj) => obj.id === id))
-                setId(priorityWhaleList?.[0].id || '');
-
-            for (const { path, id, info } of priorityWhaleList) {
-                const { whaleObj, historyInfo, contentMap } = await importWhale(path, info);
-                addHistory(id, historyInfo);
-                addWhale(id, whaleObj);
-                addContentMap(id, contentMap);
-            }
-
-            setDataFetchFinished(true);
             setDataIsLoading(false);
         })();
-    }, []);
+    }, [dataPathList]);
 
     const workspaceItemList = useMemo(
         () =>
             Object.entries(whales).map(([id, whale]) => ({
                 id,
-                name: whale.path.substring(whale.path.lastIndexOf('/') + 1),
+                name: whale.name,
             })),
         [whales],
     );
@@ -309,7 +285,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
     return (
         <DataContext.Provider
             value={{
-                dataFetchFinished,
+                dataIsLoading,
                 whales,
                 curDataPath,
                 whalesnote,

@@ -127,7 +127,7 @@ const NavColumn: React.FC<{}> = ({}) => {
                     window.localStorage.setItem('folder_width', folderWidth.toString());
                 }}
                 draggable="true"
-            ></ResizeFolderWidth>
+            />
             {whalesnote.repo_keys && whalesnote.repo_keys.length > 0 ? (
                 <SearchAndNote>
                     <SearchBarAndNote width={noteWidth}>
@@ -157,7 +157,7 @@ const NavColumn: React.FC<{}> = ({}) => {
                             window.localStorage.setItem('note_width', noteWidth.toString());
                         }}
                         draggable="true"
-                    ></ResizeNoteWidth>
+                    />
                 </SearchAndNote>
             ) : (
                 <></>

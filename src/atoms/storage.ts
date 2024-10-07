@@ -12,7 +12,7 @@ export const settingPanelTabAtom = atomWithStorage<SettingPanelTab>(
     'interfaceTab',
 );
 
-export const dataPathListAtom = atomWithStorage('whalesnote_data_path_list', []);
+export const dataPathListAtom = atomWithStorage<string[]>('whalesnote_data_path_list', []);
 export const activeWhaleIdAtom = atomWithStorage('active_whale_id', '');
 
 export const themeAtom = atomWithStorage(
