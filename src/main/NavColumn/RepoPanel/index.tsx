@@ -20,9 +20,10 @@ import { InputPopUp } from '@/components/InputPopUp';
 import { usePopUp, useContextMenu } from '@/lib';
 import { useDataContext } from '@/context/DataProvider';
 import { activeWhaleIdAtom, keySelectActiveAtom } from '@/atoms';
-import { useAtomValue } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { useKeySelect } from './useKeySelect';
 import { useManageRepo } from './useManageRepo';
+import clsx from 'clsx';
 
 const RepoPanel: React.FC<{}> = ({}) => {
     const { t } = useTranslation();
@@ -30,7 +31,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
     const { whalesnote, reorderRepo, curRepoKey, curFolderKey, switchRepo, workspaceItemList } =
         useDataContext();
 
-    const id = useAtomValue(activeWhaleIdAtom);
+    const [id, setId] = useAtom(activeWhaleIdAtom);
     const keySelectActive = useAtomValue(keySelectActiveAtom);
 
     const { adjustKSRepoColumn, ksRepoColumn, repoScrollRef } = useKeySelect();
@@ -140,11 +141,24 @@ const RepoPanel: React.FC<{}> = ({}) => {
 
     return (
         <RepoListContainer>
-            {/* <div className="">
+            <div className="flex items-center gap-3 px-3 justify-end">
                 {workspaceItemList.map((item) => {
-                    return <div className="">{item.name}</div>;
+                    return (
+                        <div
+                            key={item.id}
+                            className="pb-0.5 relative cursor-pointer shrink overflow-hidden text-ellipsis whitespace-nowrap"
+                            onClick={() => {
+                                setId(item.id);
+                            }}
+                        >
+                            {item.id === id && (
+                                <div className="absolute bottom-0 right-1/2 w-3/4 h-0.5 rounded translate-x-1/2 bg-gray-500"></div>
+                            )}
+                            {item.name}
+                        </div>
+                    );
                 })}
-            </div> */}
+            </div>
             <ReposScroll ref={repoScrollRef}>
                 <Repos ref={outerRef}>
                     {whalesnote.repo_keys && (
@@ -392,14 +406,14 @@ const ReposScroll = styled.div(
     },
     `
     &::-webkit-scrollbar {
-        height: 9px;
+        height: 7px;
     }
     &::-webkit-scrollbar-track {
         background-color: inherit;
     }
     &::-webkit-scrollbar-thumb {
         background-color: var(--main-scroller-bg-color);
-        border-radius: 3px;
+        border-radius: 4px;
     }
 `,
 );
@@ -408,7 +422,7 @@ const Repos = styled.div({
     display: 'flex',
     flexDirection: 'column',
     flexWrap: 'wrap',
-    margin: '10px 0',
+    margin: '10px 0 5px 0',
     height: 'calc(6 * (28px + 4px))',
 });
 

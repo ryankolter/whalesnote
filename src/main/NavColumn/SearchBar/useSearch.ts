@@ -9,7 +9,7 @@ import { searchListFocusedAtom, searchPanelVisibleAtom } from '@/atoms';
 const useSearch = () => {
     const setSearchListFocused = useSetAtom(searchListFocusedAtom);
 
-    const { curDataPath, whalesnote, switchNote } = useDataContext();
+    const { whalesnote, switchNote } = useDataContext();
     const [searchPanelVisible, setSearchPanelVisible] = useAtom(searchPanelVisibleAtom);
 
     const miniSearch = useRef<MiniSearch | null>();
@@ -136,7 +136,7 @@ const useSearch = () => {
 
     const loadSearchJson = useCallback(async () => {
         window.electronAPI
-            .readJsonAsync(`${curDataPath}/search.json`)
+            .readJsonAsync(`${whalesnote.path}/search.json`)
             .then((search: AsPlainObject) => {
                 setInitProgress(75);
                 setNeedGenerateIndex(false);
@@ -172,10 +172,17 @@ const useSearch = () => {
                 searchModuleInitialized.current = true;
                 miniSearch.current = null;
             });
-    }, [nextSearchResult, searchCommit, setInitProgress, setNeedGenerateIndex, setShowInitTips]);
+    }, [
+        whalesnote,
+        nextSearchResult,
+        searchCommit,
+        setInitProgress,
+        setNeedGenerateIndex,
+        setShowInitTips,
+    ]);
 
     const initSearchModule = useCallback(async () => {
-        if (!searchModuleInitialized.current && curDataPath) {
+        if (!searchModuleInitialized.current && whalesnote.path) {
             setShowInitTips(true);
             setInitProgress(10);
             setTimeout(async () => {
@@ -184,7 +191,7 @@ const useSearch = () => {
                 await loadSearchJson();
             }, 20);
         }
-    }, [curDataPath, loadDictionary, loadSearchJson, setInitProgress, setShowInitTips]);
+    }, [whalesnote, loadDictionary, loadSearchJson, setInitProgress, setShowInitTips]);
 
     useEffect(() => {
         (async () => {
@@ -198,18 +205,18 @@ const useSearch = () => {
         setTimeout(async () => {
             await loadDictionary();
             const whaleInfo = await window.electronAPI.readJsonSync(
-                `${curDataPath}/whalesnote_info.json`,
+                `${whalesnote.path}/whalesnote_info.json`,
             );
 
             const whale: WhaleObject = {
-                path: curDataPath,
+                path: whalesnote.path,
                 repo_keys: [],
                 repo_map: {},
             };
 
             for await (const repo_key of whaleInfo.repo_keys) {
                 const repoInfo = await window.electronAPI.readJsonSync(
-                    `${curDataPath}/${repo_key}/repo_info.json`,
+                    `${whalesnote.path}/${repo_key}/repo_info.json`,
                 );
                 if (!repoInfo) continue;
 
@@ -218,7 +225,7 @@ const useSearch = () => {
 
                 for await (const folder_key of repoInfo.folder_keys) {
                     const folderInfo = await window.electronAPI.readJsonSync(
-                        `${curDataPath}/${repo_key}/${folder_key}/folder_info.json`,
+                        `${whalesnote.path}/${repo_key}/${folder_key}/folder_info.json`,
                     );
                     if (!folderInfo) continue;
 
@@ -243,7 +250,7 @@ const useSearch = () => {
                 for (const folderKey of whale.repo_map[repoKey].folder_keys) {
                     for (const noteKey of folderMap[folderKey].note_keys) {
                         const content = await window.electronAPI.readMdSync(
-                            `${curDataPath}/${repoKey}/${folderKey}/${noteKey}.md`,
+                            `${whalesnote.path}/${repoKey}/${folderKey}/${noteKey}.md`,
                         );
                         if (!content) continue;
 
@@ -280,7 +287,7 @@ const useSearch = () => {
             miniSearch.current.addAll(documents);
 
             await window.electronAPI.writeStr(
-                `${curDataPath}/search.json`,
+                `${whalesnote.path}/search.json`,
                 JSON.stringify(miniSearch.current),
             );
 
@@ -288,7 +295,7 @@ const useSearch = () => {
             setShowWaitingMask(false);
             searchCommit();
         }, 50);
-    }, [curDataPath, whalesnote, searchCommit, setNeedGenerateIndex, setShowWaitingMask]);
+    }, [whalesnote, searchCommit, setNeedGenerateIndex, setShowWaitingMask]);
 
     return [
         curSearchResultIndex,

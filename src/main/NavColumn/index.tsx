@@ -244,7 +244,7 @@ const AllRepo = styled.div(
     {
         width: '900px',
         position: 'fixed',
-        padding: '15px 15px 5px 15px',
+        padding: '10px 15px',
         boxSizing: 'border-box',
         borderRadius: '8px',
         zIndex: '3400',
