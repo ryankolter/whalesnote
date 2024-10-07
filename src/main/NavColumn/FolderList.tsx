@@ -113,7 +113,7 @@ const FolderList: React.FC<{}> = ({}) => {
             const note_content = '';
 
             await window.electronAPI.writeStr(
-                `${id}/${curRepoKey}/${folder_key}/${note_key}.md`,
+                `${whalesnote.path}/${curRepoKey}/${folder_key}/${note_key}.md`,
                 note_content,
             );
 
@@ -124,7 +124,7 @@ const FolderList: React.FC<{}> = ({}) => {
             }, 300);
             allowNewFolder.current = true;
         },
-        [id, curRepoKey, newFolder, newNote, prepareContent, switchNote, editorRef],
+        [whalesnote, curRepoKey, newFolder, newNote, prepareContent, switchNote, editorRef],
     );
 
     const handleNewFolderKeyDown = useCallback(

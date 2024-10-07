@@ -4,7 +4,9 @@ import { MdEditorRef } from '@/interface';
 import { atom } from 'jotai';
 import { RefObject } from 'react';
 
-export const platformAtom = atom(await window.electronAPI.getPlatform());
+export const platformAtom = atom(async () => {
+    return await window.electronAPI.getPlatform();
+});
 
 export const searchPanelVisibleAtom = atom(false);
 export const searchListFocusedAtom = atom(false);
