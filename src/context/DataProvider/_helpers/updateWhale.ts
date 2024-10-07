@@ -1,5 +1,5 @@
-const updateKeyName = async (path: string, whaleInfo: any) => {
-    if (whaleInfo['repos_key'] === undefined) return;
+export const updateWhaleKeyName = async (path: string, whaleInfo: any) => {
+    if (whaleInfo['repos_key'] === undefined) return whaleInfo;
 
     const newWhaleInfo = {
         id: whaleInfo.id,
@@ -34,8 +34,6 @@ const updateKeyName = async (path: string, whaleInfo: any) => {
         await window.electronAPI.writeJson(repoInfoPath, newRepoInfo);
     }
     await window.electronAPI.writeJson(`${path}/whalesnote_info.json`, newWhaleInfo);
-};
 
-export const updateWhale = async (path: string, whaleInfo: any) => {
-    await updateKeyName(path, whaleInfo);
+    return newWhaleInfo;
 };

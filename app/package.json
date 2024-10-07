@@ -12,7 +12,7 @@
         "extends": null,
         "files": [
             "build/main.js",
-            "build/preload.ts",
+            "build/preload.js",
             "build/**/*",
             "!node_modules/nodejieba/dict/*"
         ],
@@ -56,15 +56,13 @@
     },
     "dependencies": {
         "fs-extra": "^11.2.0",
-        "nodejieba": "^3.4.2",
-        "string-width": "^7.2.0",
-        "typescript": "^5.6.2"
+        "nodejieba": "^3.4.3"
     },
     "scripts": {
         "electron": "tsc && electron .",
-        "dist-win": "electron-builder --win --publish always",
-        "dist-mac": "electron-builder --mac",
-        "dist-linux": "electron-builder --linux"
+        "dist-win": "tsc && electron-builder --win --publish always",
+        "dist-mac": "tsc && electron-builder --mac",
+        "dist-linux": "tsc && electron-builder --linux"
     },
     "browserslist": {
         "production": [
@@ -79,7 +77,10 @@
         ]
     },
     "devDependencies": {
-        "electron": "^32.0.1",
-        "electron-builder": "^24.13.3"
+        "electron": "^32.1.2",
+        "electron-builder": "^25.1.7",
+        "electron-builder-squirrel-windows": "^25.1.7",
+        "dmg-builder": "^25.1.7",
+        "typescript": "^5.6.2"
     }
 }

@@ -8,7 +8,7 @@ import {
     dataPathExisted,
     dataPathHasWhale,
     importWhale,
-    updateWhale,
+    updateWhaleKeyName,
 } from './_helpers';
 import { useHistory, useWhalesnote } from './_hooks';
 import { WhaleObject } from '@/interface';
@@ -146,12 +146,12 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
             for (const path of dataPathList) {
                 if (!(await dataPathExisted(path))) continue;
 
-                const whaleInfo = await window.electronAPI.readJsonSync(
+                let whaleInfo = await window.electronAPI.readJsonSync(
                     `${path}/whalesnote_info.json`,
                 );
                 if (!whaleInfo) continue;
 
-                await updateWhale(path, whaleInfo);
+                whaleInfo = await updateWhaleKeyName(path, whaleInfo);
 
                 const iterWhaleObj = {
                     path,

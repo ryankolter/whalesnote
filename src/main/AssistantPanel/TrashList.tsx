@@ -21,7 +21,7 @@ const TrashList: React.FC<{}> = ({}) => {
     const editor = useRef<HTMLDivElement>(null);
     const view = useRef<EditorView>();
     const noteScrollRef = useRef<HTMLDivElement>(null);
-    const trash = useRef({});
+    const trash = useRef<Record<string, string>>({});
     const [curTrashKey, setCurTrashKey] = useState('---');
     const [emptyPopUp, setEmptyPopUp, emptyMask] = usePopUp(500);
 
