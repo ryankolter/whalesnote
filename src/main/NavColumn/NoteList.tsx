@@ -17,7 +17,7 @@ import { restrictToFirstScrollableAncestor, restrictToVerticalAxis } from '@dnd-
 
 import { Sortable } from '@/components/Sortable';
 import { useContextMenu } from '@/lib';
-import newNoteIcon from '@/resources/icon/newNoteIcon.svg';
+import NewNoteIcon from '@/resources/icon/newNoteIcon.svg?react';
 import { useDataContext } from '@/context/DataProvider';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {
@@ -281,9 +281,13 @@ const NoteList: React.FC<{}> = ({}) => {
     return (
         <NoteListContainer>
             <NoteAddFloat>
-                <NoteAddBtn onKeyDown={(e) => handleKeyDown(e)} onClick={() => handleNewNote()}>
-                    <NewNoteIconImg src={newNoteIcon} alt="" />
-                </NoteAddBtn>
+                <div
+                    className="w-9 h-9 flex items-center justify-center cursor-pointer"
+                    onKeyDown={(e) => handleKeyDown(e)}
+                    onClick={() => handleNewNote()}
+                >
+                    <NewNoteIcon width={18} height={20} />
+                </div>
             </NoteAddFloat>
             {note_keys && note_map ? (
                 <DndContext
@@ -460,20 +464,14 @@ const NoteAddFloat = styled.div({
     backgroundColor: 'var(--main-btn-bg-color)',
 });
 
-const NoteAddBtn = styled.div({
-    width: '24px',
-    height: '26px',
-    padding: '13px 14px',
-    display: 'flex',
-    alignItem: 'center',
-    justifyContent: 'center',
-    cursor: 'pointer',
-});
-
-const NewNoteIconImg = styled.img({
-    width: '24px',
-    height: '26px',
-});
+// const NoteAddBtn = styled.div({
+//     width: '36px',
+//     height: '36px',
+//     display: 'flex',
+//     alignItem: 'center',
+//     justifyContent: 'center',
+//     cursor: 'pointer',
+// });
 
 const Notes = styled.div(
     {

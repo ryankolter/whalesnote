@@ -19,8 +19,8 @@ import { Sortable } from '@/components/Sortable';
 import { TextInput } from '@/components/TextInput';
 import { AlertPopUp } from '@/components/AlertPopUp';
 import { InputPopUp } from '@/components/InputPopUp';
-import categoryIcon from '../../resources/icon/categoryIcon.svg';
-import folderIcon from '../../resources/icon/folderIcon.svg';
+import CategoryIcon from '@/resources/icon/categoryIcon.svg?react';
+import FolderIcon from '@/resources/icon/folderIcon.svg?react';
 import { parse as pathParse } from 'path-browserify';
 import {
     activeWhaleIdAtom,
@@ -368,9 +368,9 @@ const FolderList: React.FC<{}> = ({}) => {
     return (
         <FolderListContainer>
             <FolderTopBar>
-                <CategoryIcon>
-                    <CategoryIconImg src={categoryIcon} alt="" />
-                </CategoryIcon>
+                <div className="w-4 h-4 mr-2">
+                    <CategoryIcon width={16} height={16} />
+                </div>
                 <FolderTopTitle>{t('category.title')}</FolderTopTitle>
             </FolderTopBar>
             {folder_keys && folder_map ? (
@@ -413,9 +413,9 @@ const FolderList: React.FC<{}> = ({}) => {
                                                             : {}
                                                     }
                                                 >
-                                                    <FolderIcon>
-                                                        <FolderIconImg src={folderIcon} alt="" />
-                                                    </FolderIcon>
+                                                    <div className="flex w-[14px] h-[14px] mr-3 items-center justify-center">
+                                                        <FolderIcon />
+                                                    </div>
                                                     <FolderName>
                                                         {folder_map[key].folder_name}
                                                     </FolderName>
@@ -488,13 +488,11 @@ const FolderList: React.FC<{}> = ({}) => {
                             ) : (
                                 <></>
                             )}
-                            {id && !newFolderKey ? (
+                            {id && !newFolderKey && (
                                 <FolderAddBtn
                                     className="ri-folder-add-fill"
                                     onClick={() => handleNewFolder()}
-                                ></FolderAddBtn>
-                            ) : (
-                                <div></div>
+                                />
                             )}
                             {newFolderKey ? (
                                 <TextInput
@@ -547,9 +545,9 @@ const FolderList: React.FC<{}> = ({}) => {
                                                 : {}
                                         }
                                     >
-                                        <FolderIcon>
-                                            <FolderIconImg src={folderIcon} alt="" />
-                                        </FolderIcon>
+                                        <div className="flex w-[14px] h-[14px] mr-3 items-center justify-center">
+                                            <FolderIcon />
+                                        </div>
                                         <FolderName>
                                             {folder_map[dragActiveId as string].folder_name}
                                         </FolderName>
@@ -613,12 +611,6 @@ const FolderTopBar = styled.div({
     margin: '30px 16px 20px 6px',
 });
 
-const CategoryIcon = styled.div({
-    width: '18px',
-    height: '18px',
-    marginRight: '12px',
-});
-
 const CategoryIconImg = styled.img({
     width: '18px',
     height: '18px',
@@ -667,13 +659,6 @@ const FolderItem = styled.div({
     fontSize: '14px',
     padding: '0 0 0 8px',
     cursor: 'pointer',
-});
-
-const FolderIcon = styled.div({
-    display: 'flex',
-    width: '14px',
-    height: '14px',
-    marginRight: '12px',
 });
 
 const FolderIconImg = styled.img({

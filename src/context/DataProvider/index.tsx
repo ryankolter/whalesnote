@@ -277,7 +277,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
         return keyExisted &&
             whales[id].repo_keys?.length > 0 &&
             whales[id].repo_map?.[curRepoKey]?.folder_map?.[curFolderKey]?.note_map?.[curNoteKey]
-                .title
+                ?.title
             ? whales[id].repo_map[curRepoKey].folder_map[curFolderKey].note_map[curNoteKey].title
             : i18next.t('note.untitled');
     }, [whales, id, curRepoKey, curFolderKey, curNoteKey]);
