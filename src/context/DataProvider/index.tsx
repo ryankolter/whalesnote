@@ -164,14 +164,21 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
                     setId(birthWhaleList[0].id || '');
             }
 
+            let oldIdIsValid = false;
+            let firstCancidateId;
+
             for (const birthWhale of birthWhaleList) {
                 if (Object.keys(whales).includes(birthWhale.id)) continue;
                 const { whale, historyInfo, contentMap } = await importBirthWhale(birthWhale);
                 addWhale(whale.id, whale);
                 addHistory(whale.id, historyInfo);
                 addContentMap(whale.id, contentMap);
-                setId(whale.id);
+
+                if (whale.id === id) oldIdIsValid = true;
+                if (!firstCancidateId) firstCancidateId = whale.id;
             }
+            if (!oldIdIsValid && firstCancidateId) setId(firstCancidateId);
+
             dataIsLoadingRef.current = false;
             setDataIsLoading(false);
         },

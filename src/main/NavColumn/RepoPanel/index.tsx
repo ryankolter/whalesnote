@@ -188,7 +188,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
                                 {item.id === id && (
                                     <div className="absolute bottom-0 right-1/2 w-4/5 h-0.5 rounded translate-x-1/2 bg-gray-500"></div>
                                 )}
-                                {item.name}
+                                {item.name || item.id.slice(0, 8)}
                             </div>
                         );
                     })}
