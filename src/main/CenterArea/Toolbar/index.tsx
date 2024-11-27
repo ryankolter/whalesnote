@@ -4,6 +4,7 @@ import SwitchMode from './SwitchMode';
 import ExportNote from './ExportNote';
 import { assistPanelOpenAtom, settingPanelOpenAtom } from '@/atoms';
 import { useAtom, useSetAtom } from 'jotai';
+import { PanelRightIcon, SettingsIcon } from 'lucide-react';
 
 const ToolBar: React.FC<{
     mdRenderState: string;
@@ -19,16 +20,22 @@ const ToolBar: React.FC<{
             </BreakCrumb>
             <AllBtnBox>
                 <SettingPanelBtnBox>
-                    <SettingPanelBtn
-                        className="ri-settings-3-line"
+                    <SettingsIcon
+                        width="21"
+                        height="21"
+                        style={{ color: 'var(--main-icon-color)' }}
+                        className="cursor-pointer translate-y-[0.5px]"
                         onClick={() => setSettingPanelOpen((_open) => !_open)}
-                    ></SettingPanelBtn>
+                    />
                 </SettingPanelBtnBox>
                 <ExportNote />
                 <AssistantPanelBtnBox>
                     {!assistPanelOpen && (
-                        <AssistantPanelBtn
-                            className="ri-side-bar-line"
+                        <PanelRightIcon
+                            width="20"
+                            height="20"
+                            style={{ color: 'var(--main-icon-color)' }}
+                            className="cursor-pointer"
                             onClick={() => {
                                 setAssistPanelOpen(true);
                             }}
@@ -65,25 +72,14 @@ const BreakCrumb = styled.div({
 
 const AllBtnBox = styled.div({
     display: 'flex',
+    alignItems: 'center',
 });
 
 const SettingPanelBtnBox = styled.div(
-    {
-        width: '20px',
-        height: '20px',
-        margin: '1px 3px 0 0',
-    },
     `
     app-region: no-drag;
 `,
 );
-
-const SettingPanelBtn = styled.div({
-    fontSize: '22px',
-    color: 'var(--main-icon-color)',
-    transform: 'rotate(180deg)',
-    cursor: 'pointer',
-});
 
 const AssistantPanelBtnBox = styled.div(
     {
@@ -95,12 +91,5 @@ const AssistantPanelBtnBox = styled.div(
 app-region: no-drag;
 `,
 );
-
-const AssistantPanelBtn = styled.div({
-    fontSize: '22px',
-    color: 'var(--main-icon-color)',
-    transform: 'rotate(180deg)',
-    cursor: 'pointer',
-});
 
 export default ToolBar;

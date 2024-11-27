@@ -6,6 +6,7 @@ import MobilePage from './MobilePage';
 import TrashList from './TrashList';
 import { useAtom, useSetAtom } from 'jotai';
 import { assistPanelOpenAtom, assistPanelTabAtom } from '@/atoms';
+import { PanelRightCloseIcon } from 'lucide-react';
 
 const AssistantPanel: React.FC<{}> = ({}) => {
     const [assistPanelTab, setAssistPanelTab] = useAtom(assistPanelTabAtom);
@@ -47,13 +48,16 @@ const AssistantPanel: React.FC<{}> = ({}) => {
                     );
                 }}
                 draggable="true"
-            ></ResizeAssistantPanelWidth>
+            />
             <AssistantBox>
                 <FloatCloseBtnBox>
-                    <FloatCloseBtn
-                        className="ri-side-bar-fill"
+                    <PanelRightCloseIcon
+                        width="20"
+                        height="20"
+                        style={{ color: 'var(--main-icon-color)' }}
+                        className="cursor-pointer"
                         onClick={() => setAssistPanelOpen(false)}
-                    ></FloatCloseBtn>
+                    />
                 </FloatCloseBtnBox>
                 <AssistantTabs>
                     <AssistantTab
@@ -133,13 +137,6 @@ const FloatCloseBtnBox = styled.div({
     position: 'absolute',
     top: '20px',
     right: '20px',
-});
-
-const FloatCloseBtn = styled.div({
-    fontSize: '22px',
-    color: 'var(--main-icon-color)',
-    transform: 'rotate(180deg)',
-    cursor: 'pointer',
 });
 
 const AssistantTabs = styled.div({

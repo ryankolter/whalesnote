@@ -28,6 +28,7 @@ import { useAtomValue } from 'jotai';
 import { activeWhaleIdAtom, renderFontSizeAtom, themeAtom } from '@/atoms';
 import { join as pathJoin } from 'path-browserify';
 import { useDataContext } from '@/context/DataProvider';
+import { ExternalLinkIcon } from 'lucide-react';
 
 const lowlight = createLowlight(common);
 
@@ -338,7 +339,12 @@ const ExportNote: React.FC<{}> = ({}) => {
     return (
         <ExportNoteContainer>
             <SwitchExportNoteFuncBtnBox ref={switchExportNoteFuncBtnRef}>
-                <SwitchExportNoteFuncBtn className="ri-external-link-line"></SwitchExportNoteFuncBtn>
+                <ExternalLinkIcon
+                    width="22"
+                    height="22"
+                    style={{ color: 'var(--main-icon-color)' }}
+                    className="cursor-pointer -translate-y-[0.5px]"
+                />
             </SwitchExportNoteFuncBtnBox>
             {showSwitchExportNoteFunc ? (
                 <SwitchExportNoteFunc>
@@ -406,7 +412,7 @@ const SwitchExportNoteFuncBtnBox = styled.div({
     height: '100%',
     display: 'flex',
     alignItems: 'center',
-    margin: '0 10px',
+    margin: '0 8px 0 13px',
 });
 
 const SwitchExportNoteFuncBtn = styled.div({
