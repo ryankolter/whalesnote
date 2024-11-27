@@ -77,7 +77,7 @@ const FolderList: React.FC<{}> = ({}) => {
     const [renamePopup, setRenamePopUp, renameMask] = usePopUp(500);
 
     const innerRef = useRef<HTMLDivElement>(null);
-    const { xPos, yPos, menu } = useContextMenu(innerRef);
+    const { xPos, yPos, menuVisible } = useContextMenu(innerRef);
 
     // part1 : new folder
     const handleNewFolder = () => {
@@ -319,6 +319,7 @@ const FolderList: React.FC<{}> = ({}) => {
         document.addEventListener('compositionend', () => {
             composing.current = false;
         });
+
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
             document.removeEventListener('compositionstart', () => {
@@ -353,17 +354,15 @@ const FolderList: React.FC<{}> = ({}) => {
         [id, curRepoKey, folder_keys, reorderFolder, setDragActiveId],
     );
 
-    const genAlphaCode1 = (order: number): number => {
-        if (order <= 8 * 10) {
-            return Math.ceil(order / 10) + 64;
-        } else {
-            return 4 + Math.ceil(order / 10) + 64;
-        }
-    };
+    const genAlphaCode1 = useCallback((order: number): number => {
+        if (order <= 8 * 10) return Math.ceil(order / 10) + 64;
+        else return 4 + Math.ceil(order / 10) + 64;
+    }, []);
 
-    const genNumberCode2 = (order: number): number => {
-        return (order % 10 === 0 ? 10 : order % 10) + 47;
-    };
+    const genNumberCode2 = useCallback(
+        (order: number) => (order % 10 === 0 ? 10 : order % 10) + 47,
+        [],
+    );
 
     return (
         <FolderListContainer>
@@ -464,7 +463,7 @@ const FolderList: React.FC<{}> = ({}) => {
                                         </Sortable>
                                     );
                                 })}
-                            {menu && curFolderKey ? (
+                            {menuVisible && curFolderKey ? (
                                 <MenuUl top={yPos} left={xPos}>
                                     <MenuLi
                                         className="menu-li-color"
@@ -674,14 +673,18 @@ const FolderName = styled.div({
 
 const FolderKeyTab = styled.div({
     position: 'absolute',
-    top: '4px',
+    top: '50%',
+    transform: 'translateY(-50%)',
     right: '8px',
-    width: '16px',
-    height: '12px',
-    lineHeight: '12px',
+    minWidth: '18px',
+    boxSizing: 'content-box',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    lineHeight: '16px',
     fontSize: '12px',
     letterSpacing: '1px',
-    padding: '2px 4px',
+    padding: '1px 3.5px',
     borderRadius: '4px',
     backgroundColor: 'var(--key-tab-bg-color)',
 });

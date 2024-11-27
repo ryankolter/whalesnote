@@ -1,6 +1,5 @@
-// DataContext.tsx
-import React, { createContext, useEffect, useCallback, useState, useMemo } from 'react';
-import { fetchContentInFolder, addContentMap, fetchContentAfterNew } from '@/lib';
+import React, { createContext, useEffect, useCallback, useState, useMemo, useRef } from 'react';
+import { fetchContentInFolder, addContentMap, fetchContentAfterNew, removeContentMap } from '@/lib';
 import { useAtom } from 'jotai';
 import { activeWhaleIdAtom, dataPathListAtom } from '@/atoms';
 import {
@@ -10,7 +9,7 @@ import {
     importBirthWhale,
     updateWhaleKeyName,
 } from './_helpers';
-import { useHistory, useWhalesnote } from './_hooks';
+import { useDataPath, useHistory, useWhalesnote } from './_hooks';
 import { Whale } from '@/interface';
 import i18next from 'i18next';
 
@@ -18,6 +17,8 @@ interface DataContextType {
     dataIsLoading: boolean;
     whales: Record<string, Whale>;
     curDataPath: string;
+    addWorkspace: (path: string) => void;
+    removeWorkspace: (id: string) => void;
     whalesnote: Whale;
     newRepo: (id: string, repoKey: string, repoName: string) => Promise<void>;
     newFolder: (
@@ -69,6 +70,7 @@ interface DataContextType {
     workspaceItemList: {
         id: string;
         name: string;
+        path: string;
     }[];
 }
 
@@ -76,6 +78,8 @@ const DataContext = createContext<DataContextType>({
     dataIsLoading: false,
     whales: {},
     curDataPath: '',
+    addWorkspace: () => {},
+    removeWorkspace: () => {},
     whalesnote: { id: '', name: '', path: '', repo_keys: [], repo_map: {} },
     newRepo: async () => {},
     newFolder: async () => {},
@@ -86,15 +90,9 @@ const DataContext = createContext<DataContextType>({
     reorderRepo: async () => {},
     reorderFolder: async () => {},
     reorderNote: async () => {},
-    deleteRepo: () => {
-        return '';
-    },
-    deleteFolder: () => {
-        return '';
-    },
-    deleteNote: () => {
-        return '';
-    },
+    deleteRepo: () => '',
+    deleteFolder: () => '',
+    deleteNote: () => '',
     curRepoKey: '',
     curFolderKey: '',
     curNoteKey: '',
@@ -107,14 +105,17 @@ const DataContext = createContext<DataContextType>({
 });
 
 export const DataProvider = ({ children }: { children: React.ReactNode }) => {
+    const defaultPathInitializedRef = useRef(false);
+    const dataIsLoadingRef = useRef(false);
     const [dataIsLoading, setDataIsLoading] = useState(true);
     const [id, setId] = useAtom(activeWhaleIdAtom);
-    const [dataPathList, setDataPathList] = useAtom(dataPathListAtom);
 
-    const { histories, addHistory, updateHistory } = useHistory();
+    const { dataPathList, addDataPath, removeDataPath } = useDataPath();
+    const { histories, addHistory, removeHistory, updateHistory } = useHistory();
     const {
         whales,
         addWhale,
+        removeWhale,
         fetchFolderMap,
         newRepo,
         newFolder,
@@ -130,19 +131,21 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
         deleteNote,
     } = useWhalesnote();
 
-    useEffect(() => {
-        if (dataPathList.length === 0) return;
+    const loadWhales = useCallback(
+        async (pathList: string[]) => {
+            if (pathList.length === 0) return;
+            if (dataIsLoadingRef.current) return;
 
-        (async () => {
+            dataIsLoadingRef.current = true;
             setDataIsLoading(true);
             const birthWhaleList = [];
-            for (const path of dataPathList) {
+            for (const path of pathList) {
                 if (!(await dataPathExisted(path))) continue;
+                if (!(await dataPathHasWhale(path))) await createDefaultWhale(path);
 
                 let whaleInfo = await window.electronAPI.readJsonSync(
                     `${path}/whalesnote_info.json`,
                 );
-
                 if (!whaleInfo || !whaleInfo.id || whales[whaleInfo.id]) continue;
 
                 whaleInfo = await updateWhaleKeyName(path, whaleInfo);
@@ -157,35 +160,84 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
             }
 
             if (Object.keys(whales).length === 0) {
-                if (birthWhaleList.length === 0) {
-                    const defaultDataPath = await window.electronAPI.getDefaultDataPath();
-                    if (!(await dataPathHasWhale(defaultDataPath)))
-                        await createDefaultWhale(defaultDataPath);
-                    setDataPathList([defaultDataPath]);
-                    return;
-                }
-
                 if (!birthWhaleList.find((whale) => whale.id === id))
                     setId(birthWhaleList[0].id || '');
             }
 
             for (const birthWhale of birthWhaleList) {
+                if (Object.keys(whales).includes(birthWhale.id)) continue;
                 const { whale, historyInfo, contentMap } = await importBirthWhale(birthWhale);
-                addHistory(whale.id, historyInfo);
                 addWhale(whale.id, whale);
+                addHistory(whale.id, historyInfo);
                 addContentMap(whale.id, contentMap);
+                setId(whale.id);
             }
+            dataIsLoadingRef.current = false;
             setDataIsLoading(false);
-        })();
-    }, [dataPathList]);
+        },
+        [whales, addWhale, addHistory, addContentMap],
+    );
+
+    useEffect(() => {
+        const initializeOnFirstLoad = async () => {
+            if (dataPathList.length === 0 && Object.keys(whales).length === 0) {
+                const defaultDataPath = await window.electronAPI.getDefaultDataPath();
+                if (!(await dataPathHasWhale(defaultDataPath)))
+                    await createDefaultWhale(defaultDataPath);
+                addDataPath(defaultDataPath);
+                loadWhales([defaultDataPath]);
+            } else {
+                loadWhales(dataPathList);
+            }
+        };
+
+        if (defaultPathInitializedRef.current) return;
+        defaultPathInitializedRef.current = true;
+        initializeOnFirstLoad();
+    }, []);
+
+    const addWorkspace = useCallback(
+        (path: string) => {
+            addDataPath(path);
+            loadWhales([path]);
+        },
+        [addDataPath, loadWhales],
+    );
+
+    const removeWorkspace = useCallback(
+        (id: string) => {
+            const whaleEntriesRemaining = Object.entries(whales)
+                .filter(([whaleId]) => whaleId !== id)
+                .sort(
+                    (itemA, itemB) =>
+                        dataPathList.indexOf(itemA[1].path) - dataPathList.indexOf(itemB[1].path),
+                );
+            if (whaleEntriesRemaining.length > 0) setId(whaleEntriesRemaining[0][0]);
+
+            const whaleEntriesRemove = Object.entries(whales).filter(([whaleId]) => whaleId === id);
+            whaleEntriesRemove.forEach(([id, whale]) => {
+                removeDataPath(whale.path);
+                removeWhale(id);
+                removeHistory(id);
+                removeContentMap(id);
+            });
+        },
+        [whales, dataPathList, removeDataPath, removeWhale, removeHistory, removeContentMap],
+    );
 
     const workspaceItemList = useMemo(
         () =>
-            Object.entries(whales).map(([id, whale]) => ({
-                id,
-                name: whale.name,
-            })),
-        [whales],
+            Object.entries(whales)
+                .map(([id, whale]) => ({
+                    id,
+                    name: whale.name,
+                    path: whale.path,
+                }))
+                .sort(
+                    (itemA, itemB) =>
+                        dataPathList.indexOf(itemA.path) - dataPathList.indexOf(itemB.path),
+                ),
+        [whales, dataPathList],
     );
 
     const whalesnote = useMemo(() => {
@@ -288,6 +340,8 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
                 dataIsLoading,
                 whales,
                 curDataPath,
+                addWorkspace,
+                removeWorkspace,
                 whalesnote,
                 newRepo,
                 newFolder,

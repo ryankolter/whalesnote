@@ -55,6 +55,7 @@ specifiers:
   jotai: ^2.10.0
   lint-staged: ^15.2.10
   lowlight: ^3.1.0
+  lucide-react: ^0.462.0
   markdown-it: ^14.1.0
   markdown-it-anchor: ^9.2.0
   markdown-it-emoji: ^3.0.0
@@ -125,6 +126,7 @@ dependencies:
   immer: 10.1.1
   jotai: 2.10.0_xhljovrzeltpan7qvnzgcocgfa
   lowlight: 3.1.0
+  lucide-react: 0.462.0_react@18.3.1
   markdown-it: 14.1.0
   markdown-it-anchor: 9.2.0_5vlw2uffdmokknuqwp3gj2uez4
   markdown-it-emoji: 3.0.0
@@ -4301,6 +4303,14 @@ packages:
     resolution: {integrity: sha512-KpNARQA3Iwv+jTA0utUVVbrh+Jlrr1Fv0e56GGzAFOXN7dk/FviaDW8LHmK52DlcH4WP2n6gI8vN1aesBFgo9w==}
     dependencies:
       yallist: 3.1.1
+    dev: false
+
+  /lucide-react/0.462.0_react@18.3.1:
+    resolution: {integrity: sha512-NTL7EbAao9IFtuSivSZgrAh4fZd09Lr+6MTkqIxuHaH2nnYiYIzXPo06cOxHg9wKLdj6LL8TByG4qpePqwgx/g==}
+    peerDependencies:
+      react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0-rc
+    dependencies:
+      react: 18.3.1
     dev: false
 
   /markdown-it-anchor/9.2.0_5vlw2uffdmokknuqwp3gj2uez4:

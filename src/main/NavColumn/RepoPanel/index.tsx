@@ -23,13 +23,21 @@ import { activeWhaleIdAtom, keySelectActiveAtom } from '@/atoms';
 import { useAtom, useAtomValue } from 'jotai';
 import { useKeySelect } from './useKeySelect';
 import { useManageRepo } from './useManageRepo';
-import clsx from 'clsx';
+import { PlusIcon } from 'lucide-react';
 
 const RepoPanel: React.FC<{}> = ({}) => {
     const { t } = useTranslation();
 
-    const { whalesnote, reorderRepo, curRepoKey, curFolderKey, switchRepo, workspaceItemList } =
-        useDataContext();
+    const {
+        whalesnote,
+        addWorkspace,
+        removeWorkspace,
+        reorderRepo,
+        curRepoKey,
+        curFolderKey,
+        switchRepo,
+        workspaceItemList,
+    } = useDataContext();
 
     const [id, setId] = useAtom(activeWhaleIdAtom);
     const keySelectActive = useAtomValue(keySelectActiveAtom);
@@ -53,7 +61,14 @@ const RepoPanel: React.FC<{}> = ({}) => {
 
     const [dragActiveId, setDragActiveId] = useState<string | null>(null);
     const outerRef = useRef(null);
-    const { xPos, yPos, menu } = useContextMenu(outerRef);
+    const { xPos, yPos, menuVisible } = useContextMenu(outerRef);
+
+    const workspaceRef = useRef(null);
+    const {
+        xPos: workspaceXPos,
+        yPos: workspaceYPos,
+        menuVisible: workspaceMenuVisible,
+    } = useContextMenu(workspaceRef);
     const sensors = useSensors(useSensor(MouseSensor, { activationConstraint: { distance: 5 } }));
 
     const switchRepoInPanel = useCallback(
@@ -139,25 +154,77 @@ const RepoPanel: React.FC<{}> = ({}) => {
         [id, curRepoKey, curFolderKey, whalesnote, reorderRepo, setDragActiveId],
     );
 
+    const dataPathAddHandler = useCallback(async () => {
+        const filePath = await window.electronAPI.openDirectoryDialog();
+        if (filePath !== '') {
+            if (
+                workspaceItemList.find((item) => {
+                    return item.path === filePath;
+                })
+            ) {
+                console.log('already add ');
+            } else {
+                addWorkspace(filePath);
+            }
+        }
+    }, [workspaceItemList, addWorkspace]);
+
     return (
         <RepoListContainer>
             <div className="flex items-center gap-3 px-3 justify-end">
-                {workspaceItemList.map((item) => {
-                    return (
-                        <div
-                            key={item.id}
-                            className="pb-0.5 relative cursor-pointer shrink overflow-hidden text-ellipsis whitespace-nowrap"
-                            onClick={() => {
-                                setId(item.id);
+                <div className="flex items-center" ref={workspaceRef}>
+                    {workspaceItemList.map((item) => {
+                        return (
+                            <div
+                                key={item.id}
+                                className="mx-1.5 pb-0.5 relative cursor-pointer shrink overflow-hidden text-ellipsis whitespace-nowrap"
+                                onClick={() => {
+                                    setId(item.id);
+                                }}
+                                onContextMenu={() => {
+                                    setId(item.id);
+                                }}
+                            >
+                                {item.id === id && (
+                                    <div className="absolute bottom-0 right-1/2 w-4/5 h-0.5 rounded translate-x-1/2 bg-gray-500"></div>
+                                )}
+                                {item.name}
+                            </div>
+                        );
+                    })}
+                </div>
+                <PlusIcon
+                    width="16"
+                    height="16"
+                    className="cursor-pointer"
+                    onClick={() => {
+                        dataPathAddHandler();
+                    }}
+                />
+                {workspaceMenuVisible && (
+                    <MenuUl top={workspaceYPos} left={workspaceXPos}>
+                        <MenuLi
+                            className="menu-li-color"
+                            onClick={async () => {
+                                const workspaceItem = workspaceItemList.find(
+                                    (item) => item.id === id,
+                                );
+                                if (workspaceItem)
+                                    await window.electronAPI.openParentFolder(workspaceItem.path);
                             }}
                         >
-                            {item.id === id && (
-                                <div className="absolute bottom-0 right-1/2 w-3/4 h-0.5 rounded translate-x-1/2 bg-gray-500"></div>
-                            )}
-                            {item.name}
-                        </div>
-                    );
-                })}
+                            {t('workspace.open')}
+                        </MenuLi>
+                        <MenuLi
+                            className="menu-li-color"
+                            onClick={() => {
+                                removeWorkspace(id);
+                            }}
+                        >
+                            {t('workspace.remove')}
+                        </MenuLi>
+                    </MenuUl>
+                )}
             </div>
             <ReposScroll ref={repoScrollRef}>
                 <Repos ref={outerRef}>
@@ -276,7 +343,7 @@ const RepoPanel: React.FC<{}> = ({}) => {
                                         );
                                     }
                                 })}
-                                {menu && curRepoKey ? (
+                                {menuVisible && curRepoKey && (
                                     <MenuUl top={yPos} left={xPos}>
                                         <MenuLi
                                             className="menu-li-color"
@@ -291,8 +358,6 @@ const RepoPanel: React.FC<{}> = ({}) => {
                                             {t('repository.delete')}
                                         </MenuLi>
                                     </MenuUl>
-                                ) : (
-                                    <></>
                                 )}
                             </SortableContext>
                             {dragActiveId ? (
@@ -456,16 +521,18 @@ const RepoGroupSelect = styled.div({
 
 const RepoGroupItem = styled.div({
     position: 'absolute',
-    top: '4px',
+    top: '50%',
+    transform: 'translateY(-50%)',
     right: '4px',
-    width: '14px',
-    height: '14px',
-    lineHeight: '14px',
+    width: '18px',
+    height: '18px',
+    lineHeight: '12px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     fontSize: '12px',
-    textAlign: 'center',
     letterSpacing: '1px',
-    padding: '2px',
-    borderRadius: '8px',
+    borderRadius: '100px',
     backgroundColor: 'var(--second-selected-bg-color)',
 });
 
@@ -532,10 +599,10 @@ const AddReposTips = styled.div({
     flexDirection: 'column',
     alignItems: 'center',
     width: '100px',
-    marginTop: '20px',
+    marginTop: '10px',
     fontSize: '14px',
     position: 'absolute',
-    bottom: '-50px',
+    bottom: '-40px',
     left: '35px',
     padding: '5px 10px',
     borderRadius: '5px',

@@ -91,7 +91,6 @@ const CenterArea: React.FC<{}> = () => {
                     } else {
                         setKeySelectActive(true);
                         setKeySelectNumArr([]);
-                        //只有这里才会让它初始化为显示框框
                         editorRef.current?.blur();
                     }
                 }

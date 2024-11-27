@@ -1,4 +1,4 @@
-import { ReactEventHandler, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 
 export const SelectionOptions: React.FC<{
@@ -20,7 +20,7 @@ export const SelectionOptions: React.FC<{
                 setShowOptions(false);
             }
         },
-        [setShowOptions]
+        [setShowOptions],
     );
 
     useEffect(() => {
@@ -78,7 +78,7 @@ const Title = styled.div(
     (props: { optionHeight: number }) => ({
         height: props.optionHeight + 'px',
         lineHeight: props.optionHeight + 'px',
-    })
+    }),
 );
 
 const Selection = styled.div({
@@ -101,7 +101,7 @@ const CurrentOption = styled.div(
     (props: { optionHeight: number }) => ({
         height: props.optionHeight + 'px',
         lineHeight: props.optionHeight + 'px',
-    })
+    }),
 );
 
 const CurrentValue = styled.div({
@@ -127,7 +127,7 @@ const Triangle = styled.div(
     },
     (props: { optionHeight: number }) => ({
         top: (props.optionHeight - 10) / 2 + 'px',
-    })
+    }),
 );
 
 const OptionValue = styled.span({});
@@ -160,5 +160,5 @@ const Option = styled.div(
     (props: { optionHeight: number }) => ({
         height: props.optionHeight + 'px',
         lineHeight: props.optionHeight + 'px',
-    })
+    }),
 );

@@ -121,7 +121,7 @@ export const useKeySelect = () => {
                     nextRepoPage();
                 }
 
-                //alpha z
+                // alpha z
                 if (e.key === 'z' && !modKey) {
                     if (!keySelectActive) return;
                     setRepoPanelVisible((visilble) => !visilble);

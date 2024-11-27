@@ -80,7 +80,7 @@ const MdRender: React.FC<{
     const clipboard: any = useRef<ClipboardJS>(null);
     const renderContainerRef = useRef<HTMLDivElement>(null);
     const renderRef = useRef<HTMLDivElement>(null);
-    const { xPos, yPos, menu } = useContextMenu(renderRef);
+    const { xPos, yPos, menuVisible } = useContextMenu(renderRef);
 
     md.current = useMemo(() => {
         return (
@@ -348,7 +348,7 @@ const MdRender: React.FC<{
                 className="toc-scroller"
                 tocHeight={tocVisible ? '40%' : '0'}
             ></TocDirectory>
-            {menu ? (
+            {menuVisible ? (
                 <MenuUl top={yPos} left={xPos}>
                     <MenuLi className="menu-li-color" onClick={() => copySelection()}>
                         {t('render.copy')}

@@ -68,7 +68,7 @@ const MdEditor = forwardRef<MdEditorRef, IMarkdownEditor>((props, ref) => {
     const scrollSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
     const scrollRatioSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
     const editorContainerRef = useRef<HTMLDivElement>(null);
-    const { xPos, yPos, menu, showMenu } = useContextMenu(editorContainerRef);
+    const { xPos, yPos, menuVisible, setMenuVisible } = useContextMenu(editorContainerRef);
 
     const onDocChange = useCallback(
         async (new_value: string, vu: ViewUpdate) => {
@@ -533,13 +533,13 @@ const MdEditor = forwardRef<MdEditorRef, IMarkdownEditor>((props, ref) => {
         async (e: MouseEvent<HTMLSpanElement>) => {
             e.stopPropagation();
             e.preventDefault();
-            showMenu(false);
+            setMenuVisible(false);
             const paths = await window.electronAPI.openSelectImagesDialog(
                 validImageFileType.current,
             );
             if (paths.length > 0) await loadImages(paths);
         },
-        [loadImages, showMenu],
+        [loadImages, setMenuVisible],
     );
 
     const handleZoneDrop = useCallback(
@@ -590,7 +590,7 @@ const MdEditor = forwardRef<MdEditorRef, IMarkdownEditor>((props, ref) => {
                     }`}
                 />
             </EditorDragZone>
-            {menu ? (
+            {menuVisible ? (
                 <MenuUl top={yPos} left={xPos}>
                     <MenuLi className="menu-li-color" onClick={() => copySelection()}>
                         {t('editor.copy')}

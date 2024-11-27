@@ -44,6 +44,7 @@
     "immer": "^10.1.1",
     "jotai": "^2.10.0",
     "lowlight": "^3.1.0",
+    "lucide-react": "^0.462.0",
     "markdown-it": "^14.1.0",
     "markdown-it-anchor": "^9.2.0",
     "markdown-it-emoji": "^3.0.0",

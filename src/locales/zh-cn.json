@@ -1,4 +1,8 @@
 {
+    "workspace": {
+        "remove": "移除",
+        "open": "打开目录"
+    },
     "repository": {
         "default_name": "1号资料库",
         "enter_a_name": "输入新的资料库名",

@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 export const useContextMenu = (outerRef: any) => {
     const [xPos, setXPos] = useState('0px');
     const [yPos, setYPos] = useState('0px');
-    const [menu, showMenu] = useState(false);
+    const [menuVisible, setMenuVisible] = useState(false);
 
     const handleContextMenu = useCallback(
         (event: MouseEvent) => {
@@ -11,17 +11,17 @@ export const useContextMenu = (outerRef: any) => {
             if (outerRef && outerRef.current && outerRef.current.contains(event.target)) {
                 setXPos(`${event.pageX}px`);
                 setYPos(`${event.pageY}px`);
-                showMenu(true);
+                setMenuVisible(true);
             } else {
-                showMenu(false);
+                setMenuVisible(false);
             }
         },
-        [showMenu, outerRef, setXPos, setYPos],
+        [setMenuVisible, outerRef, setXPos, setYPos],
     );
 
     const handleClick = useCallback(() => {
-        showMenu(false);
-    }, [showMenu]);
+        setMenuVisible(false);
+    }, [setMenuVisible]);
 
     useEffect(() => {
         document.addEventListener('click', handleClick);
@@ -32,5 +32,5 @@ export const useContextMenu = (outerRef: any) => {
         };
     }, [handleClick, handleContextMenu]);
 
-    return { xPos, yPos, menu, showMenu };
+    return { xPos, yPos, menuVisible, setMenuVisible };
 };

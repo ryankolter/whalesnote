@@ -4,6 +4,9 @@ export let notes: Record<string, ContentMap> = {};
 export const addContentMap = (id: string, contentMap: ContentMap) => {
     notes[id] = contentMap;
 };
+export const removeContentMap = (id: string) => {
+    delete notes[id];
+};
 
 export const fetchContentInFolder = async (
     id: string,

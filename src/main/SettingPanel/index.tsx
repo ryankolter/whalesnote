@@ -2,7 +2,6 @@ import { useTranslation } from 'react-i18next';
 import styled from '@emotion/styled';
 
 import InterfacePage from './InterfacePage';
-// import DataPage from './DataPage';
 import AboutPage from './AboutPage';
 import { settingPanelOpenAtom, settingPanelTabAtom } from '@/atoms';
 import { useAtom, useSetAtom } from 'jotai';
@@ -27,16 +26,6 @@ const SettingPanel: React.FC<{}> = ({}) => {
                 <SettingTabs>
                     <SettingTab
                         style={
-                            settingPanelTab === 'dataTab'
-                                ? { backgroundColor: 'var(--main-selected-bg-color)' }
-                                : {}
-                        }
-                        onClick={(e) => setSettingPanelTab('dataTab')}
-                    >
-                        {t('setting.data.title')}
-                    </SettingTab>
-                    <SettingTab
-                        style={
                             settingPanelTab === 'interfaceTab'
                                 ? { backgroundColor: 'var(--main-selected-bg-color)' }
                                 : {}
@@ -59,9 +48,6 @@ const SettingPanel: React.FC<{}> = ({}) => {
                 <SettingContent>
                     {settingPanelTab === 'interfaceTab' ? (
                         <InterfacePage />
-                    ) : settingPanelTab == 'dataTab' ? (
-                        // <DataPage />
-                        <></>
                     ) : settingPanelTab == 'aboutTab' ? (
                         <AboutPage />
                     ) : (

@@ -27,6 +27,13 @@ export const useHistory = () => {
         });
     }, []);
 
+    const removeHistory = useCallback((id: string) => {
+        produceHistories((draft) => {
+            if (!draft[id]) return;
+            delete draft[id];
+        });
+    }, []);
+
     const saveTask = async (id: string, dataPath: string) => {
         const currentHistories = latestHistories.current;
         if (!currentHistories[id]) return;
@@ -92,5 +99,5 @@ export const useHistory = () => {
         await addSaveTask(id, dataPath, 1200);
     };
 
-    return { histories, addHistory, updateHistory };
+    return { histories, addHistory, removeHistory, updateHistory };
 };

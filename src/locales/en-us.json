@@ -1,4 +1,8 @@
 {
+    "workspace": {
+        "remove": "Remove",
+        "open": "Open Directory"
+    },
     "repository": {
         "default_name": "Repository 1",
         "enter_a_name": "Enter a name",
@@ -103,9 +107,9 @@
     "tips": {
         "about_to_empty_the_trash": "About to empty the trash",
         "activate_searching": "activate searching",
-        "add_new_repository": "add new repo",
+        "add_new_repository": "add repo",
         "add_new_note": "add new note",
-        "click_btn_to": "Click button to",
+        "click_btn_to": "Click to",
         "export_success": "Export success",
         "please_wait": "Please wait......"
     }

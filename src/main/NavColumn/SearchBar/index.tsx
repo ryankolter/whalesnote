@@ -14,6 +14,7 @@ import {
     searchPanelVisibleAtom,
 } from '@/atoms';
 import { useDataContext } from '@/context/DataProvider';
+import { SearchIcon } from 'lucide-react';
 
 const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
     const { t } = useTranslation();
@@ -168,14 +169,16 @@ const SearchBar: React.FC<Record<string, unknown>> = ({}) => {
             <EmptyArea onClick={() => setSearchPanelVisible(false)}></EmptyArea>
             <Search>
                 <SearchIcon
-                    className="ri-search-line"
+                    width="16"
+                    height="16"
+                    className="translate-y-[1px]"
                     onClick={() => {
                         setSearchPanelVisible(true);
                         if (searchModuleInitialized.current) {
                             searchInputRef.current?.focus();
                         }
                     }}
-                ></SearchIcon>
+                />
                 <SearchInput
                     id="search-input-id"
                     ref={searchInputRef}
@@ -291,14 +294,8 @@ const Search = styled.div({
     alignItems: 'center',
     flex: '1',
     minWidth: '0',
-});
-
-const SearchIcon = styled.div({
-    fontSize: '14px',
-    width: '14px',
-    height: '14px',
-    color: 'var(--input-text-color) !important',
-    cursor: 'pointer',
+    gap: '12px',
+    padding: '6px 0 6px',
 });
 
 const SearchInput = styled.input(
@@ -311,7 +308,6 @@ const SearchInput = styled.input(
         lineHeight: '20px',
         letterSpacing: '1px',
         width: '100%',
-        padding: '6px 0 6px 16px',
         boxSizing: 'border-box',
         color: 'var(--input-text-color) !important',
         backgroundColor: 'var(--render-main-bg-color) !important',

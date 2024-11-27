@@ -73,7 +73,7 @@ const NoteList: React.FC<{}> = ({}) => {
     const [noteScrollTop, setNoteScrollTop] = useState(0);
     const notesEnd = useRef<HTMLDivElement>(null);
     const outerRef = useRef<HTMLDivElement>(null);
-    const { xPos, yPos, menu } = useContextMenu(outerRef);
+    const { xPos, yPos, menuVisible } = useContextMenu(outerRef);
     const sensors = useSensors(useSensor(MouseSensor, { activationConstraint: { distance: 5 } }));
 
     const scrollToBottom = useCallback(() => {
@@ -334,7 +334,6 @@ const NoteList: React.FC<{}> = ({}) => {
                                                                         genAlphaCode1(index + 1)
                                                                         ? 'var(--main-text-selected-color)'
                                                                         : '',
-                                                                width: '10px',
                                                                 display: 'flex',
                                                                 justifyContent: 'center',
                                                             }}
@@ -351,7 +350,6 @@ const NoteList: React.FC<{}> = ({}) => {
                                                                         genAlphaCode2(index + 1)
                                                                         ? 'var(--main-text-selected-color)'
                                                                         : '',
-                                                                width: '10px',
                                                                 display: 'flex',
                                                                 justifyContent: 'center',
                                                             }}
@@ -385,7 +383,7 @@ const NoteList: React.FC<{}> = ({}) => {
                                 }}
                                 ref={notesEnd}
                             ></div>
-                            {menu && curNoteKey ? (
+                            {menuVisible && curNoteKey ? (
                                 <MenuUl top={yPos} left={xPos}>
                                     <MenuLi
                                         className="menu-li-color"
@@ -507,17 +505,19 @@ const NoteItem = styled.div(
 );
 
 const NoteKeyTab = styled.div({
+    position: 'absolute',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    right: '8px',
+    minWidth: '18px',
+    boxSizing: 'content-box',
+    lineHeight: '16px',
     display: 'flex',
     alignItems: 'center',
-    position: 'absolute',
-    top: '4px',
-    right: '8px',
-    width: '20px',
-    height: '13px',
-    lineHeight: '13px',
+    justifyContent: 'center',
     fontSize: '13px',
     letterSpacing: '1px',
-    padding: '2px 4px',
+    padding: '1.5px 4px',
     borderRadius: '4px',
     backgroundColor: 'var(--key-tab-bg-color)',
 });

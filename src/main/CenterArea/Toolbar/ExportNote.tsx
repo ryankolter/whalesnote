@@ -32,17 +32,16 @@ import { useDataContext } from '@/context/DataProvider';
 const lowlight = createLowlight(common);
 
 const ExportNote: React.FC<{}> = ({}) => {
+    const { t } = useTranslation();
+
     const { curDataPath, curRepoKey, curFolderKey, curNoteKey, currentTitle, whalesnote } =
         useDataContext();
 
-    const theme = useAtomValue(themeAtom);
-    const renderFontSize = useAtomValue(renderFontSizeAtom);
-
     const id = useAtomValue(activeWhaleIdAtom);
+    const renderFontSize = useAtomValue(renderFontSizeAtom);
+    const theme = useAtomValue(themeAtom);
 
-    const { t } = useTranslation();
     const [showSwitchExportNoteFunc, setShowSwitchExportNoteFunc] = useState(false);
-
     const switchExportNoteFuncBtnRef = useRef<HTMLDivElement>(null);
     const [exportFinishPopUp, setExportFinishPopUp, exportFinishMask] = usePopUp(500);
 
@@ -124,7 +123,8 @@ const ExportNote: React.FC<{}> = ({}) => {
     }, [curDataPath]);
 
     const print_str = useMemo(() => {
-        return curRepoKey &&
+        return id &&
+            curRepoKey &&
             curFolderKey &&
             curNoteKey &&
             notes[id][curRepoKey] &&
@@ -132,7 +132,7 @@ const ExportNote: React.FC<{}> = ({}) => {
             notes[id][curRepoKey][curFolderKey][curNoteKey]
             ? notes[id][curRepoKey][curFolderKey][curNoteKey]
             : '';
-    }, [curDataPath, curRepoKey, curFolderKey, curNoteKey]);
+    }, [curDataPath, curRepoKey, curFolderKey, curNoteKey, id]);
 
     const saveNoteToHtml = useCallback(
         async (path: string) => {

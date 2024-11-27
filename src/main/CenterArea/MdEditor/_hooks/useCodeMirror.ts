@@ -4,7 +4,7 @@ import { EditorState, StateEffect } from '@codemirror/state';
 import { EditorView, keymap, ViewUpdate } from '@codemirror/view';
 import { indentWithTab } from '@codemirror/commands';
 import { oneDark } from '@codemirror/theme-one-dark';
-import { indentUnit } from '@codemirror/language';
+import { indentRange, indentUnit } from '@codemirror/language';
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
 import { languages } from '@codemirror/language-data';
 import { Completion, autocompletion } from '@codemirror/autocomplete';
@@ -140,6 +140,31 @@ export const useCodeMirror = <T extends Element>({
         };
     }, []);
 
+    const indentOnPasteExtension = useMemo(
+        () =>
+            EditorView.updateListener.of((update) => {
+                if (update.transactions.some((tr) => tr.isUserEvent('input.paste'))) {
+                    const { state, view } = update;
+
+                    update.transactions.forEach((tr) => {
+                        if (tr.isUserEvent('input.paste')) {
+                            tr.changes.iterChanges((from) => {
+                                const to = state.selection.ranges[0].to;
+                                const safeFrom = Math.max(0, Math.min(from, state.doc.length));
+                                const safeTo = Math.max(0, Math.min(to, state.doc.length));
+
+                                if (safeFrom < safeTo) {
+                                    const changes = indentRange(state, safeFrom, safeTo);
+                                    if (changes) view.dispatch({ changes });
+                                }
+                            });
+                        }
+                    });
+                }
+            }),
+        [],
+    );
+
     const getExtensions = useMemo(
         () => [
             basicSetup,
@@ -150,14 +175,15 @@ export const useCodeMirror = <T extends Element>({
             keymap.of([indentWithTab]),
             EditorView.lineWrapping,
             markdown({ base: markdownLanguage, addKeymap: false, codeLanguages: languages }),
-            indentUnit.of('    '),
+            indentUnit.of('  '),
+            indentOnPasteExtension,
             autocompletion({
                 activateOnTyping: true,
                 aboveCursor: true,
                 override: [myCompletions],
             }),
         ],
-        [docUpdateListener, cursorActiveListener, myCompletions],
+        [docUpdateListener, cursorActiveListener, indentOnPasteExtension, myCompletions],
     );
 
     useEffect(() => {

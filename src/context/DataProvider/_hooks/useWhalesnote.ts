@@ -24,6 +24,17 @@ export const useWhalesnote = () => {
         [whales],
     );
 
+    const removeWhale = useCallback(
+        (id: string) => {
+            if (!whales[id]) return false;
+            produceWhales((draft) => {
+                delete draft[id];
+            });
+            return true;
+        },
+        [whales],
+    );
+
     const fetchFolderMap = useCallback(
         async (id: string, repoKey: string | undefined, folderKey: string | undefined) => {
             if (!whales[id]) return;
@@ -542,6 +553,7 @@ export const useWhalesnote = () => {
     return {
         whales,
         addWhale,
+        removeWhale,
         fetchFolderMap,
         newRepo,
         renameRepo,
