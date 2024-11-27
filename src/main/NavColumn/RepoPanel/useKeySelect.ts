@@ -31,6 +31,8 @@ export const useKeySelect = () => {
         (repoKey: string) => {
             for (const [index, key] of whalesnote.repo_keys.entries()) {
                 if (key === repoKey) {
+                    console.log(index);
+
                     setKSRepoColumn(Math.floor(index / 6.0));
                     return;
                 }
@@ -97,7 +99,6 @@ export const useKeySelect = () => {
                     if (index < whalesnote.repo_keys.length) {
                         const repoKey = whalesnote.repo_keys[index];
                         await switchRepo(repoKey);
-                        adjustKSRepoColumn(repoKey);
                     }
                 }
 
@@ -178,12 +179,15 @@ export const useKeySelect = () => {
         };
     }, [handleWhell]);
 
-    const getColumnNum = useCallback((repoKey: string) => {
-        for (const [index, key] of whalesnote.repo_keys.entries()) {
-            if (key === repoKey) return Math.floor(index / 6.0);
-        }
-        return 0;
-    }, []);
+    const getColumnNum = useCallback(
+        (repoKey: string) => {
+            for (const [index, key] of whalesnote.repo_keys.entries()) {
+                if (key === repoKey) return Math.floor(index / 6.0);
+            }
+            return 0;
+        },
+        [whalesnote],
+    );
 
     useEffect(() => {
         const column = getColumnNum(curRepoKey);
