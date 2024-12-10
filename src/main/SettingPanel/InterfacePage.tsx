@@ -5,7 +5,13 @@ import styled from '@emotion/styled';
 
 import { SelectionOptions } from '@/components/SelectionOptions';
 import { useAtom } from 'jotai';
-import { editorFontSizeAtom, renderFontSizeAtom, languageAtom, themeAtom } from '@/atoms';
+import {
+    editorFontSizeAtom,
+    renderFontSizeAtom,
+    languageAtom,
+    themeAtom,
+    renderCodeFontSizeAtom,
+} from '@/atoms';
 
 const InterfacePage: React.FC<{}> = ({}) => {
     const { t } = useTranslation();
@@ -17,8 +23,10 @@ const InterfacePage: React.FC<{}> = ({}) => {
 
     const [editorFontSize, setEditorFontSize] = useAtom(editorFontSizeAtom);
     const [renderFontSize, setRenderFontSize] = useAtom(renderFontSizeAtom);
+    const [renderCodeFontSize, setRenderCodeFontSize] = useAtom(renderCodeFontSizeAtom);
     const editorFontSizeList = useMemo(() => ['12', '13', '14', '15', '16', '17', '18'], []);
     const renderFontSizeList = useMemo(() => ['12', '13', '14', '15', '16', '17', '18'], []);
+    const renderCodeFontSizeList = useMemo(() => ['12', '13', '14', '15', '16', '17', '18'], []);
 
     const translateTheme = useCallback((option: string) => {
         switch (option) {
@@ -77,6 +85,12 @@ const InterfacePage: React.FC<{}> = ({}) => {
                         currentOption={renderFontSize}
                         optionList={renderFontSizeList}
                         handleOption={setRenderFontSize}
+                    />
+                    <SelectionOptions
+                        title={t('setting.interface.style.preview_code_font_size')}
+                        currentOption={renderCodeFontSize}
+                        optionList={renderCodeFontSizeList}
+                        handleOption={setRenderCodeFontSize}
                     />
                 </PartContent>
             </ChildPart>

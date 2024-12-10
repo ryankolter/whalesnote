@@ -31,7 +31,12 @@ import markdownItTocDoneRight from 'markdown-it-toc-done-right';
 
 import { useContextMenu } from '@/lib';
 import { useAtomValue } from 'jotai';
-import { platformAtom, renderFontSizeAtom, repoPanelVisibleAtom } from '@/atoms';
+import {
+    platformAtom,
+    renderCodeFontSizeAtom,
+    renderFontSizeAtom,
+    repoPanelVisibleAtom,
+} from '@/atoms';
 import { useDataContext } from '@/context/DataProvider';
 
 const lowlight = createLowlight(common);
@@ -66,6 +71,7 @@ const MdRender: React.FC<{
 
     const platform = useAtomValue(platformAtom);
     const renderFontSize = useAtomValue(renderFontSizeAtom);
+    const renderCodeFontSize = useAtomValue(renderCodeFontSizeAtom);
     const repoPanelVisible = useAtomValue(repoPanelVisibleAtom);
 
     const [result, setResult] = useState('');
@@ -102,7 +108,7 @@ const MdRender: React.FC<{
                     if (lang) {
                         try {
                             return (
-                                '<pre style="position: relative;"><code class="hljs"><pre>' +
+                                `<pre style="position: relative;"><code class="hljs"><pre style='font-size: ${renderCodeFontSize}px'>` +
                                 html +
                                 toHtml(lowlight.highlight(lang, str, {})) +
                                 '</pre></code></pre>' +
@@ -112,7 +118,7 @@ const MdRender: React.FC<{
                     }
 
                     return (
-                        '<pre style="position: relative;"><code class="hljs"><pre>' +
+                        `<pre style="position: relative;"><code class="hljs"><pre style='font-size: ${renderCodeFontSize}px'>` +
                         html +
                         md.current.utils.escapeHtml(str) +
                         '</pre></code></pre>' +
@@ -165,7 +171,7 @@ const MdRender: React.FC<{
                     figcaption: 'title',
                 })
         );
-    }, [curDataPath]);
+    }, [curDataPath, renderCodeFontSize]);
 
     useEffect(() => {
         setResult(md.current.render(renderNoteStr));
@@ -182,10 +188,9 @@ const MdRender: React.FC<{
         });
         return () => {
             clipboard.current.off('success');
-
             clipboard.current.off('error');
         };
-    }, [curDataPath, curRepoKey, curFolderKey, curNoteKey, renderNoteStr]);
+    }, [curDataPath, curRepoKey, curFolderKey, curNoteKey, renderNoteStr, renderCodeFontSize]);
 
     useEffect(() => {
         if (renderRef.current) {
@@ -314,7 +319,7 @@ const MdRender: React.FC<{
             )}
             <div
                 ref={renderRef}
-                className={'wn-theme-rd'}
+                className="wn-theme-rd"
                 style={{
                     overflowX: 'hidden',
                     scrollBehavior: mdRenderState === 'all' ? 'auto' : 'smooth',

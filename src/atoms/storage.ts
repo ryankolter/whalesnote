@@ -39,3 +39,4 @@ export const languageAtom = atomWithStorage(
 
 export const editorFontSizeAtom = atomWithStorage('editor_font_size', '15');
 export const renderFontSizeAtom = atomWithStorage('render_font_size', '15');
+export const renderCodeFontSizeAtom = atomWithStorage('render_code_font_size', '15');

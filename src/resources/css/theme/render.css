@@ -2,9 +2,8 @@
 .wn-theme-rd {
     width: 100%;
     height: 100%;
-    top: 50px;
     box-sizing: border-box;
-    padding: 0 15px 0 10px;
+    padding: 0 15px 20px 10px;
     font-family: PingFang SC, -apple-system, Helvetica, Tahoma, Arial, "Microsoft YaHei", sans-serif;
     user-select: text;
     overflow-y: auto;
@@ -42,8 +41,7 @@
     border: none;
     border-radius: 5px;
     margin: 0 0.2em;
-    padding: 0.1em 0.4em;
-    font-size: 0.9em;
+    padding: 0.3em;
     color: var(--render-code-text-color) !important;
     background-color: var(--render-code-line-bg-color) !important;
 }
@@ -52,8 +50,11 @@
     border-radius: 8px !important;
 }
 
+.wn-theme-rd pre:not(:last-child) {
+    margin-bottom: 1em !important;
+}
+
 .wn-theme-rd pre code {
-    font-size: 1em;
     background-color: var(--render-code-block-bg-color) !important;
 }
 
@@ -63,12 +64,12 @@
 
 .wn-theme-rd pre code pre {
     margin: 0 !important;
-    padding: 1em 1.2em !important;
+    padding: 0.6em 1em !important;
     overflow-x: auto;
 }
 
 .wn-theme-rd pre code pre::-webkit-scrollbar {
-    height: 8px;
+    height: 7px;
 }
 
 .wn-theme-rd pre code pre::-webkit-scrollbar-thumb {
@@ -96,7 +97,6 @@
     margin-block-start: 2em !important;
     margin-block-end: 1em !important;
 }
-
 
 .wn-theme-rd h4 {
     font-size: 1em !important;
@@ -158,51 +158,60 @@
 
 /* ul */
 .wn-theme-rd ul {
-    margin-left: -0.5em !important;
+    list-style:disc;
+    margin-left: 1.5em;
 }
 
-.wn-theme-rd ul li {
+.wn-theme-rd ul > li {
     margin: 2em 0 0 0 !important;
 }
 
+.wn-theme-rd ul > li > p {
+    margin: 0 0 1em 0 !important;
+}
+
 .wn-theme-rd ul > li > ul {
-    margin-left: -0.5em !important;
-    margin-bottom: 1em !important;
-    margin-top: 1.5em;
-    padding-top: 0.3em;
-    padding-bottom: 0.3em;
+    margin: 1em 0 1.6em 0.2em !important;
+    padding: 0.5em 0 0.6em 1.2em !important;
     list-style-type: none;
     border-left: 5px solid var(--render-list-border-color);
+    border-radius: 4px;
+}
+
+.wn-theme-rd ul > li > ul:last-child {
+    margin-bottom: 0 !important;
 }
 
 .wn-theme-rd ul > li > ul > li {
-    margin-top: 0.3em !important;
-    margin-right: 0 !important;
-    margin-left: -0.7em !important;
+    margin: 0 !important;
 }
 
 .wn-theme-rd ul > li > ul > li:not(:last-child) {
-    margin-bottom: 1.8em !important;
+    margin-bottom: 1.4em !important;
 }
 
 .wn-theme-rd ul > li > ul > li > p {
-    margin: 0 0 !important;
+    margin: 0 0 1em 0 !important;
 }
 
 .wn-theme-rd ul > li > ul > li > ul {
-    margin-left: 0.2em !important;
-    margin-top: 1em;
-    padding-top: 0.3em;
+    margin: 0.8em 0 1.6em 0.2em !important;
+    padding: 0.4em 0 0.6em 1.2em !important;
     list-style-type: none;
     border-left: 4px solid var(--render-list-border-color);
+    border-radius: 3px;
+}
+
+.wn-theme-rd ul > li > ul > li > ul:last-child {
+    margin-bottom: 0 !important;
 }
 
 .wn-theme-rd ul > li > ul > li > ul > li {
-    margin: 0 0 0.5em -0.7em !important;
+    margin: 0 0 0.2em 0 !important;
 }
 
 .wn-theme-rd ul > li > ul > li > ul > li:first-child {
-    margin-top: 0.6em !important;
+    margin-top: 0.2em !important;
 }
 
 .wn-theme-rd ul > li > ul > li > ul > li:not(:last-child) {
@@ -210,15 +219,16 @@
 }
 
 .wn-theme-rd ul > li > ul > li > ul > li > ul {
+    margin: 0.6em 0 1.6em 0.2em !important;
+    padding: 0.3em 0 0.4em 1.2em !important;
+    list-style-type: none;
     border-left: 3px solid var(--render-list-border-color);
+    border-radius: 2px;
 }
 
-.wn-theme-rd ul > li > ul > li > ul > li > ul > li:first-child {
-    margin-top: 0.4em !important;
-}
 
 .wn-theme-rd ul > li > ul > li > ul > li > ul > li:not(:last-child) {
-    margin-bottom: 0.8em !important;
+    margin-bottom: 1em !important;
 }
 
 /* ol */
@@ -410,16 +420,16 @@
 /* copy btn */
 .copy-btn {
     position: absolute;
-    top: 2px;
-    right: 4px;
-    font-size: 0.7em;
+    top: 6px;
+    right: 6px;
+    padding: 0 6px;
+    font-size: 0.8em;
     z-index: 1000;
     color: #333;
     cursor: pointer;
     transition: .7s background-color;
-    margin: 2px 2px 0 0;
     border: 0;
-    border-radius: 2px;
+    border-radius: 4px;
     color: var(--render-copy-btn-text-color) !important;
     background-color: var(--render-copy-btn-bg-color) !important;
 }

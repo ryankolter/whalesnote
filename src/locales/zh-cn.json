@@ -91,7 +91,8 @@
             "style": {
                 "title": "样式",
                 "edit_font_size": "编辑字号",
-                "preview_font_size": "预览字号"
+                "preview_font_size": "预览字号",
+                "preview_code_font_size": "代码字号"
             }
         },
         "about": {
