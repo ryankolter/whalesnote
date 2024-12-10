@@ -235,9 +235,11 @@ const processIPC = (): void => {
     });
 
     ipcMain.handle('read:css:sync', async (_, css_file_name: string) => {
-        let file_path = path.join(__dirname, '../src/resources/css/', css_file_name);
+        let file_path = path.join(__dirname, '../../src/resources/css/', css_file_name);
+        console.log(file_path);
+
         if (app.isPackaged) {
-            const cssFilePath = path.join(__dirname, '../extraResources/css/');
+            const cssFilePath = path.join(__dirname, '../../extraResources/css/');
             file_path = path.join(cssFilePath, css_file_name);
         }
         if (!fse.pathExistsSync(file_path)) {
@@ -351,7 +353,7 @@ const processIPC = (): void => {
     //nodejieba
     ipcMain.handle('plugin:loadNodejiebaDict', async () => {
         const dictFilePath = app.isPackaged
-            ? path.join(__dirname, '../extraResources/dict')
+            ? path.join(__dirname, '../../extraResources/dict')
             : path.join(__dirname, '../../src/resources/dict');
         nodejieba.load({
             dict: path.join(dictFilePath, '/jieba.dict.utf8'),

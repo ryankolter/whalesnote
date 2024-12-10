@@ -25,7 +25,7 @@ import markdownItTable from 'markdown-it-multimd-table';
 import { notes, usePopUp } from '@/lib';
 import { AlertPopUp } from '@/components/AlertPopUp';
 import { useAtomValue } from 'jotai';
-import { activeWhaleIdAtom, renderCodeFontSizeAtom, renderFontSizeAtom, themeAtom } from '@/atoms';
+import { activeWhaleIdAtom, renderFontSizeAtom, themeAtom } from '@/atoms';
 import { join as pathJoin } from 'path-browserify';
 import { useDataContext } from '@/context/DataProvider';
 import { ExternalLinkIcon } from 'lucide-react';
@@ -40,7 +40,6 @@ const ExportNote: React.FC<{}> = ({}) => {
 
     const id = useAtomValue(activeWhaleIdAtom);
     const renderFontSize = useAtomValue(renderFontSizeAtom);
-    const renderCodeFontSize = useAtomValue(renderCodeFontSizeAtom);
     const theme = useAtomValue(themeAtom);
 
     const [showSwitchExportNoteFunc, setShowSwitchExportNoteFunc] = useState(false);
@@ -84,7 +83,7 @@ const ExportNote: React.FC<{}> = ({}) => {
                     if (lang) {
                         try {
                             return (
-                                `<pre><code class="hljs"><pre style='font-size: ${renderCodeFontSize}px'>` +
+                                '<pre><code class="hljs"><pre>' +
                                 toHtml(lowlight.highlight(lang, str, {})) +
                                 '</pre></code></pre>'
                             );
@@ -92,7 +91,7 @@ const ExportNote: React.FC<{}> = ({}) => {
                     }
 
                     return (
-                        `<pre><code class="hljs"><pre style='font-size: ${renderCodeFontSize}px'>` +
+                        '<pre><code class="hljs"><pre>' +
                         mdPrint.current.utils.escapeHtml(str) +
                         '</pre></code></pre>'
                     );
@@ -122,7 +121,7 @@ const ExportNote: React.FC<{}> = ({}) => {
                     },
                 })
         );
-    }, [curDataPath, renderCodeFontSize]);
+    }, [curDataPath]);
 
     const print_str = useMemo(() => {
         return id &&
